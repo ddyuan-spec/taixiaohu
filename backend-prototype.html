@@ -267,6 +267,13 @@
             <div class="nav-item" onclick="showPage('chat-monitor')"><span class="icon">💬</span><span>对话监控</span></div>
             <div class="nav-item" onclick="showPage('analytics')"><span class="icon">📈</span><span>数据看板</span></div>
             <div class="nav-item" onclick="showPage('case')"><span class="icon">⚠️</span><span>Case 管理</span></div>
+            <div class="nav-item" onclick="toggleSubmenu('flywheel')"><span class="icon">🔄</span><span>数据飞轮</span></div>
+            <div id="flywheel-submenu" style="display:none">
+                <div class="nav-subitem" onclick="showPage('flywheel-workbench')">数据飞轮工作台</div>
+                <div class="nav-subitem" onclick="showPage('flywheel-tasks')">优化任务管理</div>
+                <div class="nav-subitem" onclick="showPage('flywheel-abtest')">A/B测试管理</div>
+                <div class="nav-subitem" onclick="showPage('flywheel-kb')">知识库优化建议</div>
+            </div>
             <div class="nav-item" onclick="toggleSubmenu('settings')"><span class="icon">⚙️</span><span>系统设置</span></div>
             <div id="settings-submenu" style="display:none">
                 <div class="nav-subitem" onclick="showPage('settings-alert')">告警配置</div>
@@ -738,6 +745,168 @@
                 </div>
             </div>
             
+            <!-- 数据飞轮工作台 -->
+            <div class="page" id="page-flywheel-workbench">
+                <div class="page-header"><h1>数据飞轮工作台</h1></div>
+                <div class="split-layout">
+                    <div class="split-left">
+                        <div class="split-left-header">本周Bad Case (34)</div>
+                        <div class="intent-list">
+                            <div class="intent-item active" onclick="selectBadCase(this, 'bc1')">
+                                <div class="name">🟡 推荐产品重复</div>
+                                <div class="desc">用户: 王* | 时间: 05-25</div>
+                            </div>
+                            <div class="intent-item" onclick="selectBadCase(this, 'bc2')">
+                                <div class="name">🔴 知识错误</div>
+                                <div class="desc">用户: 李* | 时间: 05-25</div>
+                            </div>
+                            <div class="intent-item" onclick="selectBadCase(this, 'bc3')">
+                                <div class="name">🟡 意图识别错误</div>
+                                <div class="desc">用户: 张* | 时间: 05-24</div>
+                            </div>
+                            <div class="intent-item" onclick="selectBadCase(this, 'bc4')">
+                                <div class="name">🟡 回答不完整</div>
+                                <div class="desc">用户: 赵* | 时间: 05-24</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="split-right">
+                        <div class="guide-editor">
+                            <div class="guide-editor-header">
+                                <h3>🟡 推荐产品重复 - 问题归因分析</h3>
+                                <p>Case ID: BC20250525_001 | 对话时间: 2026-05-25 10:32</p>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                                <h4 style="font-size: 14px; margin-bottom: 12px;">对话摘要</h4>
+                                <p style="font-size: 13px; color: #666;">用户询问血糖仪推荐，AI在对话中重复推荐了同一款产品两次，用户体验不佳。</p>
+                            </div>
+                            <div style="margin-bottom: 16px;">
+                                <h4 style="font-size: 14px; margin-bottom: 12px;">问题归因</h4>
+                                <div class="config-row">
+                                    <label style="width: 120px;">问题类型</label>
+                                    <select style="flex: 1;"><option>Prompt问题</option><option selected>知识库缺失</option><option>模型限制</option><option>意图识别错误</option></select>
+                                </div>
+                                <div class="config-row">
+                                    <label style="width: 120px;">根因分析</label>
+                                    <textarea style="flex: 1; min-height: 80px;" placeholder="请输入根因分析...">推荐逻辑未做去重处理，导致同一产品被重复推荐</textarea>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 16px;">
+                                <h4 style="font-size: 14px; margin-bottom: 12px;">优化建议</h4>
+                                <textarea style="width: 100%; min-height: 100px;" placeholder="请输入优化建议...">1. 在推荐生成Prompt中增加去重逻辑
+2. 维护已推荐产品列表，避免重复</textarea>
+                            </div>
+                            <div class="guide-editor-footer">
+                                <button class="btn-default">跳过</button>
+                                <button class="btn-primary-outline" onclick="alert('✅ 已创建优化任务')">创建优化任务</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 优化任务管理 -->
+            <div class="page" id="page-flywheel-tasks">
+                <div class="page-header"><h1>优化任务管理</h1></div>
+                <div class="tabs">
+                    <div class="tab active">待优化 <span class="badge">12</span></div>
+                    <div class="tab">优化中 <span class="badge">5</span></div>
+                    <div class="tab">已验证 <span class="badge">3</span></div>
+                    <div class="tab">已上线 <span class="badge">28</span></div>
+                </div>
+                <div class="data-table">
+                    <div class="table-header">
+                        <div class="table-cell">任务ID</div><div class="table-cell">关联Bad Case</div><div class="table-cell">问题类型</div>
+                        <div class="table-cell">优化内容</div><div class="table-cell">负责人</div><div class="table-cell">状态</div><div class="table-cell actions">操作</div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell">OPT001</div><div class="table-cell">BC20250525_001</div>
+                        <div class="table-cell"><span class="tag tag-warning">Prompt问题</span></div>
+                        <div class="table-cell">推荐逻辑增加去重</div>
+                        <div class="table-cell">张三</div>
+                        <div class="table-cell"><span class="tag tag-warning">待优化</span></div>
+                        <div class="table-cell actions"><button class="btn-sm btn-text">开始</button></div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell">OPT002</div><div class="table-cell">BC20250524_003</div>
+                        <div class="table-cell"><span class="tag tag-danger">知识库缺失</span></div>
+                        <div class="table-cell">补充糖尿病饮食文档</div>
+                        <div class="table-cell">李四</div>
+                        <div class="table-cell"><span class="tag tag-info">优化中</span></div>
+                        <div class="table-cell actions"><button class="btn-sm btn-text">查看</button></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- A/B测试管理 -->
+            <div class="page" id="page-flywheel-abtest">
+                <div class="page-header"><h1>A/B测试管理</h1></div>
+                <div class="toolbar">
+                    <div class="toolbar-actions">
+                        <button class="btn-default">+ 新建A/B测试</button>
+                    </div>
+                </div>
+                <div class="data-table">
+                    <div class="table-header">
+                        <div class="table-cell">测试ID</div><div class="table-cell">测试名称</div><div class="table-cell">对比版本</div>
+                        <div class="table-cell">流量分配</div><div class="table-cell">状态</div><div class="table-cell">显著性</div><div class="table-cell actions">操作</div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell">AB001</div><div class="table-cell">推荐Prompt优化测试</div>
+                        <div class="table-cell">v2.1 vs v2.2</div>
+                        <div class="table-cell">50% / 50%</div>
+                        <div class="table-cell"><span class="tag tag-info">进行中</span></div>
+                        <div class="table-cell">p=0.032 ✅</div>
+                        <div class="table-cell actions"><button class="btn-sm btn-text">查看</button></div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell">AB002</div><div class="table-cell">意图引导话术测试</div>
+                        <div class="table-cell">v1.0 vs v1.1</div>
+                        <div class="table-cell">30% / 70%</div>
+                        <div class="table-cell"><span class="tag tag-success">已完成</span></div>
+                        <div class="table-cell">p=0.001 ✅</div>
+                        <div class="table-cell actions"><button class="btn-sm btn-text">报告</button></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 知识库优化建议 -->
+            <div class="page" id="page-flywheel-kb">
+                <div class="page-header"><h1>知识库优化建议</h1></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                    <div class="dashboard-card">
+                        <h3>🔍 高频未命中问题</h3>
+                        <div style="margin-top: 12px;">
+                            <div style="padding: 12px; background: #f8f9fa; border-radius: 6px; margin-bottom: 8px;">
+                                <div style="font-size: 13px; font-weight: 500;">"孕妇可以吃氨糖吗？"</div>
+                                <div style="font-size: 12px; color: #999; margin-top: 4px;">本周查询 45 次 | 知识库未覆盖</div>
+                                <button class="btn-sm btn-text" style="margin-top: 8px;">+ 创建文档</button>
+                            </div>
+                            <div style="padding: 12px; background: #f8f9fa; border-radius: 6px; margin-bottom: 8px;">
+                                <div style="font-size: 13px; font-weight: 500;">"血压计如何校准？"</div>
+                                <div style="font-size: 12px; color: #999; margin-top: 4px;">本周查询 38 次 | 知识库未覆盖</div>
+                                <button class="btn-sm btn-text" style="margin-top: 8px;">+ 创建文档</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>⚠️ 过时文档标记</h3>
+                        <div style="margin-top: 12px;">
+                            <div style="padding: 12px; background: #fff7e6; border-radius: 6px; margin-bottom: 8px;">
+                                <div style="font-size: 13px; font-weight: 500;">《2024年钙片选购指南》</div>
+                                <div style="font-size: 12px; color: #999; margin-top: 4px;">3个月未更新 | 可能已过时</div>
+                                <button class="btn-sm btn-text" style="margin-top: 8px;">更新文档</button>
+                            </div>
+                            <div style="padding: 12px; background: #fff7e6; border-radius: 6px;">
+                                <div style="font-size: 13px; font-weight: 500;">《血糖仪产品对比v1.0》</div>
+                                <div style="font-size: 12px; color: #999; margin-top: 4px;">6个月未更新 | 产品信息可能过时</div>
+                                <button class="btn-sm btn-text" style="margin-top: 8px;">更新文档</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="page" id="page-placeholder">
                 <div class="page-header"><h1>页面开发中</h1></div>
                 <div style="background: white; padding: 60px; border-radius: 12px; text-align: center;">
@@ -780,6 +949,10 @@ function showPage(pageId) {
         'chat-monitor': 'page-chat-monitor',
         'analytics': 'page-analytics',
         'case': 'page-case',
+        'flywheel-workbench': 'page-flywheel-workbench',
+        'flywheel-tasks': 'page-flywheel-tasks',
+        'flywheel-abtest': 'page-flywheel-abtest',
+        'flywheel-kb': 'page-flywheel-kb',
         'settings-alert': 'page-placeholder',
         'settings-gray': 'page-placeholder',
         'settings-permission': 'page-placeholder',
@@ -803,7 +976,11 @@ function showPage(pageId) {
         'user-profile': '用户管理 > 用户画像管理',
         'chat-monitor': '对话监控',
         'analytics': '数据看板',
-        'case': 'Case 管理'
+        'case': 'Case 管理',
+        'flywheel-workbench': '数据飞轮 > 数据飞轮工作台',
+        'flywheel-tasks': '数据飞轮 > 优化任务管理',
+        'flywheel-abtest': '数据飞轮 > A/B测试管理',
+        'flywheel-kb': '数据飞轮 > 知识库优化建议'
     };
     document.getElementById('currentPage').textContent = pageNames[pageId] || '仪表盘';
 }
