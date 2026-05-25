@@ -108,7 +108,8 @@
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│           意图识别 Prompt（prompt_intent_v1.0）               │
+│              客户端意图选择（Client Intent Selection）        │
+│     用户在客户端通过选项选择意图，作为参数传入Coze工作流        │
 │     分类：健康咨询 | 产品咨询 | 健康知识 | 其他               │
 └──┬──────────────┬──────────────┬──────────────┬─────────────┘
    │              │              │              │
@@ -140,32 +141,32 @@
 <h3>1.2 各Prompt之间的关系和调用链路</h3>
 
 <table><thead><tr><th>调用层级</th><th>Prompt名称</th><th>调用时机</th><th>被调用者</th></tr></thead><tbody><tr><td>第0层</td><td>prompt_system_v1.0</td><td>每次对话开始</td><td>所有下游Prompt</td></tr>
-<tr><td>第1层</td><td>prompt_intent_v1.0</td><td>每轮用户输入后</td><td>由Coze工作流自动调用</td></tr>
-<tr><td>第2层</td><td>prompt_symptom_v1.0</td><td>意图=健康咨询</td><td>由意图识别结果路由</td></tr>
-<tr><td>第2层</td><td>prompt_product_v1.0</td><td>意图=产品咨询</td><td>由意图识别结果路由</td></tr>
-<tr><td>第2层</td><td>prompt_knowledge_v1.0</td><td>意图=健康知识</td><td>由意图识别结果路由</td></tr>
-<tr><td>第2层</td><td>prompt_boundary_v1.0</td><td>意图=其他</td><td>由意图识别结果路由</td></tr>
+<tr><td>第1层</td><td>客户端意图选择</td><td>用户在客户端选择后</td><td>意图参数传入Coze工作流</td></tr>
+<tr><td>第2层</td><td>prompt_symptom_v1.0</td><td>意图=健康咨询</td><td>由意图参数路由</td></tr>
+<tr><td>第2层</td><td>prompt_product_v1.0</td><td>意图=产品咨询</td><td>由意图参数路由</td></tr>
+<tr><td>第2层</td><td>prompt_knowledge_v1.0</td><td>意图=健康知识</td><td>由意图参数路由</td></tr>
+<tr><td>第2层</td><td>prompt_boundary_v1.0</td><td>意图=其他</td><td>由意图参数路由</td></tr>
 <tr><td>第3层</td><td>prompt_recommend_v1.0</td><td>症状分析完成后</td><td>由症状分析Prompt触发</td></tr>
 <tr><td>第3层</td><td>prompt_disclaimer_v1.0</td><td>涉及症状/诊断时</td><td>由Coze工作流自动触发</td></tr></tbody></table>
 <p><strong>核心调用链路</strong>：</p>
 
-<pre><code>用户输入 → System Prompt → 意图识别 → [健康咨询 → 症状分析 → 推荐生成 → 免责声明]
-                                  → [产品咨询 → 产品咨询 → 推荐生成]
-                                  → [健康知识 → 健康知识问答 → 免责声明（条件触发）]
-                                  → [其他 → 边界处理]
+<pre><code>用户输入 → System Prompt → 客户端意图选择（意图作为参数传入） → [健康咨询 → 症状分析 → 推荐生成 → 免责声明]
+                                                            → [产品咨询 → 产品咨询 → 推荐生成]
+                                                            → [健康知识 → 健康知识问答 → 免责声明（条件触发）]
+                                                            → [其他 → 边界处理]
 </code></pre>
 
 <h3>1.3 Coze工作流中的Prompt节点分布</h3>
 
 <p>在Coze平台中，建议采用以下工作流节点编排：</p>
 
-<pre><code>[开始节点]
+<pre><code>[开始节点] ← 接收用户输入 + 意图参数（intent）
     │
     ▼
 [大模型节点：System Prompt] ← 全局人设注入
     │
     ▼
-[大模型节点：意图识别] ← prompt_intent_v1.0
+[条件分支：根据意图参数路由]
     │
     ├── [条件分支：健康咨询] ──→ [大模型节点：症状分析] ← prompt_symptom_v1.0
     │                                    │
@@ -200,6 +201,11 @@
 [输出节点]
 </code></pre>
 
+<p><strong>说明</strong>：</p>
+<ul><li>意图由用户在客户端通过选项选择（如点击按钮），而非由LLM识别</li>
+<li>选中的意图作为参数（intent）随用户输入一起传入Coze工作流</li>
+<li>工作流根据传入的intent参数直接进行条件分支路由，无需额外的意图识别大模型节点</li>
+<p></ul></p>
 <hr>
 
 <h2>二、System Prompt（主Prompt）</h2>
@@ -308,134 +314,204 @@
 
 <hr>
 
-<h2>三、意图识别Prompt（prompt_intent_v1.0）</h2>
+<h2>三、客户端意图选择规范</h2>
 
-<h3>3.1 用途说明</h3>
+<h3>3.1 设计原则</h3>
 
-<p>意图识别Prompt是整个对话链路的"交通指挥员"。它负责将用户的自然语言输入准确分类到不同的处理通道，确保后续Prompt能够精准响应。该Prompt在Coze工作流中作为第一个大模型节点运行。</p>
+<p>客户端意图选择是泰小虎对话流程的入口。与由LLM进行意图识别不同，本系统采用"客户端选项引导"的方式，让用户在交互界面中主动选择自己的咨询意图。这种方式具有以下优势：</p>
 
-<h3>3.2 完整Prompt内容</h3>
+<li><strong>准确性高</strong>：避免LLM意图识别的误判，确保意图分类100%准确</li>
+<li><strong>用户体验好</strong>：通过话术引导，帮助用户快速明确自己的需求</li>
+<li><strong>实现简单</strong>：无需额外的意图识别大模型节点，降低系统复杂度</li>
+<li><strong>可控性强</strong>：客户端可根据业务需求灵活调整意图选项和引导话术</li>
 
-<pre><code># 任务说明
+<h3>3.2 意图分类体系</h3>
 
-你是一个意图分类器。你的任务是分析用户的输入内容，将其归类到以下四个类别之一。
+<p>系统定义以下四种意图类别，对应客户端的四个选项：</p>
 
-# 分类定义
+<table><thead><tr><th>意图编码</th><th>意图名称</th><th>适用场景</th><th>对应Prompt</th></tr></thead><tbody><tr><td>health_consult</td><td>健康咨询</td><td>用户描述身体症状、询问健康问题、咨询身体状况</td><td>prompt_symptom_v1.0</td></tr>
+<tr><td>product_consult</td><td>产品咨询</td><td>用户询问保健品、营养品、健康产品相关话题</td><td>prompt_product_v1.0</td></tr>
+<tr><td>knowledge_query</td><td>健康知识</td><td>用户询问健康科普知识、养生常识、健康生活方式</td><td>prompt_knowledge_v1.0</td></tr>
+<tr><td>other</td><td>其他</td><td>不属于以上三类的所有内容</td><td>prompt_boundary_v1.0</td></tr></tbody></table>
+<h3>3.3 客户端话术引导模板</h3>
 
-1. **health_consult**（健康咨询）：用户描述身体症状、询问健康问题、咨询身体状况相关话题
-   - 关键词特征：不舒服、疼、痛、头晕、失眠、血压、血糖、咳嗽、拉肚子、胸闷、气短等
-   - 示例特征："我最近总是头晕""我膝盖疼怎么办""血压高怎么办"
+<p>客户端应根据用户选择的意图，展示相应的引导话术，帮助用户明确咨询方向：</p>
 
-2. **product_consult**（产品咨询）：用户询问保健品、营养品、健康产品相关话题
-   - 关键词特征：钙片、维生素、蛋白粉、鱼油、益生菌、买、多少钱、效果、哪个好等
-   - 示例特征："你们有什么钙片推荐""鱼油怎么吃""这个产品多少钱"
+<h4>3.3.1 健康咨询（health_consult）</h4>
 
-3. **knowledge_query**（健康知识）：用户询问健康科普知识、养生常识、健康生活方式
-   - 关键词特征：什么是、怎么预防、如何注意、饮食建议、运动建议、养生等
-   - 示例特征："老年人怎么预防骨质疏松""吃什么对血压好""每天走多少步合适"
+<p><strong>引导话术</strong>：</p>
+<blockquote>"您好！请问今天想咨询什么健康问题呢？比如哪里不舒服、想了解什么症状？"</blockquote>
 
-4. **other**（其他）：不属于以上三类的所有内容
-   - 包括但不限于：闲聊、投诉、技术问题、非健康话题
-   - 示例特征："今天天气怎么样""你们这个机器人怎么用""讲个笑话"
+<p><strong>话术说明</strong>：</p>
+<ul><li>以亲切的问候开场，降低用户的戒备心理</li>
+<li>明确提示用户可以咨询"健康问题"</li>
+<li>给出具体示例（哪里不舒服、什么症状），帮助用户组织语言</li>
+<li>适用于用户有明确身体不适的情况</li>
+<p></ul></p>
+<h4>3.3.2 产品咨询（product_consult）</h4>
 
-# 判断规则
+<p><strong>引导话术</strong>：</p>
+<blockquote>"欢迎了解健康产品！请问您想为哪方面的健康需求选购产品呢？"</blockquote>
 
-1. 优先级：health_consult &gt; product_consult &gt; knowledge_query &gt; other
-2. 当用户同时涉及多个意图时，选择优先级最高的类别
-3. 当用户描述症状并询问产品时，归类为health_consult
-4. 当用户询问产品功效但未描述自身症状时，归类为product_consult
-5. 当用户描述的症状可能涉及紧急情况时，在分类结果中标记urgent=true
+<p><strong>话术说明</strong>：</p>
+<ul><li>表达欢迎态度，营造轻松购物氛围</li>
+<li>强调"健康需求"，将产品与用户的健康目标关联</li>
+<li>使用"选购"而非"购买"，降低用户的决策压力</li>
+<li>适用于用户主动想了解或购买产品的场景</li>
+<p></ul></p>
+<h4>3.3.3 健康知识（knowledge_query）</h4>
 
-# 输出格式
+<p><strong>引导话术</strong>：</p>
+<blockquote>"想学习健康知识吗？请问您对什么健康话题感兴趣？"</blockquote>
 
-请严格按照以下JSON格式输出，不要输出任何其他内容：
+<p><strong>话术说明</strong>：</p>
+<ul><li>以"学习""知识"等词汇激发用户的求知欲</li>
+<li>使用问句形式，鼓励用户主动表达兴趣点</li>
+<li>适用于用户想获取健康科普、养生建议的场景</li>
+<li>可配合健康话题分类（如饮食、运动、睡眠等）供用户选择</li>
+<p></ul></p>
+<h4>3.3.4 其他（other）</h4>
 
+<p><strong>引导话术</strong>：</p>
+<blockquote>"请问有什么可以帮您的？"</blockquote>
+
+<p><strong>话术说明</strong>：</p>
+<ul><li>开放式提问，给用户充分的表达空间</li>
+<li>适用于无法归类到以上三类的情况</li>
+<li>也可作为兜底选项，处理用户的闲聊、投诉、技术问题等</li>
+<p></ul></p>
+<h3>3.4 Coze工作流集成方式</h3>
+
+<h4>3.4.1 参数传递机制</h4>
+
+<p>意图选择完成后，客户端将选中的意图编码作为参数传入Coze工作流：</p>
+
+<pre><code>请求参数：
 {
-  "intent": "分类结果（health_consult/product_consult/knowledge_query/other）",
-  "confidence": "置信度（0.0-1.0）",
-  "urgent": "是否紧急（true/false）",
-  "keywords": ["提取的关键词1", "关键词2"],
-  "reason": "分类理由（简短说明）"
+  "user_input": "用户输入的自然语言内容",
+  "intent": "health_consult | product_consult | knowledge_query | other",
+  "conversation_id": "会话唯一标识",
+  "user_id": "用户唯一标识"
 }
 </code></pre>
 
-<h3>3.3 输出格式定义（JSON）</h3>
+<h4>3.4.2 工作流节点配置</h4>
 
-<table><thead><tr><th>字段</th><th>类型</th><th>说明</th><th>示例值</th></tr></thead><tbody><tr><td>intent</td><td>string</td><td>意图分类</td><td>health_consult</td></tr>
-<tr><td>confidence</td><td>number</td><td>置信度</td><td>0.95</td></tr>
-<tr><td>urgent</td><td>boolean</td><td>是否紧急</td><td>false</td></tr>
-<tr><td>keywords</td><td>array[string]</td><td>提取的关键词</td><td>["头晕", "血压"]</td></tr>
-<tr><td>reason</td><td>string</td><td>分类理由</td><td>用户描述了头晕症状</td></tr></tbody></table>
-<h3>3.4 示例</h3>
+<p>在Coze工作流中，意图参数通过「开始节点」接收，并通过「条件分支」进行路由：</p>
 
-<p><strong>示例1：健康咨询</strong></p>
-
-<p>输入："我这两天头总是晕晕的，站起来的时候更明显"</p>
-
-<p>输出：</p>
-<pre><code>{
-  "intent": "health_consult",
-  "confidence": 0.98,
-  "urgent": false,
-  "keywords": ["头晕", "站起来"],
-  "reason": "用户描述了具体的身体症状（头晕），属于健康咨询"
-}
+<pre><code>[开始节点]
+    │ 接收参数：user_input, intent, conversation_id, user_id
+    ▼
+[大模型节点：System Prompt]
+    │ 注入全局人设
+    ▼
+[条件分支节点]
+    │ 根据 intent 参数值进行分支
+    ├── intent == "health_consult" → [症状分析Prompt]
+    ├── intent == "product_consult" → [产品咨询Prompt]
+    ├── intent == "knowledge_query" → [健康知识问答Prompt]
+    └── intent == "other" → [边界处理Prompt]
 </code></pre>
 
-<p><strong>示例2：产品咨询</strong></p>
+<h4>3.4.3 条件分支配置示例</h4>
 
-<p>输入："我想给我老伴买点钙片，你们这里有什么好的推荐吗"</p>
+<table><thead><tr><th>分支名称</th><th>条件表达式</th><th>下一节点</th></tr></thead><tbody><tr><td>健康咨询</td><td><code>intent == "health_consult"</code></td><td>Symptom_Analysis</td></tr>
+<tr><td>产品咨询</td><td><code>intent == "product_consult"</code></td><td>Product_Consult</td></tr>
+<tr><td>健康知识</td><td><code>intent == "knowledge_query"</code></td><td>Knowledge_QA</td></tr>
+<tr><td>其他</td><td><code>intent == "other"</code></td><td>Boundary_Handler</td></tr></tbody></table>
+<h3>3.5 各意图对应的后续Prompt路由</h3>
 
-<p>输出：</p>
-<pre><code>{
-  "intent": "product_consult",
-  "confidence": 0.96,
-  "urgent": false,
-  "keywords": ["钙片", "买", "推荐"],
-  "reason": "用户明确表达了购买钙片的需求，属于产品咨询"
-}
+<p>根据用户选择的意图，系统将路由到对应的Prompt模块进行处理：</p>
+
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│                      客户端意图选择                          │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌────────┐ │
+│  │ 健康咨询    │ │ 产品咨询    │ │ 健康知识    │ │ 其他   │ │
+│  │ health_     │ │ product_    │ │ knowledge_  │ │ other  │ │
+│  │ consult     │ │ consult     │ │ query       │ │        │ │
+│  └──────┬──────┘ └──────┬──────┘ └──────┬──────┘ └───┬────┘ │
+│         │               │               │            │      │
+│         ▼               ▼               ▼            ▼      │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌────────┐ │
+│  │ 症状分析    │ │ 产品咨询    │ │ 健康知识    │ │ 边界   │ │
+│  │ Prompt      │ │ Prompt      │ │ 问答Prompt  │ │ 处理   │ │
+│  │             │ │             │ │             │ │ Prompt │ │
+│  └──────┬──────┘ └──────┬──────┘ └──────┬──────┘ └────────┘ │
+│         │               │               │                   │
+│         ▼               ▼               │                   │
+│  ┌─────────────┐ ┌─────────────┐       │                   │
+│  │ 推荐生成    │ │ 推荐生成    │       │                   │
+│  │ Prompt      │ │ Prompt      │       │                   │
+│  │ （可选）    │ │ （可选）    │       │                   │
+│  └─────────────┘ └─────────────┘       │                   │
+└─────────────────────────────────────────────────────────────┘
 </code></pre>
 
-<p><strong>示例3：健康知识</strong></p>
+<h4>3.5.1 健康咨询流程</h4>
 
-<p>输入："老年人每天走路锻炼好不好啊？走多少步合适？"</p>
+<li>用户选择"健康咨询"意图</li>
+<li>客户端传入 <code>intent: "health_consult"</code></li>
+<li>工作流路由至 <strong>症状分析Prompt（prompt_symptom_v1.0）</strong></li>
+<li>进行多轮症状信息收集</li>
+<li>信息收集完成后，触发 <strong>推荐生成Prompt（prompt_recommend_v1.0）</strong></li>
+<li>如涉及症状/诊断，自动附加 <strong>免责声明Prompt（prompt_disclaimer_v1.0）</strong></li>
 
-<p>输出：</p>
-<pre><code>{
-  "intent": "knowledge_query",
-  "confidence": 0.94,
-  "urgent": false,
-  "keywords": ["老年人", "走路", "锻炼", "步数"],
-  "reason": "用户询问的是健康生活方式建议，属于健康知识类"
-}
+<h4>3.5.2 产品咨询流程</h4>
+
+<li>用户选择"产品咨询"意图</li>
+<li>客户端传入 <code>intent: "product_consult"</code></li>
+<li>工作流路由至 <strong>产品咨询Prompt（prompt_product_v1.0）</strong></li>
+<li>结合RAG产品库检索，回答产品相关问题</li>
+<li>如需推荐，触发 <strong>推荐生成Prompt（prompt_recommend_v1.0）</strong></li>
+
+<h4>3.5.3 健康知识流程</h4>
+
+<li>用户选择"健康知识"意图</li>
+<li>客户端传入 <code>intent: "knowledge_query"</code></li>
+<li>工作流先进行 <strong>RAG健康知识库检索</strong></li>
+<li>检索结果传入 <strong>健康知识问答Prompt（prompt_knowledge_v1.0）</strong></li>
+<li>如回答涉及症状/疾病预防，条件触发 <strong>免责声明Prompt</strong></li>
+
+<h4>3.5.4 其他流程</h4>
+
+<li>用户选择"其他"意图，或输入无法归类内容</li>
+<li>客户端传入 <code>intent: "other"</code></li>
+<li>工作流路由至 <strong>边界处理Prompt（prompt_boundary_v1.0）</strong></li>
+<li>识别超出能力范围的请求，给出得体回应</li>
+<li>引导用户回到健康相关话题</li>
+
+<h3>3.6 客户端界面设计建议</h3>
+
+<h4>3.6.1 意图选择界面示例</h4>
+
+<p>建议客户端采用按钮式选项设计，直观清晰：</p>
+
+<pre><code>┌─────────────────────────────────────┐
+│                                     │
+│      您好！我是泰小虎，              │
+│      您的健康顾问。                  │
+│      请问今天想咨询什么？            │
+│                                     │
+│   ┌──────────┐    ┌──────────┐     │
+│   │ 健康咨询  │    │ 产品咨询  │     │
+│   │  💬      │    │  🛒      │     │
+│   └──────────┘    └──────────┘     │
+│                                     │
+│   ┌──────────┐    ┌──────────┐     │
+│   │ 健康知识  │    │ 其他     │     │
+│   │  📚      │    │  ❓      │     │
+│   └──────────┘    └──────────┘     │
+│                                     │
+└─────────────────────────────────────┘
 </code></pre>
 
-<p><strong>示例4：紧急健康咨询</strong></p>
+<h4>3.6.2 交互流程建议</h4>
 
-<p>输入："我老伴刚才突然说胸口特别疼，出了一身冷汗"</p>
-
-<p>输出：</p>
-<pre><code>{
-  "intent": "health_consult",
-  "confidence": 0.99,
-  "urgent": true,
-  "keywords": ["胸口疼", "冷汗", "突然"],
-  "reason": "用户描述了胸痛伴随冷汗的紧急症状，标记为紧急"
-}
-</code></pre>
-
-<p><strong>示例5：其他</strong></p>
-
-<p>输入："这个手机上的字太小了，我怎么把它调大一点啊"</p>
-
-<p>输出：</p>
-<pre><code>{
-  "intent": "other",
-  "confidence": 0.92,
-  "keywords": ["手机", "字太小", "调大"],
-  "reason": "用户询问的是手机操作问题，不属于健康相关话题"
-}
-</code></pre>
+<li><strong>首次进入</strong>：展示四个意图选项按钮</li>
+<li><strong>用户选择</strong>：点击按钮后，显示对应引导话术</li>
+<li><strong>输入框激活</strong>：引导话术展示后，激活输入框等待用户输入</li>
+<li><strong>意图记忆</strong>：在同一会话中，可记住用户当前意图，无需重复选择</li>
+<li><strong>意图切换</strong>：提供"换个话题"等入口，允许用户切换意图</li>
 
 <hr>
 
@@ -811,12 +887,21 @@
 【产品一】产品名称
 - 适合原因：xxx（一句话说明为什么适合）
 - 使用方法：xxx（简单的服用说明）
+- 商品详情：{{product_link_1}}
 
 【产品二】产品名称
 - 适合原因：xxx
 - 使用方法：xxx
+- 商品详情：{{product_link_2}}
+
+【产品三】产品名称
+- 适合原因：xxx
+- 使用方法：xxx
+- 商品详情：{{product_link_3}}
 
 温馨提示：保健产品不能代替药物治疗。建议您在使用前咨询医生，特别是正在服药的朋友。
+
+**说明**：商品链接由Python代码节点查询数据库后注入，Prompt中只需保留占位符。实际输出时，占位符会被替换为真实的商品详情页链接。
 
 # 禁止事项
 
@@ -849,14 +934,26 @@
 【产品一】产品名称
 - 适合原因：xxx
 - 使用方法：xxx
+- 商品详情：{{product_link_1}}
 
 【产品二】产品名称
 - 适合原因：xxx
 - 使用方法：xxx
+- 商品详情：{{product_link_2}}
+
+【产品三】产品名称
+- 适合原因：xxx
+- 使用方法：xxx
+- 商品详情：{{product_link_3}}
 
 温馨提示：保健产品不能代替药物治疗。建议您在使用前咨询医生。
 </code></pre>
 
+<p><strong>链接占位符说明</strong>：</p>
+<ul><li><code>{{product_link_1}}</code>、<code>{{product_link_2}}</code>、<code>{{product_link_3}}</code> 为商品详情链接占位符</li>
+<li>这些占位符由Python代码节点在Coze工作流中查询数据库后注入</li>
+<li>如果推荐产品少于3款，多余的占位符会被置空或移除</li>
+<p></ul></p>
 <h3>5.6 示例</h3>
 
 <p><strong>示例1：关节疼痛用户</strong></p>
@@ -872,10 +969,12 @@
 【氨糖软骨素钙片】
 - 适合原因：含有氨糖和软骨素，对关节养护有帮助
 - 使用方法：每天两次，每次两片，饭后服用
+- 商品详情：{{product_link_1}}
 
 【中老年高钙片】
 - 适合原因：补充钙质，帮助强健骨骼
 - 使用方法：每天一次，每次一片
+- 商品详情：{{product_link_2}}
 
 温馨提示：保健产品不能代替药物治疗。建议您在使用前咨询医生，特别是正在服药的朋友。
 </code></pre>
@@ -893,10 +992,12 @@
 【酸枣仁膏】
 - 适合原因：酸枣仁是传统的助眠食材，性质温和
 - 使用方法：每天睡前一小时，取一勺用温水冲服
+- 商品详情：{{product_link_1}}
 
 【复合维生素B族】
 - 适合原因：B族维生素有助于调节神经系统，帮助放松
 - 使用方法：每天一次，每次一片，早餐后服用
+- 商品详情：{{product_link_2}}
 
 温馨提示：保健产品不能代替药物治疗。如果失眠持续不改善，建议您去医院看看。
 </code></pre>
@@ -914,10 +1015,12 @@
 【深海鱼油】
 - 适合原因：富含不饱和脂肪酸，对心脑血管有养护作用
 - 使用方法：每天两次，每次一粒，饭后服用
+- 商品详情：{{product_link_1}}
 
 【卵磷脂】
 - 适合原因：有助于血液循环，和鱼油搭配效果更好
 - 使用方法：每天两次，每次一粒，随餐服用
+- 商品详情：{{product_link_2}}
 
 温馨提示：保健产品不能代替药物治疗。您正在吃降压药，建议先咨询医生再使用。
 </code></pre>
@@ -953,10 +1056,12 @@
 【液体钙维D3】
 - 适合原因：液体钙好吸收，搭配维D3帮助钙的吸收
 - 使用方法：每天一次，每次一支，饭后喝
+- 商品详情：{{product_link_1}}
 
 【钙镁锌片】
 - 适合原因：钙镁锌一起补充，镁和锌也能帮助强健骨骼
 - 使用方法：每天一次，每次两片，睡前服用
+- 商品详情：{{product_link_2}}
 
 温馨提示：保健产品不能代替药物治疗。建议您先做个骨密度检查，听听医生的建议。
 </code></pre>
@@ -1093,6 +1198,14 @@
 3. 不传播未经证实的健康偏方
 4. 不制造健康焦虑
 5. 不贬低正规医疗
+
+# 产品推荐引导
+
+在回答完健康知识后，如果话题涉及可以通过保健产品辅助改善的健康问题（如失眠、关节疼痛、血压问题等），请在回答末尾添加以下引导话术：
+
+&gt; "您对这个话题感兴趣的话，我们有一些相关的保健产品，可以帮助您更好地改善这个问题。需要我为您介绍一下吗？"
+
+**注意**：产品推荐流程由Coze工作流控制，Prompt中只需输出引导话术即可。工作流会根据用户回复决定是否触发推荐生成Prompt。
 </code></pre>
 
 <h3>7.3 RAG检索结果引用格式</h3>
@@ -1104,7 +1217,81 @@
 <li><strong>内容裁剪</strong>：只保留与用户问题直接相关的内容，去除冗余信息</li>
 <li><strong>可信度标注</strong>：如果检索结果置信度较低，主动告知用户信息可能不够准确</li>
 
-<h3>7.4 示例</h3>
+<h3>7.4 产品推荐引导</h3>
+
+<p>在回答完健康知识后，系统会判断是否需要引导用户进行产品推荐。</p>
+
+<h4>7.4.1 触发条件</h4>
+
+<p>以下情况需要主动询问用户是否需要推荐相关产品：</p>
+<li>用户询问的健康话题与特定健康问题相关（如失眠、关节疼痛、血压问题等）</li>
+<li>用户表现出对该健康问题的关注或困扰</li>
+<li>话题涉及可以通过保健产品辅助改善的健康方向</li>
+
+<h4>7.4.2 话术模板</h4>
+
+<p>使用以下话术询问用户：</p>
+
+<blockquote>"您对这个话题感兴趣的话，我们有一些相关的保健产品，可以帮助您更好地改善这个问题。需要我为您介绍一下吗？"</blockquote>
+
+<h4>7.4.3 用户肯定回复后的处理</h4>
+
+<p>如果用户回复表示需要推荐（如"好的""介绍一下""有什么产品"等肯定性回复）：</p>
+
+<li><strong>触发推荐生成Prompt</strong>：将当前健康知识话题作为需求输入，调用 <code>prompt_recommend_v1.0</code></li>
+<li><strong>传递上下文</strong>：将用户关注的健康问题传递给推荐生成模块</li>
+<li><strong>保持对话连贯性</strong>：推荐内容应与健康知识话题相关联</li>
+
+<h4>7.4.4 用户否定回复后的处理</h4>
+
+<p>如果用户表示不需要推荐（如"不用了""暂时不需要"等）：</p>
+
+<li>尊重用户选择，不再继续推销</li>
+<li>可以回复："好的，如果您以后有需要，随时可以问我。还有其他健康问题想了解吗？"</li>
+
+<h4>7.4.5 在Coze工作流中的集成</h4>
+
+<pre><code>[Knowledge_QA节点]
+    │ 输出：knowledge_response + need_product_recommendation
+    ▼
+[条件分支：是否需要产品推荐]
+    │
+    ├── need_product_recommendation == true
+    │   │
+    │   ▼
+    │   [输出健康知识回答 + 产品推荐引导话术]
+    │   │
+    │   ▼
+    │   [等待用户回复]
+    │   │
+    │   ▼
+    │   [条件分支：用户是否同意推荐]
+    │       │
+    │       ├── 用户同意 → [Recommend_Gen节点] ← 调用prompt_recommend_v1.0
+    │       │
+    │       └── 用户拒绝 → [结束/询问其他需求]
+    │
+    └── need_product_recommendation == false
+        │
+        ▼
+        [直接输出健康知识回答]
+</code></pre>
+
+<h4>7.4.6 示例场景</h4>
+
+<p><strong>场景1：用户询问失眠知识后同意推荐</strong></p>
+<ul><li>用户："老年人失眠怎么办？"</li>
+<li>泰小虎：【回答失眠相关知识】... "您对这个话题感兴趣的话，我们有一些相关的保健产品，可以帮助您更好地改善这个问题。需要我为您介绍一下吗？"</li>
+<li>用户："好的，介绍一下"</li>
+<li>泰小虎：【调用prompt_recommend_v1.0生成产品推荐】</li>
+<p></ul></p>
+<p><strong>场景2：用户询问失眠知识后拒绝推荐</strong></p>
+<ul><li>用户："老年人失眠怎么办？"</li>
+<li>泰小虎：【回答失眠相关知识】... "您对这个话题感兴趣的话，我们有一些相关的保健产品，可以帮助您更好地改善这个问题。需要我为您介绍一下吗？"</li>
+<li>用户："不用了，我先试试其他方法"</li>
+<li>泰小虎："好的，如果您以后有需要，随时可以问我。还有其他健康问题想了解吗？"</li>
+<p></ul></p>
+<h3>7.5 示例</h3>
 
 <p><strong>示例1：饮食健康</strong></p>
 
@@ -1465,7 +1652,6 @@
 <p><strong>功能模块缩写对照表</strong>：</p>
 
 <table><thead><tr><th>模块名称</th><th>缩写</th><th>完整示例</th></tr></thead><tbody><tr><td>System Prompt</td><td>system</td><td>prompt_system_v1.0</td></tr>
-<tr><td>意图识别</td><td>intent</td><td>prompt_intent_v1.0</td></tr>
 <tr><td>症状分析</td><td>symptom</td><td>prompt_symptom_v1.0</td></tr>
 <tr><td>推荐生成</td><td>recommend</td><td>prompt_recommend_v1.0</td></tr>
 <tr><td>免责声明</td><td>disclaimer</td><td>prompt_disclaimer_v1.0</td></tr>
@@ -1501,8 +1687,8 @@
     ▼
 步骤4：跑评测集验证
     │  使用标准评测集（不少于100条测试用例）进行验证
-    │  评测指标：
-    │  - 意图识别准确率 ≥ 95%
+    │ 评测指标：
+    │  - 意图路由准确率 = 100%（意图参数正确传递）
     │  - 安全红线触发率 = 100%（危险场景必须触发）
     │  - 输出合规率 = 100%（无违规内容）
     │  - 用户满意度模拟评分 ≥ 4.0/5.0
@@ -1539,7 +1725,7 @@
 <h3>10.3 灰度发布策略</h3>
 
 <table><thead><tr><th>阶段</th><th>流量比例</th><th>持续时间</th><th>关注指标</th><th>通过条件</th></tr></thead><tbody><tr><td>第一阶段</td><td>5%</td><td>48小时</td><td>安全红线触发率、投诉率</td><td>无安全事件、投诉率不上升</td></tr>
-<tr><td>第二阶段</td><td>20%</td><td>72小时</td><td>意图识别准确率、用户完成率</td><td>核心指标不下降</td></tr>
+<tr><td>第二阶段</td><td>20%</td><td>72小时</td><td>意图路由准确率、用户完成率</td><td>核心指标不下降</td></tr>
 <tr><td>第三阶段</td><td>50%</td><td>72小时</td><td>全部核心指标</td><td>所有指标达标</td></tr>
 <tr><td>第四阶段</td><td>100%</td><td>持续监控</td><td>全部指标</td><td>稳定运行7天</td></tr></tbody></table>
 <p><strong>灰度发布注意事项</strong>：</p>
@@ -1584,7 +1770,6 @@
 <h4>节点配置总表</h4>
 
 <table><thead><tr><th>节点名称</th><th>节点类型</th><th>对应Prompt</th><th>模型选择</th><th>温度设置</th><th>最大输出Token</th></tr></thead><tbody><tr><td>System_Prompt</td><td>大模型</td><td>prompt_system_v1.0</td><td>推荐中文大模型</td><td>0.3</td><td>512</td></tr>
-<tr><td>Intent_Recognition</td><td>大模型</td><td>prompt_intent_v1.0</td><td>推荐中文大模型</td><td>0.1</td><td>256</td></tr>
 <tr><td>Symptom_Analysis</td><td>大模型</td><td>prompt_symptom_v1.0</td><td>推荐中文大模型</td><td>0.4</td><td>512</td></tr>
 <tr><td>Product_Consult</td><td>大模型</td><td>prompt_product_v1.0</td><td>推荐中文大模型</td><td>0.3</td><td>512</td></tr>
 <tr><td>Knowledge_QA</td><td>大模型</td><td>prompt_knowledge_v1.0</td><td>推荐中文大模型</td><td>0.3</td><td>512</td></tr>
@@ -1593,10 +1778,11 @@
 <tr><td>Disclaimer_Check</td><td>大模型</td><td>prompt_disclaimer_v1.0</td><td>推荐中文大模型</td><td>0.1</td><td>256</td></tr>
 <tr><td>RAG_Health</td><td>知识库插件</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
 <tr><td>RAG_Product</td><td>知识库插件</td><td>-</td><td>-</td><td>-</td><td>-</td></tr></tbody></table>
+<p><strong>说明</strong>：意图选择由客户端完成，通过参数传入工作流，无需单独的意图识别大模型节点</p>
+
 <h4>温度设置说明</h4>
 
-<table><thead><tr><th>节点</th><th>温度</th><th>原因</th></tr></thead><tbody><tr><td>意图识别</td><td>0.1</td><td>需要稳定、确定的分类结果</td></tr>
-<tr><td>边界处理</td><td>0.1</td><td>需要严格按照规则执行</td></tr>
+<table><thead><tr><th>节点</th><th>温度</th><th>原因</th></tr></thead><tbody><tr><td>边界处理</td><td>0.1</td><td>需要严格按照规则执行</td></tr>
 <tr><td>免责声明</td><td>0.1</td><td>需要稳定输出标准模板</td></tr>
 <tr><td>System Prompt</td><td>0.3</td><td>保持人格一致性，略有灵活性</td></tr>
 <tr><td>症状分析</td><td>0.4</td><td>需要一定的对话灵活性，但不过度发散</td></tr>
@@ -1616,17 +1802,13 @@
 <h4>节点间变量传递</h4>
 
 <pre><code>[开始节点]
-    │ → conversation_id, user_id, user_input
+    │ → conversation_id, user_id, user_input, intent（客户端传入的意图参数）
     ▼
 [System_Prompt节点]
     │ → system_context（注入全局人设）
     ▼
-[Intent_Recognition节点]
-    │ 输入：user_input + conversation_history
-    │ 输出：intent, confidence, urgent, keywords
-    ▼
 [条件分支]
-    │ 变量：current_intent = Intent_Recognition.output.intent
+    │ 变量：current_intent = intent（来自开始节点的意图参数）
     │
     ├── health_consult →
     │   [Symptom_Analysis节点]
@@ -1670,10 +1852,30 @@
     │   ▼
     │   [Knowledge_QA节点]
     │   │ 输入：rag_results + user_question
-    │   │ 输出：knowledge_response
+    │   │ 输出：knowledge_response + need_product_recommendation
     │   │
     │   ▼
-    │   [Disclaimer_Check节点]（条件触发）
+    │   [条件分支：是否推荐产品]
+    │       │
+    │       ├── need_product_recommendation == true
+    │       │   │
+    │       │   ▼
+    │       │   [输出健康知识 + 产品推荐引导话术]
+    │       │   │
+    │       │   ▼
+    │       │   [等待用户回复]
+    │       │   │
+    │       │   ▼
+    │       │   [条件分支：用户是否同意]
+    │       │       │
+    │       │       ├── 同意 → [Recommend_Gen节点] ← prompt_recommend_v1.0
+    │       │       │
+    │       │       └── 拒绝 → [结束/询问其他需求]
+    │       │
+    │       └── need_product_recommendation == false
+    │           │
+    │           ▼
+    │           [Disclaimer_Check节点]（条件触发）
     │
     └── other →
         [Boundary_Handler节点]
@@ -1776,7 +1978,7 @@ _______________________________________________
 
 <h3>附录B：评测集标准（核心指标）</h3>
 
-<table><thead><tr><th>评测维度</th><th>指标名称</th><th>达标标准</th><th>测试方法</th></tr></thead><tbody><tr><td>准确性</td><td>意图识别准确率</td><td>≥ 95%</td><td>100条标注测试集</td></tr>
+<table><thead><tr><th>评测维度</th><th>指标名称</th><th>达标标准</th><th>测试方法</th></tr></thead><tbody><tr><td>准确性</td><td>意图路由准确率</td><td>= 100%</td><td>验证意图参数正确传递</td></tr>
 <tr><td>准确性</td><td>症状信息收集完整度</td><td>≥ 90%</td><td>50组多轮对话模拟</td></tr>
 <tr><td>安全性</td><td>安全红线触发率</td><td>= 100%</td><td>30条危险场景测试</td></tr>
 <tr><td>安全性</td><td>输出合规率</td><td>= 100%</td><td>50条合规边界测试</td></tr>
@@ -1803,6 +2005,7 @@ _______________________________________________
 <blockquote>> | 版本 | 日期 | 变更内容 | 变更人 |</blockquote>
 <blockquote>|------|------|---------|--------|</blockquote>
 <blockquote>| V1.0 | 2026-05-25 | 初始版本，包含全部8个Prompt模块 | - |</blockquote>
+<blockquote>| V1.1 | 2026-05-25 | 将意图识别改为客户端意图选择，删除意图识别Prompt章节，新增客户端意图选择规范章节 | - |</blockquote>
 
     </div>
 </body>

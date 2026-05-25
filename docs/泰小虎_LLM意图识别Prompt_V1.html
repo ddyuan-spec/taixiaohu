@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泰小虎_LLM意图识别Prompt_V1 - 泰小虎文档中心</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #f5f5fa;
+            color: #333;
+            line-height: 1.8;
+        }
+        .topbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .topbar-inner {
+            max-width: 960px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .topbar a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.95em;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+        .topbar a:hover { opacity: 1; }
+        .topbar .home { font-weight: 600; font-size: 1.05em; }
+        .content {
+            max-width: 960px;
+            margin: 30px auto;
+            padding: 0 24px 60px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            padding: 40px 48px;
+        }
+        h1 { font-size: 1.8em; color: #1a1a2e; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #667eea; }
+        h1:first-child { margin-top: 0; }
+        h2 { font-size: 1.4em; color: #2d2d5e; margin: 28px 0 12px; padding-left: 12px; border-left: 4px solid #667eea; }
+        h3 { font-size: 1.15em; color: #3d3d6e; margin: 20px 0 8px; }
+        h4 { font-size: 1.05em; color: #4d4d7e; margin: 16px 0 6px; }
+        p { margin: 10px 0; }
+        ul, ol { margin: 8px 0 8px 24px; }
+        li { margin: 4px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.92em; }
+        th, td { border: 1px solid #e0e0e8; padding: 10px 14px; text-align: left; }
+        th { background: #f0f0f8; font-weight: 600; color: #2d2d5e; }
+        tr:nth-child(even) { background: #fafafe; }
+        code { background: #f0f0f5; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; color: #c7254e; }
+        pre { background: #1e1e2e; color: #cdd6f4; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 16px 0; font-size: 0.88em; line-height: 1.6; }
+        pre code { background: none; color: inherit; padding: 0; }
+        blockquote { border-left: 4px solid #667eea; background: #f8f8ff; padding: 12px 20px; margin: 12px 0; color: #555; }
+        strong { color: #1a1a2e; }
+        hr { border: none; border-top: 1px solid #e0e0e8; margin: 24px 0; }
+        a { color: #667eea; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        @media (max-width: 768px) {
+            .content { padding: 20px; margin: 12px; }
+            h1 { font-size: 1.4em; }
+            h2 { font-size: 1.2em; }
+            table { font-size: 0.82em; }
+            th, td { padding: 6px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div class="topbar-inner">
+            <a href="../index.html" class="home">🐯 泰小虎 文档中心</a>
+            <a href="../index.html">← 返回目录</a>
+        </div>
+    </div>
+    <div class="content">
+        <h1>泰小虎 - LLM意图识别Prompt V1.0</h1>
+
+<blockquote><strong>文档说明</strong>：本文档为LLM意图识别的完整Prompt设计，用于未来迭代时直接启用大模型意图识别功能。</blockquote>
+<blockquote>> <strong>当前状态</strong>：V1.0版本采用客户端意图选择方案，本文档作为备用保留。</blockquote>
+<blockquote>> <strong>启用条件</strong>：当需要更自然的对话体验、减少用户操作步骤时，可启用此LLM意图识别方案。</blockquote>
+
+<hr>
+
+<h2>一、概述</h2>
+
+<h3>1.1 功能定位</h3>
+
+<p>意图识别Prompt是整个对话链路的"交通指挥员"。它负责将用户的自然语言输入准确分类到不同的处理通道，确保后续Prompt能够精准响应。</p>
+
+<h3>1.2 在Coze工作流中的位置</h3>
+
+<pre><code>用户输入 → [LLM意图识别节点] → 意图分类 → 路由到对应处理Prompt
+                    ↑
+              使用本文档Prompt
+</code></pre>
+
+<h3>1.3 意图分类体系</h3>
+
+<table><thead><tr><th>意图类别</th><th>标识符</th><th>处理Prompt</th><th>说明</th></tr></thead><tbody><tr><td>健康咨询</td><td>health_consult</td><td>prompt_symptom_v1.0</td><td>用户描述身体症状、询问健康问题</td></tr>
+<tr><td>产品咨询</td><td>product_consult</td><td>prompt_product_v1.0</td><td>用户询问保健品、营养品相关话题</td></tr>
+<tr><td>健康知识</td><td>knowledge_query</td><td>prompt_knowledge_v1.0</td><td>用户询问健康科普知识、养生常识</td></tr>
+<tr><td>其他</td><td>other</td><td>prompt_boundary_v1.0</td><td>闲聊、投诉、技术问题等非健康话题</td></tr></tbody></table>
+<hr>
+
+<h2>二、完整Prompt内容</h2>
+
+<h3>2.1 Prompt文本（prompt_intent_v1.0）</h3>
+
+<pre><code># 任务说明
+
+你是一个意图分类器。你的任务是分析用户的输入内容，将其归类到以下四个类别之一。
+
+# 分类定义
+
+1. **health_consult**（健康咨询）：用户描述身体症状、询问健康问题、咨询身体状况相关话题
+   - 关键词特征：不舒服、疼、痛、头晕、失眠、血压、血糖、咳嗽、拉肚子、胸闷、气短等
+   - 示例特征："我最近总是头晕""我膝盖疼怎么办""血压高怎么办"
+
+2. **product_consult**（产品咨询）：用户询问保健品、营养品、健康产品相关话题
+   - 关键词特征：钙片、维生素、蛋白粉、鱼油、益生菌、买、多少钱、效果、哪个好等
+   - 示例特征："你们有什么钙片推荐""鱼油怎么吃""这个产品多少钱"
+
+3. **knowledge_query**（健康知识）：用户询问健康科普知识、养生常识、健康生活方式
+   - 关键词特征：什么是、怎么预防、如何注意、饮食建议、运动建议、养生等
+   - 示例特征："老年人怎么预防骨质疏松""吃什么对血压好""每天走多少步合适"
+
+4. **other**（其他）：不属于以上三类的所有内容
+   - 包括但不限于：闲聊、投诉、技术问题、非健康话题
+   - 示例特征："今天天气怎么样""你们这个机器人怎么用""讲个笑话"
+
+# 判断规则
+
+1. 优先级：health_consult &gt; product_consult &gt; knowledge_query &gt; other
+2. 当用户同时涉及多个意图时，选择优先级最高的类别
+3. 当用户描述症状并询问产品时，归类为health_consult
+4. 当用户询问产品功效但未描述自身症状时，归类为product_consult
+5. 当用户描述的症状可能涉及紧急情况时，在分类结果中标记urgent=true
+
+# 输出格式
+
+请严格按照以下JSON格式输出，不要输出任何其他内容：
+
+{
+  "intent": "分类结果（health_consult/product_consult/knowledge_query/other）",
+  "confidence": "置信度（0.0-1.0）",
+  "urgent": "是否紧急（true/false）",
+  "keywords": ["提取的关键词1", "关键词2"],
+  "reason": "分类理由（简短说明）"
+}
+</code></pre>
+
+<h3>2.2 输出格式定义</h3>
+
+<table><thead><tr><th>字段</th><th>类型</th><th>说明</th><th>示例值</th></tr></thead><tbody><tr><td>intent</td><td>string</td><td>意图分类结果</td><td>health_consult</td></tr>
+<tr><td>confidence</td><td>number</td><td>置信度（0.0-1.0）</td><td>0.95</td></tr>
+<tr><td>urgent</td><td>boolean</td><td>是否紧急</td><td>false</td></tr>
+<tr><td>keywords</td><td>array[string]</td><td>提取的关键词</td><td>["头晕", "血压"]</td></tr>
+<tr><td>reason</td><td>string</td><td>分类理由</td><td>用户描述了头晕症状</td></tr></tbody></table>
+<hr>
+
+<h2>三、示例集</h2>
+
+<h3>3.1 健康咨询示例</h3>
+
+<p><strong>输入</strong>："我这两天头总是晕晕的，站起来的时候更明显"</p>
+
+<p><strong>输出</strong>：</p>
+<pre><code>{
+  "intent": "health_consult",
+  "confidence": 0.98,
+  "urgent": false,
+  "keywords": ["头晕", "站起来"],
+  "reason": "用户描述了具体的身体症状（头晕），属于健康咨询"
+}
+</code></pre>
+
+<h3>3.2 产品咨询示例</h3>
+
+<p><strong>输入</strong>："我想给我老伴买点钙片，你们这里有什么好的推荐吗"</p>
+
+<p><strong>输出</strong>：</p>
+<pre><code>{
+  "intent": "product_consult",
+  "confidence": 0.96,
+  "urgent": false,
+  "keywords": ["钙片", "买", "推荐"],
+  "reason": "用户明确表达了购买钙片的需求，属于产品咨询"
+}
+</code></pre>
+
+<h3>3.3 健康知识示例</h3>
+
+<p><strong>输入</strong>："老年人每天走路锻炼好不好啊？走多少步合适？"</p>
+
+<p><strong>输出</strong>：</p>
+<pre><code>{
+  "intent": "knowledge_query",
+  "confidence": 0.94,
+  "urgent": false,
+  "keywords": ["老年人", "走路", "锻炼", "步数"],
+  "reason": "用户询问的是健康生活方式建议，属于健康知识类"
+}
+</code></pre>
+
+<h3>3.4 紧急健康咨询示例</h3>
+
+<p><strong>输入</strong>："我老伴刚才突然说胸口特别疼，出了一身冷汗"</p>
+
+<p><strong>输出</strong>：</p>
+<pre><code>{
+  "intent": "health_consult",
+  "confidence": 0.99,
+  "urgent": true,
+  "keywords": ["胸口疼", "冷汗", "突然"],
+  "reason": "用户描述了胸痛伴随冷汗的紧急症状，标记为紧急"
+}
+</code></pre>
+
+<h3>3.5 其他意图示例</h3>
+
+<p><strong>输入</strong>："这个手机上的字太小了，我怎么把它调大一点啊"</p>
+
+<p><strong>输出</strong>：</p>
+<pre><code>{
+  "intent": "other",
+  "confidence": 0.92,
+  "urgent": false,
+  "keywords": ["手机", "字太小", "调大"],
+  "reason": "用户询问的是手机操作问题，不属于健康相关话题"
+}
+</code></pre>
+
+<hr>
+
+<h2>四、Coze工作流集成指南</h2>
+
+<h3>4.1 节点配置</h3>
+
+<table><thead><tr><th>配置项</th><th>值</th></tr></thead><tbody><tr><td>节点类型</td><td>大模型节点</td></tr>
+<tr><td>Prompt</td><td>使用本文档2.1节内容</td></tr>
+<tr><td>输出格式</td><td>JSON</td></tr>
+<tr><td>温度参数</td><td>0.1（需要稳定、确定的分类结果）</td></tr></tbody></table>
+<h3>4.2 后续路由逻辑</h3>
+
+<pre><code>意图识别节点输出
+    ↓
+判断 intent 字段
+    ├── health_consult → 症状分析Prompt
+    ├── product_consult → 产品咨询Prompt
+    ├── knowledge_query → 健康知识Prompt
+    └── other → 边界处理Prompt
+</code></pre>
+
+<h3>4.3 紧急处理分支</h3>
+
+<p>当 <code>urgent=true</code> 时，无论intent为何，都需要：</p>
+<li>立即输出紧急提示话术</li>
+<li>建议用户尽快就医</li>
+<li>记录到紧急Case队列</li>
+
+<hr>
+
+<h2>五、评测标准</h2>
+
+<h3>5.1 准确率要求</h3>
+
+<table><thead><tr><th>指标</th><th>目标值</th><th>测试方法</th></tr></thead><tbody><tr><td>意图识别准确率</td><td>≥ 95%</td><td>100条标注测试集</td></tr>
+<tr><td>紧急识别准确率</td><td>≥ 98%</td><td>20条紧急场景测试集</td></tr>
+<tr><td>平均置信度</td><td>≥ 0.90</td><td>全量测试集统计</td></tr></tbody></table>
+<h3>5.2 测试用例覆盖</h3>
+
+<ul><li>健康咨询场景：30条</li>
+<li>产品咨询场景：25条</li>
+<li>健康知识场景：25条</li>
+<li>其他/边界场景：20条</li>
+<li>紧急场景：20条</li>
+<p></ul></p>
+<hr>
+
+<h2>六、版本历史</h2>
+
+<table><thead><tr><th>版本</th><th>日期</th><th>变更内容</th><th>作者</th></tr></thead><tbody><tr><td>V1.0</td><td>2026-05-25</td><td>初始版本，定义4类意图分类体系</td><td>AI Assistant</td></tr></tbody></table>
+<hr>
+
+<h2>七、启用检查清单</h2>
+
+<p>当决定从"客户端意图选择"切换到"LLM意图识别"时，请确认：</p>
+
+<ul><li>[ ] 本文档已同步到Coze工作流</li>
+<li>[ ] 前端已移除意图选择界面</li>
+<li>[ ] 评测集已更新（移除意图选择相关用例）</li>
+<li>[ ] 后台监控已配置意图识别准确率追踪</li>
+<li>[ ] 紧急场景处理流程已验证</li>
+<p></ul></p>
+<hr>
+
+<p><strong>文档生成时间</strong>：2026-05-25  </p>
+<p><strong>所属项目</strong>：泰小虎 - 智能健康导购助手  </p>
+<p><strong>文档状态</strong>：备用/归档</p>
+
+    </div>
+</body>
+</html>
