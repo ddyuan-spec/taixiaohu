@@ -344,12 +344,17 @@
 
 用户画像数据由系统在对话开始时从数据库查询并注入到对话上下文中，包括：
 
-| 画像维度 | 数据字段 | 说明 |
-|---------|---------|------|
-| 基本信息 | 姓名、性别、年龄 | 用户基础身份信息 |
-| 健康状况 | 慢性病史、过敏史 | 影响产品推荐的关键信息 |
-| 用药情况 | 当前用药清单 | 避免产品与药物冲突 |
-| 健康关注点 | 关注的健康问题 | 用于主动推荐和关怀 |
+<table>
+<thead>
+<tr><th>画像维度</th><th>数据字段</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>基本信息</td><td>姓名、性别、年龄</td><td>用户基础身份信息</td></tr>
+<tr><td>健康状况</td><td>慢性病史、过敏史</td><td>影响产品推荐的关键信息</td></tr>
+<tr><td>用药情况</td><td>当前用药清单</td><td>避免产品与药物冲突</td></tr>
+<tr><td>健康关注点</td><td>关注的健康问题</td><td>用于主动推荐和关怀</td></tr>
+</tbody>
+</table>
 
 ## 画像注入时机
 
@@ -373,12 +378,17 @@
 
 用户购买记录由系统在对话开始时从订单数据库查询并注入到对话上下文中，包括：
 
-| 数据维度 | 字段说明 | 用途 |
-|---------|---------|------|
-| 历史订单 | 订单编号、下单时间、订单状态 | 了解用户购买历史 |
-| 购买产品 | 产品名称、规格、数量 | 识别复购需求 |
-| 购买频次 | 各产品的购买次数 | 判断用户偏好 |
-| 最近购买 | 最近30天内的订单 | 识别近期需求 |
+<table>
+<thead>
+<tr><th>数据维度</th><th>字段说明</th><th>用途</th></tr>
+</thead>
+<tbody>
+<tr><td>历史订单</td><td>订单编号、下单时间、订单状态</td><td>了解用户购买历史</td></tr>
+<tr><td>购买产品</td><td>产品名称、规格、数量</td><td>识别复购需求</td></tr>
+<tr><td>购买频次</td><td>各产品的购买次数</td><td>判断用户偏好</td></tr>
+<tr><td>最近购买</td><td>最近30天内的订单</td><td>识别近期需求</td></tr>
+</tbody>
+</table>
 
 ## 购买记录注入时机
 
@@ -405,27 +415,42 @@
 
 ## 订单相关问题
 
-| 触发场景 | 识别特征 | 处理方式 |
-|---------|---------|---------|
-| 订单查询 | 用户询问订单状态、物流信息 | 转接客服 |
-| 订单修改 | 用户要求修改订单地址、数量等 | 转接客服 |
-| 订单取消 | 用户要求取消订单 | 转接客服 |
+<table>
+<thead>
+<tr><th>触发场景</th><th>识别特征</th><th>处理方式</th></tr>
+</thead>
+<tbody>
+<tr><td>订单查询</td><td>用户询问订单状态、物流信息</td><td>转接客服</td></tr>
+<tr><td>订单修改</td><td>用户要求修改订单地址、数量等</td><td>转接客服</td></tr>
+<tr><td>订单取消</td><td>用户要求取消订单</td><td>转接客服</td></tr>
+</tbody>
+</table>
 
 ## 售后问题
 
-| 触发场景 | 识别特征 | 处理方式 |
-|---------|---------|---------|
-| 退款申请 | 用户要求退款 | 转接客服 |
-| 退货换货 | 用户要求退货或换货 | 转接客服 |
-| 产品质量投诉 | 用户投诉产品质量问题 | 转接客服 |
+<table>
+<thead>
+<tr><th>触发场景</th><th>识别特征</th><th>处理方式</th></tr>
+</thead>
+<tbody>
+<tr><td>退款申请</td><td>用户要求退款</td><td>转接客服</td></tr>
+<tr><td>退货换货</td><td>用户要求退货或换货</td><td>转接客服</td></tr>
+<tr><td>产品质量投诉</td><td>用户投诉产品质量问题</td><td>转接客服</td></tr>
+</tbody>
+</table>
 
 ## 用户主动要求
 
-| 触发场景 | 识别特征 | 处理方式 |
-|---------|---------|---------|
-| 要求人工 | 用户明确要求转人工客服 | 转接客服 |
-| 投诉建议 | 用户提出投诉或建议 | 转接客服 |
-| 问题无法解决 | AI无法满足用户需求 | 转接客服 |
+<table>
+<thead>
+<tr><th>触发场景</th><th>识别特征</th><th>处理方式</th></tr>
+</thead>
+<tbody>
+<tr><td>要求人工</td><td>用户明确要求转人工客服</td><td>转接客服</td></tr>
+<tr><td>投诉建议</td><td>用户提出投诉或建议</td><td>转接客服</td></tr>
+<tr><td>问题无法解决</td><td>AI无法满足用户需求</td><td>转接客服</td></tr>
+</tbody>
+</table>
 
 ## 转接话术规范
 
@@ -450,12 +475,17 @@
 
 系统定义以下四种意图类别，对应客户端的四个选项：
 
-| 意图编码 | 意图名称 | 适用场景 | 对应Prompt |
-|---------|---------|---------|-----------|
-| health_consult | 健康咨询 | 用户描述身体症状、询问健康问题、咨询身体状况 | prompt_symptom_v1.0 |
-| product_consult | 产品咨询 | 用户询问保健品、营养品、健康产品相关话题 | prompt_product_v1.0 |
-| knowledge_query | 健康知识 | 用户询问健康科普知识、养生常识、健康生活方式 | prompt_knowledge_v1.0 |
-| other | 其他 | 不属于以上三类的所有内容 | prompt_boundary_v1.0 |
+<table>
+<thead>
+<tr><th>意图编码</th><th>意图名称</th><th>适用场景</th><th>对应Prompt</th></tr>
+</thead>
+<tbody>
+<tr><td>health_consult</td><td>健康咨询</td><td>用户描述身体症状、询问健康问题、咨询身体状况</td><td>prompt_symptom_v1.0</td></tr>
+<tr><td>product_consult</td><td>产品咨询</td><td>用户询问保健品、营养品、健康产品相关话题</td><td>prompt_product_v1.0</td></tr>
+<tr><td>knowledge_query</td><td>健康知识</td><td>用户询问健康科普知识、养生常识、健康生活方式</td><td>prompt_knowledge_v1.0</td></tr>
+<tr><td>other</td><td>其他</td><td>不属于以上三类的所有内容</td><td>prompt_boundary_v1.0</td></tr>
+</tbody>
+</table>
 
 ### 3.3 客户端话术引导模板
 
@@ -539,12 +569,17 @@
 <pre><code>
 #### 3.4.3 条件分支配置示例
 
-| 分支名称 | 条件表达式 | 下一节点 |
-|---------|-----------|---------|
-| 健康咨询 | `intent == "health_consult"` | Symptom_Analysis |
-| 产品咨询 | `intent == "product_consult"` | Product_Consult |
-| 健康知识 | `intent == "knowledge_query"` | Knowledge_QA |
-| 其他 | `intent == "other"` | Boundary_Handler |
+<table>
+<thead>
+<tr><th>分支名称</th><th>条件表达式</th><th>下一节点</th></tr>
+</thead>
+<tbody>
+<tr><td>健康咨询</td><td>`intent == "health_consult"`</td><td>Symptom_Analysis</td></tr>
+<tr><td>产品咨询</td><td>`intent == "product_consult"`</td><td>Product_Consult</td></tr>
+<tr><td>健康知识</td><td>`intent == "knowledge_query"`</td><td>Knowledge_QA</td></tr>
+<tr><td>其他</td><td>`intent == "other"`</td><td>Boundary_Handler</td></tr>
+</tbody>
+</table>
 
 ### 3.5 各意图对应的后续Prompt路由
 
@@ -650,11 +685,16 @@
 
 ### 4.2 触发条件
 
-| 触发类型 | 触发条件 | 检测方式 |
-|---------|---------|---------|
-| 连续相似提问 | 用户连续2次提问相似问题（语义相似度&gt;0.8） | 语义相似度计算 |
-| 明确否认 | 用户明确说"不是这个"、"不对"、"我不想问这个" | 关键词匹配 |
-| 点击否认按钮 | 用户点击"这不是我要的"按钮 | 客户端事件上报 |
+<table>
+<thead>
+<tr><th>触发类型</th><th>触发条件</th><th>检测方式</th></tr>
+</thead>
+<tbody>
+<tr><td>连续相似提问</td><td>用户连续2次提问相似问题（语义相似度&gt;0.8）</td><td>语义相似度计算</td></tr>
+<tr><td>明确否认</td><td>用户明确说"不是这个"、"不对"、"我不想问这个"</td><td>关键词匹配</td></tr>
+<tr><td>点击否认按钮</td><td>用户点击"这不是我要的"按钮</td><td>客户端事件上报</td></tr>
+</tbody>
+</table>
 
 ### 4.3 确认话术模板
 
@@ -716,11 +756,16 @@
 
 系统需要维护一个意图否认计数器：
 
-| 否认次数 | 处理方式 | 话术 |
-|---------|---------|------|
-| 第1次 | 发起意图确认 | "您是想咨询其他问题吗？" |
-| 第2次 | 再次发起意图确认 | "您是想咨询其他问题吗？" |
-| 第3次及以上 | 使用兜底话术 + 建议人工 | "不好意思，我可能没理解清楚。您方便再说一遍吗？如果还是不清楚，建议您联系人工客服。" |
+<table>
+<thead>
+<tr><th>否认次数</th><th>处理方式</th><th>话术</th></tr>
+</thead>
+<tbody>
+<tr><td>第1次</td><td>发起意图确认</td><td>"您是想咨询其他问题吗？"</td></tr>
+<tr><td>第2次</td><td>再次发起意图确认</td><td>"您是想咨询其他问题吗？"</td></tr>
+<tr><td>第3次及以上</td><td>使用兜底话术 + 建议人工</td><td>"不好意思，我可能没理解清楚。您方便再说一遍吗？如果还是不清楚，建议您联系人工客服。"</td></tr>
+</tbody>
+</table>
 
 ### 4.8 完整Prompt内容
 
@@ -830,25 +875,35 @@
 
 画像追问在以下情况下触发：
 
-| 触发条件 | 说明 | 判断方式 |
-|---------|------|---------|
-| 画像完整度&lt;50% | 用户画像信息严重缺失 | 系统自动计算画像完整度 |
-| 缺少关键信息 | 性别、年龄、过敏史任一缺失 | 系统检测关键字段 |
-| 健康咨询场景 | 用户进行健康咨询时，画像信息不足 | 结合意图判断 |
-| 产品推荐前 | 进行产品推荐前，缺少安全相关信息 | 推荐前检查 |
+<table>
+<thead>
+<tr><th>触发条件</th><th>说明</th><th>判断方式</th></tr>
+</thead>
+<tbody>
+<tr><td>画像完整度&lt;50%</td><td>用户画像信息严重缺失</td><td>系统自动计算画像完整度</td></tr>
+<tr><td>缺少关键信息</td><td>性别、年龄、过敏史任一缺失</td><td>系统检测关键字段</td></tr>
+<tr><td>健康咨询场景</td><td>用户进行健康咨询时，画像信息不足</td><td>结合意图判断</td></tr>
+<tr><td>产品推荐前</td><td>进行产品推荐前，缺少安全相关信息</td><td>推荐前检查</td></tr>
+</tbody>
+</table>
 
 ### 5.3 追问优先级
 
 按照以下优先级顺序进行追问：
 
-| 优先级 | 画像维度 | 追问原因 |
-|-------|---------|---------|
-| 1（最高） | 过敏史 | 直接影响产品推荐安全，可能导致严重后果 |
-| 2 | 慢性病史 | 影响产品选择和健康建议方向 |
-| 3 | 年龄 | 影响剂量建议和产品类型选择 |
-| 4 | 性别 | 影响特定健康问题的判断 |
-| 5 | 用药情况 | 避免产品与药物冲突 |
-| 6（最低） | 其他信息 | 补充完善画像 |
+<table>
+<thead>
+<tr><th>优先级</th><th>画像维度</th><th>追问原因</th></tr>
+</thead>
+<tbody>
+<tr><td>1（最高）</td><td>过敏史</td><td>直接影响产品推荐安全，可能导致严重后果</td></tr>
+<tr><td>2</td><td>慢性病史</td><td>影响产品选择和健康建议方向</td></tr>
+<tr><td>3</td><td>年龄</td><td>影响剂量建议和产品类型选择</td></tr>
+<tr><td>4</td><td>性别</td><td>影响特定健康问题的判断</td></tr>
+<tr><td>5</td><td>用药情况</td><td>避免产品与药物冲突</td></tr>
+<tr><td>6（最低）</td><td>其他信息</td><td>补充完善画像</td></tr>
+</tbody>
+</table>
 
 ### 5.4 完整Prompt内容
 
@@ -1031,11 +1086,16 @@
 <pre><code>
 #### 更新时机
 
-| 更新场景 | 更新内容 | 更新方式 |
-|---------|---------|---------|
-| 用户主动告知 | 用户在对话中主动提供信息 | 自动提取并更新 |
-| 追问获得回答 | 用户回答追问问题 | 记录回答内容 |
-| 定期校验 | 每季度校验画像有效性 | 提示用户确认 |
+<table>
+<thead>
+<tr><th>更新场景</th><th>更新内容</th><th>更新方式</th></tr>
+</thead>
+<tbody>
+<tr><td>用户主动告知</td><td>用户在对话中主动提供信息</td><td>自动提取并更新</td></tr>
+<tr><td>追问获得回答</td><td>用户回答追问问题</td><td>记录回答内容</td></tr>
+<tr><td>定期校验</td><td>每季度校验画像有效性</td><td>提示用户确认</td></tr>
+</tbody>
+</table>
 
 #### 画像完整度计算
 
@@ -1194,14 +1254,19 @@
 <pre><code>
 ### 6.4 信息收集清单
 
-| 序号 | 信息维度 | 追问话术示例 | 收集目的 |
-|------|---------|-------------|---------|
-| 1 | 症状部位 | "您哪里不舒服呀？能跟我说说是什么感觉吗？" | 确定主要问题 |
-| 2 | 持续时间 | "这种情况出现多久了？是一直这样还是时好时坏？" | 判断急慢性 |
-| 3 | 严重程度 | "如果1分最轻、10分最重，您觉得大概能打几分？" | 评估严重性 |
-| 4 | 伴随症状 | "除了这个，还有别的地方不舒服吗？" | 完整症状画像 |
-| 5 | 既往病史 | "您以前有过类似的情况吗？平时有什么慢性病吗？" | 了解健康背景 |
-| 6 | 用药情况 | "您现在有在吃什么药或者保健品吗？" | 避免冲突 |
+<table>
+<thead>
+<tr><th>序号</th><th>信息维度</th><th>追问话术示例</th><th>收集目的</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>症状部位</td><td>"您哪里不舒服呀？能跟我说说是什么感觉吗？"</td><td>确定主要问题</td></tr>
+<tr><td>2</td><td>持续时间</td><td>"这种情况出现多久了？是一直这样还是时好时坏？"</td><td>判断急慢性</td></tr>
+<tr><td>3</td><td>严重程度</td><td>"如果1分最轻、10分最重，您觉得大概能打几分？"</td><td>评估严重性</td></tr>
+<tr><td>4</td><td>伴随症状</td><td>"除了这个，还有别的地方不舒服吗？"</td><td>完整症状画像</td></tr>
+<tr><td>5</td><td>既往病史</td><td>"您以前有过类似的情况吗？平时有什么慢性病吗？"</td><td>了解健康背景</td></tr>
+<tr><td>6</td><td>用药情况</td><td>"您现在有在吃什么药或者保健品吗？"</td><td>避免冲突</td></tr>
+</tbody>
+</table>
 
 ### 6.5 输出格式定义
 
@@ -1453,24 +1518,34 @@
 <pre><code>
 ### 7.3 RAG结果融合策略
 
-| 策略 | 说明 | 实现方式 |
-|------|------|---------|
-| 语义匹配 | 将用户症状与产品功效描述进行语义匹配 | Coze RAG插件自动完成 |
-| 相关性排序 | 按匹配度对检索结果排序，取Top-3 | Prompt中要求"不超过3款" |
-| 信息提取 | 从RAG结果中提取产品名、功效、用法 | Prompt中定义输出格式 |
-| 去重过滤 | 去除功效重复的产品 | Prompt中要求差异化推荐 |
-| 安全过滤 | 过滤与用户用药冲突的产品 | 结合用户画像中的用药信息 |
+<table>
+<thead>
+<tr><th>策略</th><th>说明</th><th>实现方式</th></tr>
+</thead>
+<tbody>
+<tr><td>语义匹配</td><td>将用户症状与产品功效描述进行语义匹配</td><td>Coze RAG插件自动完成</td></tr>
+<tr><td>相关性排序</td><td>按匹配度对检索结果排序，取Top-3</td><td>Prompt中要求"不超过3款"</td></tr>
+<tr><td>信息提取</td><td>从RAG结果中提取产品名、功效、用法</td><td>Prompt中定义输出格式</td></tr>
+<tr><td>去重过滤</td><td>去除功效重复的产品</td><td>Prompt中要求差异化推荐</td></tr>
+<tr><td>安全过滤</td><td>过滤与用户用药冲突的产品</td><td>结合用户画像中的用药信息</td></tr>
+</tbody>
+</table>
 
 ### 7.4 用户画像结合规则
 
-| 用户画像维度 | 结合规则 |
-|-------------|---------|
-| 年龄段（45-55/55-65/65-70） | 65岁以上优先推荐易吸收、剂量温和的产品 |
-| 性别 | 女性用户可推荐含铁、钙的产品；男性用户可关注前列腺相关 |
-| 慢性病史 | 有糖尿病的排除含糖产品；有高血压的注意钠含量 |
-| 用药情况 | 正在服用抗凝血药的不推荐含鱼油类产品 |
-| 过敏史 | 严格排除含过敏原的产品 |
-| 消费偏好 | 根据历史购买记录推荐同品类升级款或互补产品 |
+<table>
+<thead>
+<tr><th>用户画像维度</th><th>结合规则</th></tr>
+</thead>
+<tbody>
+<tr><td>年龄段（45-55/55-65/65-70）</td><td>65岁以上优先推荐易吸收、剂量温和的产品</td></tr>
+<tr><td>性别</td><td>女性用户可推荐含铁、钙的产品；男性用户可关注前列腺相关</td></tr>
+<tr><td>慢性病史</td><td>有糖尿病的排除含糖产品；有高血压的注意钠含量</td></tr>
+<tr><td>用药情况</td><td>正在服用抗凝血药的不推荐含鱼油类产品</td></tr>
+<tr><td>过敏史</td><td>严格排除含过敏原的产品</td></tr>
+<tr><td>消费偏好</td><td>根据历史购买记录推荐同品类升级款或互补产品</td></tr>
+</tbody>
+</table>
 
 ### 6.5 输出格式定义
 
@@ -1676,23 +1751,33 @@
 <pre><code>
 ### 8.3 触发条件汇总
 
-| 场景 | 触发条件 | 免责模板 | 附加位置 |
-|------|---------|---------|---------|
-| 症状咨询 | 对话包含身体症状描述 | 模板A | 回复末尾 |
-| 用药咨询 | 对话涉及药物讨论 | 模板B | 回复末尾 |
-| 产品推荐 | 对话包含产品推荐 | 模板C | 回复末尾 |
-| 紧急情况 | 对话涉及紧急症状 | 模板D | 替换整个回复 |
-| 健康知识 | 涉及疾病预防知识 | 模板E | 回复末尾 |
+<table>
+<thead>
+<tr><th>场景</th><th>触发条件</th><th>免责模板</th><th>附加位置</th></tr>
+</thead>
+<tbody>
+<tr><td>症状咨询</td><td>对话包含身体症状描述</td><td>模板A</td><td>回复末尾</td></tr>
+<tr><td>用药咨询</td><td>对话涉及药物讨论</td><td>模板B</td><td>回复末尾</td></tr>
+<tr><td>产品推荐</td><td>对话包含产品推荐</td><td>模板C</td><td>回复末尾</td></tr>
+<tr><td>紧急情况</td><td>对话涉及紧急症状</td><td>模板D</td><td>替换整个回复</td></tr>
+<tr><td>健康知识</td><td>涉及疾病预防知识</td><td>模板E</td><td>回复末尾</td></tr>
+</tbody>
+</table>
 
 ### 8.4 免责声明模板
 
-| 模板编号 | 适用场景 | 模板内容 |
-|---------|---------|---------|
-| A | 症状咨询 | 温馨提示：我的建议仅供参考，不能代替医生的专业诊断。如果身体不适，请及时到正规医院就诊。 |
-| B | 用药咨询 | 温馨提示：关于用药问题，请务必遵医嘱。不同人的身体状况不同，适合的方案也不同，建议咨询您的主治医生。 |
-| C | 产品推荐 | 温馨提示：保健产品不能代替药物治疗。建议您在使用前咨询医生，特别是正在服药的朋友。 |
-| D | 紧急情况 | 紧急提醒：您描述的症状需要立即就医！请拨打120或马上前往最近的医院急诊科。 |
-| E | 健康知识 | 温馨提示：以上信息仅供健康参考，不构成医疗建议。如有健康问题，请咨询专业医生。 |
+<table>
+<thead>
+<tr><th>模板编号</th><th>适用场景</th><th>模板内容</th></tr>
+</thead>
+<tbody>
+<tr><td>A</td><td>症状咨询</td><td>温馨提示：我的建议仅供参考，不能代替医生的专业诊断。如果身体不适，请及时到正规医院就诊。</td></tr>
+<tr><td>B</td><td>用药咨询</td><td>温馨提示：关于用药问题，请务必遵医嘱。不同人的身体状况不同，适合的方案也不同，建议咨询您的主治医生。</td></tr>
+<tr><td>C</td><td>产品推荐</td><td>温馨提示：保健产品不能代替药物治疗。建议您在使用前咨询医生，特别是正在服药的朋友。</td></tr>
+<tr><td>D</td><td>紧急情况</td><td>紧急提醒：您描述的症状需要立即就医！请拨打120或马上前往最近的医院急诊科。</td></tr>
+<tr><td>E</td><td>健康知识</td><td>温馨提示：以上信息仅供健康参考，不构成医疗建议。如有健康问题，请咨询专业医生。</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -1999,13 +2084,18 @@
 <pre><code>
 ### 10.4 购买引导话术
 
-| 场景 | 推荐话术 | 禁止话术 |
-|------|---------|---------|
-| 首次咨询 | "您看看这几款，哪款比较合您心意？" | "这个特别好，您赶紧买吧！" |
-| 犹豫不决 | "如果您拿不准，可以先试试这一款。" | "今天不买就没了！" |
-| 价格敏感 | "这款性价比挺高的，很多朋友都在用。" | "不买就亏了！" |
-| 送人需求 | "送长辈的话，这款包装好，也很实用。" | "不买这个就是不爱长辈。" |
-| 拒绝购买 | "没关系，您随时可以再来了解。" | 继续反复推销 |
+<table>
+<thead>
+<tr><th>场景</th><th>推荐话术</th><th>禁止话术</th></tr>
+</thead>
+<tbody>
+<tr><td>首次咨询</td><td>"您看看这几款，哪款比较合您心意？"</td><td>"这个特别好，您赶紧买吧！"</td></tr>
+<tr><td>犹豫不决</td><td>"如果您拿不准，可以先试试这一款。"</td><td>"今天不买就没了！"</td></tr>
+<tr><td>价格敏感</td><td>"这款性价比挺高的，很多朋友都在用。"</td><td>"不买就亏了！"</td></tr>
+<tr><td>送人需求</td><td>"送长辈的话，这款包装好，也很实用。"</td><td>"不买这个就是不爱长辈。"</td></tr>
+<tr><td>拒绝购买</td><td>"没关系，您随时可以再来了解。"</td><td>继续反复推销</td></tr>
+</tbody>
+</table>
 
 ### 10.5 示例
 
@@ -2139,25 +2229,35 @@
 <pre><code>
 ### 11.3 超出能力范围的识别规则
 
-| 范围类型 | 识别特征 | 处理策略 | 严重程度 |
-|---------|---------|---------|---------|
-| 非健康话题 | 天气、新闻、娱乐、技术等 | 模板A：引导回健康话题 | 低 |
-| 医疗红线 | 诊断、处方、治疗方案 | 模板B：引导就医 | 高 |
-| 危险话题 | 自伤、违法、危险品 | 模板C：建议求助 | 极高 |
-| 隐私敏感 | 身份证、银行卡、个人信息 | 模板D：拒绝收集 | 高 |
-| 检查报告 | CT、验血、B超报告 | 模板E：建议找医生 | 中 |
-| 通用兜底 | 其他无法回答的问题 | 模板F：建议咨询专业人士 | 低 |
+<table>
+<thead>
+<tr><th>范围类型</th><th>识别特征</th><th>处理策略</th><th>严重程度</th></tr>
+</thead>
+<tbody>
+<tr><td>非健康话题</td><td>天气、新闻、娱乐、技术等</td><td>模板A：引导回健康话题</td><td>低</td></tr>
+<tr><td>医疗红线</td><td>诊断、处方、治疗方案</td><td>模板B：引导就医</td><td>高</td></tr>
+<tr><td>危险话题</td><td>自伤、违法、危险品</td><td>模板C：建议求助</td><td>极高</td></tr>
+<tr><td>隐私敏感</td><td>身份证、银行卡、个人信息</td><td>模板D：拒绝收集</td><td>高</td></tr>
+<tr><td>检查报告</td><td>CT、验血、B超报告</td><td>模板E：建议找医生</td><td>中</td></tr>
+<tr><td>通用兜底</td><td>其他无法回答的问题</td><td>模板F：建议咨询专业人士</td><td>低</td></tr>
+</tbody>
+</table>
 
 ### 11.4 降级应答模板
 
-| 模板编号 | 适用场景 | 模板内容 |
-|---------|---------|---------|
-| A | 非健康话题 | 这个问题超出了我的能力范围啦，我是专门帮大家解答健康问题的。您有健康方面的问题吗？随时可以问我哦。 |
-| B | 医疗红线 | 这个问题需要专业的医生来回答，我作为健康顾问不能给您具体的诊断或用药建议。建议您去医院挂个号，让医生帮您看看。 |
-| C | 危险话题 | 抱歉，这个话题我没办法讨论。如果您遇到了困难或危险，请拨打110报警或寻求其他专业帮助。 |
-| D | 隐私敏感 | 为了您的安全，我不会收集这类信息。如果有健康方面的问题，我很乐意帮助您。 |
-| E | 检查报告 | 看检查报告需要专业的医生，我没办法帮您解读。建议您拿着报告去找开检查的医生，他会给您详细解释的。 |
-| F | 通用兜底 | 这个问题我暂时回答不了，建议您咨询相关专业人士。如果您有健康方面的问题，欢迎随时问我。 |
+<table>
+<thead>
+<tr><th>模板编号</th><th>适用场景</th><th>模板内容</th></tr>
+</thead>
+<tbody>
+<tr><td>A</td><td>非健康话题</td><td>这个问题超出了我的能力范围啦，我是专门帮大家解答健康问题的。您有健康方面的问题吗？随时可以问我哦。</td></tr>
+<tr><td>B</td><td>医疗红线</td><td>这个问题需要专业的医生来回答，我作为健康顾问不能给您具体的诊断或用药建议。建议您去医院挂个号，让医生帮您看看。</td></tr>
+<tr><td>C</td><td>危险话题</td><td>抱歉，这个话题我没办法讨论。如果您遇到了困难或危险，请拨打110报警或寻求其他专业帮助。</td></tr>
+<tr><td>D</td><td>隐私敏感</td><td>为了您的安全，我不会收集这类信息。如果有健康方面的问题，我很乐意帮助您。</td></tr>
+<tr><td>E</td><td>检查报告</td><td>看检查报告需要专业的医生，我没办法帮您解读。建议您拿着报告去找开检查的医生，他会给您详细解释的。</td></tr>
+<tr><td>F</td><td>通用兜底</td><td>这个问题我暂时回答不了，建议您咨询相关专业人士。如果您有健康方面的问题，欢迎随时问我。</td></tr>
+</tbody>
+</table>
 
 ### 11.5 示例
 
@@ -2207,12 +2307,17 @@
 
 ### 12.2 触发时机
 
-| 触发场景 | 触发时机 | 关联内容 |
-|---------|---------|---------|
-| 用户进入对话 | 会话开始时 | 查询用户购买记录，注入上下文 |
-| 健康咨询 | 症状分析后 | 关联用户历史购买产品，提供针对性建议 |
-| 产品咨询 | 推荐产品时 | 参考用户历史购买偏好，推荐相关产品 |
-| 复购场景 | 识别复购需求时 | 提示用户历史购买产品，询问是否复购 |
+<table>
+<thead>
+<tr><th>触发场景</th><th>触发时机</th><th>关联内容</th></tr>
+</thead>
+<tbody>
+<tr><td>用户进入对话</td><td>会话开始时</td><td>查询用户购买记录，注入上下文</td></tr>
+<tr><td>健康咨询</td><td>症状分析后</td><td>关联用户历史购买产品，提供针对性建议</td></tr>
+<tr><td>产品咨询</td><td>推荐产品时</td><td>参考用户历史购买偏好，推荐相关产品</td></tr>
+<tr><td>复购场景</td><td>识别复购需求时</td><td>提示用户历史购买产品，询问是否复购</td></tr>
+</tbody>
+</table>
 
 ### 12.3 完整Prompt内容
 
@@ -2335,12 +2440,17 @@
 
 ### 13.2 复购场景识别
 
-| 识别场景 | 识别特征 | 推荐策略 |
-|---------|---------|---------|
-| 直接复购 | 用户明确表示要买之前买过的产品 | 推荐历史产品+相关产品 |
-| 周期性复购 | 根据购买周期推断用户可能需要复购 | 主动提示复购 |
-| 产品升级 | 用户对历史产品有改进需求 | 推荐升级款或替代款 |
-| 关联购买 | 用户购买某产品后，可能需要配套产品 | 推荐关联产品 |
+<table>
+<thead>
+<tr><th>识别场景</th><th>识别特征</th><th>推荐策略</th></tr>
+</thead>
+<tbody>
+<tr><td>直接复购</td><td>用户明确表示要买之前买过的产品</td><td>推荐历史产品+相关产品</td></tr>
+<tr><td>周期性复购</td><td>根据购买周期推断用户可能需要复购</td><td>主动提示复购</td></tr>
+<tr><td>产品升级</td><td>用户对历史产品有改进需求</td><td>推荐升级款或替代款</td></tr>
+<tr><td>关联购买</td><td>用户购买某产品后，可能需要配套产品</td><td>推荐关联产品</td></tr>
+</tbody>
+</table>
 
 ### 13.3 完整Prompt内容
 
@@ -2473,13 +2583,18 @@
 
 ### 14.2 触发场景
 
-| 触发类型 | 触发场景 | 识别特征 |
-|---------|---------|---------|
-| 订单问题 | 订单查询、修改、取消 | "订单"、"发货"、"物流"、"取消订单" |
-| 售后问题 | 退款、退货、换货 | "退款"、"退货"、"换货"、"质量问题" |
-| 投诉建议 | 用户投诉或建议 | "投诉"、"不满意"、"建议" |
-| 用户主动要求 | 用户要求转人工 | "转人工"、"人工客服"、"真人" |
-| 问题无法解决 | AI无法满足用户需求 | 多轮对话无法解决问题 |
+<table>
+<thead>
+<tr><th>触发类型</th><th>触发场景</th><th>识别特征</th></tr>
+</thead>
+<tbody>
+<tr><td>订单问题</td><td>订单查询、修改、取消</td><td>"订单"、"发货"、"物流"、"取消订单"</td></tr>
+<tr><td>售后问题</td><td>退款、退货、换货</td><td>"退款"、"退货"、"换货"、"质量问题"</td></tr>
+<tr><td>投诉建议</td><td>用户投诉或建议</td><td>"投诉"、"不满意"、"建议"</td></tr>
+<tr><td>用户主动要求</td><td>用户要求转人工</td><td>"转人工"、"人工客服"、"真人"</td></tr>
+<tr><td>问题无法解决</td><td>AI无法满足用户需求</td><td>多轮对话无法解决问题</td></tr>
+</tbody>
+</table>
 
 ### 14.3 完整Prompt内容
 
@@ -2616,11 +2731,16 @@
 
 客服信息存储在数据库配置表中，由运营人员维护，包括：
 
-| 配置项 | 说明 | 示例 |
-|-------|------|------|
-| customer_service_phone | 客服电话 | 400-XXX-XXXX |
-| customer_service_hours | 工作时间 | 周一至周日 9:00-21:00 |
-| online_service_link | 在线客服入口 | 点击跳转链接 |
+<table>
+<thead>
+<tr><th>配置项</th><th>说明</th><th>示例</th></tr>
+</thead>
+<tbody>
+<tr><td>customer_service_phone</td><td>客服电话</td><td>400-XXX-XXXX</td></tr>
+<tr><td>customer_service_hours</td><td>工作时间</td><td>周一至周日 9:00-21:00</td></tr>
+<tr><td>online_service_link</td><td>在线客服入口</td><td>点击跳转链接</td></tr>
+</tbody>
+</table>
 
 **重要说明**：
 1. 客服信息是固定配置，不需要LLM生成
@@ -2635,34 +2755,49 @@
 
 **格式**：`prompt_{功能}_{版本号}`
 
-| 组成部分 | 说明 | 示例 |
-|---------|------|------|
-| prompt_ | 固定前缀 | prompt_ |
-| {功能} | 功能模块英文缩写 | system / intent / symptom / recommend / disclaimer / knowledge / product / boundary |
-| _v | 版本分隔符 | _v |
-| {版本号} | 主版本号.次版本号 | 1.0 / 1.1 / 2.0 |
+<table>
+<thead>
+<tr><th>组成部分</th><th>说明</th><th>示例</th></tr>
+</thead>
+<tbody>
+<tr><td>prompt_</td><td>固定前缀</td><td>prompt_</td></tr>
+<tr><td>{功能}</td><td>功能模块英文缩写</td><td>system / intent / symptom / recommend / disclaimer / knowledge / product / boundary</td></tr>
+<tr><td>_v</td><td>版本分隔符</td><td>_v</td></tr>
+<tr><td>{版本号}</td><td>主版本号.次版本号</td><td>1.0 / 1.1 / 2.0</td></tr>
+</tbody>
+</table>
 
 **功能模块缩写对照表**：
 
-| 模块名称 | 缩写 | 完整示例 |
-|---------|------|---------|
-| System Prompt | system | prompt_system_v1.0 |
-| 意图确认 | intent_confirm | prompt_intent_confirm_v1.0 |
-| 症状分析 | symptom | prompt_symptom_v1.0 |
-| 推荐生成 | recommend | prompt_recommend_v1.0 |
-| 免责声明 | disclaimer | prompt_disclaimer_v1.0 |
-| 健康知识 | knowledge | prompt_knowledge_v1.0 |
-| 产品咨询 | product | prompt_product_v1.0 |
-| 边界处理 | boundary | prompt_boundary_v1.0 |
+<table>
+<thead>
+<tr><th>模块名称</th><th>缩写</th><th>完整示例</th></tr>
+</thead>
+<tbody>
+<tr><td>System Prompt</td><td>system</td><td>prompt_system_v1.0</td></tr>
+<tr><td>意图确认</td><td>intent_confirm</td><td>prompt_intent_confirm_v1.0</td></tr>
+<tr><td>症状分析</td><td>symptom</td><td>prompt_symptom_v1.0</td></tr>
+<tr><td>推荐生成</td><td>recommend</td><td>prompt_recommend_v1.0</td></tr>
+<tr><td>免责声明</td><td>disclaimer</td><td>prompt_disclaimer_v1.0</td></tr>
+<tr><td>健康知识</td><td>knowledge</td><td>prompt_knowledge_v1.0</td></tr>
+<tr><td>产品咨询</td><td>product</td><td>prompt_product_v1.0</td></tr>
+<tr><td>边界处理</td><td>boundary</td><td>prompt_boundary_v1.0</td></tr>
+</tbody>
+</table>
 
 **版本号递增规则**：
 
-| 变更类型 | 版本号变化 | 示例 |
-|---------|-----------|------|
-| 修复错别字、调整格式 | 次版本号+1 | v1.0 → v1.1 |
-| 新增追问策略、调整输出格式 | 次版本号+1 | v1.1 → v1.2 |
-| 重构Prompt结构、变更核心逻辑 | 主版本号+1 | v1.2 → v2.0 |
-| 新增功能模块 | 主版本号从1.0开始 | prompt_newfeature_v1.0 |
+<table>
+<thead>
+<tr><th>变更类型</th><th>版本号变化</th><th>示例</th></tr>
+</thead>
+<tbody>
+<tr><td>修复错别字、调整格式</td><td>次版本号+1</td><td>v1.0 → v1.1</td></tr>
+<tr><td>新增追问策略、调整输出格式</td><td>次版本号+1</td><td>v1.1 → v1.2</td></tr>
+<tr><td>重构Prompt结构、变更核心逻辑</td><td>主版本号+1</td><td>v1.2 → v2.0</td></tr>
+<tr><td>新增功能模块</td><td>主版本号从1.0开始</td><td>prompt_newfeature_v1.0</td></tr>
+</tbody>
+</table>
 
 ### 15.2 变更流程
 
@@ -2724,12 +2859,17 @@
 <pre><code>
 ### 15.3 灰度发布策略
 
-| 阶段 | 流量比例 | 持续时间 | 关注指标 | 通过条件 |
-|------|---------|---------|---------|---------|
-| 第一阶段 | 5% | 48小时 | 安全红线触发率、投诉率 | 无安全事件、投诉率不上升 |
-| 第二阶段 | 20% | 72小时 | 意图路由准确率、用户完成率 | 核心指标不下降 |
-| 第三阶段 | 50% | 72小时 | 全部核心指标 | 所有指标达标 |
-| 第四阶段 | 100% | 持续监控 | 全部指标 | 稳定运行7天 |
+<table>
+<thead>
+<tr><th>阶段</th><th>流量比例</th><th>持续时间</th><th>关注指标</th><th>通过条件</th></tr>
+</thead>
+<tbody>
+<tr><td>第一阶段</td><td>5%</td><td>48小时</td><td>安全红线触发率、投诉率</td><td>无安全事件、投诉率不上升</td></tr>
+<tr><td>第二阶段</td><td>20%</td><td>72小时</td><td>意图路由准确率、用户完成率</td><td>核心指标不下降</td></tr>
+<tr><td>第三阶段</td><td>50%</td><td>72小时</td><td>全部核心指标</td><td>所有指标达标</td></tr>
+<tr><td>第四阶段</td><td>100%</td><td>持续监控</td><td>全部指标</td><td>稳定运行7天</td></tr>
+</tbody>
+</table>
 
 **灰度发布注意事项**：
 1. 灰度期间必须保留旧版本Prompt，确保可以随时回滚
@@ -2739,12 +2879,17 @@
 
 ### 15.4 回滚机制
 
-| 触发条件 | 回滚速度 | 操作流程 |
-|---------|---------|---------|
-| 出现安全合规问题 | 立即回滚（5分钟内） | 运维人员直接切回旧版本 → 通知全员 → 24小时内出复盘报告 |
-| 用户投诉率上升超过50% | 30分钟内回滚 | 运维人员切回旧版本 → 产品分析原因 → 修复后重新评测 |
-| 核心指标下降超过10% | 1小时内回滚 | 运维人员切回旧版本 → 技术团队排查 → 评估是否修复 |
-| 灰度阶段未通过 | 按计划回滚 | 记录问题 → 修改Prompt → 重新走变更流程 |
+<table>
+<thead>
+<tr><th>触发条件</th><th>回滚速度</th><th>操作流程</th></tr>
+</thead>
+<tbody>
+<tr><td>出现安全合规问题</td><td>立即回滚（5分钟内）</td><td>运维人员直接切回旧版本 → 通知全员 → 24小时内出复盘报告</td></tr>
+<tr><td>用户投诉率上升超过50%</td><td>30分钟内回滚</td><td>运维人员切回旧版本 → 产品分析原因 → 修复后重新评测</td></tr>
+<tr><td>核心指标下降超过10%</td><td>1小时内回滚</td><td>运维人员切回旧版本 → 技术团队排查 → 评估是否修复</td></tr>
+<tr><td>灰度阶段未通过</td><td>按计划回滚</td><td>记录问题 → 修改Prompt → 重新走变更流程</td></tr>
+</tbody>
+</table>
 
 **回滚操作规范**：
 1. 回滚操作必须记录在《Prompt版本变更日志》中
@@ -2756,12 +2901,17 @@
 
 **测试场景**：
 
-| 测试场景 | 对照组 | 实验组 | 评估指标 | 样本量 |
-|---------|--------|--------|---------|--------|
-| Prompt措辞优化 | 当前版本 | 优化版本 | 用户满意度、对话完成率 | 每组≥500次对话 |
-| 追问策略调整 | 当前版本 | 新策略 | 信息收集完整度、用户流失率 | 每组≥300次对话 |
-| 推荐逻辑优化 | 当前版本 | 新逻辑 | 推荐点击率、转化率 | 每组≥1000次对话 |
-| 免责声明调整 | 当前版本 | 新版本 | 合规率、用户感知影响 | 每组≥200次对话 |
+<table>
+<thead>
+<tr><th>测试场景</th><th>对照组</th><th>实验组</th><th>评估指标</th><th>样本量</th></tr>
+</thead>
+<tbody>
+<tr><td>Prompt措辞优化</td><td>当前版本</td><td>优化版本</td><td>用户满意度、对话完成率</td><td>每组≥500次对话</td></tr>
+<tr><td>追问策略调整</td><td>当前版本</td><td>新策略</td><td>信息收集完整度、用户流失率</td><td>每组≥300次对话</td></tr>
+<tr><td>推荐逻辑优化</td><td>当前版本</td><td>新逻辑</td><td>推荐点击率、转化率</td><td>每组≥1000次对话</td></tr>
+<tr><td>免责声明调整</td><td>当前版本</td><td>新版本</td><td>合规率、用户感知影响</td><td>每组≥200次对话</td></tr>
+</tbody>
+</table>
 
 **A/B测试规则**：
 1. 测试前必须明确假设和评估指标
@@ -2778,25 +2928,30 @@
 
 #### 节点配置总表
 
-| 节点名称 | 节点类型 | 对应Prompt | 模型选择 | 温度设置 | 最大输出Token |
-|---------|---------|-----------|---------|---------|--------------|
-| System_Prompt | 大模型 | prompt_system_v1.0 | 推荐中文大模型 | 0.3 | 512 |
-| Intent_Confirm | 大模型 | prompt_intent_confirm_v1.0 | 推荐中文大模型 | 0.2 | 256 |
-| Profile_Inquiry | 大模型 | prompt_profile_inquiry_v1.0 | 推荐中文大模型 | 0.3 | 256 |
-| Symptom_Analysis | 大模型 | prompt_symptom_v1.0 | 推荐中文大模型 | 0.4 | 512 |
-| Product_Consult | 大模型 | prompt_product_v1.0 | 推荐中文大模型 | 0.3 | 512 |
-| Knowledge_QA | 大模型 | prompt_knowledge_v1.0 | 推荐中文大模型 | 0.3 | 512 |
-| Boundary_Handler | 大模型 | prompt_boundary_v1.0 | 推荐中文大模型 | 0.1 | 256 |
-| Recommend_Gen | 大模型 | prompt_recommend_v1.0 | 推荐中文大模型 | 0.3 | 512 |
-| Disclaimer_Check | 大模型 | prompt_disclaimer_v1.0 | 推荐中文大模型 | 0.1 | 256 |
-| Purchase_History | 大模型 | prompt_purchase_history_v1.0 | 推荐中文大模型 | 0.3 | 256 |
-| Repurchase | 大模型 | prompt_repurchase_v1.0 | 推荐中文大模型 | 0.3 | 256 |
-| Customer_Service | 大模型 | prompt_customer_service_v1.0 | 推荐中文大模型 | 0.1 | 256 |
-| RAG_Health | 知识库插件 | - | - | - | - |
-| RAG_Product | 知识库插件 | - | - | - | - |
-| Query_User_Profile | 代码插件 | - | - | - | - |
-| Query_Purchase_History | 代码插件 | - | - | - | - |
-| Query_Customer_Service_Info | 代码插件 | - | - | - | - |
+<table>
+<thead>
+<tr><th>节点名称</th><th>节点类型</th><th>对应Prompt</th><th>模型选择</th><th>温度设置</th><th>最大输出Token</th></tr>
+</thead>
+<tbody>
+<tr><td>System_Prompt</td><td>大模型</td><td>prompt_system_v1.0</td><td>推荐中文大模型</td><td>0.3</td><td>512</td></tr>
+<tr><td>Intent_Confirm</td><td>大模型</td><td>prompt_intent_confirm_v1.0</td><td>推荐中文大模型</td><td>0.2</td><td>256</td></tr>
+<tr><td>Profile_Inquiry</td><td>大模型</td><td>prompt_profile_inquiry_v1.0</td><td>推荐中文大模型</td><td>0.3</td><td>256</td></tr>
+<tr><td>Symptom_Analysis</td><td>大模型</td><td>prompt_symptom_v1.0</td><td>推荐中文大模型</td><td>0.4</td><td>512</td></tr>
+<tr><td>Product_Consult</td><td>大模型</td><td>prompt_product_v1.0</td><td>推荐中文大模型</td><td>0.3</td><td>512</td></tr>
+<tr><td>Knowledge_QA</td><td>大模型</td><td>prompt_knowledge_v1.0</td><td>推荐中文大模型</td><td>0.3</td><td>512</td></tr>
+<tr><td>Boundary_Handler</td><td>大模型</td><td>prompt_boundary_v1.0</td><td>推荐中文大模型</td><td>0.1</td><td>256</td></tr>
+<tr><td>Recommend_Gen</td><td>大模型</td><td>prompt_recommend_v1.0</td><td>推荐中文大模型</td><td>0.3</td><td>512</td></tr>
+<tr><td>Disclaimer_Check</td><td>大模型</td><td>prompt_disclaimer_v1.0</td><td>推荐中文大模型</td><td>0.1</td><td>256</td></tr>
+<tr><td>Purchase_History</td><td>大模型</td><td>prompt_purchase_history_v1.0</td><td>推荐中文大模型</td><td>0.3</td><td>256</td></tr>
+<tr><td>Repurchase</td><td>大模型</td><td>prompt_repurchase_v1.0</td><td>推荐中文大模型</td><td>0.3</td><td>256</td></tr>
+<tr><td>Customer_Service</td><td>大模型</td><td>prompt_customer_service_v1.0</td><td>推荐中文大模型</td><td>0.1</td><td>256</td></tr>
+<tr><td>RAG_Health</td><td>知识库插件</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>RAG_Product</td><td>知识库插件</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>Query_User_Profile</td><td>代码插件</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>Query_Purchase_History</td><td>代码插件</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>Query_Customer_Service_Info</td><td>代码插件</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+</tbody>
+</table>
 
 **说明**：
 - 意图选择由客户端完成，通过参数传入工作流
@@ -2806,36 +2961,46 @@
 
 #### 温度设置说明
 
-| 节点 | 温度 | 原因 |
-|------|------|------|
-| 边界处理 | 0.1 | 需要严格按照规则执行 |
-| 免责声明 | 0.1 | 需要稳定输出标准模板 |
-| 客服转接 | 0.1 | 需要稳定输出标准话术 |
-| 意图确认 | 0.2 | 需要稳定检测触发条件，略有灵活性处理用户回复 |
-| System Prompt | 0.3 | 保持人格一致性，略有灵活性 |
-| 画像追问 | 0.3 | 需要自然、友好的追问语气 |
-| 症状分析 | 0.4 | 需要一定的对话灵活性，但不过度发散 |
-| 推荐生成 | 0.3 | 需要基于事实的稳定推荐 |
-| 产品咨询 | 0.3 | 需要客观、稳定的产品介绍 |
-| 健康知识 | 0.3 | 需要准确、稳定的知识输出 |
-| 购买记录关联 | 0.3 | 需要自然、得体的关联提示 |
-| 复购推荐 | 0.3 | 需要基于历史记录的稳定推荐 |
+<table>
+<thead>
+<tr><th>节点</th><th>温度</th><th>原因</th></tr>
+</thead>
+<tbody>
+<tr><td>边界处理</td><td>0.1</td><td>需要严格按照规则执行</td></tr>
+<tr><td>免责声明</td><td>0.1</td><td>需要稳定输出标准模板</td></tr>
+<tr><td>客服转接</td><td>0.1</td><td>需要稳定输出标准话术</td></tr>
+<tr><td>意图确认</td><td>0.2</td><td>需要稳定检测触发条件，略有灵活性处理用户回复</td></tr>
+<tr><td>System Prompt</td><td>0.3</td><td>保持人格一致性，略有灵活性</td></tr>
+<tr><td>画像追问</td><td>0.3</td><td>需要自然、友好的追问语气</td></tr>
+<tr><td>症状分析</td><td>0.4</td><td>需要一定的对话灵活性，但不过度发散</td></tr>
+<tr><td>推荐生成</td><td>0.3</td><td>需要基于事实的稳定推荐</td></tr>
+<tr><td>产品咨询</td><td>0.3</td><td>需要客观、稳定的产品介绍</td></tr>
+<tr><td>健康知识</td><td>0.3</td><td>需要准确、稳定的知识输出</td></tr>
+<tr><td>购买记录关联</td><td>0.3</td><td>需要自然、得体的关联提示</td></tr>
+<tr><td>复购推荐</td><td>0.3</td><td>需要基于历史记录的稳定推荐</td></tr>
+</tbody>
+</table>
 
 ### 16.2 变量传递规则
 
 #### 全局变量
 
-| 变量名 | 类型 | 说明 | 作用域 |
-|--------|------|------|--------|
-| conversation_id | string | 会话唯一标识 | 全局 |
-| user_id | string | 用户唯一标识 | 全局 |
-| user_profile | object | 用户画像信息 | 全局 |
-| conversation_history | array | 对话历史记录 | 全局 |
-| symptom_info | object | 已收集的症状信息 | 全局 |
-| current_intent | string | 当前意图分类 | 单轮 |
-| intent_deny_count | number | 意图否认次数 | 全局 |
-| last_user_input | string | 上一次用户输入 | 单轮 |
-| similarity_score | number | 语义相似度分数 | 单轮 |
+<table>
+<thead>
+<tr><th>变量名</th><th>类型</th><th>说明</th><th>作用域</th></tr>
+</thead>
+<tbody>
+<tr><td>conversation_id</td><td>string</td><td>会话唯一标识</td><td>全局</td></tr>
+<tr><td>user_id</td><td>string</td><td>用户唯一标识</td><td>全局</td></tr>
+<tr><td>user_profile</td><td>object</td><td>用户画像信息</td><td>全局</td></tr>
+<tr><td>conversation_history</td><td>array</td><td>对话历史记录</td><td>全局</td></tr>
+<tr><td>symptom_info</td><td>object</td><td>已收集的症状信息</td><td>全局</td></tr>
+<tr><td>current_intent</td><td>string</td><td>当前意图分类</td><td>单轮</td></tr>
+<tr><td>intent_deny_count</td><td>number</td><td>意图否认次数</td><td>全局</td></tr>
+<tr><td>last_user_input</td><td>string</td><td>上一次用户输入</td><td>单轮</td></tr>
+<tr><td>similarity_score</td><td>number</td><td>语义相似度分数</td><td>单轮</td></tr>
+</tbody>
+</table>
 
 #### 节点间变量传递
 
@@ -2947,87 +3112,137 @@
 
 #### 用户画像查询分支配置
 
-| 分支名称 | 条件表达式 | 下一节点 |
-|---------|-----------|---------|
-| 画像完整度不足 | `profile_completeness &lt; 50 \|\| missing_key_info == true` | Profile_Inquiry |
-| 画像完整度充足 | `profile_completeness &gt;= 50` | 主意图路由分支 |
+<table>
+<thead>
+<tr><th>分支名称</th><th>条件表达式</th><th>下一节点</th></tr>
+</thead>
+<tbody>
+<tr><td>画像完整度不足</td><td>`profile_completeness &lt; 50 \</td><td>\</td></tr>
+<tr><td>画像完整度充足</td><td>`profile_completeness &gt;= 50`</td><td>主意图路由分支</td></tr>
+</tbody>
+</table>
 
 #### 画像追问分支配置
 
-| 分支名称 | 条件表达式 | 下一节点 |
-|---------|-----------|---------|
-| 需要追问过敏史 | `missing_allergy == true` | 输出过敏史追问话术 |
-| 需要追问慢性病 | `missing_chronic_disease == true` | 输出慢性病追问话术 |
-| 需要追问年龄 | `missing_age == true` | 输出年龄追问话术 |
-| 需要追问性别 | `missing_gender == true` | 输出性别追问话术 |
-| 追问完成 | 所有关键字段已收集 | 继续原意图流程 |
+<table>
+<thead>
+<tr><th>分支名称</th><th>条件表达式</th><th>下一节点</th></tr>
+</thead>
+<tbody>
+<tr><td>需要追问过敏史</td><td>`missing_allergy == true`</td><td>输出过敏史追问话术</td></tr>
+<tr><td>需要追问慢性病</td><td>`missing_chronic_disease == true`</td><td>输出慢性病追问话术</td></tr>
+<tr><td>需要追问年龄</td><td>`missing_age == true`</td><td>输出年龄追问话术</td></tr>
+<tr><td>需要追问性别</td><td>`missing_gender == true`</td><td>输出性别追问话术</td></tr>
+<tr><td>追问完成</td><td>所有关键字段已收集</td><td>继续原意图流程</td></tr>
+</tbody>
+</table>
 
 #### 购买记录查询分支配置
 
-| 分支名称 | 条件表达式 | 下一节点 |
-|---------|-----------|---------|
-| 有历史购买记录 | `purchase_history_count &gt; 0` | Purchase_History |
-| 无历史购买记录 | `purchase_history_count == 0` | 跳过购买记录关联 |
+<table>
+<thead>
+<tr><th>分支名称</th><th>条件表达式</th><th>下一节点</th></tr>
+</thead>
+<tbody>
+<tr><td>有历史购买记录</td><td>`purchase_history_count &gt; 0`</td><td>Purchase_History</td></tr>
+<tr><td>无历史购买记录</td><td>`purchase_history_count == 0`</td><td>跳过购买记录关联</td></tr>
+</tbody>
+</table>
 
 #### 客服转接分支配置
 
-| 分支名称 | 条件表达式 | 下一节点 |
-|---------|-----------|---------|
-| 订单问题 | `contains_order_keywords == true` | Customer_Service |
-| 售后问题 | `contains_after_sale_keywords == true` | Customer_Service |
-| 用户要求转人工 | `contains_transfer_keywords == true` | Customer_Service |
-| 问题无法解决 | `unresolved_rounds &gt;= 3` | Customer_Service |
-| 无需转接 | 以上条件均不满足 | 继续原流程 |
+<table>
+<thead>
+<tr><th>分支名称</th><th>条件表达式</th><th>下一节点</th></tr>
+</thead>
+<tbody>
+<tr><td>订单问题</td><td>`contains_order_keywords == true`</td><td>Customer_Service</td></tr>
+<tr><td>售后问题</td><td>`contains_after_sale_keywords == true`</td><td>Customer_Service</td></tr>
+<tr><td>用户要求转人工</td><td>`contains_transfer_keywords == true`</td><td>Customer_Service</td></tr>
+<tr><td>问题无法解决</td><td>`unresolved_rounds &gt;= 3`</td><td>Customer_Service</td></tr>
+<tr><td>无需转接</td><td>以上条件均不满足</td><td>继续原流程</td></tr>
+</tbody>
+</table>
 
 #### 意图确认分支配置
 
-| 分支名称 | 条件表达式 | 下一节点 |
-|---------|-----------|---------|
-| 需要意图确认 | `similarity_score &gt; 0.8 \|\| contains_deny_keyword == true \|\| deny_button_clicked == true` | Intent_Confirm |
-| 无需意图确认 | 以上条件均不满足 | 主意图路由分支 |
+<table>
+<thead>
+<tr><th>分支名称</th><th>条件表达式</th><th>下一节点</th></tr>
+</thead>
+<tbody>
+<tr><td>需要意图确认</td><td>`similarity_score &gt; 0.8 \</td><td>\</td></tr>
+<tr><td>无需意图确认</td><td>以上条件均不满足</td><td>主意图路由分支</td></tr>
+</tbody>
+</table>
 
 #### 意图确认子分支配置
 
-| 分支名称 | 条件表达式 | 下一节点 |
-|---------|-----------|---------|
-| 用户肯定 | `user_response == "肯定"`（如"是的"、"对"、"换个话题"） | 显示意图选择弹窗 → 重新选择intent |
-| 用户否定 | `user_response == "否定"`（如"不是"、"没有"、"继续"） | 继续原意图流程 |
-| 兜底处理 | `intent_deny_count &gt;= 2` | 输出兜底话术 |
+<table>
+<thead>
+<tr><th>分支名称</th><th>条件表达式</th><th>下一节点</th></tr>
+</thead>
+<tbody>
+<tr><td>用户肯定</td><td>`user_response == "肯定"`（如"是的"、"对"、"换个话题"）</td><td>显示意图选择弹窗 → 重新选择intent</td></tr>
+<tr><td>用户否定</td><td>`user_response == "否定"`（如"不是"、"没有"、"继续"）</td><td>继续原意图流程</td></tr>
+<tr><td>兜底处理</td><td>`intent_deny_count &gt;= 2`</td><td>输出兜底话术</td></tr>
+</tbody>
+</table>
 
 #### 主意图路由分支配置
 
-| 分支名称 | 条件表达式 | 下一节点 |
-|---------|-----------|---------|
-| 紧急情况 | `intent == "health_consult" && urgent == true` | 紧急就医回复（固定文本节点） |
-| 健康咨询 | `intent == "health_consult"` | Symptom_Analysis |
-| 产品咨询 | `intent == "product_consult"` | RAG_Product → Product_Consult |
-| 健康知识 | `intent == "knowledge_query"` | RAG_Health → Knowledge_QA |
-| 其他 | `intent == "other"` | Boundary_Handler |
-| 兜底 | `confidence &lt; 0.7` | 默认回复（"您能再说详细一点吗？"） |
+<table>
+<thead>
+<tr><th>分支名称</th><th>条件表达式</th><th>下一节点</th></tr>
+</thead>
+<tbody>
+<tr><td>紧急情况</td><td>`intent == "health_consult" && urgent == true`</td><td>紧急就医回复（固定文本节点）</td></tr>
+<tr><td>健康咨询</td><td>`intent == "health_consult"`</td><td>Symptom_Analysis</td></tr>
+<tr><td>产品咨询</td><td>`intent == "product_consult"`</td><td>RAG_Product → Product_Consult</td></tr>
+<tr><td>健康知识</td><td>`intent == "knowledge_query"`</td><td>RAG_Health → Knowledge_QA</td></tr>
+<tr><td>其他</td><td>`intent == "other"`</td><td>Boundary_Handler</td></tr>
+<tr><td>兜底</td><td>`confidence &lt; 0.7`</td><td>默认回复（"您能再说详细一点吗？"）</td></tr>
+</tbody>
+</table>
 
 #### 症状分析子分支配置
 
-| 分支名称 | 条件表达式 | 下一节点 |
-|---------|-----------|---------|
-| 继续追问 | `need_more_info == true` | 输出追问内容（回到用户输入） |
-| 分析完成 | `need_more_info == false` | RAG_Health → Recommend_Gen |
+<table>
+<thead>
+<tr><th>分支名称</th><th>条件表达式</th><th>下一节点</th></tr>
+</thead>
+<tbody>
+<tr><td>继续追问</td><td>`need_more_info == true`</td><td>输出追问内容（回到用户输入）</td></tr>
+<tr><td>分析完成</td><td>`need_more_info == false`</td><td>RAG_Health → Recommend_Gen</td></tr>
+</tbody>
+</table>
 
 #### 免责声明子分支配置
 
-| 分支名称 | 条件表达式 | 下一节点 |
-|---------|-----------|---------|
-| 需要免责 | `need_disclaimer == true` | 拼接免责声明后输出 |
-| 无需免责 | `need_disclaimer == false` | 直接输出 |
+<table>
+<thead>
+<tr><th>分支名称</th><th>条件表达式</th><th>下一节点</th></tr>
+</thead>
+<tbody>
+<tr><td>需要免责</td><td>`need_disclaimer == true`</td><td>拼接免责声明后输出</td></tr>
+<tr><td>无需免责</td><td>`need_disclaimer == false`</td><td>直接输出</td></tr>
+</tbody>
+</table>
 
 ### 16.4 RAG插件配置
 
 #### 知识库配置
 
-| 知识库名称 | 内容范围 | 检索策略 | Top-K | 相似度阈值 |
-|-----------|---------|---------|-------|-----------|
-| 健康知识库 | 健康科普文章、疾病预防知识、养生指南 | 语义检索 | 5 | 0.7 |
-| 产品知识库 | 保健产品信息、成分说明、使用方法、适用人群 | 语义检索 + 关键词检索 | 5 | 0.75 |
-| 症状知识库 | 常见症状描述、健康方向参考、就医建议 | 语义检索 | 3 | 0.7 |
+<table>
+<thead>
+<tr><th>知识库名称</th><th>内容范围</th><th>检索策略</th><th>Top-K</th><th>相似度阈值</th></tr>
+</thead>
+<tbody>
+<tr><td>健康知识库</td><td>健康科普文章、疾病预防知识、养生指南</td><td>语义检索</td><td>5</td><td>0.7</td></tr>
+<tr><td>产品知识库</td><td>保健产品信息、成分说明、使用方法、适用人群</td><td>语义检索 + 关键词检索</td><td>5</td><td>0.75</td></tr>
+<tr><td>症状知识库</td><td>常见症状描述、健康方向参考、就医建议</td><td>语义检索</td><td>3</td><td>0.7</td></tr>
+</tbody>
+</table>
 
 #### Coze RAG插件参数配置
 
@@ -3053,12 +3268,17 @@
 
 #### RAG内容更新规范
 
-| 更新类型 | 频率 | 审核要求 |
-|---------|------|---------|
-| 产品信息更新 | 产品上下架时 | 产品部门审核 |
-| 健康知识更新 | 每月一次 | 医学顾问审核 |
-| 紧急内容修正 | 发现后24小时内 | 合规负责人审核 |
-| 知识库全量审查 | 每季度一次 | 技术负责人 + 医学顾问 |
+<table>
+<thead>
+<tr><th>更新类型</th><th>频率</th><th>审核要求</th></tr>
+</thead>
+<tbody>
+<tr><td>产品信息更新</td><td>产品上下架时</td><td>产品部门审核</td></tr>
+<tr><td>健康知识更新</td><td>每月一次</td><td>医学顾问审核</td></tr>
+<tr><td>紧急内容修正</td><td>发现后24小时内</td><td>合规负责人审核</td></tr>
+<tr><td>知识库全量审查</td><td>每季度一次</td><td>技术负责人 + 医学顾问</td></tr>
+</tbody>
+</table>
 
 ---
 
