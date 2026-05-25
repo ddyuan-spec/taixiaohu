@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>泰小虎_Prompt完整文档_V1 - 泰小虎文档中心</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -66,6 +67,7 @@
         hr { border: none; border-top: 1px solid #e0e0e8; margin: 24px 0; }
         a { color: #667eea; text-decoration: none; }
         a:hover { text-decoration: underline; }
+        .mermaid { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 16px 0; text-align: center; }
         @media (max-width: 768px) {
             .content { padding: 20px; margin: 12px; }
             h1 { font-size: 1.4em; }
@@ -3131,5 +3133,12 @@
 <blockquote>| V1.3 | 2026-05-25 | 新增4个业务场景Prompt：在System Prompt中添加用户画像上下文注入、购买记录上下文注入、客服转接触发条件；新增画像追问Prompt章节（含触发条件、追问优先级、关联人画像追问）；新增购买记录关联Prompt章节（含复购提示话术）；新增复购推荐Prompt章节（含复购场景识别、优惠话术）；新增客服转接Prompt章节（含触发场景、转接话术、客服信息配置说明）；更新Coze工作流添加用户画像查询节点、购买记录查询节点、画像追问分支、客服转接分支 | - |</blockquote>
 
     </div>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' }
+        });
+    </script>
 </body>
 </html>

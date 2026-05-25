@@ -10,6 +10,7 @@ const htmlTemplate = (title, body) => `<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title} - 泰小虎文档中心</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -72,6 +73,7 @@ const htmlTemplate = (title, body) => `<!DOCTYPE html>
         hr { border: none; border-top: 1px solid #e0e0e8; margin: 24px 0; }
         a { color: #667eea; text-decoration: none; }
         a:hover { text-decoration: underline; }
+        .mermaid { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 16px 0; text-align: center; }
         @media (max-width: 768px) {
             .content { padding: 20px; margin: 12px; }
             h1 { font-size: 1.4em; }
@@ -91,6 +93,13 @@ const htmlTemplate = (title, body) => `<!DOCTYPE html>
     <div class="content">
         ${body}
     </div>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' }
+        });
+    </script>
 </body>
 </html>`;
 
@@ -104,11 +113,18 @@ function containsAsciiArt(text) {
 function mdToHtml(md) {
     let html = md;
     
-    // Process code blocks first, but handle ASCII art separately
+    // Process Mermaid blocks first
+    const mermaidBlocks = [];
+    html = html.replace(/```mermaid\n([\s\S]*?)```/g, (match, content) => {
+        mermaidBlocks.push(content);
+        return `%%MERMAID_${mermaidBlocks.length - 1}%%`;
+    });
+    
+    // Process code blocks, but handle ASCII art separately
     const codeBlocks = [];
     const asciiArtBlocks = [];
     
-    html = html.replace(/```[\s\S]*?```/g, match => {
+    html = html.replace(/```([\s\S]*?)```/g, match => {
         // Check if this is ASCII art (contains box drawing characters)
         if (containsAsciiArt(match)) {
             asciiArtBlocks.push(match);
@@ -120,8 +136,8 @@ function mdToHtml(md) {
     });
     
     const inlineCodes = [];
-    html = html.replace(/`[^`]+`/g, match => {
-        inlineCodes.push(match);
+    html = html.replace(/`([^`]+)`/g, (match, content) => {
+        inlineCodes.push(content);
         return `%%INLINECODE_${inlineCodes.length - 1}%%`;
     });
 
@@ -166,6 +182,11 @@ function mdToHtml(md) {
     // Remove empty paragraphs
     html = html.replace(/<p>\s*<\/p>/g, '');
 
+    // Restore Mermaid blocks
+    mermaidBlocks.forEach((content, i) => {
+        html = html.replace(`%%MERMAID_${i}%%`, `<div class="mermaid">${content}</div>`);
+    });
+
     // Restore ASCII art blocks with special styling
     asciiArtBlocks.forEach((block, i) => {
         const code = block.replace(/```\w*\n?/, '').replace(/```$/, '');
@@ -181,9 +202,8 @@ function mdToHtml(md) {
     });
     
     // Restore inline codes
-    inlineCodes.forEach((code, i) => {
-        const inner = code.replace(/`/g, '');
-        html = html.replace(`%%INLINECODE_${i}%%`, `<code>${inner}</code>`);
+    inlineCodes.forEach((content, i) => {
+        html = html.replace(`%%INLINECODE_${i}%%`, `<code>${content}</code>`);
     });
 
     return html;

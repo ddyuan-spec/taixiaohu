@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>泰小虎_LLM意图识别Prompt_V1 - 泰小虎文档中心</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -66,6 +67,7 @@
         hr { border: none; border-top: 1px solid #e0e0e8; margin: 24px 0; }
         a { color: #667eea; text-decoration: none; }
         a:hover { text-decoration: underline; }
+        .mermaid { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 16px 0; text-align: center; }
         @media (max-width: 768px) {
             .content { padding: 20px; margin: 12px; }
             h1 { font-size: 1.4em; }
@@ -309,5 +311,12 @@
 <p><strong>文档状态</strong>：备用/归档</p>
 
     </div>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' }
+        });
+    </script>
 </body>
 </html>
