@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泰小虎 - 智能体管理后台交互原型</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        /* 登录页样式 */
+        .login-page {
+            display: flex;
+            min-height: 100vh;
+        }
+        .login-brand {
+            flex: 1.2;
+            background: linear-gradient(135deg, #FF6B35 0%, #FF8C5A 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 60px;
+        }
+        .login-brand .logo {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        .login-brand h1 {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+        .login-brand p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        .login-form-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            background: white;
+        }
+        .login-form {
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .login-form h2 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #1a1a2e;
+        }
+        .login-form .subtitle {
+            color: #666;
+            margin-bottom: 32px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #555;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #FF6B35;
+        }
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #666;
+        }
+        .forgot-link {
+            color: #FF6B35;
+            text-decoration: none;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #FF6B35 0%, #FF8C5A 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+            margin-top: 12px;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+            color: #999;
+            font-size: 14px;
+        }
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
+        .divider span {
+            padding: 0 16px;
+        }
+        
+        /* 后台布局 */
+        .admin-layout {
+            display: none;
+            min-height: 100vh;
+        }
+        .admin-layout.active {
+            display: flex;
+        }
+        
+        /* 侧边栏 */
+        .sidebar {
+            width: 240px;
+            background: #1A365D;
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-header .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .sidebar-header .logo-icon {
+            font-size: 28px;
+        }
+        .nav-menu {
+            flex: 1;
+            padding: 16px 0;
+            overflow-y: auto;
+        }
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .nav-item.active {
+            background: #FF6B35;
+        }
+        .nav-item .icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+        .nav-subitem {
+            padding: 10px 20px 10px 56px;
+            cursor: pointer;
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.3s;
+        }
+        .nav-subitem:hover {
+            color: white;
+            background: rgba(255,255,255,0.05);
+        }
+        .nav-subitem.active {
+            color: #FF6B35;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* 顶部栏 */
+        .top-bar {
+            height: 64px;
+            background: white;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+        .breadcrumb {
+            font-size: 14px;
+            color: #666;
+        }
+        .breadcrumb span {
+            color: #999;
+        }
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .search-box {
+            position: relative;
+        }
+        .search-box input {
+            width: 280px;
+            padding: 8px 16px 8px 36px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+        }
+        .notification {
+            position: relative;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 16px;
+            height: 16px;
+            background: #FF6B35;
+            color: white;
+            font-size: 10px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+        
+        /* 页面内容 */
+        .page-content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+        .page-header {
+            margin-bottom: 24px;
+        }
+        .page-header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .page-header .welcome {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        /* 数据卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .stat-card .label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+        .stat-card .trend {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .trend.up { color: #52c41a; }
+        .trend.down { color: #ff4d4f; }
+        .stat-card.alert .value { color: #FF6B35; }
+        
+        /* 图表区域 */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .dashboard-card h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .chart-placeholder {
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        /* 列表表格 */
+        .data-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .table-header {
+            display: flex;
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+            font-weight: 500;
+            color: #666;
+        }
+        .table-row {
+            display: flex;
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            align-items: center;
+        }
+        .table-row:hover {
+            background: #fafafa;
+        }
+        .table-cell {
+            flex: 1;
+        }
+        .table-cell.checkbox {
+            flex: 0 0 40px;
+        }
+        .table-cell.actions {
+            flex: 0 0 120px;
+            display: flex;
+            gap: 8px;
+        }
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .tag-success { background: #e6f4ea; color: #137333; }
+        .tag-warning { background: #fef7e0; color: #b06000; }
+        .tag-danger { background: #fce8e6; color: #c5221f; }
+        .tag-info { background: #e8f4fd; color: #0066cc; }
+        .tag-gray { background: #f5f5f5; color: #666; }
+        
+        /* 按钮 */
+        .btn-sm {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-text {
+            background: transparent;
+            color: #FF6B35;
+        }
+        .btn-text:hover {
+            background: rgba(255,107,53,0.1);
+        }
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .toolbar-actions {
+            display: flex;
+            gap: 12px;
+        }
+        .btn-default {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .btn-default:hover {
+            border-color: #FF6B35;
+            color: #FF6B35;
+        }
+        
+        /* Tab */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab:hover {
+            color: #FF6B35;
+        }
+        .tab.active {
+            color: #FF6B35;
+            border-bottom-color: #FF6B35;
+        }
+        .tab .badge {
+            margin-left: 6px;
+            padding: 2px 8px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+        
+        /* 筛选器 */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .filter-item select,
+        .filter-item input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        /* 状态横幅 */
+        .status-banner {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+        .status-banner.success {
+            background: #e6f4ea;
+            color: #137333;
+        }
+        .status-banner.warning {
+            background: #fef7e0;
+            color: #b06000;
+        }
+        
+        /* 分页 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 16px;
+        }
+        .page-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .page-btn:hover {
+            border-color: #FF6B35;
+            color: #FF6B35;
+        }
+        .page-btn.active {
+            background: #FF6B35;
+            color: white;
+            border-color: #FF6B35;
+        }
+        
+        /* 隐藏页面 */
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        
+        /* 工作流画布 */
+        .workflow-canvas {
+            background: #f8f9fa;
+            border-radius: 8px;
+            min-height: 400px;
+            position: relative;
+            padding: 40px;
+        }
+        .workflow-node {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            width: 180px;
+            text-align: center;
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .workflow-node:hover {
+            border-color: #FF6B35;
+            box-shadow: 0 4px 12px rgba(255,107,53,0.2);
+        }
+        .workflow-node.start {
+            border-color: #52c41a;
+            background: #f6ffed;
+        }
+        .workflow-node.llm {
+            border-color: #1890ff;
+            background: #e6f7ff;
+        }
+        .workflow-node.rag {
+            border-color: #722ed1;
+            background: #f9f0ff;
+        }
+        .workflow-node.condition {
+            border-color: #fa8c16;
+            background: #fff7e6;
+        }
+        .workflow-node.end {
+            border-color: #ff4d4f;
+            background: #fff1f0;
+        }
+        .workflow-node .icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .workflow-node .title {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        /* 对话监控 */
+        .chat-monitor {
+            display: flex;
+            height: calc(100vh - 200px);
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .chat-list {
+            width: 360px;
+            border-right: 1px solid #eee;
+            overflow-y: auto;
+        }
+        .chat-item {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .chat-item:hover {
+            background: #fafafa;
+        }
+        .chat-item.active {
+            background: #fff7e6;
+            border-left: 3px solid #FF6B35;
+        }
+        .chat-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .chat-item-name {
+            font-weight: 500;
+        }
+        .chat-item-time {
+            font-size: 12px;
+            color: #999;
+        }
+        .chat-item-topic {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        .chat-item-meta {
+            font-size: 12px;
+            color: #999;
+        }
+        .chat-detail {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f5f5f5;
+        }
+        .message {
+            display: flex;
+            margin-bottom: 16px;
+        }
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 12px;
+        }
+        .message.user .message-avatar {
+            background: #FF6B35;
+            color: white;
+        }
+        .message.ai .message-avatar {
+            background: white;
+            border: 2px solid #FF6B35;
+        }
+        .message-content {
+            max-width: 60%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .message.user .message-content {
+            background: #FF6B35;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .message.ai .message-content {
+            background: white;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .message-time {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+            text-align: right;
+        }
+        .chat-actions {
+            padding: 16px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 12px;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .login-page {
+                flex-direction: column;
+            }
+            .login-brand {
+                padding: 40px 20px;
+            }
+            .sidebar {
+                display: none;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 登录页 -->
+<div class="login-page" id="loginPage">
+    <div class="login-brand">
+        <div class="logo">🐯</div>
+        <h1>泰小虎</h1>
+        <p>智能健康导购 · 贴心守护</p>
+    </div>
+    <div class="login-form-container">
+        <div class="login-form">
+            <h2>🐯 泰小虎管理后台</h2>
+            <p class="subtitle">欢迎回来，请登录您的账号</p>
+            
+            <div class="form-group">
+                <label>管理员账号</label>
+                <input type="text" placeholder="请输入管理员账号" value="admin">
+            </div>
+            
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" placeholder="请输入密码" value="********">
+            </div>
+            
+            <div class="form-options">
+                <label class="checkbox">
+                    <input type="checkbox" checked>
+                    <span>记住登录状态</span>
+                </label>
+                <a href="#" class="forgot-link">忘记密码?</a>
+            </div>
+            
+            <button class="btn btn-primary" onclick="login()">登 录</button>
+            
+            <div class="divider"><span>或</span></div>
+            
+            <button class="btn btn-secondary">企业SSO登录</button>
+        </div>
+    </div>
+</div>
+
+<!-- 后台布局 -->
+<div class="admin-layout" id="adminLayout">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">🐯</span>
+                <span>泰小虎后台</span>
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-item active" onclick="showPage('dashboard')">
+                <span class="icon">📊</span>
+                <span>仪表盘</span>
+            </div>
+            
+            <div class="nav-item" onclick="toggleSubmenu('knowledge')">
+                <span class="icon">📚</span>
+                <span>知识库管理</span>
+            </div>
+            <div id="knowledge-submenu" style="display:none">
+                <div class="nav-subitem" onclick="showPage('knowledge-health')">健康知识库</div>
+                <div class="nav-subitem" onclick="showPage('knowledge-product')">产品知识库</div>
+                <div class="nav-subitem" onclick="showPage('knowledge-symptom')">症状-风险库</div>
+            </div>
+            
+            <div class="nav-item" onclick="toggleSubmenu('agent')">
+                <span class="icon">🤖</span>
+                <span>Agent 配置</span>
+            </div>
+            <div id="agent-submenu" style="display:none">
+                <div class="nav-subitem" onclick="showPage('agent-workflow')">工作流配置</div>
+                <div class="nav-subitem" onclick="showPage('agent-dialog')">对话流配置</div>
+                <div class="nav-subitem" onclick="showPage('agent-prompt')">Prompt 管理</div>
+            </div>
+            
+            <div class="nav-item" onclick="toggleSubmenu('user')">
+                <span class="icon">👥</span>
+                <span>用户管理</span>
+            </div>
+            <div id="user-submenu" style="display:none">
+                <div class="nav-subitem" onclick="showPage('user-list')">用户列表</div>
+                <div class="nav-subitem" onclick="showPage('user-profile')">用户画像管理</div>
+                <div class="nav-subitem" onclick="showPage('user-tags')">画像标签管理</div>
+                <div class="nav-subitem" onclick="showPage('user-segment')">分群管理</div>
+            </div>
+            
+            <div class="nav-item" onclick="showPage('chat-monitor')">
+                <span class="icon">💬</span>
+                <span>对话监控</span>
+            </div>
+            
+            <div class="nav-item" onclick="showPage('analytics')">
+                <span class="icon">📈</span>
+                <span>数据看板</span>
+            </div>
+            
+            <div class="nav-item" onclick="showPage('case')">
+                <span class="icon">⚠️</span>
+                <span>Case 管理</span>
+            </div>
+            
+            <div class="nav-item" onclick="toggleSubmenu('settings')">
+                <span class="icon">⚙️</span>
+                <span>系统设置</span>
+            </div>
+            <div id="settings-submenu" style="display:none">
+                <div class="nav-subitem" onclick="showPage('settings-alert')">告警配置</div>
+                <div class="nav-subitem" onclick="showPage('settings-gray')">灰度发布</div>
+                <div class="nav-subitem" onclick="showPage('settings-permission')">权限管理</div>
+                <div class="nav-subitem" onclick="showPage('settings-service')">客服配置</div>
+            </div>
+        </nav>
+    </aside>
+    
+    <!-- 主内容 -->
+    <main class="main-content">
+        <!-- 顶部栏 -->
+        <header class="top-bar">
+            <div class="breadcrumb">
+                首页 <span>/</span> <span id="currentPage">仪表盘</span>
+            </div>
+            <div class="top-actions">
+                <div class="search-box">
+                    <input type="text" placeholder="全局搜索...">
+                </div>
+                <div class="notification">
+                    🔔
+                    <span class="notification-badge">3</span>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">张</div>
+                    <span>张经理</span>
+                </div>
+            </div>
+        </header>
+        
+        <!-- 页面内容 -->
+        <div class="page-content">
+            <!-- 仪表盘页 -->
+            <div class="page active" id="page-dashboard">
+                <div class="page-header">
+                    <h1>仪表盘</h1>
+                    <p class="welcome">欢迎回来，张经理 | 今日: 2026-05-25 周一</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="label">今日对话量</div>
+                        <div class="value">12,847</div>
+                        <div class="trend up">↑ 8.3%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">满意度</div>
+                        <div class="value">94.2%</div>
+                        <div class="trend up">↑ 1.2%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">转化率</div>
+                        <div class="value">23.6%</div>
+                        <div class="trend down">↓ 0.8%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">日活用户</div>
+                        <div class="value">3,256</div>
+                        <div class="trend up">↑ 5.1%</div>
+                    </div>
+                    <div class="stat-card alert">
+                        <div class="label">告警信息</div>
+                        <div class="value">3</div>
+                        <div class="trend down">⚠️ 待处理</div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>📈 对话量趋势(7天)</h3>
+                        <div class="chart-placeholder">[折线图区域]</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>🎯 转化漏斗</h3>
+                        <div class="chart-placeholder">[漏斗图区域]</div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>⚠️ 告警信息</h3>
+                        <div style="padding: 12px 0;">
+                            <div style="padding: 12px; background: #fff2f0; border-radius: 6px; margin-bottom: 8px;">
+                                <span style="color: #ff4d4f;">🔴</span> 知识库同步失败 10:32
+                            </div>
+                            <div style="padding: 12px; background: #fffbe6; border-radius: 6px; margin-bottom: 8px;">
+                                <span style="color: #faad14;">🟡</span> 满意度下降 今日-1.2%
+                            </div>
+                            <div style="padding: 12px; background: #fffbe6; border-radius: 6px;">
+                                <span style="color: #faad14;">🟡</span> Bad Case上升 今日+15%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>🔥 热门咨询TOP5</h3>
+                        <div style="padding: 12px 0;">
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
+                                <span>1. 血压管理</span>
+                                <span style="color: #999;">328</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
+                                <span>2. 血糖监测</span>
+                                <span style="color: #999;">256</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
+                                <span>3. 关节保健</span>
+                                <span style="color: #999;">198</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
+                                <span>4. 钙片推荐</span>
+                                <span style="color: #999;">167</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                                <span>5. 睡眠改善</span>
+                                <span style="color: #999;">145</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3>📋 最近 Bad Case</h3>
+                    <div class="data-table">
+                        <div class="table-header">
+                            <div class="table-cell">时间</div>
+                            <div class="table-cell">用户</div>
+                            <div class="table-cell">问题摘要</div>
+                            <div class="table-cell">分类</div>
+                            <div class="table-cell">状态</div>
+                            <div class="table-cell actions">操作</div>
+                        </div>
+                        <div class="table-row">
+                            <div class="table-cell">10:32</div>
+                            <div class="table-cell">王*</div>
+                            <div class="table-cell">AI回复了错误的用药信息</div>
+                            <div class="table-cell"><span class="tag tag-danger">知识错误</span></div>
+                            <div class="table-cell"><span class="tag tag-warning">待处理</span></div>
+                            <div class="table-cell actions">
+                                <button class="btn-sm btn-text">处理</button>
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div class="table-cell">10:15</div>
+                            <div class="table-cell">李*</div>
+                            <div class="table-cell">重复推荐同一产品</div>
+                            <div class="table-cell"><span class="tag tag-warning">逻辑错误</span></div>
+                            <div class="table-cell"><span class="tag tag-info">处理中</span></div>
+                            <div class="table-cell actions">
+                                <button class="btn-sm btn-text">查看</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 知识库管理页 -->
+            <div class="page" id="page-knowledge-health">
+                <div class="page-header">
+                    <h1>知识库管理</h1>
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active">健康知识库 <span class="badge">1,234</span></div>
+                    <div class="tab">产品知识库 <span class="badge">856</span></div>
+                    <div class="tab">症状-风险库 <span class="badge">432</span></div>
+                </div>
+                
+                <div class="toolbar">
+                    <div class="toolbar-actions">
+                        <button class="btn-default">+ 新建文档</button>
+                        <button class="btn-default">📥 批量导入</button>
+                        <button class="btn-default">📤 批量导出</button>
+                        <button class="btn-default">🔄 同步状态</button>
+                    </div>
+                    <div class="filter-bar" style="margin:0">
+                        <div class="filter-item">
+                            <input type="text" placeholder="🔍 输入关键词搜索...">
+                        </div>
+                        <div class="filter-item">
+                            <select><option>全部状态</option></select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="status-banner success">
+                    <span>🟢 火山引擎RAG同步正常 | 最后同步: 2026-05-25 10:30:00 | 待同步文档: 12 篇</span>
+                    <button class="btn-sm btn-text">立即同步</button>
+                </div>
+                
+                <div class="data-table">
+                    <div class="table-header">
+                        <div class="table-cell checkbox"><input type="checkbox"></div>
+                        <div class="table-cell">文档名称</div>
+                        <div class="table-cell">分类</div>
+                        <div class="table-cell">状态</div>
+                        <div class="table-cell">版本</div>
+                        <div class="table-cell">更新时间</div>
+                        <div class="table-cell actions">操作</div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell checkbox"><input type="checkbox"></div>
+                        <div class="table-cell">高血压用药指南</div>
+                        <div class="table-cell">心血管</div>
+                        <div class="table-cell"><span class="tag tag-success">已发布</span></div>
+                        <div class="table-cell">v3.2</div>
+                        <div class="table-cell">05-24</div>
+                        <div class="table-cell actions">
+                            <button class="btn-sm btn-text">编辑</button>
+                        </div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell checkbox"><input type="checkbox"></div>
+                        <div class="table-cell">糖尿病饮食建议</div>
+                        <div class="table-cell">内分泌</div>
+                        <div class="table-cell"><span class="tag tag-success">已发布</span></div>
+                        <div class="table-cell">v2.1</div>
+                        <div class="table-cell">05-23</div>
+                        <div class="table-cell actions">
+                            <button class="btn-sm btn-text">编辑</button>
+                        </div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell checkbox"><input type="checkbox"></div>
+                        <div class="table-cell">钙片选购指南</div>
+                        <div class="table-cell">骨骼健康</div>
+                        <div class="table-cell"><span class="tag tag-warning">待审核</span></div>
+                        <div class="table-cell">v1.0</div>
+                        <div class="table-cell">05-25</div>
+                        <div class="table-cell actions">
+                            <button class="btn-sm btn-text">编辑</button>
+                        </div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell checkbox"><input type="checkbox"></div>
+                        <div class="table-cell">关节炎康复方案</div>
+                        <div class="table-cell">骨骼健康</div>
+                        <div class="table-cell"><span class="tag tag-gray">已下线</span></div>
+                        <div class="table-cell">v4.0</div>
+                        <div class="table-cell">05-20</div>
+                        <div class="table-cell actions">
+                            <button class="btn-sm btn-text">编辑</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pagination">
+                    <button class="page-btn">&lt;</button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <span>...</span>
+                    <button class="page-btn">42</button>
+                    <button class="page-btn">&gt;</button>
+                </div>
+            </div>
+            
+            <!-- Agent工作流配置页 -->
+            <div class="page" id="page-agent-workflow">
+                <div class="page-header">
+                    <h1>Agent 配置 - 工作流配置</h1>
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active">工作流配置</div>
+                    <div class="tab">对话流配置</div>
+                    <div class="tab">模型参数</div>
+                    <div class="tab">插件管理</div>
+                    <div class="tab">意图引导话术配置</div>
+                    <div class="tab">意图确认话术配置</div>
+                </div>
+                
+                <div class="toolbar">
+                    <div class="toolbar-actions">
+                        <button class="btn-default">💾 保存</button>
+                        <button class="btn-default">▶️ 调试运行</button>
+                        <button class="btn-default">📋 复制</button>
+                        <button class="btn-default">⏪ 撤销</button>
+                        <button class="btn-default">⏩ 重做</button>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span>缩放:</span>
+                        <button class="btn-default" style="padding: 4px 8px;">-</button>
+                        <span>100%</span>
+                        <button class="btn-default" style="padding: 4px 8px;">+</button>
+                    </div>
+                </div>
+                
+                <div class="workflow-canvas">
+                    <div class="workflow-node start" style="top: 40px; left: 40px;">
+                        <div class="icon">👤</div>
+                        <div class="title">用户输入</div>
+                    </div>
+                    <div class="workflow-node" style="top: 40px; left: 280px;">
+                        <div class="icon">📥</div>
+                        <div class="title">接收意图参数</div>
+                    </div>
+                    <div class="workflow-node condition" style="top: 160px; left: 280px;">
+                        <div class="icon">🔀</div>
+                        <div class="title">条件分支</div>
+                    </div>
+                    <div class="workflow-node llm" style="top: 280px; left: 120px;">
+                        <div class="icon">💬</div>
+                        <div class="title">健康咨询</div>
+                    </div>
+                    <div class="workflow-node llm" style="top: 280px; left: 280px;">
+                        <div class="icon">🛒</div>
+                        <div class="title">产品推荐</div>
+                    </div>
+                    <div class="workflow-node llm" style="top: 280px; left: 440px;">
+                        <div class="icon">🏥</div>
+                        <div class="title">症状评估</div>
+                    </div>
+                    <div class="workflow-node rag" style="top: 400px; left: 280px;">
+                        <div class="icon">📚</div>
+                        <div class="title">知识检索</div>
+                    </div>
+                    <div class="workflow-node llm" style="top: 520px; left: 280px;">
+                        <div class="icon">✍️</div>
+                        <div class="title">内容生成</div>
+                    </div>
+                    <div class="workflow-node end" style="top: 640px; left: 280px;">
+                        <div class="icon">✅</div>
+                        <div class="title">输出回复</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 用户列表页 -->
+            <div class="page" id="page-user-list">
+                <div class="page-header">
+                    <h1>用户列表</h1>
+                </div>
+                
+                <div class="filter-bar">
+                    <div class="filter-item">
+                        <input type="text" placeholder="🔍 用户ID/昵称/手机号..." style="width: 300px;">
+                    </div>
+                    <div class="filter-item">
+                        <select><option>全部年龄段</option></select>
+                    </div>
+                    <div class="filter-item">
+                        <select><option>全部行为意图</option></select>
+                    </div>
+                    <div class="filter-item">
+                        <select><option>全部健康状态</option></select>
+                    </div>
+                    <div class="filter-item">
+                        <select><option>全部消费能力</option></select>
+                    </div>
+                    <button class="btn-default">重置筛选</button>
+                </div>
+                
+                <div style="background: white; padding: 16px 20px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">
+                    <span style="margin-right: 24px;">总用户: <strong>128,456</strong></span>
+                    <span style="margin-right: 24px;">今日新增: <strong>156</strong></span>
+                    <span style="margin-right: 24px;">月活: <strong>45,678</strong></span>
+                    <span style="margin-right: 24px;">7日活跃: <strong>23,456</strong></span>
+                    <span style="margin-right: 24px;">高价值用户: <strong>8,901</strong></span>
+                    <span>流失风险: <strong style="color: #ff4d4f;">3,245</strong></span>
+                </div>
+                
+                <div class="toolbar">
+                    <div class="toolbar-actions">
+                        <button class="btn-default">批量打标签</button>
+                        <button class="btn-default">批量导出</button>
+                        <button class="btn-default">加入分群</button>
+                    </div>
+                </div>
+                
+                <div class="data-table">
+                    <div class="table-header">
+                        <div class="table-cell checkbox"><input type="checkbox"></div>
+                        <div class="table-cell">用户ID</div>
+                        <div class="table-cell">昵称</div>
+                        <div class="table-cell">年龄段</div>
+                        <div class="table-cell">行为意图</div>
+                        <div class="table-cell">健康状态</div>
+                        <div class="table-cell">消费能力</div>
+                        <div class="table-cell actions">操作</div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell checkbox"><input type="checkbox"></div>
+                        <div class="table-cell">U10001</div>
+                        <div class="table-cell">王阿姨</div>
+                        <div class="table-cell">60-65</div>
+                        <div class="table-cell"><span class="tag tag-success">购买意向</span></div>
+                        <div class="table-cell">高血压</div>
+                        <div class="table-cell">中等</div>
+                        <div class="table-cell actions">
+                            <button class="btn-sm btn-text">详情</button>
+                        </div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell checkbox"><input type="checkbox"></div>
+                        <div class="table-cell">U10002</div>
+                        <div class="table-cell">李叔叔</div>
+                        <div class="table-cell">55-60</div>
+                        <div class="table-cell"><span class="tag tag-info">咨询浏览</span></div>
+                        <div class="table-cell">糖尿病</div>
+                        <div class="table-cell">较高</div>
+                        <div class="table-cell actions">
+                            <button class="btn-sm btn-text">详情</button>
+                        </div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell checkbox"><input type="checkbox"></div>
+                        <div class="table-cell">U10003</div>
+                        <div class="table-cell">张大爷</div>
+                        <div class="table-cell">65-70</div>
+                        <div class="table-cell"><span class="tag tag-warning">纯浏览</span></div>
+                        <div class="table-cell">关节炎</div>
+                        <div class="table-cell">低</div>
+                        <div class="table-cell actions">
+                            <button class="btn-sm btn-text">详情</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pagination">
+                    <button class="page-btn">&lt;</button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <span>...</span>
+                    <button class="page-btn">642</button>
+                    <button class="page-btn">&gt;</button>
+                </div>
+            </div>
+            
+            <!-- 对话监控页 -->
+            <div class="page" id="page-chat-monitor">
+                <div class="page-header">
+                    <h1>对话监控</h1>
+                </div>
+                
+                <div class="filter-bar">
+                    <div class="filter-item">
+                        <select><option>全部状态</option></select>
+                    </div>
+                    <div class="filter-item">
+                        <select><option>全部话题</option></select>
+                    </div>
+                    <div class="filter-item">
+                        <select><option>全部满意度</option></select>
+                    </div>
+                    <div class="filter-item">
+                        <select><option>实时</option></select>
+                    </div>
+                    <div class="filter-item">
+                        <input type="text" placeholder="搜索用户...">
+                    </div>
+                    <div class="filter-item">
+                        <input type="text" placeholder="关键词...">
+                    </div>
+                    <button class="btn-default">🔄 自动刷新: 开</button>
+                </div>
+                
+                <div style="background: white; padding: 16px 20px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">
+                    <span style="margin-right: 24px;">当前在线: <strong>156</strong></span>
+                    <span style="margin-right: 24px;">进行中对话: <strong>89</strong></span>
+                    <span style="margin-right: 24px;">今日总对话: <strong>12,847</strong></span>
+                    <span style="margin-right: 24px;">平均响应: <strong>1.2s</strong></span>
+                    <span style="margin-right: 24px;">平均轮次: <strong>4.3</strong></span>
+                    <span style="margin-right: 24px;">人工介入: <strong style="color: #ff4d4f;">3</strong></span>
+                    <span>意图确认: <strong>45</strong> | 意图切换: <strong>38</strong> | 确认转化率: <strong>84.4%</strong></span>
+                </div>
+                
+                <div class="chat-monitor">
+                    <div class="chat-list">
+                        <div class="chat-item active">
+                            <div class="chat-item-header">
+                                <span class="chat-item-name">🟢 王阿姨</span>
+                                <span class="chat-item-time">10:32</span>
+                            </div>
+                            <div class="chat-item-topic">高血压用药咨询</div>
+                            <div class="chat-item-meta">5轮对话 | 满意度: 😊</div>
+                        </div>
+                        <div class="chat-item">
+                            <div class="chat-item-header">
+                                <span class="chat-item-name">🟡 李叔叔</span>
+                                <span class="chat-item-time">10:28</span>
+                            </div>
+                            <div class="chat-item-topic">血糖仪推荐</div>
+                            <div class="chat-item-meta">3轮对话 | 满意度: 😐</div>
+                        </div>
+                        <div class="chat-item">
+                            <div class="chat-item-header">
+                                <span class="chat-item-name">🔴 张大爷 ⚠️</span>
+                                <span class="chat-item-time">10:25</span>
+                            </div>
+                            <div class="chat-item-topic">关节疼痛咨询</div>
+                            <div class="chat-item-meta">8轮对话 | 满意度: ☹️</div>
+                        </div>
+                        <div class="chat-item">
+                            <div class="chat-item-header">
+                                <span class="chat-item-name">🟢 赵阿姨</span>
+                                <span class="chat-item-time">10:20</span>
+                            </div>
+                            <div class="chat-item-topic">钙片选购咨询</div>
+                            <div class="chat-item-meta">4轮对话 | 满意度: 😊</div>
+                        </div>
+                    </div>
+                    <div class="chat-detail">
+                        <div class="chat-header">
+                            <div><strong>对话ID:</strong> C20260525_001</div>
+                            <div><strong>用户:</strong> 王阿姨 (U10001)</div>
+                            <div><strong>开始时间:</strong> 2026-05-25 10:30:15</div>
+                            <div><strong>状态:</strong> 🟢 进行中 | <strong>话题:</strong> 健康咨询 > 心血管</div>
+                        </div>
+                        <div class="chat-messages">
+                            <div class="message user">
+                                <div class="message-avatar">王</div>
+                                <div>
+                                    <div class="message-content">你好，我最近血压有点高，想了解一下有什么降压药推荐？</div>
+                                    <div class="message-time">10:30:15</div>
+                                </div>
+                            </div>
+                            <div class="message ai">
+                                <div class="message-avatar">🐯</div>
+                                <div>
+                                    <div class="message-content">王阿姨您好！了解到您最近血压偏高，我来帮您了解一下。首先，请问您目前的血压是多少呢？是否已在医生指导下用药？</div>
+                                    <div class="message-time">10:30:16</div>
+                                </div>
+                            </div>
+                            <div class="message user">
+                                <div class="message-avatar">王</div>
+                                <div>
+                                    <div class="message-content">血压大概150/95，医生开了氨氯地平，但我想看看有没有其他选择...</div>
+                                    <div class="message-time">10:31:02</div>
+                                </div>
+                            </div>
+                            <div class="message ai">
+                                <div class="message-avatar">🐯</div>
+                                <div>
+                                    <div class="message-content">[检索中...] 正在为您查询相关...</div>
+                                    <div class="message-time">10:31:03</div>
+                                </div>
+                            </div>
+                            <div class="message ai">
+                                <div class="message-avatar">🐯</div>
+                                <div>
+                                    <div class="message-content">根据您的情况，氨氯地平是常用的降压药之一。除了氨氯地平，还有其他几类降压药可以选择，如ARB类、利尿剂等。但具体用药方案建议您遵医嘱，我可以为您介绍各类药物的特点和注意事项。<br><br>📎 引用: 高血压用药指南 v3.2</div>
+                                    <div class="message-time">10:31:05</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-actions">
+                            <button class="btn-default">⚠️ 标记Bad Case</button>
+                            <button class="btn-default">👤 人工介入</button>
+                            <button class="btn-default">📋 评分</button>
+                            <button class="btn-default">📤 导出对话</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 数据看板页 -->
+            <div class="page" id="page-analytics">
+                <div class="page-header">
+                    <h1>数据看板</h1>
+                </div>
+                
+                <div class="filter-bar">
+                    <div class="filter-item">
+                        <select><option>今日</option><option>昨日</option><option>近7天</option><option>近30天</option></select>
+                    </div>
+                    <div class="filter-item">
+                        <label class="checkbox"><input type="checkbox"> 与上一周期对比</label>
+                    </div>
+                    <div class="toolbar-actions" style="margin-left: auto;">
+                        <button class="btn-default">📥 导出报表</button>
+                        <button class="btn-default">📌 保存为模板</button>
+                    </div>
+                </div>
+                
+                <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="stat-card">
+                        <div class="label">总对话量</div>
+                        <div class="value">89,529</div>
+                        <div class="trend up">↑ 12.3%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">平均满意度</div>
+                        <div class="value">94.2%</div>
+                        <div class="trend up">↑ 1.2%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">转化率</div>
+                        <div class="value">23.6%</div>
+                        <div class="trend down">↓ 0.8%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Bad Case率</div>
+                        <div class="value">1.8%</div>
+                        <div class="trend up">↓ 0.3%</div>
+                    </div>
+                </div>
+                
+                <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="stat-card">
+                        <div class="label">意图选择转化率</div>
+                        <div class="value">68.5%</div>
+                        <div class="trend up">↑ 2.3%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">意图确认转化率</div>
+                        <div class="value">84.4%</div>
+                        <div class="trend up">↑ 5.2%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">平均响应时长</div>
+                        <div class="value">1.2s</div>
+                        <div class="trend up">↓ 0.1s</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">知识库命中率</div>
+                        <div class="value">87.3%</div>
+                        <div class="trend up">↑ 2.1%</div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>📈 对话量趋势</h3>
+                        <div class="chart-placeholder">[折线图 - 近7天对话量趋势]</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>🎯 转化漏斗</h3>
+                        <div class="chart-placeholder">[漏斗图 - 访问→咨询→推荐→下单]</div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>😊 满意度分布</h3>
+                        <div class="chart-placeholder">[环形图 - 满意度分布]</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>⚠️ Bad Case 分类趋势</h3>
+                        <div class="chart-placeholder">[堆叠柱状图 - Bad Case分类]</div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>🔄 意图确认分析</h3>
+                        <div style="padding: 16px;">
+                            <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 600; color: #1890ff;">1,245</div>
+                                    <div style="font-size: 12px; color: #666;">意图确认次数</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 600; color: #52c41a;">1,051</div>
+                                    <div style="font-size: 12px; color: #666;">意图切换次数</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 600; color: #FF6B35;">84.4%</div>
+                                    <div style="font-size: 12px; color: #666;">确认转化率</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 600; color: #722ed1;">3.2s</div>
+                                    <div style="font-size: 12px; color: #666;">平均响应时间</div>
+                                </div>
+                            </div>
+                            <div class="chart-placeholder" style="height: 150px;">[折线图 - 意图确认转化趋势]</div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>👤 用户画像完整度分布</h3>
+                        <div class="chart-placeholder">[环形图 - 画像完整度]</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Case管理页 -->
+            <div class="page" id="page-case">
+                <div class="page-header">
+                    <h1>Case 管理</h1>
+                </div>
+                
+                <div style="background: white; padding: 16px 20px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">
+                    <span style="margin-right: 24px;">总计: <strong>1,234</strong></span>
+                    <span style="margin-right: 24px;">待处理: <strong style="color: #ff4d4f;">89</strong></span>
+                    <span style="margin-right: 24px;">处理中: <strong style="color: #faad14;">45</strong></span>
+                    <span style="margin-right: 24px;">已解决: <strong style="color: #52c41a;">987</strong></span>
+                    <span style="margin-right: 24px;">已关闭: <strong>113</strong></span>
+                    <span style="margin-right: 24px;">本周新增: <strong>34</strong></span>
+                    <span>平均处理时长: <strong>2.3天</strong></span>
+                </div>
+                
+                <div class="filter-bar">
+                    <div class="filter-item">
+                        <select><option>全部状态</option></select>
+                    </div>
+                    <div class="filter-item">
+                        <select><option>全部分类</option></select>
+                    </div>
+                    <div class="filter-item">
+                        <select><option>全部严重程度</option></select>
+                    </div>
+                    <div class="filter-item">
+                        <select><option>全部处理人</option></select>
+                    </div>
+                    <div class="filter-item">
+                        <input type="text" placeholder="关键词搜索...">
+                    </div>
+                    <button class="btn-default">重置</button>
+                </div>
+                
+                <div class="toolbar">
+                    <div class="toolbar-actions">
+                        <button class="btn-default">📤 导出Bad Case</button>
+                        <button class="btn-default">📤 导出对话记录</button>
+                        <button class="btn-default">📊 生成分析报告</button>
+                    </div>
+                </div>
+                
+                <div class="data-table">
+                    <div class="table-header">
+                        <div class="table-cell checkbox"><input type="checkbox"></div>
+                        <div class="table-cell">Case ID</div>
+                        <div class="table-cell">对话摘要</div>
+                        <div class="table-cell">分类</div>
+                        <div class="table-cell">严重程度</div>
+                        <div class="table-cell">状态</div>
+                        <div class="table-cell actions">操作</div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell checkbox"><input type="checkbox"></div>
+                        <div class="table-cell">BC1001</div>
+                        <div class="table-cell">用户询问降压药副作用时回复了错误信息<br><small style="color: #999;">用户:王* | 时间:05-25 | 处理人:--</small></div>
+                        <div class="table-cell"><span class="tag tag-danger">知识错误</span></div>
+                        <div class="table-cell"><span class="tag tag-danger">高</span></div>
+                        <div class="table-cell"><span class="tag tag-gray">待处理</span></div>
+                        <div class="table-cell actions">
+                            <button class="btn-sm btn-text">处理</button>
+                        </div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell checkbox"><input type="checkbox"></div>
+                        <div class="table-cell">BC1000</div>
+                        <div class="table-cell">AI 重复推荐同一产品<br><small style="color: #999;">用户:李* | 时间:05-24 | 处理人:张</small></div>
+                        <div class="table-cell"><span class="tag tag-warning">逻辑错误</span></div>
+                        <div class="table-cell"><span class="tag tag-warning">中</span></div>
+                        <div class="table-cell"><span class="tag tag-info">处理中</span></div>
+                        <div class="table-cell actions">
+                            <button class="btn-sm btn-text">查看</button>
+                        </div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell checkbox"><input type="checkbox"></div>
+                        <div class="table-cell">BC0999</div>
+                        <div class="table-cell">用户表达不满后AI回复过于机械<br><small style="color: #999;">用户:赵* | 时间:05-23 | 处理人:李</small></div>
+                        <div class="table-cell"><span class="tag tag-info">态度不当</span></div>
+                        <div class="table-cell"><span class="tag tag-success">低</span></div>
+                        <div class="table-cell"><span class="tag tag-success">已解决</span></div>
+                        <div class="table-cell actions">
+                            <button class="btn-sm btn-text">查看</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pagination">
+                    <button class="page-btn">&lt;</button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <span>...</span>
+                    <button class="page-btn">62</button>
+                    <button class="page-btn">&gt;</button>
+                </div>
+            </div>
+            
+            <!-- 用户画像管理页 -->
+            <div class="page" id="page-user-profile">
+                <div class="page-header">
+                    <h1>用户画像管理</h1>
+                </div>
+                
+                <div style="background: white; padding: 16px 20px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">
+                    <span style="margin-right: 24px;">总用户: <strong>45,678</strong></span>
+                    <span style="margin-right: 24px;">画像完整: <strong>20,555</strong></span>
+                    <span style="margin-right: 24px;">平均完整度: <strong>72.3%</strong></span>
+                    <span style="margin-right: 24px;">今日新增画像: <strong>156</strong></span>
+                    <span style="margin-right: 24px;">今日变更: <strong>89</strong></span>
+                    <span>关联人总数: <strong>12,345</strong></span>
+                </div>
+                
+                <div class="filter-bar">
+                    <div class="filter-item">
+                        <input type="text" placeholder="🔍 用户ID/手机号/昵称搜索..." style="width: 280px;">
+                    </div>
+                    <div class="filter-item">
+                        <select><option>全部完整度</option></select>
+                    </div>
+                    <div class="filter-item">
+                        <select><option>全部慢性病</option></select>
+                    </div>
+                    <div class="filter-item">
+                        <select><option>全部过敏源</option></select>
+                    </div>
+                    <button class="btn-default">重置</button>
+                    <button class="btn-default">导出数据</button>
+                </div>
+                
+                <div class="data-table">
+                    <div class="table-header">
+                        <div class="table-cell" style="flex: 0 0 60px;">头像</div>
+                        <div class="table-cell">用户ID</div>
+                        <div class="table-cell">昵称</div>
+                        <div class="table-cell">画像完整度</div>
+                        <div class="table-cell">主要标签</div>
+                        <div class="table-cell actions">操作</div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell" style="flex: 0 0 60px;"><span style="font-size: 24px;">🧑</span></div>
+                        <div class="table-cell">U10001</div>
+                        <div class="table-cell">王*明</div>
+                        <div class="table-cell">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="flex: 1; height: 8px; background: #f0f0f0; border-radius: 4px; overflow: hidden;">
+                                    <div style="width: 80%; height: 100%; background: #52c41a; border-radius: 4px;"></div>
+                                </div>
+                                <span style="font-size: 12px;">80%</span>
+                            </div>
+                        </div>
+                        <div class="table-cell">
+                            <span class="tag tag-danger">高血压</span>
+                            <span class="tag tag-warning">糖尿病</span>
+                            <span class="tag tag-warning">花粉过敏</span>
+                        </div>
+                        <div class="table-cell actions">
+                            <button class="btn-sm btn-text">详情</button>
+                        </div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell" style="flex: 0 0 60px;"><span style="font-size: 24px;">👩</span></div>
+                        <div class="table-cell">U10002</div>
+                        <div class="table-cell">李*芳</div>
+                        <div class="table-cell">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="flex: 1; height: 8px; background: #f0f0f0; border-radius: 4px; overflow: hidden;">
+                                    <div style="width: 95%; height: 100%; background: #52c41a; border-radius: 4px;"></div>
+                                </div>
+                                <span style="font-size: 12px;">95%</span>
+                            </div>
+                        </div>
+                        <div class="table-cell">
+                            <span class="tag tag-warning">高血脂</span>
+                            <span class="tag tag-gray">无过敏史</span>
+                        </div>
+                        <div class="table-cell actions">
+                            <button class="btn-sm btn-text">详情</button>
+                        </div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-cell" style="flex: 0 0 60px;"><span style="font-size: 24px;">👨</span></div>
+                        <div class="table-cell">U10003</div>
+                        <div class="table-cell">张*华</div>
+                        <div class="table-cell">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="flex: 1; height: 8px; background: #f0f0f0; border-radius: 4px; overflow: hidden;">
+                                    <div style="width: 40%; height: 100%; background: #ff4d4f; border-radius: 4px;"></div>
+                                </div>
+                                <span style="font-size: 12px;">40%</span>
+                            </div>
+                        </div>
+                        <div class="table-cell">
+                            <span class="tag tag-warning">关节炎</span>
+                            <span class="tag tag-warning">海鲜过敏</span>
+                        </div>
+                        <div class="table-cell actions">
+                            <button class="btn-sm btn-text">详情</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 其他页面占位 -->
+            <div class="page" id="page-placeholder">
+                <div class="page-header">
+                    <h1 id="placeholderTitle">页面开发中</h1>
+                </div>
+                <div style="background: white; padding: 60px; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 64px; margin-bottom: 20px;">🚧</div>
+                    <h2 style="color: #666; margin-bottom: 12px;">该页面正在开发中</h2>
+                    <p style="color: #999;">敬请期待后续版本更新</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+// 登录
+function login() {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('adminLayout').classList.add('active');
+}
+
+// 切换子菜单
+function toggleSubmenu(id) {
+    const submenu = document.getElementById(id + '-submenu');
+    submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+}
+
+// 显示页面
+function showPage(pageId) {
+    // 隐藏所有页面
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+    });
+    
+    // 更新导航状态
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // 显示对应页面
+    const pageMap = {
+        'dashboard': 'page-dashboard',
+        'knowledge-health': 'page-knowledge-health',
+        'knowledge-product': 'page-knowledge-health',
+        'knowledge-symptom': 'page-knowledge-health',
+        'agent-workflow': 'page-agent-workflow',
+        'agent-dialog': 'page-placeholder',
+        'agent-prompt': 'page-placeholder',
+        'user-list': 'page-user-list',
+        'user-profile': 'page-user-profile',
+        'user-tags': 'page-placeholder',
+        'user-segment': 'page-placeholder',
+        'chat-monitor': 'page-chat-monitor',
+        'analytics': 'page-analytics',
+        'case': 'page-case',
+        'settings-alert': 'page-placeholder',
+        'settings-gray': 'page-placeholder',
+        'settings-permission': 'page-placeholder',
+        'settings-service': 'page-placeholder'
+    };
+    
+    const targetPage = pageMap[pageId] || 'page-placeholder';
+    document.getElementById(targetPage).classList.add('active');
+    
+    // 更新面包屑
+    const pageNames = {
+        'dashboard': '仪表盘',
+        'knowledge-health': '知识库管理 > 健康知识库',
+        'knowledge-product': '知识库管理 > 产品知识库',
+        'knowledge-symptom': '知识库管理 > 症状-风险库',
+        'agent-workflow': 'Agent 配置 > 工作流配置',
+        'agent-dialog': 'Agent 配置 > 对话流配置',
+        'agent-prompt': 'Agent 配置 > Prompt 管理',
+        'user-list': '用户管理 > 用户列表',
+        'user-profile': '用户管理 > 用户画像管理',
+        'user-tags': '用户管理 > 画像标签管理',
+        'user-segment': '用户管理 > 分群管理',
+        'chat-monitor': '对话监控',
+        'analytics': '数据看板',
+        'case': 'Case 管理',
+        'settings-alert': '系统设置 > 告警配置',
+        'settings-gray': '系统设置 > 灰度发布',
+        'settings-permission': '系统设置 > 权限管理',
+        'settings-service': '系统设置 > 客服配置'
+    };
+    document.getElementById('currentPage').textContent = pageNames[pageId] || '仪表盘';
+}
+
+// Tab切换
+document.querySelectorAll('.tabs').forEach(tabs => {
+    tabs.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            tabs.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+});
+</script>
+
+</body>
+</html>
