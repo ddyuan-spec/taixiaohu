@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>泰小虎 - 智能健康导购助手</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #FF6B35;
+            --primary-light: #FFF5F0;
+            --secondary: #2D9D78;
+            --secondary-light: #F0FFF5;
+            --warning: #E8A317;
+            --danger: #D94F4F;
+            --success: #4CAF50;
+            --text-primary: #1A1A1A;
+            --text-secondary: #4A4A4A;
+            --text-placeholder: #999999;
+            --bg-page: #F5F5F5;
+            --bg-card: #FFFFFF;
+            --bg-launch: #FFF8F3;
+            --purple-light: #F5F0FF;
+            --gray-light: #F5F5F5;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--bg-page);
+            color: var(--text-primary);
+            line-height: 1.6;
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* 页面容器 */
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        .page.active { display: block; }
+        
+        /* ========== 启动页 ========== */
+        .launch-page {
+            background: var(--bg-launch);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+            text-align: center;
+        }
+        .launch-page.active { display: flex; }
+        
+        .brand-logo {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary) 0%, #FF8F5C 100%);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(255, 107, 53, 0.3);
+        }
+        
+        .brand-name {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        
+        .brand-slogan {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+        
+        .mascot {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #FFE5D9 0%, #FFF 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 100px;
+            margin-bottom: 40px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .login-buttons {
+            width: 100%;
+            max-width: 320px;
+        }
+        
+        .btn {
+            width: 100%;
+            height: 56px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover { background: #E55A28; transform: translateY(-2px); }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            margin-top: 12px;
+        }
+        .btn-secondary:hover { background: var(--primary-light); }
+        
+        .agreement {
+            margin-top: 24px;
+            font-size: 14px;
+            color: var(--text-placeholder);
+        }
+        .agreement a { color: var(--primary); text-decoration: none; }
+        
+        /* ========== 意图选择页 ========== */
+        .intent-page {
+            background: white;
+            padding: 0;
+        }
+        .intent-page.active { display: flex; flex-direction: column; }
+        
+        .intent-header {
+            text-align: center;
+            padding: 60px 24px 30px;
+            background: linear-gradient(180deg, var(--primary-light) 0%, white 100%);
+        }
+        
+        .intent-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary) 0%, #FF8F5C 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 16px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(255, 107, 53, 0); }
+        }
+        
+        .intent-welcome {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .intent-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+        
+        .intent-options {
+            padding: 20px 24px;
+            flex: 1;
+        }
+        
+        .intent-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .intent-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        .intent-card.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        
+        .intent-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+        .intent-icon.health { background: var(--primary-light); }
+        .intent-icon.product { background: var(--secondary-light); }
+        .intent-icon.knowledge { background: var(--purple-light); }
+        .intent-icon.other { background: var(--gray-light); }
+        
+        .intent-info h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .intent-info p {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+        
+        .intent-arrow {
+            margin-left: auto;
+            font-size: 20px;
+            color: #ccc;
+        }
+        
+        /* ========== 主页面（带Tab） ========== */
+        .main-page {
+            padding-bottom: 70px;
+        }
+        
+        /* 底部Tab */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            height: 65px;
+            background: white;
+            display: flex;
+            border-top: 1px solid #eee;
+            z-index: 100;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+            color: var(--text-placeholder);
+            transition: all 0.3s;
+        }
+        .tab-item.active { color: var(--primary); }
+        .tab-item .icon { font-size: 24px; }
+        .tab-item .label { font-size: 12px; }
+        
+        /* ========== AI对话页 ========== */
+        .chat-page { background: var(--bg-page); }
+        
+        .chat-header {
+            background: white;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .chat-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .intent-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .intent-tag .change-btn {
+            font-size: 12px;
+            opacity: 0.8;
+            cursor: pointer;
+        }
+        
+        .chat-messages {
+            padding: 16px;
+            min-height: calc(100vh - 200px);
+        }
+        
+        .message {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.user { flex-direction: row-reverse; }
+        
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .message.ai .message-avatar { background: linear-gradient(135deg, var(--primary) 0%, #FF8F5C 100%); }
+        .message.user .message-avatar { background: var(--secondary); }
+        
+        .message-bubble {
+            max-width: 75%;
+            padding: 14px 18px;
+            border-radius: 18px;
+            font-size: 17px;
+            line-height: 1.6;
+        }
+        .message.ai .message-bubble {
+            background: white;
+            border-bottom-left-radius: 4px;
+        }
+        .message.user .message-bubble {
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 8px 0;
+        }
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
+        }
+        
+        /* 产品推荐卡片 */
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            margin-top: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .product-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+        }
+        .product-item:last-child { border-bottom: none; }
+        .product-item:hover { background: #fafafa; }
+        .product-img {
+            width: 60px;
+            height: 60px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+        .product-info { flex: 1; }
+        .product-name { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .product-desc { font-size: 14px; color: var(--text-secondary); }
+        .product-price { color: var(--danger); font-weight: 600; margin-top: 4px; }
+        
+        /* 输入区域 */
+        .chat-input-area {
+            position: fixed;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: white;
+            padding: 12px 16px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        
+        .voice-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .chat-input {
+            flex: 1;
+            min-height: 44px;
+            max-height: 100px;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 22px;
+            font-size: 17px;
+            resize: none;
+            outline: none;
+            font-family: inherit;
+        }
+        .chat-input:focus { border-color: var(--primary); }
+        
+        .send-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+        .send-btn:hover { background: #E55A28; }
+        .send-btn:disabled { background: #ccc; cursor: not-allowed; }
+        
+        /* ========== 产品列表页 ========== */
+        .product-page { background: var(--bg-page); }
+        
+        .page-header {
+            background: white;
+            padding: 16px 24px;
+            font-size: 20px;
+            font-weight: 600;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .product-list {
+            padding: 16px;
+        }
+        
+        .product-list-item {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .product-list-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        
+        .product-list-img {
+            width: 80px;
+            height: 80px;
+            background: #f5f5f5;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+        
+        .product-list-info { flex: 1; }
+        .product-list-name { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+        .product-list-desc { font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; }
+        .product-list-price { font-size: 20px; color: var(--danger); font-weight: 600; }
+        .product-list-price span { font-size: 14px; }
+        
+        .product-tag {
+            display: inline-block;
+            background: var(--secondary-light);
+            color: var(--secondary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+        
+        /* ========== 个人中心页 ========== */
+        .profile-page { background: var(--bg-page); }
+        
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #FF8F5C 100%);
+            padding: 40px 24px;
+            text-align: center;
+            color: white;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+        
+        .profile-name { font-size: 22px; font-weight: 600; }
+        .profile-phone { font-size: 16px; opacity: 0.8; }
+        
+        .profile-menu {
+            padding: 16px;
+        }
+        
+        .menu-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+        .menu-item:hover { background: #fafafa; }
+        .menu-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-light);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .menu-text { flex: 1; font-size: 17px; }
+        .menu-arrow { color: #ccc; }
+        
+        /* ========== 意图切换弹窗 ========== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px 20px 0 0;
+            width: 100%;
+            max-width: 430px;
+            padding: 24px;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-intent-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .modal-intent-card:hover { background: #f5f5f5; }
+        .modal-intent-card.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        
+        .modal-close {
+            margin-top: 20px;
+            text-align: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 430px) {
+            body { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== 启动页 ========== -->
+<div class="page launch-page active" id="launchPage">
+    <div class="brand-logo">🐯</div>
+    <h1 class="brand-name">泰小虎</h1>
+    <p class="brand-slogan">您的智能健康导购助手</p>
+    <div class="mascot">🐯</div>
+    <div class="login-buttons">
+        <button class="btn btn-primary" onclick="goToIntent()">
+            📱 手机号一键登录
+        </button>
+        <button class="btn btn-secondary" onclick="goToIntent()">
+            手机号登录
+        </button>
+        <p class="agreement">
+            登录即表示同意 <a href="#">用户协议</a> 和 <a href="#">隐私政策</a>
+        </p>
+    </div>
+</div>
+
+<!-- ========== 意图选择页 ========== -->
+<div class="page intent-page" id="intentPage">
+    <div class="intent-header">
+        <div class="intent-avatar">🐯</div>
+        <h2 class="intent-welcome">您好！我是泰小虎，<br>您的健康顾问。</h2>
+        <p class="intent-subtitle">请问今天想聊点什么？</p>
+    </div>
+    <div class="intent-options">
+        <div class="intent-card" onclick="selectIntent('health')">
+            <div class="intent-icon health">🏥</div>
+            <div class="intent-info">
+                <h3>健康咨询</h3>
+                <p>身体不舒服，想问问症状</p>
+            </div>
+            <span class="intent-arrow">→</span>
+        </div>
+        <div class="intent-card" onclick="selectIntent('product')">
+            <div class="intent-icon product">🛒</div>
+            <div class="intent-info">
+                <h3>产品咨询</h3>
+                <p>想了解或购买保健品</p>
+            </div>
+            <span class="intent-arrow">→</span>
+        </div>
+        <div class="intent-card" onclick="selectIntent('knowledge')">
+            <div class="intent-icon knowledge">📚</div>
+            <div class="intent-info">
+                <h3>健康知识</h3>
+                <p>学习健康养生知识</p>
+            </div>
+            <span class="intent-arrow">→</span>
+        </div>
+        <div class="intent-card" onclick="selectIntent('other')">
+            <div class="intent-icon other">💬</div>
+            <div class="intent-info">
+                <h3>其他问题</h3>
+                <p>其他需要帮助的事</p>
+            </div>
+            <span class="intent-arrow">→</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========== AI对话页 ========== -->
+<div class="page chat-page main-page" id="chatPage">
+    <div class="chat-header">
+        <div class="chat-header-left">
+            <div class="intent-tag" id="currentIntentTag">
+                <span>🏥</span>
+                <span>健康咨询</span>
+                <span class="change-btn" onclick="showIntentModal()">切换</span>
+            </div>
+        </div>
+        <span style="font-size: 14px; color: var(--text-secondary);">泰小虎</span>
+    </div>
+    
+    <div class="chat-messages" id="chatMessages">
+        <!-- 消息会动态添加 -->
+    </div>
+    
+    <div class="chat-input-area">
+        <button class="voice-btn" onclick="voiceInput()">🎤</button>
+        <textarea class="chat-input" id="chatInput" placeholder="请输入您的问题..." rows="1"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+    </div>
+    
+    <div class="tab-bar">
+        <div class="tab-item active" onclick="switchTab('chat')">
+            <span class="icon">💬</span>
+            <span class="label">AI问诊</span>
+        </div>
+        <div class="tab-item" onclick="switchTab('health')">
+            <span class="icon">❤️</span>
+            <span class="label">健康自查</span>
+        </div>
+        <div class="tab-item" onclick="switchTab('product')">
+            <span class="icon">🛒</span>
+            <span class="label">好物推荐</span>
+        </div>
+        <div class="tab-item" onclick="switchTab('profile')">
+            <span class="icon">👤</span>
+            <span class="label">我的</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========== 产品列表页 ========== -->
+<div class="page product-page main-page" id="productPage">
+    <div class="page-header">好物推荐</div>
+    <div class="product-list">
+        <div class="product-list-item" onclick="showProductDetail('钙片')">
+            <div class="product-list-img">💊</div>
+            <div class="product-list-info">
+                <div class="product-list-name">中老年高钙片</div>
+                <div class="product-list-desc">补充钙质，强健骨骼，适合中老年人日常补钙</div>
+                <div>
+                    <span class="product-tag">热销</span>
+                    <span class="product-tag">补钙</span>
+                </div>
+                <div class="product-list-price"><span>¥</span>89<span>/瓶</span></div>
+            </div>
+        </div>
+        <div class="product-list-item" onclick="showProductDetail('氨糖')">
+            <div class="product-list-img">💊</div>
+            <div class="product-list-info">
+                <div class="product-list-name">氨糖软骨素钙片</div>
+                <div class="product-list-desc">关节养护，缓解关节不适，含氨糖+软骨素</div>
+                <div>
+                    <span class="product-tag">推荐</span>
+                    <span class="product-tag">关节</span>
+                </div>
+                <div class="product-list-price"><span>¥</span>168<span>/瓶</span></div>
+            </div>
+        </div>
+        <div class="product-list-item" onclick="showProductDetail('鱼油')">
+            <div class="product-list-img">💊</div>
+            <div class="product-list-info">
+                <div class="product-list-name">深海鱼油软胶囊</div>
+                <div class="product-list-desc">富含Omega-3，心脑血管养护，调节血脂</div>
+                <div>
+                    <span class="product-tag">心脑血管</span>
+                </div>
+                <div class="product-list-price"><span>¥</span>128<span>/瓶</span></div>
+            </div>
+        </div>
+        <div class="product-list-item" onclick="showProductDetail('维生素')">
+            <div class="product-list-img">💊</div>
+            <div class="product-list-info">
+                <div class="product-list-name">复合维生素B族</div>
+                <div class="product-list-desc">缓解疲劳，调节神经系统，增强免疫力</div>
+                <div>
+                    <span class="product-tag">免疫力</span>
+                </div>
+                <div class="product-list-price"><span>¥</span>68<span>/瓶</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-bar">
+        <div class="tab-item" onclick="switchTab('chat')">
+            <span class="icon">💬</span>
+            <span class="label">AI问诊</span>
+        </div>
+        <div class="tab-item" onclick="switchTab('health')">
+            <span class="icon">❤️</span>
+            <span class="label">健康自查</span>
+        </div>
+        <div class="tab-item active">
+            <span class="icon">🛒</span>
+            <span class="label">好物推荐</span>
+        </div>
+        <div class="tab-item" onclick="switchTab('profile')">
+            <span class="icon">👤</span>
+            <span class="label">我的</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========== 个人中心页 ========== -->
+<div class="page profile-page main-page" id="profilePage">
+    <div class="profile-header">
+        <div class="profile-avatar">👤</div>
+        <div class="profile-name">泰小虎用户</div>
+        <div class="profile-phone">138****8888</div>
+    </div>
+    <div class="profile-menu">
+        <div class="menu-item" onclick="alert('健康档案功能开发中')">
+            <div class="menu-icon">📋</div>
+            <div class="menu-text">健康档案</div>
+            <span class="menu-arrow">›</span>
+        </div>
+        <div class="menu-item" onclick="alert('我的订单功能开发中')">
+            <div class="menu-icon">📦</div>
+            <div class="menu-text">我的订单</div>
+            <span class="menu-arrow">›</span>
+        </div>
+        <div class="menu-item" onclick="alert('收货地址功能开发中')">
+            <div class="menu-icon">📍</div>
+            <div class="menu-text">收货地址</div>
+            <span class="menu-arrow">›</span>
+        </div>
+        <div class="menu-item" onclick="alert('意见反馈功能开发中')">
+            <div class="menu-icon">💭</div>
+            <div class="menu-text">意见反馈</div>
+            <span class="menu-arrow">›</span>
+        </div>
+        <div class="menu-item" onclick="alert('设置功能开发中')">
+            <div class="menu-icon">⚙️</div>
+            <div class="menu-text">设置</div>
+            <span class="menu-arrow">›</span>
+        </div>
+    </div>
+    <div class="tab-bar">
+        <div class="tab-item" onclick="switchTab('chat')">
+            <span class="icon">💬</span>
+            <span class="label">AI问诊</span>
+        </div>
+        <div class="tab-item" onclick="switchTab('health')">
+            <span class="icon">❤️</span>
+            <span class="label">健康自查</span>
+        </div>
+        <div class="tab-item" onclick="switchTab('product')">
+            <span class="icon">🛒</span>
+            <span class="label">好物推荐</span>
+        </div>
+        <div class="tab-item active">
+            <span class="icon">👤</span>
+            <span class="label">我的</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========== 意图切换弹窗 ========== -->
+<div class="modal-overlay" id="intentModal">
+    <div class="modal-content">
+        <div class="modal-title">选择咨询类型</div>
+        <div class="modal-intent-card" onclick="changeIntent('health')">
+            <div class="intent-icon health">🏥</div>
+            <div class="intent-info">
+                <h3>健康咨询</h3>
+                <p>身体不舒服，想问问症状</p>
+            </div>
+        </div>
+        <div class="modal-intent-card" onclick="changeIntent('product')">
+            <div class="intent-icon product">🛒</div>
+            <div class="intent-info">
+                <h3>产品咨询</h3>
+                <p>想了解或购买保健品</p>
+            </div>
+        </div>
+        <div class="modal-intent-card" onclick="changeIntent('knowledge')">
+            <div class="intent-icon knowledge">📚</div>
+            <div class="intent-info">
+                <h3>健康知识</h3>
+                <p>学习健康养生知识</p>
+            </div>
+        </div>
+        <div class="modal-intent-card" onclick="changeIntent('other')">
+            <div class="intent-icon other">💬</div>
+            <div class="intent-info">
+                <h3>其他问题</h3>
+                <p>其他需要帮助的事</p>
+            </div>
+        </div>
+        <div class="modal-close" onclick="hideIntentModal()">取消</div>
+    </div>
+</div>
+
+<script>
+    // 状态管理
+    let currentIntent = 'health';
+    let chatHistory = [];
+    
+    // 意图配置
+    const intentConfig = {
+        health: { icon: '🏥', name: '健康咨询', greeting: '您好！请问今天想咨询什么健康问题呢？比如哪里不舒服、想了解什么症状？' },
+        product: { icon: '🛒', name: '产品咨询', greeting: '欢迎了解健康产品！请问您想为哪方面的健康需求选购产品呢？' },
+        knowledge: { icon: '📚', name: '健康知识', greeting: '想学习健康知识吗？请问您对什么健康话题感兴趣？' },
+        other: { icon: '💬', name: '其他问题', greeting: '请问有什么可以帮您的？' }
+    };
+    
+    // AI回复模拟数据
+    const aiResponses = {
+        health: {
+            default: '好的，我来帮您分析一下。请问您具体是哪里不舒服呢？比如头晕、关节疼、还是睡眠不好？',
+            keywords: {
+                '头晕': '头晕的情况有很多种原因。请问您是：\n\n1. 起床或站起来时头晕？\n2. 一整天都晕晕的？\n3. 偶尔头晕？\n\n另外，您今年多大年纪了？有没有高血压或糖尿病？',
+                '关节疼': '关节疼痛在中老年人中很常见。请问是哪个关节疼呢？膝盖、手腕还是肩膀？疼痛持续多久了？',
+                '失眠': '睡眠问题确实很困扰人。请问您是入睡困难，还是容易醒？每晚大概能睡几个小时？',
+                '血压': '血压问题需要重视。请问您的血压大概是多少？有没有在吃降压药？'
+            }
+        },
+        product: {
+            default: '好的，我来为您推荐合适的产品。请问您主要是想改善哪方面的问题呢？比如：\n\n• 骨骼关节健康\n• 心脑血管养护\n• 睡眠改善\n• 免疫力提升',
+            keywords: {
+                '骨骼': '根据您的需求，我为您推荐以下产品：',
+                '关节': '关节养护方面，我推荐以下产品：',
+                '睡眠': '改善睡眠方面，我推荐以下产品：',
+                '心脏': '心脑血管养护方面，我推荐以下产品：'
+            }
+        },
+        knowledge: {
+            default: '健康知识很重要！请问您想了解哪方面的内容呢？比如：\n\n• 高血压怎么调理？\n• 糖尿病饮食注意事项\n• 中老年人如何补钙？\n• 怎样改善睡眠质量？',
+            keywords: {
+                '高血压': '高血压的日常调理很重要，我给您几个建议：\n\n1. 饮食要清淡，少吃咸的\n2. 每天适量运动，比如散步30分钟\n3. 保持心情愉快，不要生气着急\n4. 按时吃药，定期测量血压\n\n您对这个话题感兴趣的话，我们有一些相关的保健产品，可以帮助您更好地改善这个问题。需要我为您介绍一下吗？',
+                '补钙': '中老年人补钙很重要，我给您说说：\n\n1. 多吃含钙高的食物：牛奶、豆腐、虾皮\n2. 适当晒太阳，帮助钙吸收\n3. 可以补充钙片，选择好吸收的\n\n需要我为您推荐一些补钙产品吗？'
+            }
+        },
+        other: {
+            default: '好的，请问您有什么问题需要帮助？我会尽力为您解答。'
+        }
+    };
+    
+    // 产品数据
+    const products = {
+        health: [
+            { name: '中老年高钙片', desc: '补充钙质，强健骨骼', price: '¥89', icon: '💊' },
+            { name: '氨糖软骨素', desc: '关节养护，缓解不适', price: '¥168', icon: '💊' }
+        ],
+        product: [
+            { name: '深海鱼油', desc: '心脑血管养护', price: '¥128', icon: '💊' },
+            { name: '复合维生素B', desc: '增强免疫力', price: '¥68', icon: '💊' }
+        ]
+    };
+    
+    // 页面切换
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+    }
+    
+    function goToIntent() {
+        showPage('intentPage');
+    }
+    
+    function selectIntent(intent) {
+        currentIntent = intent;
+        showPage('chatPage');
+        updateIntentTag();
+        initChat();
+    }
+    
+    function updateIntentTag() {
+        const config = intentConfig[currentIntent];
+        document.getElementById('currentIntentTag').innerHTML = `
+            <span>${config.icon}</span>
+            <span>${config.name}</span>
+            <span class="change-btn" onclick="showIntentModal()">切换</span>
+        `;
+    }
+    
+    // 初始化聊天
+    function initChat() {
+        const config = intentConfig[currentIntent];
+        document.getElementById('chatMessages').innerHTML = '';
+        chatHistory = [];
+        
+        // 添加AI欢迎语
+        setTimeout(() => {
+            addAIMessage(config.greeting);
+        }, 500);
+    }
+    
+    // 添加消息
+    function addUserMessage(text) {
+        const messagesDiv = document.getElementById('chatMessages');
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'message user';
+        msgDiv.innerHTML = `
+            <div class="message-avatar">👤</div>
+            <div class="message-bubble">${text}</div>
+        `;
+        messagesDiv.appendChild(msgDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        chatHistory.push({ role: 'user', text });
+    }
+    
+    function addAIMessage(text, includeProducts = false) {
+        const messagesDiv = document.getElementById('chatMessages');
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'message ai';
+        
+        let html = `
+            <div class="message-avatar">🐯</div>
+            <div class="message-bubble">${text.replace(/\n/g, '<br>')}</div>
+        `;
+        
+        if (includeProducts) {
+            const productList = products[currentIntent] || products.health;
+            html += `
+                <div class="product-card">
+                    ${productList.map(p => `
+                        <div class="product-item" onclick="showProductDetail('${p.name}')">
+                            <div class="product-img">${p.icon}</div>
+                            <div class="product-info">
+                                <div class="product-name">${p.name}</div>
+                                <div class="product-desc">${p.desc}</div>
+                                <div class="product-price">${p.price}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        msgDiv.innerHTML = html;
+        messagesDiv.appendChild(msgDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        chatHistory.push({ role: 'ai', text });
+    }
+    
+    function showTyping() {
+        const messagesDiv = document.getElementById('chatMessages');
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message ai typing';
+        typingDiv.id = 'typingIndicator';
+        typingDiv.innerHTML = `
+            <div class="message-avatar">🐯</div>
+            <div class="message-bubble">
+                <div class="typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        `;
+        messagesDiv.appendChild(typingDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+    
+    function hideTyping() {
+        const typing = document.getElementById('typingIndicator');
+        if (typing) typing.remove();
+    }
+    
+    // 发送消息
+    function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const text = input.value.trim();
+        if (!text) return;
+        
+        addUserMessage(text);
+        input.value = '';
+        
+        // 显示输入中
+        showTyping();
+        
+        // 模拟AI回复
+        setTimeout(() => {
+            hideTyping();
+            const response = getAIResponse(text);
+            const includeProducts = shouldShowProducts(text);
+            addAIMessage(response, includeProducts);
+        }, 1000 + Math.random() * 1000);
+    }
+    
+    function getAIResponse(text) {
+        const responses = aiResponses[currentIntent];
+        
+        // 检查关键词
+        for (const [keyword, reply] of Object.entries(responses.keywords || {})) {
+            if (text.includes(keyword)) {
+                return reply;
+            }
+        }
+        
+        return responses.default;
+    }
+    
+    function shouldShowProducts(text) {
+        const productKeywords = ['推荐', '产品', '买', '骨骼', '关节', '睡眠', '心脏'];
+        return productKeywords.some(k => text.includes(k));
+    }
+    
+    // 语音输入模拟
+    function voiceInput() {
+        alert('🎤 语音输入功能演示\n\n实际应用中，这里会调用语音识别API，将语音转换为文字。');
+    }
+    
+    // Tab切换
+    function switchTab(tab) {
+        if (tab === 'chat') {
+            showPage('chatPage');
+        } else if (tab === 'product') {
+            showPage('productPage');
+        } else if (tab === 'profile') {
+            showPage('profilePage');
+        } else if (tab === 'health') {
+            alert('健康自查功能开发中，敬请期待！');
+        }
+    }
+    
+    // 意图切换弹窗
+    function showIntentModal() {
+        document.getElementById('intentModal').classList.add('active');
+    }
+    
+    function hideIntentModal() {
+        document.getElementById('intentModal').classList.remove('active');
+    }
+    
+    function changeIntent(intent) {
+        currentIntent = intent;
+        hideIntentModal();
+        updateIntentTag();
+        initChat();
+    }
+    
+    // 产品详情
+    function showProductDetail(name) {
+        alert(`📦 ${name}\n\n产品详情页功能演示。\n\n实际应用中，这里会跳转到产品详情页，展示完整的产品信息、用户评价、购买按钮等。`);
+    }
+    
+    // 输入框自动调整高度
+    document.getElementById('chatInput').addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+    });
+    
+    // 回车发送
+    document.getElementById('chatInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+    
+    // 点击弹窗外部关闭
+    document.getElementById('intentModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            hideIntentModal();
+        }
+    });
+</script>
+
+</body>
+</html>
