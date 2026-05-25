@@ -66,6 +66,7 @@ const htmlTemplate = (title, body) => `<!DOCTYPE html>
         code { background: #f0f0f5; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; color: #c7254e; }
         pre { background: #1e1e2e; color: #cdd6f4; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 16px 0; font-size: 0.88em; line-height: 1.6; }
         pre code { background: none; color: inherit; padding: 0; }
+        pre.ascii-art { background: #f8f8ff; color: #2d2d5e; border: 1px solid #e0e0e8; font-family: "Consolas", "Monaco", "Courier New", monospace; }
         blockquote { border-left: 4px solid #667eea; background: #f8f8ff; padding: 12px 20px; margin: 12px 0; color: #555; }
         strong { color: #1a1a2e; }
         hr { border: none; border-top: 1px solid #e0e0e8; margin: 24px 0; }
@@ -93,15 +94,31 @@ const htmlTemplate = (title, body) => `<!DOCTYPE html>
 </body>
 </html>`;
 
+// Check if content contains ASCII art box drawing characters
+function containsAsciiArt(text) {
+    const boxChars = /[┌┐└┘├┤┬┴┼─│┏┓┗┛┣┫┳┻╋━┃]/;
+    return boxChars.test(text);
+}
+
 // Simple markdown to HTML converter
 function mdToHtml(md) {
     let html = md;
-    // Escape HTML entities in code blocks first
+    
+    // Process code blocks first, but handle ASCII art separately
     const codeBlocks = [];
+    const asciiArtBlocks = [];
+    
     html = html.replace(/```[\s\S]*?```/g, match => {
-        codeBlocks.push(match);
-        return `%%CODEBLOCK_${codeBlocks.length - 1}%%`;
+        // Check if this is ASCII art (contains box drawing characters)
+        if (containsAsciiArt(match)) {
+            asciiArtBlocks.push(match);
+            return `%%ASCIIART_${asciiArtBlocks.length - 1}%%`;
+        } else {
+            codeBlocks.push(match);
+            return `%%CODEBLOCK_${codeBlocks.length - 1}%%`;
+        }
     });
+    
     const inlineCodes = [];
     html = html.replace(/`[^`]+`/g, match => {
         inlineCodes.push(match);
@@ -149,12 +166,21 @@ function mdToHtml(md) {
     // Remove empty paragraphs
     html = html.replace(/<p>\s*<\/p>/g, '');
 
+    // Restore ASCII art blocks with special styling
+    asciiArtBlocks.forEach((block, i) => {
+        const code = block.replace(/```\w*\n?/, '').replace(/```$/, '');
+        // Preserve whitespace and line breaks for ASCII art
+        const formattedCode = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        html = html.replace(`%%ASCIIART_${i}%%`, `<pre class="ascii-art"><code>${formattedCode}</code></pre>`);
+    });
+
     // Restore code blocks
     codeBlocks.forEach((block, i) => {
-        const lang = block.match(/```(\w+)/);
         const code = block.replace(/```\w*\n?/, '').replace(/```$/, '');
         html = html.replace(`%%CODEBLOCK_${i}%%`, `<pre><code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`);
     });
+    
+    // Restore inline codes
     inlineCodes.forEach((code, i) => {
         const inner = code.replace(/`/g, '');
         html = html.replace(`%%INLINECODE_${i}%%`, `<code>${inner}</code>`);
