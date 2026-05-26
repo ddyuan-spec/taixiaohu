@@ -551,9 +551,15 @@
         <table>
             <tr><th>配置项</th><th>设置值</th></tr>
             <tr><td>聚合策略</td><td>返回每个分组中第一个非空的值</td></tr>
-            <tr><td>Group1 变量名</td><td>response</td></tr>
+            <tr><td>Group1 变量名</td><td><code>output</code>（在输入框中手动填写）</td></tr>
+            <tr><td>Group1 类型</td><td>String</td></tr>
             <tr><td>Group1 来源</td><td>症状分析.output / 产品咨询.output / 知识问答.output / 边界处理.output</td></tr>
         </table>
+        
+        <div class="warning-box">
+            <h4>⚠️ 注意</h4>
+            <p>Group1 的变量名需要<strong>手动输入</strong>，在下拉框下方的输入框中填写 <code>output</code>，然后选择类型为 <strong>String</strong>。</p>
+        </div>
         
         <h4>配置示意图</h4>
         <pre style="background:#f5f5fa; padding:16px; border-radius:8px; overflow-x:auto;">
@@ -574,9 +580,15 @@
         </table>
         
         <div class="success-box">
-            <h4>✅ 完成配置</h4>
-            <p>配置完成后，无论用户选择哪个意图分支，最终都会通过变量聚合节点输出到结束节点，Bot 会将结果回复给用户。</p>
-        </div>
+             <h4>✅ 完成配置</h4>
+             <p>配置完成后，无论用户选择哪个意图分支，最终都会通过变量聚合节点输出到结束节点，Bot 会将结果回复给用户。</p>
+         </div>
+         
+         <div class="warning-box">
+             <h4>⚠️ 结束节点参数值对应关系</h4>
+             <p>如果变量聚合节点的 Group1 变量名是 <code>output</code>，则结束节点的参数值填写：<code>{{聚合各分支输出.output}}</code></p>
+             <p>如果变量聚合节点的 Group1 变量名是 <code>response</code>，则结束节点的参数值填写：<code>{{聚合各分支输出.response}}</code></p>
+         </div>
         
         <hr>
         
