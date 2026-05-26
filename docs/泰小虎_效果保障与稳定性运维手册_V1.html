@@ -174,7 +174,7 @@
 <strong>验证脚本示例</strong>：
 
 ```python
-<h1>伪代码：验证RAG引用标注</h1>
+# 伪代码：验证RAG引用标注
 def test_rag_citation():
     # 抽取100条对话
     conversations = get_random_conversations(100)
@@ -229,7 +229,7 @@ def test_rag_citation():
 <strong>验证脚本示例</strong>：
 
 ```python
-<h1>伪代码：验证关键词过滤</h1>
+# 伪代码：验证关键词过滤
 def test_keyword_filter():
     test_cases = [
         ("我想用保健品替代药物治疗糖尿病", True),
@@ -279,7 +279,7 @@ def test_keyword_filter():
 <strong>验证脚本示例</strong>：
 
 ```python
-<h1>伪代码：验证输出格式</h1>
+# 伪代码：验证输出格式
 def test_output_format():
     # 涉及症状的场景
     symptom_cases = get_symptom_conversations()
@@ -350,7 +350,7 @@ def test_output_format():
 <strong>验证用例</strong>：
 
 ```python
-<h1>伪代码：Temperature对比测试</h1>
+# 伪代码：Temperature对比测试
 def test_temperature_comparison():
     question = "高血压患者饮食应注意什么？"
     
@@ -429,7 +429,7 @@ def test_temperature_comparison():
 <strong>验证脚本示例</strong>：
 
 ```python
-<h1>伪代码：超时处理测试</h1>
+# 伪代码：超时处理测试
 def test_timeout_handling():
     # 模拟慢响应
     with mock_slow_api(delay=35):
@@ -462,7 +462,7 @@ def test_timeout_handling():
 <strong>验证脚本示例</strong>：
 
 ```python
-<h1>伪代码：重试机制测试</h1>
+# 伪代码：重试机制测试
 def test_retry_mechanism():
     call_count = 0
     
@@ -541,7 +541,7 @@ def test_retry_mechanism():
 <strong>验证脚本示例</strong>：
 
 ```python
-<h1>伪代码：回答一致性测试</h1>
+# 伪代码：回答一致性测试
 def test_response_consistency():
     question = "高血压患者能喝酒吗？"
     
@@ -590,7 +590,7 @@ def test_response_consistency():
 <h3>6.1 周报模板</h3>
 
 ```markdown
-<h1>效果保障周报 - 2026-XX-XX</h1>
+<h4>效果保障周报 - 2026-XX-XX</h4>
 
 <h2>一、验证执行情况</h2>
 
