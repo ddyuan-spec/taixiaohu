@@ -270,11 +270,19 @@
 请判断用户意图，只输出意图分类。</div>
         </div>
         
-        <h4>输出参数</h4>
-        <table>
-            <tr><th>参数名</th><th>参数值</th></tr>
-            <tr><td>intent</td><td>{{意图识别.output}}</td></tr>
-        </table>
+        <h4>输出参数（关键配置）</h4>
+        <div class="warning-box">
+            <h4>⚠️ 重要：大模型节点输出参数配置方式</h4>
+            <p>在 Coze 单 Agent 模式中，大模型节点的输出需要通过<strong>「输出格式」</strong>配置，而不是直接设置参数值。</p>
+        </div>
+        
+        <p><strong>配置步骤：</strong></p>
+        <ol>
+            <li>在意图识别节点的<strong>「输出」</strong>区域，点击<strong>「输出格式 JSON」</strong></li>
+            <li>选择<strong>「String」</strong>类型</li>
+            <li>变量名填写：<code>intent</code></li>
+            <li>这样大模型的输出会自动赋值给 <code>{{意图识别.intent}}</code></li>
+        </ol>
         
         <hr>
         
@@ -285,10 +293,10 @@
         <h4>分支条件配置</h4>
         <table>
             <tr><th>分支名称</th><th>条件表达式</th></tr>
-            <tr><td>健康咨询</td><td>{{意图识别.output}} == "health_consult"</td></tr>
-            <tr><td>产品咨询</td><td>{{意图识别.output}} == "product_consult"</td></tr>
-            <tr><td>健康知识</td><td>{{意图识别.output}} == "knowledge_query"</td></tr>
-            <tr><td>其他</td><td>{{意图识别.output}} == "other"</td></tr>
+            <tr><td>健康咨询</td><td>{{意图识别.intent}} == "health_consult"</td></tr>
+            <tr><td>产品咨询</td><td>{{意图识别.intent}} == "product_consult"</td></tr>
+            <tr><td>健康知识</td><td>{{意图识别.intent}} == "knowledge_query"</td></tr>
+            <tr><td>其他</td><td>{{意图识别.intent}} == "other"</td></tr>
         </table>
         
         <hr>
