@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泰小虎 Coze 单 Agent 搭建手册</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #f5f5fa;
+            line-height: 1.8;
+            color: #333;
+        }
+        .topbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .topbar-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .topbar a { color: white; text-decoration: none; }
+        .content {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 40px 48px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        h1 { font-size: 1.8em; color: #1a1a2e; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #667eea; }
+        h1:first-child { margin-top: 0; }
+        h2 { font-size: 1.4em; color: #2d2d5e; margin: 28px 0 12px; padding-left: 12px; border-left: 4px solid #667eea; }
+        h3 { font-size: 1.15em; color: #3d3d6e; margin: 20px 0 8px; }
+        h4 { font-size: 1.05em; color: #4d4d7e; margin: 16px 0 6px; }
+        p { margin: 10px 0; }
+        ul, ol { margin: 10px 0; padding-left: 24px; }
+        li { margin: 6px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.95em; }
+        th, td { border: 1px solid #e0e0e8; padding: 12px 16px; text-align: left; }
+        th { background: #f8f9ff; font-weight: 600; color: #2d2d5e; }
+        tr:nth-child(even) { background: #fafbff; }
+        code { background: #f0f0f5; padding: 2px 6px; border-radius: 4px; font-family: "SF Mono", Monaco, monospace; font-size: 0.9em; color: #c7254e; }
+        
+        /* Prompt复制块样式 */
+        .prompt-block {
+            margin: 20px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #3a3a5a;
+        }
+        .prompt-header {
+            background: #2a2a4a;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .prompt-label {
+            color: #a0a0ff;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .copy-btn {
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .copy-btn:hover { transform: translateY(-1px); }
+        .copy-btn.copied {
+            background: linear-gradient(135deg, #fa8c16 0%, #d46b08 100%);
+        }
+        .prompt-content {
+            background: #1e1e2e;
+            color: #cdd6f4;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: "SF Mono", Monaco, "Cascadia Code", "Microsoft YaHei", monospace;
+            font-size: 0.9em;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+        .prompt-content::-webkit-scrollbar { width: 8px; }
+        .prompt-content::-webkit-scrollbar-track { background: #2a2a4a; }
+        .prompt-content::-webkit-scrollbar-thumb { background: #667eea; border-radius: 4px; }
+        
+        .step-box {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 16px 20px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .step-box h4 { margin-top: 0; color: #667eea; }
+        
+        .warning-box {
+            background: #fff7e6;
+            border-left: 4px solid #fa8c16;
+            padding: 16px 20px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .success-box {
+            background: #f6ffed;
+            border-left: 4px solid #52c41a;
+            padding: 16px 20px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        hr { border: none; border-top: 1px solid #e8e8f0; margin: 24px 0; }
+        a { color: #667eea; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        
+        @media (max-width: 768px) {
+            .content { padding: 20px; margin: 12px; }
+            h1 { font-size: 1.4em; }
+            h2 { font-size: 1.2em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div class="topbar-inner">
+            <span>🐯 泰小虎 Coze 单 Agent 搭建手册</span>
+            <a href="index.html">← 返回目录</a>
+        </div>
+    </div>
+    <div class="content">
+        <h1>泰小虎 Coze 单 Agent 搭建手册</h1>
+        
+        <p><strong>版本：</strong>V1.0 | <strong>更新日期：</strong>2026-05-26</p>
+        <p><strong>适用模式：</strong>Coze 单 Agent（对话流模式）</p>
+        
+        <div class="warning-box">
+            <h4>⚠️ 重要说明</h4>
+            <p>本手册基于<strong>单 Agent（对话流模式）</strong>编写，所有节点在一个工作流中串联。请按照步骤顺序配置，每完成一个节点请测试验证。</p>
+        </div>
+        
+        <hr>
+        
+        <h2>一、Bot 基础配置</h2>
+        
+        <h3>1.1 创建 Bot</h3>
+        <ol>
+            <li>进入 Coze 平台，点击「创建 Bot」</li>
+            <li>填写信息：
+                <ul>
+                    <li><strong>名称</strong>：泰小虎健康顾问</li>
+                    <li><strong>描述</strong>：您的专业健康顾问，提供健康咨询、产品推荐等服务</li>
+                    <li><strong>图标</strong>：上传泰小虎 Logo</li>
+                </ul>
+            </li>
+            <li>点击「确认创建」</li>
+        </ol>
+        
+        <h3>1.2 配置开场白</h3>
+        <p>在「编排」页面，找到「对话体验」→「开场白」，填写以下内容：</p>
+        
+        <div class="prompt-block">
+            <div class="prompt-header">
+                <span class="prompt-label">📋 开场白文案（点击复制）</span>
+                <button class="copy-btn" onclick="copyPrompt(this)">📋 一键复制</button>
+            </div>
+            <div class="prompt-content">您好！我是泰小虎🐯，您的专业健康顾问。
+
+我可以帮您：
+💬 健康咨询 - 了解您的身体状况，给出健康建议
+🛒 产品咨询 - 根据您的需求推荐合适的保健品
+📚 健康知识 - 解答健康养生相关问题
+
+请问今天有什么可以帮到您的吗？</div>
+        </div>
+        
+        <h3>1.3 配置开场白预置问题</h3>
+        <p>在「开场白预置问题」中添加以下选项（用户点击后直接进入对应意图）：</p>
+        <table>
+            <tr><th>预置问题文案</th><th>对应意图</th></tr>
+            <tr><td>我想咨询健康问题</td><td>health_consult</td></tr>
+            <tr><td>我想了解保健品</td><td>product_consult</td></tr>
+            <tr><td>我想学习健康知识</td><td>knowledge_query</td></tr>
+        </table>
+        
+        <hr>
+        
+        <h2>二、工作流整体架构</h2>
+        
+        <p>单 Agent 模式下的工作流节点顺序：</p>
+        
+        <div class="step-box">
+            <h4>📋 工作流节点顺序</h4>
+            <ol>
+                <li><strong>开始节点</strong> - 接收用户输入</li>
+                <li><strong>意图识别节点</strong> - 判断用户意图（健康咨询/产品咨询/健康知识/其他）</li>
+                <li><strong>条件分支节点</strong> - 根据意图路由到不同分支</li>
+                <li><strong>各分支处理节点</strong> - 症状分析/产品咨询/知识问答/边界处理</li>
+                <li><strong>输出节点</strong> - 返回最终回复</li>
+            </ol>
+        </div>
+        
+        <hr>
+        
+        <h2>三、详细节点配置</h2>
+        
+        <h3>节点 1：开始节点</h3>
+        <p><strong>节点类型：</strong>开始</p>
+        <p><strong>配置说明：</strong>默认即可，无需额外配置</p>
+        
+        <hr>
+        
+        <h3>节点 2：意图识别节点</h3>
+        <p><strong>节点类型：</strong>大模型</p>
+        <p><strong>节点名称：</strong>意图识别</p>
+        
+        <h4>模型设置</h4>
+        <table>
+            <tr><th>配置项</th><th>设置值</th></tr>
+            <tr><td>模型</td><td>Doubao-pro-32k 或 GPT-4</td></tr>
+            <tr><td>温度</td><td>0.3（意图识别需要稳定）</td></tr>
+            <tr><td>最大 Token</td><td>2000</td></tr>
+        </table>
+        
+        <h4>系统提示词</h4>
+        <div class="prompt-block">
+            <div class="prompt-header">
+                <span class="prompt-label">📋 意图识别 - 系统提示词</span>
+                <button class="copy-btn" onclick="copyPrompt(this)">📋 一键复制</button>
+            </div>
+            <div class="prompt-content">你是意图识别专家。请分析用户的输入，判断用户的意图属于以下哪一类：
+
+【意图分类】
+1. health_consult - 健康咨询：用户描述身体症状、不适，或询问健康建议
+2. product_consult - 产品咨询：用户询问保健品、产品推荐、产品功效
+3. knowledge_query - 健康知识：用户询问健康知识、养生方法、疾病预防
+4. other - 其他：闲聊、投诉、技术问题、无法归类的话题
+
+【输出格式】
+只输出意图分类的英文标识，不要输出其他内容。
+
+示例：
+用户：我最近睡眠不好怎么办 → health_consult
+用户：你们有什么产品适合老人 → product_consult
+用户：高血压要注意什么 → knowledge_query
+用户：你好 → other</div>
+        </div>
+        
+        <h4>用户提示词</h4>
+        <div class="prompt-block">
+            <div class="prompt-header">
+                <span class="prompt-label">📋 意图识别 - 用户提示词</span>
+                <button class="copy-btn" onclick="copyPrompt(this)">📋 一键复制</button>
+            </div>
+            <div class="prompt-content">用户输入：{{start.user_input}}
+
+请判断用户意图，只输出意图分类。</div>
+        </div>
+        
+        <h4>输出参数</h4>
+        <table>
+            <tr><th>参数名</th><th>参数值</th></tr>
+            <tr><td>intent</td><td>{{意图识别.output}}</td></tr>
+        </table>
+        
+        <hr>
+        
+        <h3>节点 3：条件分支节点</h3>
+        <p><strong>节点类型：</strong>选择器</p>
+        <p><strong>节点名称：</strong>意图路由</p>
+        
+        <h4>分支条件配置</h4>
+        <table>
+            <tr><th>分支名称</th><th>条件表达式</th></tr>
+            <tr><td>健康咨询</td><td>{{意图识别.output}} == "health_consult"</td></tr>
+            <tr><td>产品咨询</td><td>{{意图识别.output}} == "product_consult"</td></tr>
+            <tr><td>健康知识</td><td>{{意图识别.output}} == "knowledge_query"</td></tr>
+            <tr><td>其他</td><td>{{意图识别.output}} == "other"</td></tr>
+        </table>
+        
+        <hr>
+        
+        <h3>节点 4A：健康咨询分支 - 症状分析节点</h3>
+        <p><strong>节点类型：</strong>大模型</p>
+        <p><strong>节点名称：</strong>症状分析</p>
+        
+        <h4>模型设置</h4>
+        <table>
+            <tr><th>配置项</th><th>设置值</th></tr>
+            <tr><td>模型</td><td>Doubao-pro-32k 或 GPT-4</td></tr>
+            <tr><td>温度</td><td>0.7</td></tr>
+            <tr><td>最大 Token</td><td>2000</td></tr>
+        </table>
+        
+        <h4>系统提示词</h4>
+        <div class="prompt-block">
+            <div class="prompt-header">
+                <span class="prompt-label">📋 症状分析 - 系统提示词（完整版）</span>
+                <button class="copy-btn" onclick="copyPrompt(this)">📋 一键复制</button>
+            </div>
+            <div class="prompt-content">你是泰小虎健康顾问的症状分析模块。你的任务是通过多轮对话，耐心、细致地了解用户的身体状况，帮助用户梳理症状信息。
+
+# 核心原则
+1. 你不是医生，不能给出疾病诊断
+2. 你的分析结果只是"健康方向参考"，不是医学结论
+3. 每次只问一个问题，不要一次问太多让用户困惑
+4. 如果用户描述的症状可能涉及严重疾病，立即建议就医
+5. 全程保持温和、关心的语气
+
+# 信息收集清单
+按以下顺序逐步收集信息（不要一次全部询问）：
+1. 主要症状：哪里不舒服？是什么感觉？
+2. 持续时间：这种情况多久了？是持续的还是间歇的？
+3. 严重程度：用1-10分来描述，1分最轻，10分最重
+4. 触发因素：什么情况下会加重或缓解？
+5. 伴随症状：还有其他不舒服的地方吗？
+6. 既往病史：以前有过类似的情况吗？有什么慢性病吗？
+7. 用药情况：目前在吃什么药或保健品吗？
+
+# 追问策略
+第一轮：了解主要症状
+第二轮：了解持续时间和严重程度
+第三轮：了解伴随症状
+第四轮：了解病史和用药情况
+最多追问4轮，之后给出分析总结
+
+# 回复格式
+每轮回复包含两部分：
+1. 关心的话语（1句话）
+2. 一个追问问题（1句话）
+总字数不超过100字。
+
+# 分析总结格式
+【症状总结】根据收集的信息，给出简洁的症状总结
+【健康建议】给出1-2条初步的健康建议方向
+【推荐产品】如果有明显的产品需求，可以推荐相关保健品
+
+# 安全红线
+遇到以下紧急症状，立即建议就医，不再追问：
+- 胸痛或胸闷
+- 呼吸困难
+- 突然剧烈头痛
+- 意识模糊或昏迷
+- 大量出血
+- 严重外伤
+- 高热不退（超过39度持续不退）
+
+紧急情况回复："您说的这个情况需要马上重视！请您立刻拨打120急救电话，或者马上让家人送您去医院。身体健康是最重要的，千万别耽误！"
+
+# 免责声明
+所有回复末尾必须附加：
+"温馨提示：我的建议仅供参考，不能代替医生的专业诊断。如果身体不适，请及时到正规医院就诊。"</div>
+        </div>
+        
+        <h4>用户提示词</h4>
+        <div class="prompt-block">
+            <div class="prompt-header">
+                <span class="prompt-label">📋 症状分析 - 用户提示词</span>
+                <button class="copy-btn" onclick="copyPrompt(this)">📋 一键复制</button>
+            </div>
+            <div class="prompt-content">用户输入：{{start.user_input}}
+
+请分析用户的症状，逐步收集信息。如果是紧急情况请立即建议就医。</div>
+        </div>
+        
+        <hr>
+        
+        <h3>节点 4B：产品咨询分支 - 产品咨询节点</h3>
+        <p><strong>节点类型：</strong>大模型</p>
+        <p><strong>节点名称：</strong>产品咨询</p>
+        
+        <h4>系统提示词</h4>
+        <div class="prompt-block">
+            <div class="prompt-header">
+                <span class="prompt-label">📋 产品咨询 - 系统提示词</span>
+                <button class="copy-btn" onclick="copyPrompt(this)">📋 一键复制</button>
+            </div>
+            <div class="prompt-content">你是泰小虎健康顾问的产品咨询模块。你的任务是理解用户的产品需求，为用户推荐合适的保健品。
+
+# 咨询原则
+1. 理解用户想解决什么健康问题
+2. 询问用户的具体情况（年龄、身体状况等）
+3. 推荐1-3款合适产品，不要推荐太多让用户困惑
+4. 说明产品功效、适用人群、服用方法
+5. 强调不能替代药物治疗
+
+# 收集需求
+如果用户只是简单说"想买保健品"，需要询问：
+- 想解决什么健康问题？
+- 是给谁用的？（自己/父母/其他）
+- 有没有特殊情况？（过敏、慢性病等）
+
+# 推荐格式
+根据您的情况，我推荐：
+
+【产品名称】
+- 功效：...
+- 适用人群：...
+- 服用方法：...
+- 注意事项：...
+
+# 免责声明
+所有推荐后必须附加：
+"温馨提示：保健品不能替代药物治疗，如有需要请咨询医生。我的建议仅供参考，不能代替医生的专业诊断。"</div>
+        </div>
+        
+        <h4>用户提示词</h4>
+        <div class="prompt-block">
+            <div class="prompt-header">
+                <span class="prompt-label">📋 产品咨询 - 用户提示词</span>
+                <button class="copy-btn" onclick="copyPrompt(this)">📋 一键复制</button>
+            </div>
+            <div class="prompt-content">用户输入：{{start.user_input}}
+
+请理解用户的产品需求，推荐合适的保健品。</div>
+        </div>
+        
+        <hr>
+        
+        <h3>节点 4C：健康知识分支 - 知识问答节点</h3>
+        <p><strong>节点类型：</strong>大模型</p>
+        <p><strong>节点名称：</strong>知识问答</p>
+        
+        <h4>系统提示词</h4>
+        <div class="prompt-block">
+            <div class="prompt-header">
+                <span class="prompt-label">📋 知识问答 - 系统提示词</span>
+                <button class="copy-btn" onclick="copyPrompt(this)">📋 一键复制</button>
+            </div>
+            <div class="prompt-content">你是泰小虎健康顾问的健康知识问答模块。你的任务是用通俗易懂的语言回答用户的健康问题。
+
+# 回答原则
+1. 将专业知识转化为通俗易懂的语言
+2. 使用生活化的比喻和例子
+3. 不要暴露"知识库""检索"等技术词汇
+4. 如果不确定答案，诚实告知并建议咨询专业人士
+5. 不要编造不存在的信息
+
+# 回答格式
+关于您问的【问题主题】，我了解到：
+
+【通俗解答】用简单的话解释相关知识
+
+【实用建议】给出1-2条日常生活中可以做到的实用建议
+
+如果还有其他问题，欢迎继续问我哦~</div>
+        </div>
+        
+        <h4>用户提示词</h4>
+        <div class="prompt-block">
+            <div class="prompt-header">
+                <span class="prompt-label">📋 知识问答 - 用户提示词</span>
+                <button class="copy-btn" onclick="copyPrompt(this)">📋 一键复制</button>
+            </div>
+            <div class="prompt-content">用户输入：{{start.user_input}}
+
+请用通俗易懂的语言回答用户的健康知识问题。</div>
+        </div>
+        
+        <hr>
+        
+        <h3>节点 4D：其他分支 - 边界处理节点</h3>
+        <p><strong>节点类型：</strong>大模型</p>
+        <p><strong>节点名称：</strong>边界处理</p>
+        
+        <h4>系统提示词</h4>
+        <div class="prompt-block">
+            <div class="prompt-header">
+                <span class="prompt-label">📋 边界处理 - 系统提示词</span>
+                <button class="copy-btn" onclick="copyPrompt(this)">📋 一键复制</button>
+            </div>
+            <div class="prompt-content">你是泰小虎健康顾问的边界处理模块。你的任务是处理无法归类到健康咨询、产品咨询、健康知识问答的输入。
+
+# 处理策略
+
+## 闲聊处理
+如果是简单的问候或闲聊：
+- 友好回应，简要介绍自己能帮助什么
+- 引导用户选择咨询方向
+
+## 投诉处理
+如果用户有投诉：
+- 先倾听，表达理解和歉意
+- 记录投诉内容
+- 引导用户联系客服
+
+## 技术问题
+如果用户问技术问题：
+- 提供基本指引
+- 引导联系技术支持
+
+## 无关话题
+如果用户问与健康完全无关的话题：
+- 礼貌回应
+- 自然引导回健康话题
+
+# 回复示例
+"您好！我是泰小虎，您的健康顾问~ 我可以帮您解答健康问题、推荐合适的保健品、了解健康知识。请问有什么可以帮到您的吗？"</div>
+        </div>
+        
+        <h4>用户提示词</h4>
+        <div class="prompt-block">
+            <div class="prompt-header">
+                <span class="prompt-label">📋 边界处理 - 用户提示词</span>
+                <button class="copy-btn" onclick="copyPrompt(this)">📋 一键复制</button>
+            </div>
+            <div class="prompt-content">用户输入：{{start.user_input}}
+
+请处理用户的输入，如果是闲聊友好回应，如果是投诉表达歉意并引导联系客服，如果是无关话题引导回健康咨询。</div>
+        </div>
+        
+        <hr>
+        
+        <h3>节点 5：输出节点</h3>
+        <p><strong>节点类型：</strong>结束</p>
+        <p><strong>节点名称：</strong>输出回复</p>
+        
+        <h4>输出参数配置</h4>
+        <table>
+            <tr><th>参数名</th><th>参数值</th><th>说明</th></tr>
+            <tr><td>response</td><td>{{症状分析.output}} 或 {{产品咨询.output}} 或 {{知识问答.output}} 或 {{边界处理.output}}</td><td>根据分支选择对应的输出</td></tr>
+        </table>
+        
+        <div class="warning-box">
+            <h4>⚠️ 注意</h4>
+            <p>在 Coze 单 Agent 模式中，各分支的输出需要合并到一个结束节点。您可以使用「变量聚合」节点或直接在结束节点选择各分支的输出变量。</p>
+        </div>
+        
+        <hr>
+        
+        <h2>四、知识库配置（可选）</h2>
+        
+        <p>如果需要接入知识库，可以在对应节点后添加「知识库」节点：</p>
+        
+        <h3>添加知识库节点</h3>
+        <ol>
+            <li>在「症状分析」节点后添加「知识库」节点</li>
+            <li>选择已创建的健康知识库</li>
+            <li>配置检索参数：
+                <ul>
+                    <li>检索方式：语义检索</li>
+                    <li>检索数量：Top 3</li>
+                </ul>
+            </li>
+            <li>将检索结果传递给下一个大模型节点</li>
+        </ol>
+        
+        <hr>
+        
+        <h2>五、测试与发布</h2>
+        
+        <h3>5.1 工作流测试</h3>
+        <ol>
+            <li>点击工作流编辑页面的「试运行」</li>
+            <li>输入测试内容：
+                <ul>
+                    <li>测试健康咨询："我最近睡眠不好"</li>
+                    <li>测试产品咨询："有什么产品适合老人"</li>
+                    <li>测试健康知识："高血压要注意什么"</li>
+                    <li>测试其他："你好"</li>
+                </ul>
+            </li>
+            <li>检查各节点输出是否符合预期</li>
+        </ol>
+        
+        <h3>5.2 发布 Bot</h3>
+        <ol>
+            <li>测试通过后，点击右上角「发布」</li>
+            <li>选择发布渠道（豆包、飞书等）</li>
+            <li>完成发布</li>
+        </ol>
+        
+        <hr>
+        
+        <h2>六、反馈与优化</h2>
+        
+        <div class="success-box">
+            <h4>✅ 搭建完成后的反馈</h4>
+            <p>请按照本手册搭建完成后，告诉我以下信息，我可以帮您优化：</p>
+            <ol>
+                <li>哪个节点配置遇到问题？</li>
+                <li>测试结果是否符合预期？</li>
+                <li>回复内容是否需要调整？</li>
+                <li>是否需要添加知识库？</li>
+            </ol>
+        </div>
+        
+        <hr>
+        
+        <p style="text-align: center; color: #666; margin-top: 40px;">
+            <strong>文档版本：</strong>V1.0 | 
+            <strong>最后更新：</strong>2026-05-26 | 
+            <strong>作者：</strong>泰小虎技术团队
+        </p>
+    </div>
+    
+    <script>
+    function copyPrompt(btn) {
+        const block = btn.closest('.prompt-block');
+        const content = block.querySelector('.prompt-content');
+        const text = content.innerText || content.textContent;
+        
+        navigator.clipboard.writeText(text).then(function() {
+            btn.textContent = '✅ 已复制！';
+            btn.classList.add('copied');
+            setTimeout(function() {
+                btn.textContent = '📋 一键复制';
+                btn.classList.remove('copied');
+            }, 2000);
+        }).catch(function() {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            btn.textContent = '✅ 已复制！';
+            btn.classList.add('copied');
+            setTimeout(function() {
+                btn.textContent = '📋 一键复制';
+                btn.classList.remove('copied');
+            }, 2000);
+        });
+    }
+    </script>
+</body>
+</html>
