@@ -532,19 +532,50 @@
         
         <hr>
         
-        <h3>节点 5：输出节点</h3>
+        <h3>节点 5：变量聚合节点（关键）</h3>
+        <p><strong>节点类型：</strong>变量聚合</p>
+        <p><strong>节点名称：</strong>聚合各分支输出</p>
+        
+        <div class="step-box">
+            <h4>📋 为什么需要变量聚合节点？</h4>
+            <p>在 Coze 单 Agent 模式中，4个分支（健康咨询/产品咨询/知识问答/边界处理）的输出需要合并后才能传递给结束节点。<strong>变量聚合节点</strong>的作用是将多个分支的输出整合为一个变量。</p>
+        </div>
+        
+        <h4>配置步骤</h4>
+        <ol>
+            <li>在 4 个分支节点（症状分析、产品咨询、知识问答、边界处理）之后，添加「<strong>变量聚合</strong>」节点</li>
+            <li>将 4 个分支的输出都连接到变量聚合节点</li>
+            <li>在变量聚合节点的「<strong>输出</strong>」区域配置：</li>
+        </ol>
+        
+        <table>
+            <tr><th>配置项</th><th>设置值</th></tr>
+            <tr><td>聚合策略</td><td>返回每个分组中第一个非空的值</td></tr>
+            <tr><td>Group1 变量名</td><td>response</td></tr>
+            <tr><td>Group1 来源</td><td>症状分析.output / 产品咨询.output / 知识问答.output / 边界处理.output</td></tr>
+        </table>
+        
+        <h4>配置示意图</h4>
+        <pre style="background:#f5f5fa; padding:16px; border-radius:8px; overflow-x:auto;">
+症状分析 ──┐
+产品咨询 ──┼──→ 【变量聚合】──→ 【结束节点】
+知识问答 ──┤         ↓
+边界处理 ──┘    输出: {{聚合各分支输出.response}}
+        </pre>
+        
+        <h3>节点 6：结束节点</h3>
         <p><strong>节点类型：</strong>结束</p>
         <p><strong>节点名称：</strong>输出回复</p>
         
         <h4>输出参数配置</h4>
         <table>
             <tr><th>参数名</th><th>参数值</th><th>说明</th></tr>
-            <tr><td>response</td><td>{{症状分析.output}} 或 {{产品咨询.output}} 或 {{知识问答.output}} 或 {{边界处理.output}}</td><td>根据分支选择对应的输出</td></tr>
+            <tr><td>response</td><td>{{聚合各分支输出.response}}</td><td>变量聚合节点的输出</td></tr>
         </table>
         
-        <div class="warning-box">
-            <h4>⚠️ 注意</h4>
-            <p>在 Coze 单 Agent 模式中，各分支的输出需要合并到一个结束节点。您可以使用「变量聚合」节点或直接在结束节点选择各分支的输出变量。</p>
+        <div class="success-box">
+            <h4>✅ 完成配置</h4>
+            <p>配置完成后，无论用户选择哪个意图分支，最终都会通过变量聚合节点输出到结束节点，Bot 会将结果回复给用户。</p>
         </div>
         
         <hr>
