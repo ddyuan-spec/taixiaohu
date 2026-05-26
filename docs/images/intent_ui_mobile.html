@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f0f2f5;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .phone {
+            width: 375px;
+            height: 812px;
+            background: #fff;
+            border-radius: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            overflow: hidden;
+            position: relative;
+        }
+        .phone-header {
+            height: 44px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 17px;
+            font-weight: 600;
+        }
+        .chat-container {
+            padding: 20px;
+            height: calc(100% - 44px);
+            background: #f8f9fa;
+            overflow-y: auto;
+        }
+        .ai-message {
+            background: white;
+            padding: 16px 20px;
+            border-radius: 16px 16px 16px 4px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .ai-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .ai-text {
+            color: #333;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .intent-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .intent-btn {
+            background: white;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 20px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .intent-btn:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102,126,234,0.15);
+        }
+        .intent-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        .intent-label {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="phone-header">🐯 泰小虎</div>
+        <div class="chat-container">
+            <div class="ai-message">
+                <div class="ai-avatar">🐯</div>
+                <div class="ai-text">
+                    您好！我是泰小虎，<br>
+                    您的健康顾问。<br>
+                    请问今天想咨询什么？
+                </div>
+            </div>
+            <div class="intent-grid">
+                <div class="intent-btn">
+                    <div class="intent-icon">💬</div>
+                    <div class="intent-label">健康咨询</div>
+                </div>
+                <div class="intent-btn">
+                    <div class="intent-icon">🛒</div>
+                    <div class="intent-label">产品咨询</div>
+                </div>
+                <div class="intent-btn">
+                    <div class="intent-icon">📚</div>
+                    <div class="intent-label">健康知识</div>
+                </div>
+                <div class="intent-btn">
+                    <div class="intent-icon">❓</div>
+                    <div class="intent-label">其他</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
