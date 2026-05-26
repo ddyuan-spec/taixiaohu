@@ -589,6 +589,29 @@
              <p>如果变量聚合节点的 Group1 变量名是 <code>output</code>，则结束节点的参数值填写：<code>{{聚合各分支输出.output}}</code></p>
              <p>如果变量聚合节点的 Group1 变量名是 <code>response</code>，则结束节点的参数值填写：<code>{{聚合各分支输出.response}}</code></p>
          </div>
+         
+         <div class="step-box">
+             <h4>🔍 常见问题排查</h4>
+             
+             <h5>问题1：输出为空 <code>{"output":""}</code></h5>
+             <ol>
+                 <li><strong>检查大模型节点输出</strong>：点击各分支大模型节点，查看「输出」区域是否有 <code>output</code> 字段</li>
+                 <li><strong>检查变量聚合来源</strong>：确认 Group1 来源正确选择了各节点的 <code>xxx.output</code></li>
+                 <li><strong>检查结束节点参数</strong>：确认参数值与变量聚合的 Group1 变量名一致</li>
+             </ol>
+             
+             <h5>问题2：输出带 JSON 格式如 <code>{"output":"..."}</code></h5>
+             <p><strong>原因</strong>：结束节点直接输出了变量聚合的原始格式。</p>
+             <p><strong>解决</strong>：确保结束节点的参数值只填写变量，如 <code>{{聚合各分支输出.output}}</code>，不要添加其他文本或格式。</p>
+             
+             <h5>问题3：意图识别不准确或失败</h5>
+             <ol>
+                 <li><strong>检查意图识别节点的用户提示词</strong>：确认包含 <code>{{start.user_input}}</code></li>
+                 <li><strong>检查系统提示词</strong>：确认强调"只输出意图分类的英文标识"</li>
+                 <li><strong>检查模型温度</strong>：意图识别节点温度建议设置为 0.3，确保输出稳定</li>
+                 <li><strong>检查条件分支表达式</strong>：确认使用 <code>{{意图识别.intent}}</code> 而不是 <code>{{意图识别.output}}</code></li>
+             </ol>
+         </div>
         
         <hr>
         
