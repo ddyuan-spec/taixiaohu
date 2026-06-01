@@ -21,7 +21,6 @@
         .header h1 { font-size: 2.5em; margin-bottom: 10px; }
         .header p { opacity: 0.9; font-size: 1.1em; }
 
-        /* 搜索栏 */
         .search-bar {
             background: white;
             border-radius: 12px;
@@ -34,116 +33,57 @@
         }
         .search-bar .icon { font-size: 1.3em; color: #999; }
         .search-bar input {
-            flex: 1;
-            border: none;
-            outline: none;
-            font-size: 1em;
-            color: #333;
-            background: transparent;
+            flex: 1; border: none; outline: none; font-size: 1em; color: #333; background: transparent;
         }
         .search-bar input::placeholder { color: #aaa; }
         .search-bar .clear-btn {
-            background: none;
-            border: none;
-            color: #999;
-            cursor: pointer;
-            font-size: 1.1em;
-            display: none;
-            padding: 4px 8px;
-            border-radius: 4px;
+            background: none; border: none; color: #999; cursor: pointer; font-size: 1.1em;
+            display: none; padding: 4px 8px; border-radius: 4px;
         }
         .search-bar .clear-btn:hover { background: #f0f0f0; }
         .search-bar .clear-btn.visible { display: block; }
-        .no-results {
-            text-align: center;
-            color: #999;
-            padding: 40px 20px;
-            font-size: 1em;
-            display: none;
-        }
+        .no-results { text-align: center; color: #999; padding: 40px 20px; display: none; }
 
-        /* 分类区域 */
         .category {
-            background: white;
-            border-radius: 12px;
-            padding: 25px 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            background: white; border-radius: 12px; padding: 25px 30px;
+            margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
         .category-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 18px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #f0f0f0;
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid #f0f0f0;
         }
-        .category-header h2 {
-            font-size: 1.2em;
-            color: #2c3e50;
-        }
+        .category-header h2 { font-size: 1.2em; color: #2c3e50; }
         .category-header .badge {
-            background: #667eea;
-            color: white;
-            font-size: 0.75em;
-            padding: 2px 10px;
-            border-radius: 12px;
+            background: #667eea; color: white; font-size: 0.75em;
+            padding: 2px 10px; border-radius: 12px;
         }
 
-        /* 文档列表 */
         .doc-list { list-style: none; }
         .doc-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            border-radius: 8px;
-            transition: background 0.2s;
-            text-decoration: none;
-            color: inherit;
-            gap: 14px;
+            display: flex; align-items: center; padding: 12px 16px; border-radius: 8px;
+            transition: background 0.2s; text-decoration: none; color: inherit; gap: 14px;
         }
         .doc-item:hover { background: #f5f7ff; }
-        .doc-item .doc-icon {
-            font-size: 1.4em;
-            width: 36px;
-            text-align: center;
-            flex-shrink: 0;
-        }
+        .doc-item .doc-icon { font-size: 1.4em; width: 36px; text-align: center; flex-shrink: 0; }
         .doc-item .doc-info { flex: 1; min-width: 0; }
-        .doc-item .doc-name {
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 0.95em;
-        }
+        .doc-item .doc-name { font-weight: 600; color: #2c3e50; font-size: 0.95em; }
         .doc-item .doc-desc {
-            color: #888;
-            font-size: 0.85em;
-            margin-top: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            color: #888; font-size: 0.85em; margin-top: 2px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .doc-item .doc-tag {
-            font-size: 0.75em;
-            padding: 2px 10px;
-            border-radius: 12px;
-            flex-shrink: 0;
-            font-weight: 500;
+            font-size: 0.75em; padding: 2px 10px; border-radius: 12px; flex-shrink: 0; font-weight: 500;
         }
-        .tag-core { background: #e8f4f8; color: #0891b2; }
         .tag-new { background: #d4edda; color: #155724; }
         .tag-md { background: #f3f0ff; color: #7c3aed; }
+        .tag-py { background: #e0f2fe; color: #0369a1; }
         .tag-html { background: #fff3e0; color: #e65100; }
+        .tag-old { background: #f1f5f9; color: #64748b; }
         .doc-item .doc-arrow { color: #ccc; font-size: 0.9em; flex-shrink: 0; }
+        .doc-item.external .doc-arrow::after { content: ' ↗'; }
 
         .hidden { display: none !important; }
-
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.9em;
-        }
+        footer { text-align: center; margin-top: 40px; color: rgba(255,255,255,0.7); font-size: 0.9em; }
     </style>
 </head>
 <body>
@@ -153,7 +93,6 @@
             <p>智能健康导购助手 · 文档中心</p>
         </div>
 
-        <!-- 搜索栏 -->
         <div class="search-bar">
             <span class="icon">🔍</span>
             <input type="text" id="searchInput" placeholder="搜索文档名称..." oninput="filterDocs()">
@@ -169,7 +108,7 @@
             </div>
             <ul class="doc-list">
                 <li>
-                    <a href="prompts-v3.html" class="doc-item" data-name="提示词文档 v3.0 prompts-v3.html">
+                    <a href="prompts-v3.html" class="doc-item" data-name="提示词文档 v3.0 prompts-v3">
                         <span class="doc-icon">📝</span>
                         <div class="doc-info">
                             <div class="doc-name">提示词文档 v3.0</div>
@@ -180,7 +119,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="functional-requirements.html" class="doc-item" data-name="配套功能性需求 functional-requirements.html">
+                    <a href="functional-requirements.html" class="doc-item" data-name="配套功能性需求 functional-requirements">
                         <span class="doc-icon">📋</span>
                         <div class="doc-info">
                             <div class="doc-name">配套功能性需求</div>
@@ -193,30 +132,116 @@
             </ul>
         </div>
 
-        <!-- 其他设计文档 -->
-        <div class="category" id="cat-other">
+        <!-- 提示词历史版本 -->
+        <div class="category" id="cat-prompts">
             <div class="category-header">
-                <h2>📂 其他设计文档</h2>
+                <h2>📝 提示词历史版本</h2>
                 <span class="badge">2</span>
             </div>
             <ul class="doc-list">
                 <li>
-                    <a href="https://github.com/ddyuan-spec/taixiaohu/blob/main/ADAPTER_INTEGRATION.md" target="_blank" class="doc-item" data-name="适配器集成设计 ADAPTER_INTEGRATION">
-                        <span class="doc-icon">🔗</span>
+                    <a href="https://github.com/ddyuan-spec/taixiaohu-agent/blob/main/prompts/system_prompts.py" target="_blank" class="doc-item external" data-name="提示词 v1.3 system_prompts.py">
+                        <span class="doc-icon">📜</span>
                         <div class="doc-info">
-                            <div class="doc-name">适配器集成设计</div>
-                            <div class="doc-desc">LLM适配器、知识库适配器的集成架构设计文档</div>
+                            <div class="doc-name">提示词 v1.3（源码）</div>
+                            <div class="doc-desc">v1.3版本提示词源码，包含System Prompt、意图识别、画像收集等原始实现</div>
+                        </div>
+                        <span class="doc-tag tag-old">v1.3</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/ddyuan-spec/taixiaohu-agent/blob/main/prompts/prompt_manager.py" target="_blank" class="doc-item external" data-name="提示词管理器 prompt_manager.py">
+                        <span class="doc-icon">⚙️</span>
+                        <div class="doc-info">
+                            <div class="doc-name">提示词管理器（源码）</div>
+                            <div class="doc-desc">提示词加载、版本管理、动态配置的管理器实现</div>
+                        </div>
+                        <span class="doc-tag tag-py">PY</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 评测与测试 -->
+        <div class="category" id="cat-eval">
+            <div class="category-header">
+                <h2>🧪 评测与测试</h2>
+                <span class="badge">3</span>
+            </div>
+            <ul class="doc-list">
+                <li>
+                    <a href="https://github.com/ddyuan-spec/taixiaohu-agent/blob/main/evaluation_report_final.md" target="_blank" class="doc-item external" data-name="评测报告 evaluation_report_final">
+                        <span class="doc-icon">📊</span>
+                        <div class="doc-info">
+                            <div class="doc-name">评测报告（最终版）</div>
+                            <div class="doc-desc">智能体多场景评测结果汇总，含单轮/多轮对话评测数据</div>
                         </div>
                         <span class="doc-tag tag-md">MD</span>
                         <span class="doc-arrow">›</span>
                     </a>
                 </li>
                 <li>
-                    <a href="https://github.com/ddyuan-spec/taixiaohu/blob/main/GITHUB_DEPLOY.md" target="_blank" class="doc-item" data-name="GitHub部署指南 GITHUB_DEPLOY">
-                        <span class="doc-icon">🚀</span>
+                    <a href="https://github.com/ddyuan-spec/taixiaohu-agent/blob/main/evaluation/test_suite.py" target="_blank" class="doc-item external" data-name="单轮评测集 test_suite">
+                        <span class="doc-icon">🧪</span>
                         <div class="doc-info">
-                            <div class="doc-name">GitHub部署指南</div>
-                            <div class="doc-desc">项目GitHub部署流程与环境配置说明</div>
+                            <div class="doc-name">单轮评测集（源码）</div>
+                            <div class="doc-desc">单轮对话评测用例，覆盖意图识别、产品推荐、健康咨询等场景</div>
+                        </div>
+                        <span class="doc-tag tag-py">PY</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/ddyuan-spec/taixiaohu-agent/blob/main/evaluation/multi_turn_test_suite_full.py" target="_blank" class="doc-item external" data-name="多轮评测集 multi_turn_test_suite">
+                        <span class="doc-icon">🔄</span>
+                        <div class="doc-info">
+                            <div class="doc-name">多轮评测集（源码）</div>
+                            <div class="doc-desc">多轮对话完整评测用例，覆盖健康咨询→产品推荐→产品追问全流程</div>
+                        </div>
+                        <span class="doc-tag tag-py">PY</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 其他设计文档 -->
+        <div class="category" id="cat-other">
+            <div class="category-header">
+                <h2>📂 其他设计文档</h2>
+                <span class="badge">3</span>
+            </div>
+            <ul class="doc-list">
+                <li>
+                    <a href="https://github.com/ddyuan-spec/taixiaohu/blob/main/ADAPTER_INTEGRATION.md" target="_blank" class="doc-item external" data-name="适配器集成设计 ADAPTER_INTEGRATION">
+                        <span class="doc-icon">🔗</span>
+                        <div class="doc-info">
+                            <div class="doc-name">适配器集成设计</div>
+                            <div class="doc-desc">LLM适配器、知识库适配器、画像库、记忆库、Badcase库的集成架构</div>
+                        </div>
+                        <span class="doc-tag tag-md">MD</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/ddyuan-spec/taixiaohu-agent/blob/main/workflow_visualization.html" target="_blank" class="doc-item external" data-name="工作流可视化 workflow_visualization">
+                        <span class="doc-icon">🌊</span>
+                        <div class="doc-info">
+                            <div class="doc-name">工作流可视化</div>
+                            <div class="doc-desc">智能体工作流程图可视化展示</div>
+                        </div>
+                        <span class="doc-tag tag-html">HTML</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/ddyuan-spec/taixiaohu-agent/blob/main/README.md" target="_blank" class="doc-item external" data-name="项目说明 README">
+                        <span class="doc-icon">📖</span>
+                        <div class="doc-info">
+                            <div class="doc-name">项目说明（README）</div>
+                            <div class="doc-desc">泰小虎智能体项目介绍、功能特性、快速开始指南</div>
                         </div>
                         <span class="doc-tag tag-md">MD</span>
                         <span class="doc-arrow">›</span>
@@ -240,7 +265,6 @@
             const categories = document.querySelectorAll('.category');
 
             clearBtn.classList.toggle('visible', query.length > 0);
-
             let totalVisible = 0;
 
             items.forEach(item => {
@@ -250,7 +274,6 @@
                 if (visible) totalVisible++;
             });
 
-            // 隐藏空分类
             categories.forEach(cat => {
                 const visibleItems = cat.querySelectorAll('.doc-item:not(.hidden)');
                 cat.classList.toggle('hidden', visibleItems.length === 0);
