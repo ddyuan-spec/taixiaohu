@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泰小虎智能体 - 文档中心</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="泰小虎智能体 - 智能健康导购助手文档中心">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        .doc-grid {
+            display: grid;
+            gap: 20px;
+        }
+        .doc-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .doc-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        }
+        .doc-card h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .doc-card p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .doc-card .tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .tag {
+            background: #e8f4f8;
+            color: #667eea;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+        }
+        .tag.new {
+            background: #d4edda;
+            color: #155724;
+        }
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐯 泰小虎智能体</h1>
+            <p>智能健康导购助手 · 文档中心</p>
+        </div>
+        
+        <div class="doc-grid">
+            <a href="prompts-v3.html" class="doc-card">
+                <h2>📝 提示词文档 v3.0 <span class="tag new">NEW</span></h2>
+                <p>包含16个核心模块的完整提示词，包括：System Prompt、意图识别、画像收集、产品推荐等。支持一键复制功能。</p>
+                <div class="tags">
+                    <span class="tag">16个模块</span>
+                    <span class="tag">一键复制</span>
+                    <span class="tag">v3.0</span>
+                </div>
+            </a>
+            
+            <a href="functional-requirements.html" class="doc-card">
+                <h2>📋 配套功能性需求</h2>
+                <p>包含知识库功能设计（上传、切片、检索）、对话记录功能设计、调用记录功能设计等核心模块的详细说明。</p>
+                <div class="tags">
+                    <span class="tag">知识库</span>
+                    <span class="tag">对话记录</span>
+                    <span class="tag">调用记录</span>
+                </div>
+            </a>
+        </div>
+        
+        <footer>
+            <p>📄 泰小虎智能体 · 文档中心</p>
+            <p>智能健康导购助手 · AI Powered</p>
+        </footer>
+    </div>
+</body>
+</html>

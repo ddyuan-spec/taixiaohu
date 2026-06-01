@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泰小虎智能体 - 配套功能性需求</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+        .toc {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .toc h2 {
+            color: #11998e;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .toc li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .toc a {
+            color: #333;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .toc a:hover {
+            color: #11998e;
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .section h2 {
+            color: #11998e;
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #11998e;
+        }
+        .section h3 {
+            color: #2c3e50;
+            font-size: 1.2em;
+            margin: 25px 0 15px 0;
+        }
+        .feature-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .feature-card h4 {
+            color: #11998e;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        th {
+            background: #e8f4f8;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .highlight strong {
+            color: #856404;
+        }
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📋 配套功能性需求</h1>
+            <p>泰小虎智能体 · 功能模块设计文档</p>
+        </header>
+
+        <nav class="toc">
+            <h2>📑 目录</h2>
+            <ul>
+                <li><a href="#knowledge-base">🗄️ 一、知识库功能设计</a></li>
+                <li><a href="#conversation-logs">💬 二、对话记录功能设计</a></li>
+                <li><a href="#call-records">📊 三、调用记录功能设计</a></li>
+            </ul>
+        </nav>
+
+        <!-- 知识库功能设计 -->
+        <section class="section" id="knowledge-base">
+            <h2>🗄️ 一、知识库功能设计</h2>
+            <p>知识库是泰小虎智能体的核心数据基础设施，用于存储和管理产品知识、健康知识等内容，支持RAG（检索增强生成）能力。</p>
+
+            <h3>1.1 知识库架构</h3>
+            <table>
+                <tr>
+                    <th>组件</th>
+                    <th>说明</th>
+                    <th>技术实现</th>
+                </tr>
+                <tr>
+                    <td>原始文档</td>
+                    <td>上传的原始文件（PDF、TXT、DOCX等）</td>
+                    <td>文件存储</td>
+                </tr>
+                <tr>
+                    <td>文档解析</td>
+                    <td>将文档解析为结构化文本</td>
+                    <td>文本提取</td>
+                </tr>
+                <tr>
+                    <td>知识切片</td>
+                    <td>将长文本切分为语义完整的片段</td>
+                    <td>滑动窗口/语义切分</td>
+                </tr>
+                <tr>
+                    <td>向量化</td>
+                    <td>将文本转换为向量表示</td>
+                    <td>Embedding API</td>
+                </tr>
+                <tr>
+                    <td>向量检索</td>
+                    <td>基于向量相似度检索相关内容</td>
+                    <td>余弦相似度/欧氏距离</td>
+                </tr>
+            </table>
+
+            <h3>1.2 知识库数据结构</h3>
+            <div class="code-block">
+                <pre>// products_knowledge.json 结构
+{
+  "products": [
+    {
+      "product_id": "PRD001",
+      "product_name": "泰吉眠沙棘茶氨酸",
+      "product_name_alias": ["泰吉眠", "沙棘茶氨酸"],
+      "main_efficacy": "30分钟助入睡，延长深睡时间，舒缓压力",
+      "target_audience": "失眠、易醒、睡不沉、作息紊乱的成年人",
+      "core_ingredients": [
+        {"name": "茶氨酸", "function": "舒缓神经、放松身心"},
+        {"name": "GABA", "function": "改善睡眠质量"},
+        {"name": "酸枣仁", "function": "安神助眠"}
+      ],
+      "usage": "每日1次，每次2片",
+      "dosage": {
+        "adult": "每日1次，每次2片，睡前30分钟温水送服",
+        "elderly": "每日1次，每次1片，睡前30分钟温水送服"
+      },
+      "contraindications": [
+        "孕妇、哺乳期女性",
+        "3岁以下婴幼儿",
+        "对本品成分过敏者"
+      ],
+      "side_effects": [
+        "极个别空腹食用可能轻微胃胀"
+      ],
+      "faq": [
+        {
+          "question": "多久见效？",
+          "answer": "一般连续服用7-14天可见明显改善"
+        }
+      ]
+    }
+  ]
+}</pre>
+            </div>
+
+            <h3>1.3 知识上传功能</h3>
+            <div class="feature-card">
+                <h4>📤 上传流程</h4>
+                <ol>
+                    <li>用户进入"知识上传"页面</li>
+                    <li>选择上传方式：文件上传 / 文本输入</li>
+                    <li>支持的文件格式：PDF、TXT、DOCX、XLSX</li>
+                    <li>系统解析文档内容</li>
+                    <li>用户确认/编辑解析结果</li>
+                    <li>点击"确认上传"保存到知识库</li>
+                </ol>
+            </div>
+
+            <div class="feature-card">
+                <h4>📝 文本输入模式</h4>
+                <p>用户可以直接在文本框中输入知识内容，系统自动解析并存储。适用于快速添加简单知识点。</p>
+                <div class="highlight">
+                    <strong>输入格式：</strong>
+                    <p>产品名称：泰吉眠沙棘茶氨酸</p>
+                    <p>功效：改善睡眠质量</p>
+                    <p>适用人群：失眠人群</p>
+                </div>
+            </div>
+
+            <h3>1.4 知识切片功能</h3>
+            <table>
+                <tr>
+                    <th>切片策略</th>
+                    <th>说明</th>
+                    <th>适用场景</th>
+                </tr>
+                <tr>
+                    <td>固定长度切片</td>
+                    <td>按固定字符数切分（默认500字）</td>
+                    <td>结构化文档</td>
+                </tr>
+                <tr>
+                    <td>段落切片</td>
+                    <td>按段落边界切分</td>
+                    <td>长文档</td>
+                </tr>
+                <tr>
+                    <td>语义切片</td>
+                    <td>基于语义相似度自动切分</td>
+                    <td>复杂文档</td>
+                </tr>
+            </table>
+
+            <div class="code-block">
+                <pre>// knowledge.json 切片结构
+{
+  "chunks": [
+    {
+      "chunk_id": "c001",
+      "source": "泰吉眠产品手册",
+      "content": "泰吉眠沙棘茶氨酸主要功效：30分钟助入睡，延长深睡时间，舒缓压力情绪。核心成分包括茶氨酸、GABA、酸枣仁等天然成分...",
+      "metadata": {
+        "product_id": "PRD001",
+        "category": "产品功效",
+        "created_at": "2024-01-15T10:30:00Z"
+      }
+    }
+  ]
+}</pre>
+            </div>
+
+            <h3>1.5 知识检索功能</h3>
+            <div class="feature-card">
+                <h4>🔍 检索流程</h4>
+                <ol>
+                    <li>接收用户query</li>
+                    <li>构建增强query（结合用户画像、症状等）</li>
+                    <li>调用Embedding API生成向量</li>
+                    <li>在向量数据库中检索相似切片</li>
+                    <li>返回Top-K结果（默认3条）</li>
+                    <li>组装上下文传递给LLM</li>
+                </ol>
+            </div>
+
+            <div class="code-block">
+                <pre>// 检索请求示例
+{
+  "query": "失眠推荐什么产品",
+  "user_context": {
+    "age": 42,
+    "gender": "女",
+    "symptom": "失眠"
+  },
+  "top_k": 3,
+  "filters": {
+    "category": "产品功效"
+  }
+}
+
+// 检索响应示例
+{
+  "results": [
+    {
+      "chunk_id": "c001",
+      "content": "泰吉眠沙棘茶氨酸主要功效...",
+      "score": 0.92,
+      "product_id": "PRD001"
+    }
+  ]
+}</pre>
+            </div>
+
+            <h3>1.6 知识库管理界面</h3>
+            <table>
+                <tr>
+                    <th>功能</th>
+                    <th>说明</th>
+                    <th>入口</th>
+                </tr>
+                <tr>
+                    <td>知识上传</td>
+                    <td>上传新文档或文本</td>
+                    <td>/admin/knowledge/upload</td>
+                </tr>
+                <tr>
+                    <td>知识切片</td>
+                    <td>查看和管理切片列表</td>
+                    <td>/admin/knowledge/chunks</td>
+                </tr>
+                <tr>
+                    <td>知识搜索</td>
+                    <td>搜索知识内容</td>
+                    <td>/admin/knowledge</td>
+                </tr>
+                <tr>
+                    <td>知识编辑</td>
+                    <td>编辑/删除切片</td>
+                    <td>切片列表页操作</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 对话记录功能设计 -->
+        <section class="section" id="conversation-logs">
+            <h2>💬 二、对话记录功能设计</h2>
+            <p>对话记录功能用于持久化存储用户与泰小虎的完整对话历史，支持会话管理、记录查询、数据导出等能力。</p>
+
+            <h3>2.1 对话数据结构</h3>
+            <div class="code-block">
+                <pre>// 对话记录JSON结构
+{
+  "session_id": "web_1780050501432_swm2x2bfs",
+  "user_id": "",
+  "started_at": "2024-01-15T10:30:00Z",
+  "ended_at": null,
+  "is_active": true,
+  "total_messages": 8,
+  "user_profile": {
+    "age": 35,
+    "gender": "男",
+    "chronic_diseases": "",
+    "current_medication": ""
+  },
+  "messages": [
+    {
+      "message_id": "web_xxx_user_1",
+      "message_type": "user",
+      "content": "你好，我今年35岁，男性",
+      "timestamp": "2024-01-15T10:30:05Z",
+      "intent": "other",
+      "llm_calls": [],
+      "knowledge_base_calls": []
+    },
+    {
+      "message_id": "web_xxx_agent_1",
+      "message_type": "agent",
+      "content": "您好！我是泰小虎...",
+      "timestamp": "2024-01-15T10:30:06Z",
+      "intent": "other",
+      "state": "boundary",
+      "llm_calls": [
+        {
+          "module": "boundary_handler",
+          "prompt_tokens": 500,
+          "completion_tokens": 100,
+          "total_tokens": 600,
+          "response_time_ms": 1200,
+          "success": true
+        }
+      ],
+      "knowledge_base_calls": []
+    }
+  ]
+}</pre>
+            </div>
+
+            <h3>2.2 会话管理功能</h3>
+            <table>
+                <tr>
+                    <th>功能</th>
+                    <th>说明</th>
+                    <th>API</th>
+                </tr>
+                <tr>
+                    <td>创建会话</td>
+                    <td>用户首次对话时自动创建</td>
+                    <td>自动</td>
+                </tr>
+                <tr>
+                    <td>会话续接</td>
+                    <td>使用相同session_id继续对话</td>
+                    <td>POST /api/chat</td>
+                </tr>
+                <tr>
+                    <td>会话列表</td>
+                    <td>分页查看所有会话</td>
+                    <td>GET /api/v2/conversations</td>
+                </tr>
+                <tr>
+                    <td>会话详情</td>
+                    <td>查看单条会话的完整对话</td>
+                    <td>GET /api/v2/conversations/{id}</td>
+                </tr>
+                <tr>
+                    <td>会话删除</td>
+                    <td>删除指定会话</td>
+                    <td>DELETE /api/v2/conversations/{id}</td>
+                </tr>
+                <tr>
+                    <td>会话搜索</td>
+                    <td>按关键词搜索会话</td>
+                    <td>GET /api/v2/conversations?q=关键词</td>
+                </tr>
+            </table>
+
+            <h3>2.3 对话记录API</h3>
+            
+            <h4>获取会话列表</h4>
+            <div class="code-block">
+                <pre>GET /api/v2/conversations?limit=20&filter=all
+
+// 响应
+{
+  "success": true,
+  "sessions": [
+    {
+      "session_id": "web_xxx",
+      "user_id": "",
+      "started_at": "2024-01-15T10:30:00Z",
+      "total_messages": 8,
+      "kb_calls": 1,
+      "is_active": true,
+      "user_profile": {"age": 35, "gender": "男"}
+    }
+  ]
+}</pre>
+            </div>
+
+            <h4>获取会话详情</h4>
+            <div class="code-block">
+                <pre>GET /api/v2/conversations/web_xxx
+
+// 响应
+{
+  "success": true,
+  "session": {
+    "session_id": "web_xxx",
+    "messages": [...],
+    "user_profile": {...}
+  }
+}</pre>
+            </div>
+
+            <h3>2.4 对话记录管理界面</h3>
+            <table>
+                <tr>
+                    <th>功能</th>
+                    <th>说明</th>
+                    <th>路径</th>
+                </tr>
+                <tr>
+                    <td>会话列表</td>
+                    <td>分页展示所有会话，支持筛选</td>
+                    <td>/admin/conversations</td>
+                </tr>
+                <tr>
+                    <td>会话详情</td>
+                    <td>查看完整对话流程</td>
+                    <td>/admin/conversations/{id}</td>
+                </tr>
+                <tr>
+                    <td>会话搜索</td>
+                    <td>按用户ID、会话ID搜索</td>
+                    <td>列表页搜索框</td>
+                </tr>
+                <tr>
+                    <td>会话筛选</td>
+                    <td>按状态、调用类型筛选</td>
+                    <td>列表页下拉筛选</td>
+                </tr>
+            </table>
+
+            <h3>2.5 前端会话集成</h3>
+            <div class="feature-card">
+                <h4>🎯 会话ID生成策略</h4>
+                <p>前端为每个新会话生成唯一session_id，格式：</p>
+                <div class="code-block">
+                    <pre>sessionId = 'web_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
+// 示例: web_1780050501432_swm2x2bfs</pre>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <pre>// 前端发送消息时携带session_id
+POST /api/chat
+{
+  "message": "最近总是失眠",
+  "session_id": "web_1780050501432_swm2x2bfs"
+}</pre>
+            </div>
+        </section>
+
+        <!-- 调用记录功能设计 -->
+        <section class="section" id="call-records">
+            <h2>📊 三、调用记录功能设计</h2>
+            <p>调用记录功能用于监控和分析泰小虎智能体的运行状态，包括LLM调用记录、知识库调用记录等，为优化和审计提供数据支撑。</p>
+
+            <h3>3.1 调用记录类型</h3>
+            <table>
+                <tr>
+                    <th>类型</th>
+                    <th>说明</th>
+                    <th>记录内容</th>
+                </tr>
+                <tr>
+                    <td>LLM调用</td>
+                    <td>每次LLM API调用</td>
+                    <td>模块名、Token消耗、响应时间、成功率</td>
+                </tr>
+                <tr>
+                    <td>知识库调用</td>
+                    <td>每次RAG检索</td>
+                    <td>Query、召回数量、关联产品、响应时间</td>
+                </tr>
+                <tr>
+                    <td>意图识别</td>
+                    <td>每次意图分类</td>
+                    <td>输入、意图类型、置信度</td>
+                </tr>
+            </table>
+
+            <h3>3.2 LLM调用记录结构</h3>
+            <div class="code-block">
+                <pre>// LLM调用记录
+{
+  "module": "recommendation_engine",  // 调用的模块
+  "prompt_tokens": 1500,             // 输入Token数
+  "completion_tokens": 200,           // 输出Token数
+  "total_tokens": 1700,              // 总Token数
+  "response_time_ms": 2500,          // 响应时间(ms)
+  "success": true,                    // 是否成功
+  "error_message": "",               // 错误信息
+  "timestamp": "2024-01-15T10:30:00Z"
+}</pre>
+            </div>
+
+            <h3>3.3 知识库调用记录结构</h3>
+            <div class="code-block">
+                <pre>// 知识库调用记录
+{
+  "query": "有什么产品推荐吗？ 失眠 35岁 男",
+  "intent": "recommendation",
+  "results_count": 1,
+  "product_ids": ["PRD001"],
+  "product_names": ["泰吉眠沙棘茶氨酸"],
+  "response_time_ms": 150,
+  "timestamp": "2024-01-15T10:30:00Z"
+}</pre>
+            </div>
+
+            <h3>3.4 调用记录API</h3>
+            
+            <h4>获取LLM调用记录</h4>
+            <div class="code-block">
+                <pre>GET /api/v2/llm/records?limit=50
+
+// 响应
+{
+  "success": true,
+  "records": [
+    {
+      "session_id": "web_xxx",
+      "module": "recommendation_engine",
+      "prompt_tokens": 1500,
+      "completion_tokens": 200,
+      "total_tokens": 1700,
+      "response_time_ms": 2500,
+      "success": true,
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+  ]
+}</pre>
+            </div>
+
+            <h4>获取LLM统计</h4>
+            <div class="code-block">
+                <pre>GET /api/v2/llm/stats
+
+// 响应
+{
+  "success": true,
+  "stats": {
+    "total_calls": 150,
+    "total_tokens": 250000,
+    "avg_response_time_ms": 1800,
+    "success_rate": 0.98,
+    "calls_by_module": {
+      "recommendation_engine": 45,
+      "product_consult": 30,
+      "symptom_collector": 25
+    }
+  }
+}</pre>
+            </div>
+
+            <h4>获取知识库调用记录</h4>
+            <div class="code-block">
+                <pre>GET /api/v2/kb/call-records?limit=50
+
+// 响应
+{
+  "success": true,
+  "records": [
+    {
+      "session_id": "web_xxx",
+      "query": "有什么产品推荐吗？ 失眠 35岁 男",
+      "intent": "recommendation",
+      "results_count": 1,
+      "product_ids": ["PRD001"],
+      "product_names": ["泰吉眠沙棘茶氨酸"],
+      "response_time_ms": 150,
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+  ]
+}</pre>
+            </div>
+
+            <h4>获取知识库统计</h4>
+            <div class="code-block">
+                <pre>GET /api/v2/kb/stats
+
+// 响应
+{
+  "success": true,
+  "stats": {
+    "total_calls": 100,
+    "total_results": 120,
+    "avg_results_per_call": 1.2,
+    "calls_by_intent": {
+      "recommendation": 50,
+      "product_consult": 30,
+      "knowledge_qa": 20
+    },
+    "calls_by_product": {
+      "PRD001": 45,
+      "PRD002": 30,
+      "PRD003": 25
+    }
+  }
+}</pre>
+            </div>
+
+            <h3>3.5 调用记录管理界面</h3>
+            <table>
+                <tr>
+                    <th>功能</th>
+                    <th>说明</th>
+                    <th>路径</th>
+                </tr>
+                <tr>
+                    <td>调用记录</td>
+                    <td>查看LLM和知识库调用历史</td>
+                    <td>/admin/calls</td>
+                </tr>
+                <tr>
+                    <td>LLM记录</td>
+                    <td>LLM调用详细记录</td>
+                    <td>/admin/llm</td>
+                </tr>
+                <tr>
+                    <td>知识库调用</td>
+                    <td>知识库检索记录</td>
+                    <td>/admin/knowledge/call-records</td>
+                </tr>
+                <tr>
+                    <td>统计分析</td>
+                    <td>汇总统计和图表</td>
+                    <td>仪表盘</td>
+                </tr>
+            </table>
+
+            <h3>3.6 数据存储策略</h3>
+            <div class="feature-card">
+                <h4>💾 存储方案</h4>
+                <ul>
+                    <li><strong>本地文件存储</strong>：JSON文件，按会话ID存储</li>
+                    <li><strong>存储路径</strong>：data/conversation_logs/{session_id}.json</li>
+                    <li><strong>定期归档</strong>：超过30天的会话归档到历史目录</li>
+                    <li><strong>数据导出</strong>：支持导出为CSV/JSON格式</li>
+                </ul>
+            </div>
+
+            <div class="highlight">
+                <strong>⚠️ 生产环境建议：</strong>
+                <p>当前实现使用本地文件存储，适用于中小规模应用。生产环境建议迁移到数据库（PostgreSQL/MongoDB）或时序数据库（InfluxDB），支持更高效的查询和分析。</p>
+            </div>
+        </section>
+
+        <footer>
+            <p>📄 泰小虎智能体 - 配套功能性需求文档</p>
+            <p>智能健康导购助手 · 功能模块设计</p>
+        </footer>
+    </div>
+</body>
+</html>
