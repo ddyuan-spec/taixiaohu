@@ -207,6 +207,178 @@
             </ul>
         </div>
 
+        <!-- P0 需求文档 -->
+        <div class="category" id="cat-p0">
+            <div class="category-header">
+                <h2>🔴 P0 核心需求</h2>
+                <span class="badge">3</span>
+            </div>
+            <ul class="doc-list">
+                <li>
+                    <a href="req-prompt-config.html" class="doc-item" data-name="提示词配置功能 req-prompt-config">
+                        <span class="doc-icon">⚙️</span>
+                        <div class="doc-info">
+                            <div class="doc-name">提示词配置功能</div>
+                            <div class="doc-desc">后台管理16个模块提示词的编辑、版本管理、预览、恢复默认等功能</div>
+                        </div>
+                        <span class="doc-tag tag-new">P0</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="req-conversation-detail.html" class="doc-item" data-name="对话记录详情页 req-conversation-detail">
+                        <span class="doc-icon">💬</span>
+                        <div class="doc-info">
+                            <div class="doc-name">对话记录详情页</div>
+                            <div class="doc-desc">展示完整对话流程、知识库调用详情、LLM调用记录的可视化详情页</div>
+                        </div>
+                        <span class="doc-tag tag-new">P0</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- P1 需求文档 -->
+        <div class="category" id="cat-p1">
+            <div class="category-header">
+                <h2>🟠 P1 高优先级需求</h2>
+                <span class="badge">4</span>
+            </div>
+            <ul class="doc-list">
+                <li>
+                    <a href="req-badcase.html" class="doc-item" data-name="Badcase管理 req-badcase">
+                        <span class="doc-icon">🐛</span>
+                        <div class="doc-info">
+                            <div class="doc-name">Badcase管理</div>
+                            <div class="doc-desc">问题对话标记、分类、指派、修复跟踪的完整管理流程</div>
+                        </div>
+                        <span class="doc-tag tag-new">P1</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="req-model-call.html" class="doc-item" data-name="模型调用记录与Token统计 req-model-call">
+                        <span class="doc-icon">🤖</span>
+                        <div class="doc-info">
+                            <div class="doc-name">模型调用记录与Token统计</div>
+                            <div class="doc-desc">LLM API调用明细、Token消耗统计、成本分析看板</div>
+                        </div>
+                        <span class="doc-tag tag-new">P1</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="req-call-chain.html" class="doc-item" data-name="调用链路追踪 req-call-chain">
+                        <span class="doc-icon">🔗</span>
+                        <div class="doc-info">
+                            <div class="doc-name">调用链路追踪</div>
+                            <div class="doc-desc">单次用户请求的全链路可视化追踪，从意图识别到最终回复</div>
+                        </div>
+                        <span class="doc-tag tag-new">P1</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="req-points-system.html" class="doc-item" data-name="用户积分体系 req-points-system">
+                        <span class="doc-icon">🪙</span>
+                        <div class="doc-info">
+                            <div class="doc-name">用户积分体系</div>
+                            <div class="doc-desc">基础积分账户系统，支持积分获取、消耗、查询和流水记录</div>
+                        </div>
+                        <span class="doc-tag tag-new">P1</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- P2 需求文档 -->
+        <div class="category" id="cat-p2">
+            <div class="category-header">
+                <h2>🟡 P2 中优先级需求</h2>
+                <span class="badge">4</span>
+            </div>
+            <ul class="doc-list">
+                <li>
+                    <a href="req-points-earn.html" class="doc-item" data-name="积分获取分享打卡 req-points-earn">
+                        <span class="doc-icon">🎁</span>
+                        <div class="doc-info">
+                            <div class="doc-name">积分获取（分享/打卡）</div>
+                            <div class="doc-desc">用户通过分享推广和每日打卡获取积分，提升活跃度和留存</div>
+                        </div>
+                        <span class="doc-tag tag-new">P2</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="req-points-config.html" class="doc-item" data-name="积分配置后台 req-points-config">
+                        <span class="doc-icon">🔧</span>
+                        <div class="doc-info">
+                            <div class="doc-name">积分配置后台</div>
+                            <div class="doc-desc">管理员配置积分规则、积分获取/消耗数值、功能开关控制</div>
+                        </div>
+                        <span class="doc-tag tag-new">P2</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="req-conversation-filter.html" class="doc-item" data-name="对话记录筛选增强 req-conversation-filter">
+                        <span class="doc-icon">🔍</span>
+                        <div class="doc-info">
+                            <div class="doc-name">对话记录筛选增强</div>
+                            <div class="doc-desc">多维度筛选（意图/知识库/轮数/时间）、关键词搜索、排序</div>
+                        </div>
+                        <span class="doc-tag tag-new">P2</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- P3 需求文档 -->
+        <div class="category" id="cat-p3">
+            <div class="category-header">
+                <h2>🟢 P3 低优先级需求</h2>
+                <span class="badge">3</span>
+            </div>
+            <ul class="doc-list">
+                <li>
+                    <a href="req-points-level.html" class="doc-item" data-name="积分等级体系 req-points-level">
+                        <span class="doc-icon">🏆</span>
+                        <div class="doc-info">
+                            <div class="doc-name">积分等级体系</div>
+                            <div class="doc-desc">10个等级称号和特权，增强用户成就感和粘性</div>
+                        </div>
+                        <span class="doc-tag tag-new">P3</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="req-points-shop.html" class="doc-item" data-name="积分商城 req-points-shop">
+                        <span class="doc-icon">🛒</span>
+                        <div class="doc-info">
+                            <div class="doc-name">积分商城</div>
+                            <div class="doc-desc">用户使用积分兑换虚拟商品、优惠券、实物奖品</div>
+                        </div>
+                        <span class="doc-tag tag-new">P3</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="req-data-export.html" class="doc-item" data-name="数据导出 req-data-export">
+                        <span class="doc-icon">📥</span>
+                        <div class="doc-info">
+                            <div class="doc-name">数据导出</div>
+                            <div class="doc-desc">对话记录、积分数据、模型调用记录的Excel/CSV导出</div>
+                        </div>
+                        <span class="doc-tag tag-new">P3</span>
+                        <span class="doc-arrow">›</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
         <!-- 其他设计文档 -->
         <div class="category" id="cat-other">
             <div class="category-header">

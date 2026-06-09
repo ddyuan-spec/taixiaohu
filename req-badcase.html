@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>需求文档 - Badcase管理</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.8; color: #333; background: #f5f5f5; padding: 20px; }
+        .container { max-width: 960px; margin: 0 auto; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 20px; }
+        .header h1 { font-size: 1.8em; }
+        .header .meta { opacity: 0.9; margin-top: 8px; font-size: 0.9em; }
+        .section { background: white; border-radius: 12px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        .section h2 { color: #667eea; font-size: 1.3em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e9ecef; }
+        .section h3 { color: #2c3e50; font-size: 1.1em; margin: 20px 0 10px; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.95em; }
+        th, td { border: 1px solid #dee2e6; padding: 10px 12px; text-align: left; }
+        th { background: #e8f4f8; color: #2c3e50; font-weight: 600; }
+        tr:nth-child(even) { background: #f8f9fa; }
+        .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 500; }
+        .tag-p0 { background: #fee2e2; color: #991b1b; }
+        .tag-p1 { background: #fef3c7; color: #92400e; }
+        .tag-p2 { background: #dbeafe; color: #1e40af; }
+        .code-block { background: #2d3748; color: #e2e8f0; border-radius: 8px; padding: 16px; margin: 15px 0; overflow-x: auto; font-family: 'Consolas', monospace; font-size: 0.9em; }
+        ul, ol { margin-left: 20px; }
+        li { margin: 6px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐛 Badcase管理</h1>
+            <div class="meta">需求文档 | 优先级 <span class="tag tag-p1">P1</span> | 版本 v1.0</div>
+        </div>
+
+        <div class="section">
+            <h2>📌 需求概述</h2>
+            <p>运营人员可以在对话记录中标记问题对话（Badcase），记录问题类型和原因，追踪修复状态，用于持续优化智能体的回复质量。</p>
+        </div>
+
+        <div class="section">
+            <h2>🎯 功能目标</h2>
+            <ul>
+                <li>快速标记问题对话，降低记录成本</li>
+                <li>分类统计Badcase，识别高频问题</li>
+                <li>追踪修复状态，确保问题闭环</li>
+                <li>支持关联到具体模块和提示词版本</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>📋 功能清单</h2>
+            <table>
+                <tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+                <tr><td>标记Badcase</td><td>在对话详情页点击"标记Badcase"按钮</td><td><span class="tag tag-p1">P1</span></td></tr>
+                <tr><td>问题分类</td><td>选择预设的问题类型（意图错误/回复不当/产品推荐错误等）</td><td><span class="tag tag-p1">P1</span></td></tr>
+                <tr><td>原因描述</td><td>填写具体问题描述和期望回复</td><td><span class="tag tag-p1">P1</span></td></tr>
+                <tr><td>关联模块</td><td>自动/手动关联到出问题的模块（意图识别/推荐引擎等）</td><td><span class="tag tag-p1">P1</span></td></tr>
+                <tr><td>修复状态</td><td>待处理/处理中/已修复/已忽略</td><td><span class="tag tag-p1">P1</span></td></tr>
+                <tr><td>Badcase列表</td><td>独立页面展示所有Badcase，支持筛选和排序</td><td><span class="tag tag-p1">P1</span></td></tr>
+                <tr><td>统计分析</td><td>按问题类型、模块、时间维度统计Badcase分布</td><td><span class="tag tag-p2">P2</span></td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>🏷️ 问题分类预设</h2>
+            <table>
+                <tr><th>分类</th><th>说明</th></tr>
+                <tr><td>意图识别错误</td><td>用户意图被错误分类</td></tr>
+                <tr><td>回复内容不当</td><td>回复内容不符合预期（语气/内容/格式）</td></tr>
+                <tr><td>产品推荐错误</td><td>推荐了不相关或禁忌的产品</td></tr>
+                <tr><td>知识库检索失败</td><td>未检索到相关知识或检索结果不准确</td></tr>
+                <tr><td>画像收集问题</td><td>未正确识别或收集用户画像</td></tr>
+                <tr><td>安全红线突破</td><td>回复中出现了违规内容</td></tr>
+                <tr><td>其他</td><td>不属于以上分类的问题</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>💾 数据结构</h2>
+            <div class="code-block">{
+  "badcase_id": "bc_001",
+  "session_id": "web_xxx",
+  "message_id": "msg_xxx",
+  "category": "意图识别错误",
+  "description": "用户说'有什么产品推荐'，但意图被识别为'闲聊'",
+  "expected_response": "应该识别为'产品咨询'意图并推荐产品",
+  "related_module": "intent_router",
+  "prompt_version": "v3.0",
+  "status": "待处理",
+  "assigned_to": "",
+  "created_at": "2024-01-15T10:30:00Z",
+  "resolved_at": null,
+  "resolution_note": ""
+}</div>
+        </div>
+    </div>
+</body>
+</html>

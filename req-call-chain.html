@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>需求文档 - 调用链路追踪</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; }
+        .requirement-card { border-left: 4px solid #3b82f6; }
+        .requirement-card.p1 { border-left-color: #f59e0b; }
+        .timeline-line { position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: #e5e7eb; }
+        .timeline-dot { position: absolute; left: 12px; width: 18px; height: 18px; border-radius: 50%; border: 3px solid white; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm font-medium">P1</span>
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">后台管理</span>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-900">调用链路追踪</h1>
+                    <p class="text-gray-500 mt-2">单次用户请求的全链路可视化追踪，展示从意图识别到最终回复的完整处理流程</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-gray-400">版本</div>
+                    <div class="text-lg font-semibold">v1.0</div>
+                    <div class="text-sm text-gray-400 mt-1">2024-01-15</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overview -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-bullseye text-blue-500 mr-2"></i>需求概述</h2>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                为每次用户消息处理生成唯一的Trace ID，追踪该消息在系统中的完整处理链路，
+                包括意图识别、知识库查询、LLM调用、产品推荐等各个节点的执行情况和耗时，
+                帮助开发和运营人员快速定位问题环节。
+            </p>
+            <div class="bg-blue-50 rounded-lg p-4">
+                <div class="text-sm font-semibold text-blue-800 mb-2">核心价值：</div>
+                <ul class="text-sm text-blue-700 space-y-1">
+                    <li>• 快速定位问题：当回复异常时，一眼看出哪个环节出错</li>
+                    <li>• 性能分析：识别耗时瓶颈，优化系统性能</li>
+                    <li>• 数据验证：确认知识库是否正确被调用</li>
+                    <li>• 调试辅助：开发阶段追踪处理流程</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Trace Structure -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-sitemap text-green-500 mr-2"></i>链路结构</h2>
+            
+            <div class="relative pl-12 space-y-6">
+                <div class="timeline-line"></div>
+                
+                <!-- Node 1 -->
+                <div class="relative">
+                    <div class="timeline-dot bg-blue-500" style="top: 4px;"></div>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-play text-blue-500"></i>
+                                <span class="font-semibold">用户请求接入</span>
+                            </div>
+                            <span class="text-xs text-gray-500">Trace ID生成</span>
+                        </div>
+                        <div class="text-sm text-gray-600 mt-2">生成唯一trace_id，初始化链路上下文</div>
+                    </div>
+                </div>
+
+                <!-- Node 2 -->
+                <div class="relative">
+                    <div class="timeline-dot bg-purple-500" style="top: 4px;"></div>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-brain text-purple-500"></i>
+                                <span class="font-semibold">意图识别</span>
+                            </div>
+                            <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">LLM调用</span>
+                        </div>
+                        <div class="text-sm text-gray-600 mt-2">调用LLM识别用户意图，记录输入输出Token和响应时间</div>
+                    </div>
+                </div>
+
+                <!-- Node 3 -->
+                <div class="relative">
+                    <div class="timeline-dot bg-green-500" style="top: 4px;"></div>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-database text-green-500"></i>
+                                <span class="font-semibold">知识库查询</span>
+                            </div>
+                            <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">RAG</span>
+                        </div>
+                        <div class="text-sm text-gray-600 mt-2">向量检索相关产品/症状信息，记录检索结果数量和相关性分数</div>
+                    </div>
+                </div>
+
+                <!-- Node 4 -->
+                <div class="relative">
+                    <div class="timeline-dot bg-amber-500" style="top: 4px;"></div>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-user-md text-amber-500"></i>
+                                <span class="font-semibold">症状/画像收集</span>
+                            </div>
+                            <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded">LLM调用</span>
+                        </div>
+                        <div class="text-sm text-gray-600 mt-2">根据意图调用相应模块，记录处理逻辑和中间状态</div>
+                    </div>
+                </div>
+
+                <!-- Node 5 -->
+                <div class="relative">
+                    <div class="timeline-dot bg-red-500" style="top: 4px;"></div>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-pills text-red-500"></i>
+                                <span class="font-semibold">产品推荐</span>
+                            </div>
+                            <span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">LLM调用</span>
+                        </div>
+                        <div class="text-sm text-gray-600 mt-2">生成产品推荐回复，记录推荐产品列表和推荐理由</div>
+                    </div>
+                </div>
+
+                <!-- Node 6 -->
+                <div class="relative">
+                    <div class="timeline-dot bg-indigo-500" style="top: 4px;"></div>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-reply text-indigo-500"></i>
+                                <span class="font-semibold">回复生成</span>
+                            </div>
+                            <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">LLM调用</span>
+                        </div>
+                        <div class="text-sm text-gray-600 mt-2">最终对话回复，记录完整响应内容</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Functional Requirements -->
+        <div class="space-y-4 mb-6">
+            <h2 class="text-xl font-bold"><i class="fas fa-list-check text-purple-500 mr-2"></i>功能需求</h2>
+
+            <!-- FR1 -->
+            <div class="requirement-card p1 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR1 - Trace ID生成与传递</h3>
+                    <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">P1</span>
+                </div>
+                <p class="text-gray-700 mb-3">用户每次发送消息时生成唯一Trace ID，贯穿整个处理链路。</p>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="text-sm font-semibold mb-2">实现要求：</div>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Trace ID格式：txh_ + 时间戳 + 随机字符串</li>
+                        <li>• 通过上下文对象在各模块间传递</li>
+                        <li>• 关联session_id和conversation_id</li>
+                        <li>• 存储到conversation_logs表的trace_id字段</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- FR2 -->
+            <div class="requirement-card p1 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR2 - 链路节点记录</h3>
+                    <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">P1</span>
+                </div>
+                <p class="text-gray-700 mb-3">记录每个处理节点的详细信息。</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-3 py-2">节点类型</th>
+                                <th class="px-3 py-2">记录内容</th>
+                                <th class="px-3 py-2">耗时记录</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr>
+                                <td class="px-3 py-2">intent_recognition</td>
+                                <td class="px-3 py-2">原始意图、识别结果、置信度</td>
+                                <td class="px-3 py-2">✓</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2">knowledge_query</td>
+                                <td class="px-3 py-2">查询参数、返回结果数、top1相关性</td>
+                                <td class="px-3 py-2">✓</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2">llm_call</td>
+                                <td class="px-3 py-2">模型名、prompt长度、token消耗</td>
+                                <td class="px-3 py-2">✓</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2">product_recommend</td>
+                                <td class="px-3 py-2">推荐产品列表、推荐理由</td>
+                                <td class="px-3 py-2">✓</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- FR3 -->
+            <div class="requirement-card p1 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR3 - 链路可视化页面</h3>
+                    <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">P1</span>
+                </div>
+                <p class="text-gray-700 mb-3">在后台管理提供链路追踪查看页面。</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <div class="text-sm font-semibold">入口位置</div>
+                        <div class="text-xs text-gray-500 mt-1">对话记录详情页 → 查看链路</div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <div class="text-sm font-semibold">展示形式</div>
+                        <div class="text-xs text-gray-500 mt-1">时间轴 + 节点卡片</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FR4 -->
+            <div class="requirement-card p1 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR4 - 节点详情展开</h3>
+                    <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">P1</span>
+                </div>
+                <p class="text-gray-700">点击任意节点可展开查看详细信息，包括输入参数、输出结果、异常信息等。</p>
+            </div>
+
+            <!-- FR5 -->
+            <div class="requirement-card p2 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR5 - 耗时分析</h3>
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">P2</span>
+                </div>
+                <p class="text-gray-700">显示每个节点的耗时和总耗时，高亮显示耗时较长的节点。</p>
+            </div>
+        </div>
+
+        <!-- UI Mockup -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-desktop text-indigo-500 mr-2"></i>页面设计</h2>
+            
+            <div class="border rounded-xl p-6 bg-gray-50">
+                <!-- Trace Header -->
+                <div class="bg-white rounded-lg p-4 mb-4 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-sm text-gray-500">Trace ID</div>
+                            <div class="font-mono text-lg">txh_20240115143218001_a7f3</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-500">总耗时</div>
+                            <div class="text-2xl font-bold text-blue-600">4.2s</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 mt-3 text-sm">
+                        <span class="text-gray-500">会话: <span class="text-gray-700">sess_abc123</span></span>
+                        <span class="text-gray-500">用户: <span class="text-gray-700">匿名用户</span></span>
+                        <span class="text-gray-500">时间: <span class="text-gray-700">2024-01-15 14:32:18</span></span>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="relative pl-8 space-y-4">
+                    <div class="absolute left-3 top-2 bottom-2 w-0.5 bg-gray-300"></div>
+                    
+                    <div class="relative">
+                        <div class="absolute left-[-22px] w-4 h-4 rounded-full bg-blue-500 border-2 border-white"></div>
+                        <div class="bg-white rounded-lg p-3 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="font-medium">意图识别</span>
+                                <span class="text-sm text-gray-500">1.2s</span>
+                            </div>
+                            <div class="text-sm text-gray-600 mt-1">识别结果: product_consult (置信度: 0.95)</div>
+                            <div class="mt-2 flex gap-2">
+                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">gpt-4</span>
+                                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">1,234 tokens</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <div class="absolute left-[-22px] w-4 h-4 rounded-full bg-green-500 border-2 border-white"></div>
+                        <div class="bg-white rounded-lg p-3 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="font-medium">知识库查询</span>
+                                <span class="text-sm text-gray-500">0.3s</span>
+                            </div>
+                            <div class="text-sm text-gray-600 mt-1">检索到 5 条相关产品</div>
+                            <div class="mt-2 flex gap-2">
+                                <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Top1相关性: 0.89</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <div class="absolute left-[-22px] w-4 h-4 rounded-full bg-red-500 border-2 border-white"></div>
+                        <div class="bg-white rounded-lg p-3 shadow-sm border-l-4 border-red-500">
+                            <div class="flex items-center justify-between">
+                                <span class="font-medium">产品推荐</span>
+                                <span class="text-sm text-red-500">2.5s ⚠️</span>
+                            </div>
+                            <div class="text-sm text-gray-600 mt-1">推荐产品: 益生菌粉、维生素C</div>
+                            <div class="mt-2 text-xs text-amber-600 bg-amber-50 p-2 rounded">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                耗时较长，建议优化prompt长度
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Model -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-database text-green-500 mr-2"></i>数据模型</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left">字段名</th>
+                            <th class="px-4 py-3 text-left">类型</th>
+                            <th class="px-4 py-3 text-left">说明</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        <tr><td class="px-4 py-3 font-mono">trace_id</td><td class="px-4 py-3">String</td><td class="px-4 py-3">链路唯一ID</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">session_id</td><td class="px-4 py-3">String</td><td class="px-4 py-3">关联会话ID</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">node_id</td><td class="px-4 py-3">String</td><td class="px-4 py-3">节点ID</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">node_type</td><td class="px-4 py-3">String</td><td class="px-4 py-3">节点类型</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">parent_node_id</td><td class="px-4 py-3">String</td><td class="px-4 py-3">父节点ID</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">input_data</td><td class="px-4 py-3">JSON</td><td class="px-4 py-3">输入数据</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">output_data</td><td class="px-4 py-3">JSON</td><td class="px-4 py-3">输出数据</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">duration_ms</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">耗时(毫秒)</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">status</td><td class="px-4 py-3">String</td><td class="px-4 py-3">状态</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">created_at</td><td class="px-4 py-3">DateTime</td><td class="px-4 py-3">创建时间</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- API -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-code text-gray-500 mr-2"></i>接口设计</h2>
+            <div class="space-y-3">
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/admin/traces/:trace_id</div>
+                    <div class="text-gray-400 text-xs mt-1">获取完整链路信息</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/admin/traces/:trace_id/nodes</div>
+                    <div class="text-gray-400 text-xs mt-1">获取链路节点列表</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

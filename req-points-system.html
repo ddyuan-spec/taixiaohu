@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>需求文档 - 用户积分体系</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; }
+        .requirement-card { border-left: 4px solid #3b82f6; }
+        .requirement-card.p1 { border-left-color: #f59e0b; }
+        .requirement-card.p2 { border-left-color: #8b5cf6; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm font-medium">P1</span>
+                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">用户运营</span>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-900">用户积分体系</h1>
+                    <p class="text-gray-500 mt-2">基础积分账户系统，支持积分获取、消耗、查询和流水记录</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-gray-400">版本</div>
+                    <div class="text-lg font-semibold">v1.0</div>
+                    <div class="text-sm text-gray-400 mt-1">2024-01-15</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overview -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-bullseye text-blue-500 mr-2"></i>需求概述</h2>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                建立用户积分账户体系，为每个用户（按session_id区分）维护积分余额，
+                记录积分获取和消耗的完整流水，为后续的积分商城、等级体系等运营功能提供基础支撑。
+            </p>
+            <div class="grid grid-cols-4 gap-4 mt-4">
+                <div class="bg-blue-50 rounded-lg p-4 text-center">
+                    <i class="fas fa-wallet text-blue-500 text-2xl mb-2"></i>
+                    <div class="text-sm font-medium">积分账户</div>
+                    <div class="text-xs text-gray-500">每个用户独立</div>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4 text-center">
+                    <i class="fas fa-exchange-alt text-green-500 text-2xl mb-2"></i>
+                    <div class="text-sm font-medium">流水记录</div>
+                    <div class="text-xs text-gray-500">完整可追溯</div>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4 text-center">
+                    <i class="fas fa-gift text-purple-500 text-2xl mb-2"></i>
+                    <div class="text-sm font-medium">积分获取</div>
+                    <div class="text-xs text-gray-500">多种方式</div>
+                </div>
+                <div class="bg-amber-50 rounded-lg p-4 text-center">
+                    <i class="fas fa-shopping-cart text-amber-500 text-2xl mb-2"></i>
+                    <div class="text-sm font-medium">积分消耗</div>
+                    <div class="text-xs text-gray-500">商城兑换</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Model -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-database text-green-500 mr-2"></i>数据模型</h2>
+            
+            <div class="mb-6">
+                <h3 class="font-semibold mb-3 text-gray-700">用户积分账户表 (user_points)</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left">字段名</th>
+                                <th class="px-4 py-3 text-left">类型</th>
+                                <th class="px-4 py-3 text-left">说明</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr><td class="px-4 py-3 font-mono">id</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">主键</td></tr>
+                            <tr><td class="px-4 py-3 font-mono">session_id</td><td class="px-4 py-3">String</td><td class="px-4 py-3">用户会话ID</td></tr>
+                            <tr><td class="px-4 py-3 font-mono">total_points</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">总积分（累计获得）</td></tr>
+                            <tr><td class="px-4 py-3 font-mono">available_points</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">可用积分</td></tr>
+                            <tr><td class="px-4 py-3 font-mono">consumed_points</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">已消耗积分</td></tr>
+                            <tr><td class="px-4 py-3 font-mono">created_at</td><td class="px-4 py-3">DateTime</td><td class="px-4 py-3">创建时间</td></tr>
+                            <tr><td class="px-4 py-3 font-mono">updated_at</td><td class="px-4 py-3">DateTime</td><td class="px-4 py-3">更新时间</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="font-semibold mb-3 text-gray-700">积分流水表 (point_transactions)</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left">字段名</th>
+                                <th class="px-4 py-3 text-left">类型</th>
+                                <th class="px-4 py-3 text-left">说明</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr><td class="px-4 py-3 font-mono">id</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">主键</td></tr>
+                            <tr><td class="px-4 py-3 font-mono">session_id</td><td class="px-4 py-3">String</td><td class="px-4 py-3">用户会话ID</td></tr>
+                            <tr><td class="px-4 py-3 font-mono">transaction_type</td><td class="px-4 py-3">String</td><td class="px-4 py-3">类型(earn/consume)</td></tr>
+                            <tr><td class="px-4 py-3 font-mono">source</td><td class="px-4 py-3">String</td><td class="px-4 py-3">来源(share/checkin/dialogue/etc)</td></tr>
+                            <tr><td class="px-4 py-3 font-mono">points</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">变动积分(正数/负数)</td></tr>
+                            <tr><td class="px-4 py-3 font-mono">balance_after</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">变动后余额</td></tr>
+                            <tr><td class="px-4 py-3 font-mono">description</td><td class="px-4 py-3">String</td><td class="px-4 py-3">描述</td></tr>
+                            <tr><td class="px-4 py-3 font-mono">created_at</td><td class="px-4 py-3">DateTime</td><td class="px-4 py-3">创建时间</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Functional Requirements -->
+        <div class="space-y-4 mb-6">
+            <h2 class="text-xl font-bold"><i class="fas fa-list-check text-purple-500 mr-2"></i>功能需求</h2>
+
+            <!-- FR1 -->
+            <div class="requirement-card p1 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR1 - 积分账户初始化</h3>
+                    <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">P1</span>
+                </div>
+                <p class="text-gray-700 mb-3">新用户首次交互时自动创建积分账户，默认赠送一定数量的初始积分。</p>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="text-sm font-semibold mb-2">初始化配置：</div>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• 初始积分：100分（可配置）</li>
+                        <li>• 自动创建时机：首次发送消息时</li>
+                        <li>• 记录初始积分流水</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- FR2 -->
+            <div class="requirement-card p1 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR2 - 积分获取</h3>
+                    <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">P1</span>
+                </div>
+                <p class="text-gray-700 mb-3">支持多种方式获取积分，每次获取记录流水。</p>
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="bg-gray-50 rounded-lg p-3 text-center">
+                        <i class="fas fa-comments text-blue-500 text-xl mb-2"></i>
+                        <div class="text-sm font-medium">对话互动</div>
+                        <div class="text-xs text-gray-500">每次有效对话+5分</div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3 text-center">
+                        <i class="fas fa-share-alt text-green-500 text-xl mb-2"></i>
+                        <div class="text-sm font-medium">分享推广</div>
+                        <div class="text-xs text-gray-500">分享+20分</div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3 text-center">
+                        <i class="fas fa-calendar-check text-purple-500 text-xl mb-2"></i>
+                        <div class="text-sm font-medium">每日打卡</div>
+                        <div class="text-xs text-gray-500">打卡+10分</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FR3 -->
+            <div class="requirement-card p1 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR3 - 积分消耗</h3>
+                    <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">P1</span>
+                </div>
+                <p class="text-gray-700 mb-3">支持积分消耗场景，需校验余额充足。</p>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="text-sm font-semibold mb-2">消耗场景：</div>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• 积分商城兑换商品</li>
+                        <li>• 解锁高级功能（如深度健康报告）</li>
+                        <li>• 参与抽奖活动</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- FR4 -->
+            <div class="requirement-card p1 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR4 - 积分查询接口</h3>
+                    <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">P1</span>
+                </div>
+                <p class="text-gray-700">提供查询用户当前积分余额和流水记录的API。</p>
+            </div>
+
+            <!-- FR5 -->
+            <div class="requirement-card p2 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR5 - 积分变动通知</h3>
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">P2</span>
+                </div>
+                <p class="text-gray-700">积分变动时在前端显示提示通知（如Toast消息）。</p>
+            </div>
+        </div>
+
+        <!-- UI Mockup -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-desktop text-indigo-500 mr-2"></i>页面设计</h2>
+            
+            <div class="grid grid-cols-2 gap-6">
+                <!-- Points Card -->
+                <div>
+                    <h3 class="font-semibold mb-3 text-gray-700">积分展示卡片</h3>
+                    <div class="bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl p-6 text-white">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-coins text-2xl"></i>
+                                <span class="font-medium">我的积分</span>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="text-4xl font-bold">1,250</div>
+                        <div class="text-sm opacity-80 mt-1">可用积分</div>
+                        <div class="flex gap-4 mt-4 text-sm">
+                            <div>
+                                <div class="font-semibold">2,000</div>
+                                <div class="opacity-80">累计获得</div>
+                            </div>
+                            <div>
+                                <div class="font-semibold">750</div>
+                                <div class="opacity-80">已使用</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction List -->
+                <div>
+                    <h3 class="font-semibold mb-3 text-gray-700">积分流水</h3>
+                    <div class="border rounded-xl overflow-hidden">
+                        <div class="p-3 border-b flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                                    <i class="fas fa-plus text-green-500 text-xs"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium">每日打卡</div>
+                                    <div class="text-xs text-gray-500">2024-01-15</div>
+                                </div>
+                            </div>
+                            <div class="text-green-600 font-semibold">+10</div>
+                        </div>
+                        <div class="p-3 border-b flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <i class="fas fa-comments text-blue-500 text-xs"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium">对话互动</div>
+                                    <div class="text-xs text-gray-500">2024-01-15</div>
+                                </div>
+                            </div>
+                            <div class="text-green-600 font-semibold">+5</div>
+                        </div>
+                        <div class="p-3 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                                    <i class="fas fa-shopping-cart text-red-500 text-xs"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium">兑换商品</div>
+                                    <div class="text-xs text-gray-500">2024-01-14</div>
+                                </div>
+                            </div>
+                            <div class="text-red-600 font-semibold">-100</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-code text-gray-500 mr-2"></i>接口设计</h2>
+            <div class="space-y-3">
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/points/balance?session_id=xxx</div>
+                    <div class="text-gray-400 text-xs mt-1">查询积分余额</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/points/transactions?session_id=xxx</div>
+                    <div class="text-gray-400 text-xs mt-1">查询积分流水</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">POST /api/points/earn</div>
+                    <div class="text-gray-400 text-xs mt-1">积分获取（内部调用）</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">POST /api/points/consume</div>
+                    <div class="text-gray-400 text-xs mt-1">积分消耗（内部调用）</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

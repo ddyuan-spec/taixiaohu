@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>需求文档 - 积分配置后台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; }
+        .requirement-card { border-left: 4px solid #3b82f6; }
+        .requirement-card.p2 { border-left-color: #8b5cf6; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-medium">P2</span>
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">后台管理</span>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-900">积分配置后台</h1>
+                    <p class="text-gray-500 mt-2">管理员配置积分规则、积分获取/消耗数值、开关控制</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-gray-400">版本</div>
+                    <div class="text-lg font-semibold">v1.0</div>
+                    <div class="text-sm text-gray-400 mt-1">2024-01-15</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overview -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-bullseye text-blue-500 mr-2"></i>需求概述</h2>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                提供后台管理界面，让运营人员可以灵活配置积分系统的各项规则，包括积分获取数值、
+                每日上限、连续打卡奖励、分享奖励等，支持实时生效和配置历史记录。
+            </p>
+            <div class="bg-yellow-50 rounded-lg p-4">
+                <div class="text-sm font-semibold text-yellow-800 mb-2">配置范围：</div>
+                <ul class="text-sm text-yellow-700 space-y-1">
+                    <li>• 初始积分（新用户注册赠送）</li>
+                    <li>• 对话互动积分（每次有效对话）</li>
+                    <li>• 分享推广积分（分享者和被分享者）</li>
+                    <li>• 每日打卡积分和连续奖励</li>
+                    <li>• 积分消耗规则（商城兑换比例）</li>
+                    <li>• 功能开关（启用/禁用某项积分获取途径）</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Functional Requirements -->
+        <div class="space-y-4 mb-6">
+            <h2 class="text-xl font-bold"><i class="fas fa-list-check text-purple-500 mr-2"></i>功能需求</h2>
+
+            <div class="requirement-card p2 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR1 - 积分规则配置页</h3>
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">P2</span>
+                </div>
+                <p class="text-gray-700 mb-3">后台管理页面展示所有积分规则配置项，支持编辑和保存。</p>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="text-sm font-semibold mb-2">配置项列表：</div>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between bg-white rounded p-2">
+                            <span class="text-sm">新用户初始积分</span>
+                            <div class="flex items-center gap-2">
+                                <input type="number" value="100" class="w-20 px-2 py-1 border rounded text-sm">
+                                <span class="text-xs text-gray-500">分</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between bg-white rounded p-2">
+                            <span class="text-sm">对话互动积分</span>
+                            <div class="flex items-center gap-2">
+                                <input type="number" value="5" class="w-20 px-2 py-1 border rounded text-sm">
+                                <span class="text-xs text-gray-500">分/次</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between bg-white rounded p-2">
+                            <span class="text-sm">对话积分每日上限</span>
+                            <div class="flex items-center gap-2">
+                                <input type="number" value="50" class="w-20 px-2 py-1 border rounded text-sm">
+                                <span class="text-xs text-gray-500">分/天</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between bg-white rounded p-2">
+                            <span class="text-sm">分享者获得积分</span>
+                            <div class="flex items-center gap-2">
+                                <input type="number" value="20" class="w-20 px-2 py-1 border rounded text-sm">
+                                <span class="text-xs text-gray-500">分/次</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between bg-white rounded p-2">
+                            <span class="text-sm">分享积分每日上限</span>
+                            <div class="flex items-center gap-2">
+                                <input type="number" value="100" class="w-20 px-2 py-1 border rounded text-sm">
+                                <span class="text-xs text-gray-500">分/天</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between bg-white rounded p-2">
+                            <span class="text-sm">每日打卡积分</span>
+                            <div class="flex items-center gap-2">
+                                <input type="number" value="10" class="w-20 px-2 py-1 border rounded text-sm">
+                                <span class="text-xs text-gray-500">分/天</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between bg-white rounded p-2">
+                            <span class="text-sm">连续3天额外奖励</span>
+                            <div class="flex items-center gap-2">
+                                <input type="number" value="20" class="w-20 px-2 py-1 border rounded text-sm">
+                                <span class="text-xs text-gray-500">分</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between bg-white rounded p-2">
+                            <span class="text-sm">连续7天额外奖励</span>
+                            <div class="flex items-center gap-2">
+                                <input type="number" value="50" class="w-20 px-2 py-1 border rounded text-sm">
+                                <span class="text-xs text-gray-500">分</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="requirement-card p2 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR2 - 功能开关</h3>
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">P2</span>
+                </div>
+                <p class="text-gray-700 mb-3">支持启用/禁用各项积分获取途径。</p>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-comments text-blue-500"></i>
+                            <span class="text-sm">对话互动积分</span>
+                        </div>
+                        <div class="w-10 h-5 bg-green-500 rounded-full relative">
+                            <div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-share-alt text-green-500"></i>
+                            <span class="text-sm">分享推广积分</span>
+                        </div>
+                        <div class="w-10 h-5 bg-green-500 rounded-full relative">
+                            <div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-calendar-check text-purple-500"></i>
+                            <span class="text-sm">每日打卡积分</span>
+                        </div>
+                        <div class="w-10 h-5 bg-green-500 rounded-full relative">
+                            <div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="requirement-card p2 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR3 - 配置实时生效</h3>
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">P2</span>
+                </div>
+                <p class="text-gray-700">保存配置后立即生效，无需重启服务。配置存储在数据库中，服务启动时加载到内存。</p>
+            </div>
+
+            <div class="requirement-card p2 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR4 - 配置变更记录</h3>
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">P2</span>
+                </div>
+                <p class="text-gray-700">记录每次配置变更的历史，包括修改时间、修改人、修改前后值。</p>
+            </div>
+        </div>
+
+        <!-- UI Mockup -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-desktop text-indigo-500 mr-2"></i>页面设计</h2>
+            
+            <div class="border rounded-xl overflow-hidden">
+                <div class="bg-gray-50 px-4 py-3 border-b flex items-center justify-between">
+                    <span class="font-semibold">积分规则配置</span>
+                    <button class="bg-blue-500 text-white px-4 py-1.5 rounded-lg text-sm">
+                        <i class="fas fa-save mr-1"></i>保存配置
+                    </button>
+                </div>
+                <div class="p-4 space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="border rounded-lg p-3">
+                            <div class="text-sm font-medium mb-2">新用户初始积分</div>
+                            <div class="flex items-center gap-2">
+                                <input type="number" value="100" class="flex-1 px-3 py-2 border rounded-lg">
+                                <span class="text-sm text-gray-500">分</span>
+                            </div>
+                        </div>
+                        <div class="border rounded-lg p-3">
+                            <div class="text-sm font-medium mb-2">对话互动积分</div>
+                            <div class="flex items-center gap-2">
+                                <input type="number" value="5" class="flex-1 px-3 py-2 border rounded-lg">
+                                <span class="text-sm text-gray-500">分/次</span>
+                            </div>
+                        </div>
+                        <div class="border rounded-lg p-3">
+                            <div class="text-sm font-medium mb-2">对话积分每日上限</div>
+                            <div class="flex items-center gap-2">
+                                <input type="number" value="50" class="flex-1 px-3 py-2 border rounded-lg">
+                                <span class="text-sm text-gray-500">分/天</span>
+                            </div>
+                        </div>
+                        <div class="border rounded-lg p-3">
+                            <div class="text-sm font-medium mb-2">分享者获得积分</div>
+                            <div class="flex items-center gap-2">
+                                <input type="number" value="20" class="flex-1 px-3 py-2 border rounded-lg">
+                                <span class="text-sm text-gray-500">分/次</span>
+                            </div>
+                        </div>
+                        <div class="border rounded-lg p-3">
+                            <div class="text-sm font-medium mb-2">分享积分每日上限</div>
+                            <div class="flex items-center gap-2">
+                                <input type="number" value="100" class="flex-1 px-3 py-2 border rounded-lg">
+                                <span class="text-sm text-gray-500">分/天</span>
+                            </div>
+                        </div>
+                        <div class="border rounded-lg p-3">
+                            <div class="text-sm font-medium mb-2">每日打卡积分</div>
+                            <div class="flex items-center gap-2">
+                                <input type="number" value="10" class="flex-1 px-3 py-2 border rounded-lg">
+                                <span class="text-sm text-gray-500">分/天</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t pt-4">
+                        <div class="text-sm font-medium mb-3">功能开关</div>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm">启用对话互动积分</span>
+                                <div class="w-12 h-6 bg-green-500 rounded-full relative cursor-pointer">
+                                    <div class="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm">启用分享推广积分</span>
+                                <div class="w-12 h-6 bg-green-500 rounded-full relative cursor-pointer">
+                                    <div class="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm">启用每日打卡积分</span>
+                                <div class="w-12 h-6 bg-green-500 rounded-full relative cursor-pointer">
+                                    <div class="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Model -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-database text-green-500 mr-2"></i>数据模型</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left">字段名</th>
+                            <th class="px-4 py-3 text-left">类型</th>
+                            <th class="px-4 py-3 text-left">说明</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        <tr><td class="px-4 py-3 font-mono">id</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">主键</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">config_key</td><td class="px-4 py-3">String</td><td class="px-4 py-3">配置项key</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">config_value</td><td class="px-4 py-3">String</td><td class="px-4 py-3">配置值</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">config_type</td><td class="px-4 py-3">String</td><td class="px-4 py-3">类型(number/boolean/string)</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">description</td><td class="px-4 py-3">String</td><td class="px-4 py-3">描述</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">updated_at</td><td class="px-4 py-3">DateTime</td><td class="px-4 py-3">更新时间</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- API -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-code text-gray-500 mr-2"></i>接口设计</h2>
+            <div class="space-y-3">
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/admin/points-config</div>
+                    <div class="text-gray-400 text-xs mt-1">获取积分配置</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">PUT /api/admin/points-config</div>
+                    <div class="text-gray-400 text-xs mt-1">更新积分配置</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/admin/points-config/history</div>
+                    <div class="text-gray-400 text-xs mt-1">获取配置变更历史</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

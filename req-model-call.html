@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>需求文档 - 模型调用记录与Token统计</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; }
+        .requirement-card { border-left: 4px solid #3b82f6; }
+        .requirement-card.p1 { border-left-color: #f59e0b; }
+        .requirement-card.p2 { border-left-color: #8b5cf6; }
+        .data-flow { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm font-medium">P1</span>
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">后台管理</span>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-900">模型调用记录与Token统计</h1>
+                    <p class="text-gray-500 mt-2">LLM API调用明细记录、Token消耗统计、成本分析</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-gray-400">版本</div>
+                    <div class="text-lg font-semibold">v1.0</div>
+                    <div class="text-sm text-gray-400 mt-1">2024-01-15</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overview -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-bullseye text-blue-500 mr-2"></i>需求概述</h2>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                记录每次LLM模型调用的详细信息，包括输入输出Token数、响应时间、模型版本、调用链路关联等，
+                并提供多维度的Token消耗统计和成本分析，帮助运营团队监控AI服务成本和性能。
+            </p>
+            <div class="grid grid-cols-3 gap-4 mt-4">
+                <div class="bg-blue-50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-blue-600">100%</div>
+                    <div class="text-sm text-gray-600">调用覆盖率</div>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-green-600">实时</div>
+                    <div class="text-sm text-gray-600">统计更新</div>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-purple-600">7天</div>
+                    <div class="text-sm text-gray-600">数据保留</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Model -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-database text-green-500 mr-2"></i>数据模型</h2>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left">字段名</th>
+                            <th class="px-4 py-3 text-left">类型</th>
+                            <th class="px-4 py-3 text-left">说明</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        <tr><td class="px-4 py-3 font-mono">call_id</td><td class="px-4 py-3">String</td><td class="px-4 py-3">调用唯一ID</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">session_id</td><td class="px-4 py-3">String</td><td class="px-4 py-3">关联会话ID</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">conversation_id</td><td class="px-4 py-3">String</td><td class="px-4 py-3">关联对话记录ID</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">model_name</td><td class="px-4 py-3">String</td><td class="px-4 py-3">模型名称 (gpt-4/gpt-3.5)</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">prompt_tokens</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">输入Token数</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">completion_tokens</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">输出Token数</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">total_tokens</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">总Token数</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">response_time_ms</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">响应时间(毫秒)</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">module_type</td><td class="px-4 py-3">String</td><td class="px-4 py-3">调用模块(意图识别/画像收集/...)</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">status</td><td class="px-4 py-3">String</td><td class="px-4 py-3">状态(success/error/timeout)</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">error_message</td><td class="px-4 py-3">String</td><td class="px-4 py-3">错误信息(如有)</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">cost_usd</td><td class="px-4 py-3">Float</td><td class="px-4 py-3">预估成本(美元)</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">created_at</td><td class="px-4 py-3">DateTime</td><td class="px-4 py-3">调用时间</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Functional Requirements -->
+        <div class="space-y-4 mb-6">
+            <h2 class="text-xl font-bold"><i class="fas fa-list-check text-purple-500 mr-2"></i>功能需求</h2>
+
+            <!-- FR1 -->
+            <div class="requirement-card p1 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR1 - 调用记录自动采集</h3>
+                    <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">P1</span>
+                </div>
+                <p class="text-gray-700 mb-3">在AgentService每次调用LLM时，自动记录调用信息到数据库。</p>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="text-sm font-semibold mb-2">采集点：</div>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• 意图识别模块 (intent_recognizer)</li>
+                        <li>• 用户画像收集模块 (profile_collector)</li>
+                        <li>• 症状收集模块 (symptom_collector)</li>
+                        <li>• 产品推荐模块 (product_recommender)</li>
+                        <li>• 对话管理模块 (dialogue_manager)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- FR2 -->
+            <div class="requirement-card p1 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR2 - 调用记录列表页</h3>
+                    <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">P1</span>
+                </div>
+                <p class="text-gray-700 mb-3">后台管理页面展示所有模型调用记录，支持筛选和排序。</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <div class="text-sm font-semibold">筛选条件</div>
+                        <div class="text-xs text-gray-500 mt-1">模型名称、模块类型、状态、时间范围</div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <div class="text-sm font-semibold">列表字段</div>
+                        <div class="text-xs text-gray-500 mt-1">时间、模型、模块、Token数、耗时、状态</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FR3 -->
+            <div class="requirement-card p1 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR3 - Token消耗统计看板</h3>
+                    <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">P1</span>
+                </div>
+                <p class="text-gray-700 mb-3">可视化展示Token消耗趋势和分布。</p>
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="border rounded-lg p-3 text-center">
+                        <i class="fas fa-chart-line text-blue-500 text-2xl mb-2"></i>
+                        <div class="text-sm font-medium">日消耗趋势</div>
+                        <div class="text-xs text-gray-500">近7天/30天</div>
+                    </div>
+                    <div class="border rounded-lg p-3 text-center">
+                        <i class="fas fa-chart-pie text-green-500 text-2xl mb-2"></i>
+                        <div class="text-sm font-medium">模块分布</div>
+                        <div class="text-xs text-gray-500">各模块Token占比</div>
+                    </div>
+                    <div class="border rounded-lg p-3 text-center">
+                        <i class="fas fa-coins text-amber-500 text-2xl mb-2"></i>
+                        <div class="text-sm font-medium">成本估算</div>
+                        <div class="text-xs text-gray-500">按模型单价计算</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FR4 -->
+            <div class="requirement-card p2 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR4 - 调用详情页</h3>
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">P2</span>
+                </div>
+                <p class="text-gray-700 mb-3">查看单次调用的完整信息，包括请求参数和响应内容。</p>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="text-sm font-semibold mb-2">详情内容：</div>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• 完整Prompt内容（可折叠）</li>
+                        <li>• LLM返回结果</li>
+                        <li>• Token使用明细</li>
+                        <li>• 关联的对话记录链接</li>
+                        <li>• 调用链路追踪入口</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- FR5 -->
+            <div class="requirement-card p2 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR5 - 异常告警</h3>
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">P2</span>
+                </div>
+                <p class="text-gray-700">当调用失败率超过阈值或响应时间异常时，在管理后台显示告警提示。</p>
+            </div>
+        </div>
+
+        <!-- UI Mockup -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-desktop text-indigo-500 mr-2"></i>页面设计</h2>
+            
+            <div class="space-y-6">
+                <!-- Stats Cards -->
+                <div>
+                    <h3 class="font-semibold mb-3 text-gray-700">统计卡片</h3>
+                    <div class="grid grid-cols-4 gap-4">
+                        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white">
+                            <div class="text-sm opacity-80">今日Token消耗</div>
+                            <div class="text-2xl font-bold mt-1">128,456</div>
+                            <div class="text-xs mt-1 opacity-80">↑ 12% 较昨日</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white">
+                            <div class="text-sm opacity-80">今日调用次数</div>
+                            <div class="text-2xl font-bold mt-1">1,234</div>
+                            <div class="text-xs mt-1 opacity-80">↑ 5% 较昨日</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-4 text-white">
+                            <div class="text-sm opacity-80">平均响应时间</div>
+                            <div class="text-2xl font-bold mt-1">856ms</div>
+                            <div class="text-xs mt-1 opacity-80">↓ 3% 较昨日</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl p-4 text-white">
+                            <div class="text-sm opacity-80">预估成本</div>
+                            <div class="text-2xl font-bold mt-1">$12.5</div>
+                            <div class="text-xs mt-1 opacity-80">今日累计</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart Area -->
+                <div>
+                    <h3 class="font-semibold mb-3 text-gray-700">趋势图表</h3>
+                    <div class="border rounded-xl p-4 h-48 flex items-end justify-around">
+                        <div class="w-12 bg-blue-200 rounded-t" style="height: 40%"></div>
+                        <div class="w-12 bg-blue-300 rounded-t" style="height: 60%"></div>
+                        <div class="w-12 bg-blue-400 rounded-t" style="height: 45%"></div>
+                        <div class="w-12 bg-blue-500 rounded-t" style="height: 80%"></div>
+                        <div class="w-12 bg-blue-600 rounded-t" style="height: 70%"></div>
+                        <div class="w-12 bg-blue-500 rounded-t" style="height: 90%"></div>
+                        <div class="w-12 bg-blue-400 rounded-t" style="height: 65%"></div>
+                        <div class="text-gray-400 text-sm">Token消耗趋势图（示意）</div>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div>
+                    <h3 class="font-semibold mb-3 text-gray-700">调用记录列表</h3>
+                    <div class="border rounded-xl overflow-hidden">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left">时间</th>
+                                    <th class="px-4 py-3 text-left">模型</th>
+                                    <th class="px-4 py-3 text-left">模块</th>
+                                    <th class="px-4 py-3 text-right">Input</th>
+                                    <th class="px-4 py-3 text-right">Output</th>
+                                    <th class="px-4 py-3 text-right">耗时</th>
+                                    <th class="px-4 py-3 text-center">状态</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3">14:32:18</td>
+                                    <td class="px-4 py-3"><span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-xs">gpt-4</span></td>
+                                    <td class="px-4 py-3">意图识别</td>
+                                    <td class="px-4 py-3 text-right">1,234</td>
+                                    <td class="px-4 py-3 text-right">56</td>
+                                    <td class="px-4 py-3 text-right">1.2s</td>
+                                    <td class="px-4 py-3 text-center"><i class="fas fa-check-circle text-green-500"></i></td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3">14:32:15</td>
+                                    <td class="px-4 py-3"><span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs">gpt-3.5</span></td>
+                                    <td class="px-4 py-3">对话管理</td>
+                                    <td class="px-4 py-3 text-right">2,456</td>
+                                    <td class="px-4 py-3 text-right">128</td>
+                                    <td class="px-4 py-3 text-right">0.8s</td>
+                                    <td class="px-4 py-3 text-center"><i class="fas fa-check-circle text-green-500"></i></td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3">14:31:42</td>
+                                    <td class="px-4 py-3"><span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-xs">gpt-4</span></td>
+                                    <td class="px-4 py-3">产品推荐</td>
+                                    <td class="px-4 py-3 text-right">3,678</td>
+                                    <td class="px-4 py-3 text-right">256</td>
+                                    <td class="px-4 py-3 text-right">2.1s</td>
+                                    <td class="px-4 py-3 text-center"><i class="fas fa-times-circle text-red-500"></i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-code text-gray-500 mr-2"></i>接口设计</h2>
+            <div class="space-y-3">
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/admin/model-calls</div>
+                    <div class="text-gray-400 text-xs mt-1">获取模型调用记录列表</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/admin/model-calls/stats</div>
+                    <div class="text-gray-400 text-xs mt-1">获取Token统计概览</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/admin/model-calls/:id</div>
+                    <div class="text-gray-400 text-xs mt-1">获取单次调用详情</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

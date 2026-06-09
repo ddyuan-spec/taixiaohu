@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>需求文档 - 对话记录详情页</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.8; color: #333; background: #f5f5f5; padding: 20px; }
+        .container { max-width: 960px; margin: 0 auto; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 20px; }
+        .header h1 { font-size: 1.8em; }
+        .header .meta { opacity: 0.9; margin-top: 8px; font-size: 0.9em; }
+        .section { background: white; border-radius: 12px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        .section h2 { color: #667eea; font-size: 1.3em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e9ecef; }
+        .section h3 { color: #2c3e50; font-size: 1.1em; margin: 20px 0 10px; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.95em; }
+        th, td { border: 1px solid #dee2e6; padding: 10px 12px; text-align: left; }
+        th { background: #e8f4f8; color: #2c3e50; font-weight: 600; }
+        tr:nth-child(even) { background: #f8f9fa; }
+        .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 500; }
+        .tag-p0 { background: #fee2e2; color: #991b1b; }
+        .tag-p1 { background: #fef3c7; color: #92400e; }
+        .tag-p2 { background: #dbeafe; color: #1e40af; }
+        .code-block { background: #2d3748; color: #e2e8f0; border-radius: 8px; padding: 16px; margin: 15px 0; overflow-x: auto; font-family: 'Consolas', monospace; font-size: 0.9em; }
+        ul, ol { margin-left: 20px; }
+        li { margin: 6px 0; }
+        .mockup { background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 8px; padding: 20px; margin: 15px 0; text-align: center; color: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💬 对话记录详情页</h1>
+            <div class="meta">需求文档 | 优先级 <span class="tag tag-p0">P0</span> | 版本 v1.0</div>
+        </div>
+
+        <div class="section">
+            <h2>📌 需求概述</h2>
+            <p>在对话记录列表页点击某条会话后，进入详情页展示该会话的完整对话流程，包括每轮对话的用户输入、系统回复、意图识别结果、知识库调用详情、LLM调用记录等。</p>
+        </div>
+
+        <div class="section">
+            <h2>🎯 功能目标</h2>
+            <ul>
+                <li>展示完整对话流程，清晰呈现每轮交互</li>
+                <li>展示每次知识库调用的Query、返回结果、使用的原文片段</li>
+                <li>展示每次LLM调用的模块、Token消耗、响应时间</li>
+                <li>支持标记Badcase，记录问题原因</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>🏗️ 页面布局（参考图1）</h2>
+            <h3>顶部信息栏</h3>
+            <ul>
+                <li>会话ID</li>
+                <li>用户画像（年龄、性别、慢性病等）</li>
+                <li>会话状态（进行中/已结束）</li>
+                <li>总消息数 / 总知识库调用数 / 总Token消耗</li>
+                <li>操作按钮：标记Badcase、导出对话</li>
+            </ul>
+
+            <h3>中部对话流程区</h3>
+            <p>按时间顺序展示每轮对话，每轮包含：</p>
+            <table>
+                <tr><th>元素</th><th>说明</th></tr>
+                <tr><td>用户消息</td><td>用户输入内容，标注时间戳</td></tr>
+                <tr><td>意图识别</td><td>识别的意图类型、置信度</td></tr>
+                <tr><td>知识库调用</td><td>展开的卡片，展示Query、Top-K结果、原文片段</td></tr>
+                <tr><td>LLM调用</td><td>调用的模块、输入Token、输出Token、响应时间</td></tr>
+                <tr><td>系统回复</td><td>最终回复内容</td></tr>
+            </table>
+
+            <h3>知识库调用详情卡片</h3>
+            <div class="code-block">{
+  "query": "有什么产品推荐吗？ 失眠 35岁 男",
+  "intent": "recommendation",
+  "results": [
+    {
+      "rank": 1,
+      "product_id": "PRD001",
+      "product_name": "泰吉眠沙棘茶氨酸",
+      "score": 0.92,
+      "source_text": "泰吉眠沙棘茶氨酸主要功效：30分钟助入睡...",
+      "source_doc": "泰吉眠产品手册"
+    }
+  ],
+  "response_time_ms": 150
+}</div>
+
+            <h3>右侧/底部信息面板</h3>
+            <ul>
+                <li>用户画像信息</li>
+                <li>会话统计（消息数、调用次数、Token消耗）</li>
+                <li>Badcase标记区域（问题类型、原因描述、截图）</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>📋 功能清单</h2>
+            <table>
+                <tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+                <tr><td>对话流程展示</td><td>按轮次展示完整对话，含用户/系统消息</td><td><span class="tag tag-p0">P0</span></td></tr>
+                <tr><td>知识库调用展开</td><td>点击展开查看Query、Top-K结果、原文片段</td><td><span class="tag tag-p0">P0</span></td></tr>
+                <tr><td>LLM调用记录</td><td>展示每次LLM调用的模块、Token、响应时间</td><td><span class="tag tag-p0">P0</span></td></tr>
+                <tr><td>用户画像展示</td><td>展示该会话收集到的用户画像信息</td><td><span class="tag tag-p1">P1</span></td></tr>
+                <tr><td>Badcase标记</td><td>标记问题对话，选择问题类型、填写原因</td><td><span class="tag tag-p1">P1</span></td></tr>
+                <tr><td>对话导出</td><td>导出对话记录为JSON/CSV</td><td><span class="tag tag-p2">P2</span></td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>💾 数据接口</h2>
+            <div class="code-block">GET /api/v2/conversations/{session_id}
+
+Response:
+{
+  "session_id": "web_xxx",
+  "messages": [
+    {
+      "message_id": "...",
+      "type": "user/agent",
+      "content": "...",
+      "intent": "health_consult",
+      "state": "symptom_collection",
+      "knowledge_base_calls": [...],
+      "llm_calls": [...],
+      "timestamp": "..."
+    }
+  ],
+  "user_profile": {...},
+  "stats": {
+    "total_messages": 8,
+    "total_kb_calls": 2,
+    "total_tokens": 3500
+  }
+}</div>
+        </div>
+    </div>
+</body>
+</html>
