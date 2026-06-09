@@ -39,6 +39,71 @@ BADCASE_FILE = os.path.join(DATA_DIR, "badcases.json")
 class BadcaseService:
     def __init__(self):
         self.badcases = _load_json(BADCASE_FILE, [])
+        self._init_demo_data()
+    
+    def _init_demo_data(self):
+        """初始化演示数据"""
+        if not self.badcases:
+            demo_badcases = [
+                {
+                    'id': 'bc_demo_001',
+                    'session_id': 'sess_demo_001',
+                    'category': 'intent_error',
+                    'description': '用户询问"我膝盖疼该吃什么药"，系统识别为产品咨询而非症状咨询',
+                    'severity': 'high',
+                    'status': 'open',
+                    'assigned_to': '开发团队',
+                    'conversation_snippet': '用户：我膝盖疼该吃什么药\n系统：识别为 product_consult',
+                    'created_at': (datetime.now() - timedelta(days=2)).isoformat(),
+                    'updated_at': (datetime.now() - timedelta(days=2)).isoformat(),
+                    'resolution': '',
+                    'resolution_time': None
+                },
+                {
+                    'id': 'bc_demo_002',
+                    'session_id': 'sess_demo_002',
+                    'category': 'wrong_recommendation',
+                    'description': '用户有高血压病史，但系统推荐了含钠较高的保健品',
+                    'severity': 'critical',
+                    'status': 'in_progress',
+                    'assigned_to': '产品团队',
+                    'conversation_snippet': '用户：我有高血压\n系统：推荐产品X（含钠量高）',
+                    'created_at': (datetime.now() - timedelta(days=1)).isoformat(),
+                    'updated_at': (datetime.now() - timedelta(hours=5)).isoformat(),
+                    'resolution': '正在审核产品禁忌症数据库',
+                    'resolution_time': None
+                },
+                {
+                    'id': 'bc_demo_003',
+                    'session_id': 'sess_demo_003',
+                    'category': 'inappropriate_response',
+                    'description': '用户表达焦虑情绪时，系统回复过于生硬，缺少情感关怀',
+                    'severity': 'medium',
+                    'status': 'resolved',
+                    'assigned_to': '运营团队',
+                    'conversation_snippet': '用户：我很担心我的健康\n系统：请描述您的症状',
+                    'created_at': (datetime.now() - timedelta(days=5)).isoformat(),
+                    'updated_at': (datetime.now() - timedelta(days=3)).isoformat(),
+                    'resolution': '已优化对话管理模块的情感回复prompt',
+                    'resolution_time': (datetime.now() - timedelta(days=3)).isoformat()
+                },
+                {
+                    'id': 'bc_demo_004',
+                    'session_id': 'sess_demo_004',
+                    'category': 'knowledge_gap',
+                    'description': '用户询问"辅酶Q10对心脏有什么好处"，知识库未返回相关信息',
+                    'severity': 'low',
+                    'status': 'open',
+                    'assigned_to': '知识库团队',
+                    'conversation_snippet': '用户：辅酶Q10对心脏有什么好处\n系统：未找到相关知识',
+                    'created_at': (datetime.now() - timedelta(hours=12)).isoformat(),
+                    'updated_at': (datetime.now() - timedelta(hours=12)).isoformat(),
+                    'resolution': '',
+                    'resolution_time': None
+                }
+            ]
+            self.badcases = demo_badcases
+            self._save()
     
     def _save(self):
         _save_json(BADCASE_FILE, self.badcases)
@@ -106,6 +171,91 @@ MODEL_CALLS_FILE = os.path.join(DATA_DIR, "model_calls.json")
 class ModelCallService:
     def __init__(self):
         self.calls = _load_json(MODEL_CALLS_FILE, [])
+        self._init_demo_data()
+    
+    def _init_demo_data(self):
+        """初始化演示数据"""
+        if not self.calls:
+            now = datetime.now()
+            demo_calls = [
+                {
+                    'call_id': 'call_demo_001',
+                    'session_id': 'sess_demo_001',
+                    'conversation_id': 'conv_001',
+                    'model_name': 'qwen-plus',
+                    'prompt_tokens': 1234,
+                    'completion_tokens': 156,
+                    'total_tokens': 1390,
+                    'response_time_ms': 1250,
+                    'module_type': 'intent_recognition',
+                    'status': 'success',
+                    'error_message': '',
+                    'cost_usd': 0.028,
+                    'created_at': (now - timedelta(hours=2)).isoformat()
+                },
+                {
+                    'call_id': 'call_demo_002',
+                    'session_id': 'sess_demo_001',
+                    'conversation_id': 'conv_001',
+                    'model_name': 'qwen-plus',
+                    'prompt_tokens': 2456,
+                    'completion_tokens': 312,
+                    'total_tokens': 2768,
+                    'response_time_ms': 2100,
+                    'module_type': 'product_recommendation',
+                    'status': 'success',
+                    'error_message': '',
+                    'cost_usd': 0.055,
+                    'created_at': (now - timedelta(hours=2, minutes=5)).isoformat()
+                },
+                {
+                    'call_id': 'call_demo_003',
+                    'session_id': 'sess_demo_002',
+                    'conversation_id': 'conv_002',
+                    'model_name': 'qwen-plus',
+                    'prompt_tokens': 890,
+                    'completion_tokens': 78,
+                    'total_tokens': 968,
+                    'response_time_ms': 980,
+                    'module_type': 'symptom_extraction',
+                    'status': 'success',
+                    'error_message': '',
+                    'cost_usd': 0.019,
+                    'created_at': (now - timedelta(hours=5)).isoformat()
+                },
+                {
+                    'call_id': 'call_demo_004',
+                    'session_id': 'sess_demo_003',
+                    'conversation_id': 'conv_003',
+                    'model_name': 'qwen-plus',
+                    'prompt_tokens': 1567,
+                    'completion_tokens': 0,
+                    'total_tokens': 1567,
+                    'response_time_ms': 5000,
+                    'module_type': 'knowledge_qa',
+                    'status': 'error',
+                    'error_message': '请求超时',
+                    'cost_usd': 0.0,
+                    'created_at': (now - timedelta(hours=8)).isoformat()
+                },
+                {
+                    'call_id': 'call_demo_005',
+                    'session_id': 'sess_demo_004',
+                    'conversation_id': 'conv_004',
+                    'model_name': 'qwen-plus',
+                    'prompt_tokens': 678,
+                    'completion_tokens': 145,
+                    'total_tokens': 823,
+                    'response_time_ms': 1100,
+                    'module_type': 'dialogue_response',
+                    'status': 'success',
+                    'error_message': '',
+                    'cost_usd': 0.016,
+                    'created_at': (now - timedelta(minutes=30)).isoformat()
+                }
+            ]
+            self.calls = demo_calls
+            self._save()
     
     def _save(self):
         _save_json(MODEL_CALLS_FILE, self.calls)
@@ -191,6 +341,108 @@ TRACE_FILE = os.path.join(DATA_DIR, "traces.json")
 class TraceService:
     def __init__(self):
         self.traces = _load_json(TRACE_FILE, [])
+        self._init_demo_data()
+    
+    def _init_demo_data(self):
+        """初始化演示数据"""
+        if not self.traces:
+            now = datetime.now()
+            demo_traces = [
+                {
+                    'trace_id': 'txh_20250609143000_a1b2',
+                    'session_id': 'sess_demo_001',
+                    'user_message': '我最近膝盖疼，有什么保健品推荐吗？',
+                    'status': 'completed',
+                    'total_duration_ms': 4200,
+                    'nodes': [
+                        {
+                            'node_id': 'txh_20250609143000_a1b2_node_0',
+                            'node_type': 'intent_recognition',
+                            'input_data': {'user_message': '我最近膝盖疼，有什么保健品推荐吗？'},
+                            'output_data': {'intent': 'product_recommend', 'confidence': 0.92},
+                            'duration_ms': 1200,
+                            'status': 'success',
+                            'error_message': '',
+                            'created_at': (now - timedelta(hours=2)).isoformat()
+                        },
+                        {
+                            'node_id': 'txh_20250609143000_a1b2_node_1',
+                            'node_type': 'knowledge_query',
+                            'input_data': {'query': '膝盖疼 保健品'},
+                            'output_data': {'results_count': 3, 'top_relevance': 0.89},
+                            'duration_ms': 300,
+                            'status': 'success',
+                            'error_message': '',
+                            'created_at': (now - timedelta(hours=2)).isoformat()
+                        },
+                        {
+                            'node_id': 'txh_20250609143000_a1b2_node_2',
+                            'node_type': 'product_recommend',
+                            'input_data': {'products': ['氨糖软骨素', '钙片', '维生素D']},
+                            'output_data': {'recommended': ['氨糖软骨素'], 'reason': '针对关节健康'},
+                            'duration_ms': 2500,
+                            'status': 'success',
+                            'error_message': '',
+                            'created_at': (now - timedelta(hours=2)).isoformat()
+                        },
+                        {
+                            'node_id': 'txh_20250609143000_a1b2_node_3',
+                            'node_type': 'dialogue_response',
+                            'input_data': {'context': '用户膝盖疼，推荐氨糖软骨素'},
+                            'output_data': {'response': '根据您的情况，我推荐氨糖软骨素...'},
+                            'duration_ms': 200,
+                            'status': 'success',
+                            'error_message': '',
+                            'created_at': (now - timedelta(hours=2)).isoformat()
+                        }
+                    ],
+                    'created_at': (now - timedelta(hours=2)).isoformat(),
+                    'completed_at': (now - timedelta(hours=2)).isoformat()
+                },
+                {
+                    'trace_id': 'txh_20250609120000_c3d4',
+                    'session_id': 'sess_demo_002',
+                    'user_message': '我血压有点高，能吃这个吗？',
+                    'status': 'completed',
+                    'total_duration_ms': 1800,
+                    'nodes': [
+                        {
+                            'node_id': 'txh_20250609120000_c3d4_node_0',
+                            'node_type': 'intent_recognition',
+                            'input_data': {'user_message': '我血压有点高，能吃这个吗？'},
+                            'output_data': {'intent': 'product_consult', 'confidence': 0.88},
+                            'duration_ms': 900,
+                            'status': 'success',
+                            'error_message': '',
+                            'created_at': (now - timedelta(hours=5)).isoformat()
+                        },
+                        {
+                            'node_id': 'txh_20250609120000_c3d4_node_1',
+                            'node_type': 'safety_check',
+                            'input_data': {'condition': '高血压', 'product': '当前产品'},
+                            'output_data': {'safe': True, 'warning': '建议监测血压'},
+                            'duration_ms': 600,
+                            'status': 'success',
+                            'error_message': '',
+                            'created_at': (now - timedelta(hours=5)).isoformat()
+                        },
+                        {
+                            'node_id': 'txh_20250609120000_c3d4_node_2',
+                            'node_type': 'dialogue_response',
+                            'input_data': {'safety_result': 'safe'},
+                            'output_data': {'response': '您可以服用，但建议定期监测血压...'},
+                            'duration_ms': 300,
+                            'status': 'success',
+                            'error_message': '',
+                            'created_at': (now - timedelta(hours=5)).isoformat()
+                        }
+                    ],
+                    'created_at': (now - timedelta(hours=5)).isoformat(),
+                    'completed_at': (now - timedelta(hours=5)).isoformat()
+                }
+            ]
+            self.traces = demo_traces
+            self._save()
     
     def _save(self):
         _save_json(TRACE_FILE, self.traces)
@@ -264,6 +516,7 @@ class PointsService:
         self.accounts = _load_json(POINTS_FILE, {})
         self.transactions = _load_json(POINT_TRANSACTIONS_FILE, [])
         self._init_config()
+        self._init_demo_data()
     
     def _init_config(self):
         self.config = _load_json(os.path.join(DATA_DIR, "points_config.json"), {
@@ -280,6 +533,115 @@ class PointsService:
             'enable_share': True,
             'enable_checkin': True
         })
+    
+    def _init_demo_data(self):
+        """初始化演示数据"""
+        if not self.accounts:
+            now = datetime.now()
+            demo_accounts = {
+                'demo_user_001': {
+                    'session_id': 'demo_user_001',
+                    'total_points': 1250,
+                    'available_points': 850,
+                    'consumed_points': 400,
+                    'created_at': (now - timedelta(days=30)).isoformat(),
+                    'updated_at': now.isoformat()
+                },
+                'demo_user_002': {
+                    'session_id': 'demo_user_002',
+                    'total_points': 580,
+                    'available_points': 580,
+                    'consumed_points': 0,
+                    'created_at': (now - timedelta(days=15)).isoformat(),
+                    'updated_at': now.isoformat()
+                },
+                'demo_user_003': {
+                    'session_id': 'demo_user_003',
+                    'total_points': 2100,
+                    'available_points': 1500,
+                    'consumed_points': 600,
+                    'created_at': (now - timedelta(days=60)).isoformat(),
+                    'updated_at': now.isoformat()
+                }
+            }
+            self.accounts = demo_accounts
+            
+            # 添加演示交易记录
+            demo_transactions = [
+                {
+                    'id': 'txn_demo_001',
+                    'session_id': 'demo_user_001',
+                    'transaction_type': 'earn',
+                    'source': 'initial',
+                    'points': 100,
+                    'balance_after': 100,
+                    'description': '新用户初始积分',
+                    'created_at': (now - timedelta(days=30)).isoformat()
+                },
+                {
+                    'id': 'txn_demo_002',
+                    'session_id': 'demo_user_001',
+                    'transaction_type': 'earn',
+                    'source': 'checkin',
+                    'points': 10,
+                    'balance_after': 110,
+                    'description': '每日打卡 +10分',
+                    'created_at': (now - timedelta(days=29)).isoformat()
+                },
+                {
+                    'id': 'txn_demo_003',
+                    'session_id': 'demo_user_001',
+                    'transaction_type': 'earn',
+                    'source': 'dialogue',
+                    'points': 1000,
+                    'balance_after': 1110,
+                    'description': '对话互动累计奖励',
+                    'created_at': (now - timedelta(days=20)).isoformat()
+                },
+                {
+                    'id': 'txn_demo_004',
+                    'session_id': 'demo_user_001',
+                    'transaction_type': 'consume',
+                    'source': 'shop',
+                    'points': -200,
+                    'balance_after': 910,
+                    'description': '兑换商品：专属主题皮肤',
+                    'created_at': (now - timedelta(days=10)).isoformat()
+                },
+                {
+                    'id': 'txn_demo_005',
+                    'session_id': 'demo_user_001',
+                    'transaction_type': 'consume',
+                    'source': 'shop',
+                    'points': -60,
+                    'balance_after': 850,
+                    'description': '兑换商品：8折优惠券',
+                    'created_at': (now - timedelta(days=5)).isoformat()
+                },
+                {
+                    'id': 'txn_demo_006',
+                    'session_id': 'demo_user_002',
+                    'transaction_type': 'earn',
+                    'source': 'initial',
+                    'points': 100,
+                    'balance_after': 100,
+                    'description': '新用户初始积分',
+                    'created_at': (now - timedelta(days=15)).isoformat()
+                },
+                {
+                    'id': 'txn_demo_007',
+                    'session_id': 'demo_user_002',
+                    'transaction_type': 'earn',
+                    'source': 'share',
+                    'points': 480,
+                    'balance_after': 580,
+                    'description': '分享推广奖励',
+                    'created_at': (now - timedelta(days=10)).isoformat()
+                }
+            ]
+            self.transactions = demo_transactions
+            self._save_accounts()
+            self._save_transactions()
     
     def _save_accounts(self):
         _save_json(POINTS_FILE, self.accounts)
