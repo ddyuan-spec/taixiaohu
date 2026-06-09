@@ -36,6 +36,15 @@ class IntentType(Enum):
 
 
 @dataclass
+class KnowledgeSource:
+    """知识库来源文档（单个切片）"""
+    file_name: str = ""           # 源文件名
+    chunk_id: str = ""            # 切片ID
+    chunk_content: str = ""       # 切片内容摘要
+    relevance: float = 0.0        # 相似度分数 0-1
+
+
+@dataclass
 class KnowledgeBaseCall:
     """知识库调用记录"""
     query: str
@@ -43,6 +52,7 @@ class KnowledgeBaseCall:
     results_count: int
     product_ids: List[str]
     response_time_ms: int
+    sources: List[KnowledgeSource] = field(default_factory=list)  # 命中的源文档
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
 
 
@@ -134,7 +144,20 @@ class ConversationLogger:
             # 处理 knowledge_base_calls
             kb_calls = []
             for kb in msg_data.get('knowledge_base_calls', []):
-                kb_calls.append(KnowledgeBaseCall(**kb))
+                # 处理 sources 嵌套
+                sources = []
+                for src in kb.get('sources', []):
+                    sources.append(KnowledgeSource(**src))
+                kb_obj = KnowledgeBaseCall(
+                    query=kb.get('query', ''),
+                    intent=kb.get('intent', ''),
+                    results_count=kb.get('results_count', 0),
+                    product_ids=kb.get('product_ids', []),
+                    response_time_ms=kb.get('response_time_ms', 0),
+                    sources=sources,
+                    timestamp=kb.get('timestamp', datetime.now().isoformat())
+                )
+                kb_calls.append(kb_obj)
             
             # 处理 llm_calls
             llm_calls = []

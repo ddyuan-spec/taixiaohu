@@ -1036,6 +1036,20 @@
                                     <span style="font-size:11px; color:#888;">匹配产品ID：</span>
                                     ${call.product_ids.map(pid => `<code style="font-size:11px; background:#e6f7ff; padding:1px 6px; border-radius:3px; margin-right:4px;">${pid}</code>`).join('')}
                                 </div>` : ''}
+                            ${call.sources && call.sources.length > 0 ?
+                                `<div style="margin-top:8px; border-top:1px dashed #e8e8e8; padding-top:8px;">
+                                    <div style="font-size:11px; font-weight:600; color:#555; margin-bottom:6px;"><i class="bi bi-journal-text me-1"></i>命中知识库来源 (${call.sources.length})</div>
+                                    ${call.sources.map((src, si) => `
+                                        <div style="background:#f6ffed; border:1px solid #d9f7be; border-radius:4px; padding:8px; margin-bottom:6px;">
+                                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                                <span style="font-size:11px; font-weight:600; color:#333;"><i class="bi bi-file-earmark-text me-1" style="color:#52c41a;"></i>${escapeHtml(src.file_name || '未知文件')}</span>
+                                                <span style="font-size:11px; color:#52c41a; font-weight:600;">相似度 ${(src.relevance || 0).toFixed(2)}</span>
+                                            </div>
+                                            <div style="font-size:11px; color:#666; line-height:1.4;">${escapeHtml(src.chunk_content || '')}</div>
+                                            <div style="font-size:10px; color:#999; margin-top:4px;">切片ID: ${escapeHtml(src.chunk_id || '-')}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>` : ''}
                         </div>
                     `;
                 });

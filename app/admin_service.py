@@ -461,6 +461,17 @@ class ProfileService:
         sessions = _load_json(SESSIONS_FILE, [])
         return [s for s in sessions if s.get("user_id") == user_id]
 
+    def create_profile(self, profile_data: Dict) -> Dict:
+        """手动创建用户画像"""
+        profiles = self.get_all_profiles()
+        profiles.append(profile_data)
+        _save_json(PROFILES_FILE, profiles)
+        return profile_data
+
+    def update_profile(self, user_id: str, updates: Dict) -> Optional[Dict]:
+        """更新用户画像（供API调用）"""
+        return self.create_or_update_profile(user_id, updates)
+
     def get_stats(self) -> Dict:
         """获取画像统计"""
         profiles = self.get_all_profiles()

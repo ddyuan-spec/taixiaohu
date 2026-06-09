@@ -6,6 +6,9 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 from agent import TaiXiaoHuAgent
 from agent_service import get_agent_service
 import uuid
+import os
+import json
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'taixiaohu_secret_key_2024'  # 用于session加密
@@ -691,6 +694,44 @@ def admin_profiles():
                            stats=stats)
 
 
+@app.route('/api/admin/profiles', methods=['POST'])
+def api_create_profile():
+    """手动创建用户画像"""
+    try:
+        from admin_service import profile_service
+        data = request.json or {}
+        user_id = data.get('user_id', '').strip()
+        if not user_id:
+            return jsonify({'success': False, 'error': '用户ID不能为空'}), 400
+        # 检查是否已存在
+        existing = profile_service.get_profile_by_id(user_id)
+        if existing:
+            return jsonify({'success': False, 'error': '该用户ID已存在'}), 409
+        # 构建画像数据
+        profile_data = {
+            'user_id': user_id,
+            'name': data.get('name', ''),
+            'age': data.get('age', ''),
+            'gender': data.get('gender', ''),
+            'chronic_diseases': data.get('chronic_diseases', ''),
+            'allergy_history': data.get('allergy_history', ''),
+            'current_medication': data.get('current_medication', ''),
+            'health_concerns': data.get('health_concerns', ''),
+            'completeness': 0.3,
+            'created_at': datetime.now().isoformat(),
+            'updated_at': datetime.now().isoformat()
+        }
+        # 计算完整度
+        filled = sum(1 for v in [profile_data['name'], profile_data['age'], profile_data['gender'],
+                                   profile_data['chronic_diseases'], profile_data['allergy_history'],
+                                   profile_data['current_medication'], profile_data['health_concerns']] if v)
+        profile_data['completeness'] = round(filled / 6, 2)
+        profile_service.create_profile(profile_data)
+        return jsonify({'success': True, 'profile': profile_data})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 @app.route('/api/admin/profiles/<user_id>', methods=['GET'])
 def api_get_profile(user_id):
     """获取指定用户画像（JSON格式）"""
@@ -803,20 +844,87 @@ def admin_llm_test():
 
 
 # ============================================================
-# 提示词配置路由
+# 提示词配置路由 (新版 - 16模块管理)
 # ============================================================
+PROMPTS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'prompts.json')
+
+def _load_prompts():
+    """加载提示词配置"""
+    if os.path.exists(PROMPTS_FILE):
+        try:
+            with open(PROMPTS_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            return {}
+    return {}
+
+
+def _save_prompts(prompts):
+    """保存提示词配置"""
+    os.makedirs(os.path.dirname(PROMPTS_FILE), exist_ok=True)
+    with open(PROMPTS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(prompts, f, ensure_ascii=False, indent=2)
+
+
 @app.route('/admin/prompt')
 def admin_prompt():
     """提示词配置页面"""
-    from llm_service import get_llm_service
-    llm_service = get_llm_service()
-    prompts = llm_service.get_all_prompts() if llm_service else {}
-    return render_template('admin_prompt.html', prompts=prompts)
+    return render_template('admin_prompt.html')
+
+
+@app.route('/api/admin/prompts', methods=['GET'])
+def api_list_prompts():
+    """获取所有提示词配置"""
+    try:
+        prompts = _load_prompts()
+        return jsonify({'success': True, 'prompts': prompts})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/prompts/<prompt_id>', methods=['GET'])
+def api_get_prompt(prompt_id):
+    """获取单个提示词配置"""
+    try:
+        prompts = _load_prompts()
+        prompt = prompts.get(prompt_id)
+        if not prompt:
+            return jsonify({'success': False, 'error': '提示词不存在'}), 404
+        return jsonify({'success': True, 'prompt': prompt})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/prompts/<prompt_id>', methods=['PUT'])
+def api_update_prompt(prompt_id):
+    """更新提示词配置"""
+    try:
+        prompts = _load_prompts()
+        data = request.json or {}
+        prompts[prompt_id] = data
+        _save_prompts(prompts)
+        return jsonify({'success': True, 'prompt': data})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/prompts/import', methods=['POST'])
+def api_import_prompts():
+    """批量导入提示词"""
+    try:
+        data = request.json or {}
+        imported = data.get('prompts', {})
+        if not imported:
+            return jsonify({'success': False, 'error': '导入数据为空'}), 400
+        _save_prompts(imported)
+        return jsonify({'success': True, 'message': f'成功导入 {len(imported)} 个模块'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @app.route('/admin/prompt/save', methods=['POST'])
-def admin_prompt_save():
-    """保存提示词配置"""
+def admin_prompt_save_legacy():
+    """保存提示词配置（兼容旧版）"""
     try:
         data = request.json
         prompt_name = data.get('name')

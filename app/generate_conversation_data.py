@@ -38,7 +38,12 @@ SCENARIOS = [
                 "agent": "您好！为65岁的长辈选择保健品，建议先了解她的健康状况。请问您母亲目前有什么慢性病或正在服用的药物吗？",
                 "intent": "health_consult",
                 "intent_confidence": 0.95,
-                "kb_calls": [{"query": "老年人保健品推荐", "results_count": 5, "product_ids": ["prod_001", "prod_002"]}],
+                "kb_calls": [{"query": "老年人保健品推荐", "results_count": 5, "product_ids": ["prod_001", "prod_002"],
+                    "sources": [
+                        {"file_name": "老年人营养指南.pdf", "chunk_id": "chunk_001", "chunk_content": "老年人日常保健应关注心血管健康和骨骼健康，推荐补充深海鱼油、辅酶Q10和维生素D+钙...", "relevance": 0.92},
+                        {"file_name": "保健品产品手册.pdf", "chunk_id": "chunk_005", "chunk_content": "深海鱼油富含Omega-3脂肪酸，有助于调节血脂，建议选择低钠配方产品...", "relevance": 0.88}
+                    ]
+                }],
                 "llm_calls": [{"module": "intent_recognition", "prompt_tokens": 120, "completion_tokens": 45, "total_tokens": 165, "response_time_ms": 800, "success": True}],
                 "recommended_products": [],
                 "trace_nodes": [
@@ -52,7 +57,12 @@ SCENARIOS = [
                 "agent": "了解了。高血压患者在选择保健品时需要特别注意。我推荐以下几款适合高血压人群的保健品：\n\n1. **深海鱼油** - 有助于调节血脂，选择低钠配方\n2. **辅酶Q10** - 对心血管健康有益\n3. **维生素D+钙** - 老年人普遍缺乏\n\n请问您母亲有没有其他过敏史或特殊饮食要求？",
                 "intent": "product_recommend",
                 "intent_confidence": 0.93,
-                "kb_calls": [{"query": "高血压 保健品 推荐", "results_count": 3, "product_ids": ["prod_003", "prod_004", "prod_005"]}],
+                "kb_calls": [{"query": "高血压 保健品 推荐", "results_count": 3, "product_ids": ["prod_003", "prod_004", "prod_005"],
+                    "sources": [
+                        {"file_name": "高血压人群保健指南.pdf", "chunk_id": "chunk_010", "chunk_content": "高血压患者选择保健品需特别注意钠含量，推荐辅酶Q10和低钠深海鱼油...", "relevance": 0.91},
+                        {"file_name": "产品禁忌说明.pdf", "chunk_id": "chunk_015", "chunk_content": "高血压患者应避免高钠保健品，服用降压药期间可安全使用辅酶Q10...", "relevance": 0.85}
+                    ]
+                }],
                 "llm_calls": [
                     {"module": "intent_recognition", "prompt_tokens": 150, "completion_tokens": 50, "total_tokens": 200, "response_time_ms": 700, "success": True},
                     {"module": "product_recommendation", "prompt_tokens": 800, "completion_tokens": 200, "total_tokens": 1000, "response_time_ms": 1500, "success": True}
@@ -70,7 +80,12 @@ SCENARIOS = [
                 "agent": "好的，以下是推荐产品的价格信息：\n\n1. **深海鱼油（60粒装）** - ￥128\n2. **辅酶Q10（30粒装）** - ￥198\n3. **维生素D+钙（90片装）** - ￥89\n\n三件套组合价￥358（省￥57）。需要我帮您生成订单吗？",
                 "intent": "price_inquiry",
                 "intent_confidence": 0.91,
-                "kb_calls": [{"query": "产品价格 鱼油 辅酶Q10 钙片", "results_count": 3, "product_ids": ["prod_003", "prod_004", "prod_005"]}],
+                "kb_calls": [{"query": "产品价格 鱼油 辅酶Q10 钙片", "results_count": 3, "product_ids": ["prod_003", "prod_004", "prod_005"],
+                    "sources": [
+                        {"file_name": "产品价目表2024.pdf", "chunk_id": "chunk_020", "chunk_content": "深海鱼油60粒装￥128，辅酶Q10 30粒装￥198，维生素D+钙90片装￥89...", "relevance": 0.95},
+                        {"file_name": "促销政策.pdf", "chunk_id": "chunk_025", "chunk_content": "三件套组合价￥358，比单买节省￥57，活动有效期至2024年底...", "relevance": 0.90}
+                    ]
+                }],
                 "llm_calls": [{"module": "dialogue_response", "prompt_tokens": 600, "completion_tokens": 150, "total_tokens": 750, "response_time_ms": 900, "success": True}],
                 "recommended_products": ["prod_003", "prod_004", "prod_005"],
                 "trace_nodes": [
@@ -93,7 +108,12 @@ SCENARIOS = [
                 "agent": "3岁孩子不爱吃饭是常见问题。建议：\n1. 营造愉快的用餐氛围\n2. 控制零食摄入\n3. 增加食物多样性\n\n另外，可以适当补充儿童复合维生素。",
                 "intent": "health_consult",
                 "intent_confidence": 0.88,
-                "kb_calls": [{"query": "儿童不爱吃饭 解决办法", "results_count": 4, "product_ids": ["prod_010"]}],
+                "kb_calls": [{"query": "儿童不爱吃饭 解决办法", "results_count": 4, "product_ids": ["prod_010"],
+                    "sources": [
+                        {"file_name": "儿童营养指南.pdf", "chunk_id": "chunk_030", "chunk_content": "3岁儿童不爱吃饭可通过营造用餐氛围、控制零食、增加食物多样性来改善...", "relevance": 0.87},
+                        {"file_name": "儿童维生素产品说明.pdf", "chunk_id": "chunk_032", "chunk_content": "儿童复合维生素适用于3岁以上儿童，每日1片，可补充日常饮食不足...", "relevance": 0.82}
+                    ]
+                }],
                 "llm_calls": [{"module": "intent_recognition", "prompt_tokens": 130, "completion_tokens": 60, "total_tokens": 190, "response_time_ms": 750, "success": True}],
                 "recommended_products": ["prod_010"],
                 "trace_nodes": [
@@ -107,7 +127,12 @@ SCENARIOS = [
                 "agent": "儿童维生素一般很安全，按照推荐剂量服用即可。",
                 "intent": "safety_inquiry",
                 "intent_confidence": 0.85,
-                "kb_calls": [{"query": "儿童维生素 副作用", "results_count": 2, "product_ids": []}],
+                "kb_calls": [{"query": "儿童维生素 副作用", "results_count": 2, "product_ids": [],
+                    "sources": [
+                        {"file_name": "儿童维生素安全手册.pdf", "chunk_id": "chunk_035", "chunk_content": "3岁儿童服用维生素需严格按推荐剂量，过量可能导致维生素A/D中毒...", "relevance": 0.85},
+                        {"file_name": "产品说明书.pdf", "chunk_id": "chunk_036", "chunk_content": "儿童复合维生素推荐剂量：3-6岁每日半片，6岁以上每日1片...", "relevance": 0.80}
+                    ]
+                }],
                 "llm_calls": [{"module": "dialogue_response", "prompt_tokens": 400, "completion_tokens": 80, "total_tokens": 480, "response_time_ms": 600, "success": True}],
                 "recommended_products": [],
                 "trace_nodes": [
@@ -137,7 +162,12 @@ SCENARIOS = [
                 "agent": "减肥是一个系统工程，保健品只能作为辅助。根据《中国居民膳食指南》，健康减重建议每周减少0.5-1kg。\n\n推荐的辅助产品：\n1. **膳食纤维** - 增加饱腹感\n2. **左旋肉碱** - 促进脂肪代谢\n3. **益生菌** - 调节肠道菌群\n\n但最重要的是控制饮食和增加运动。",
                 "intent": "product_recommend",
                 "intent_confidence": 0.94,
-                "kb_calls": [{"query": "减肥 保健品 膳食纤维 左旋肉碱", "results_count": 6, "product_ids": ["prod_020", "prod_021", "prod_022"]}],
+                "kb_calls": [{"query": "减肥 保健品 膳食纤维 左旋肉碱", "results_count": 6, "product_ids": ["prod_020", "prod_021", "prod_022"],
+                    "sources": [
+                        {"file_name": "减肥营养指南.pdf", "chunk_id": "chunk_040", "chunk_content": "《中国居民膳食指南》建议健康减重每周减少0.5-1kg，推荐膳食纤维增加饱腹感...", "relevance": 0.91},
+                        {"file_name": "运动营养手册.pdf", "chunk_id": "chunk_042", "chunk_content": "左旋肉碱可促进脂肪代谢，配合有氧运动效果更佳，建议每日500-2000mg...", "relevance": 0.87}
+                    ]
+                }],
                 "llm_calls": [
                     {"module": "intent_recognition", "prompt_tokens": 110, "completion_tokens": 40, "total_tokens": 150, "response_time_ms": 650, "success": True},
                     {"module": "product_recommendation", "prompt_tokens": 700, "completion_tokens": 180, "total_tokens": 880, "response_time_ms": 1400, "success": True}
@@ -155,7 +185,12 @@ SCENARIOS = [
                 "agent": "不建议过度节食。根据营养学研究，过度节食会导致基础代谢率下降，反而容易反弹。建议：\n\n1. 每日热量摄入不低于1200大卡\n2. 蛋白质摄入要充足（每公斤体重1-1.2g）\n3. 配合有氧运动（每周150分钟）\n\n保健品在合理饮食基础上才能发挥最佳效果。",
                 "intent": "knowledge_query",
                 "intent_confidence": 0.89,
-                "kb_calls": [{"query": "节食 基础代谢 反弹", "results_count": 4, "product_ids": []}],
+                "kb_calls": [{"query": "节食 基础代谢 反弹", "results_count": 4, "product_ids": [],
+                    "sources": [
+                        {"file_name": "减肥营养指南.pdf", "chunk_id": "chunk_044", "chunk_content": "过度节食会导致基础代谢率下降，反而容易反弹，建议每日热量摄入不低于1200大卡...", "relevance": 0.88},
+                        {"file_name": "运动营养学.pdf", "chunk_id": "chunk_046", "chunk_content": "蛋白质摄入要充足，每公斤体重1-1.2g，配合有氧运动每周150分钟...", "relevance": 0.84}
+                    ]
+                }],
                 "llm_calls": [{"module": "dialogue_response", "prompt_tokens": 550, "completion_tokens": 160, "total_tokens": 710, "response_time_ms": 950, "success": True}],
                 "recommended_products": [],
                 "trace_nodes": [
@@ -206,7 +241,12 @@ SCENARIOS = [
                 "agent": "了解了。熬夜会影响免疫力和肝脏代谢。针对您的情况，我建议关注以下方面：\n\n1. **护肝类** - 奶蓟草提取物\n2. **维生素B族** - 缓解疲劳\n3. **褪黑素** - 改善睡眠质量\n\n同时建议尽量调整作息，保证每天7-8小时睡眠。",
                 "intent": "product_recommend",
                 "intent_confidence": 0.90,
-                "kb_calls": [{"query": "熬夜 护肝 维生素B 褪黑素", "results_count": 5, "product_ids": ["prod_030", "prod_031", "prod_032"]}],
+                "kb_calls": [{"query": "熬夜 护肝 维生素B 褪黑素", "results_count": 5, "product_ids": ["prod_030", "prod_031", "prod_032"],
+                    "sources": [
+                        {"file_name": "熬夜恢复指南.pdf", "chunk_id": "chunk_050", "chunk_content": "熬夜会影响免疫力和肝脏代谢，推荐奶蓟草提取物护肝、维生素B族缓解疲劳...", "relevance": 0.90},
+                        {"file_name": "睡眠改善手册.pdf", "chunk_id": "chunk_052", "chunk_content": "褪黑素可改善睡眠质量，建议睡前30分钟服用1-3mg，同时调整作息...", "relevance": 0.86}
+                    ]
+                }],
                 "llm_calls": [
                     {"module": "intent_recognition", "prompt_tokens": 120, "completion_tokens": 50, "total_tokens": 170, "response_time_ms": 600, "success": True},
                     {"module": "product_recommendation", "prompt_tokens": 500, "completion_tokens": 150, "total_tokens": 650, "response_time_ms": 1200, "success": True}
@@ -234,7 +274,12 @@ SCENARIOS = [
                 "agent": "膝盖疼痛在中老年人群中很常见，通常与关节软骨磨损有关。建议关注以下成分：\n\n1. **氨糖软骨素** - 修复软骨组织\n2. **胶原蛋白** - 维持关节弹性\n3. **MSM（有机硫）** - 缓解炎症\n\n请问您今年多大年纪？疼痛持续多久了？",
                 "intent": "health_consult",
                 "intent_confidence": 0.92,
-                "kb_calls": [{"query": "膝盖疼痛 关节 保健品", "results_count": 5, "product_ids": ["prod_040", "prod_041"]}],
+                "kb_calls": [{"query": "膝盖疼痛 关节 保健品", "results_count": 5, "product_ids": ["prod_040", "prod_041"],
+                    "sources": [
+                        {"file_name": "关节养护指南.pdf", "chunk_id": "chunk_060", "chunk_content": "膝盖疼痛通常与关节软骨磨损有关，推荐氨糖软骨素修复软骨、胶原蛋白维持弹性...", "relevance": 0.93},
+                        {"file_name": "中老年保健手册.pdf", "chunk_id": "chunk_062", "chunk_content": "MSM有机硫可缓解关节炎症，配合氨糖使用效果更佳，建议连续服用3个月...", "relevance": 0.89}
+                    ]
+                }],
                 "llm_calls": [{"module": "dialogue_response", "prompt_tokens": 500, "completion_tokens": 130, "total_tokens": 630, "response_time_ms": 850, "success": True}],
                 "recommended_products": ["prod_040", "prod_041"],
                 "trace_nodes": [
@@ -248,7 +293,12 @@ SCENARIOS = [
                 "agent": "55岁出现膝盖疼痛半年，建议先去医院做个X光检查，排除骨关节炎。在保健品方面，以下产品比较适合您：\n\n1. **氨糖软骨素复合片** - ￥168/60片\n2. **钙+维生素D3** - ￥89/90片\n\n建议连续服用3个月以上观察效果。同时注意减少爬楼梯和深蹲动作。",
                 "intent": "product_recommend",
                 "intent_confidence": 0.91,
-                "kb_calls": [{"query": "55岁 膝盖疼痛 氨糖软骨素", "results_count": 3, "product_ids": ["prod_040", "prod_042"]}],
+                "kb_calls": [{"query": "55岁 膝盖疼痛 氨糖软骨素", "results_count": 3, "product_ids": ["prod_040", "prod_042"],
+                    "sources": [
+                        {"file_name": "关节养护指南.pdf", "chunk_id": "chunk_064", "chunk_content": "55岁出现膝盖疼痛建议先就医排除骨关节炎，氨糖软骨素复合片￥168/60片...", "relevance": 0.90},
+                        {"file_name": "钙片产品说明.pdf", "chunk_id": "chunk_066", "chunk_content": "钙+维生素D3 ￥89/90片，建议中老年每日补充，配合氨糖效果更佳...", "relevance": 0.87}
+                    ]
+                }],
                 "llm_calls": [
                     {"module": "intent_recognition", "prompt_tokens": 140, "completion_tokens": 55, "total_tokens": 195, "response_time_ms": 680, "success": True},
                     {"module": "product_recommendation", "prompt_tokens": 600, "completion_tokens": 160, "total_tokens": 760, "response_time_ms": 1300, "success": True}
@@ -275,7 +325,12 @@ SCENARIOS = [
                 "agent": "恭喜您！孕4个月是胎儿快速发育期，营养需求增加。重点补充：\n\n1. **叶酸** - 预防神经管缺陷（400-800μg/天）\n2. **DHA** - 促进胎儿大脑发育\n3. **钙+维生素D** - 骨骼发育\n4. **铁剂** - 预防孕期贫血\n\n建议选择孕妇专用复合维生素。",
                 "intent": "health_consult",
                 "intent_confidence": 0.95,
-                "kb_calls": [{"query": "孕期营养 叶酸 DHA 钙 铁", "results_count": 6, "product_ids": ["prod_050"]}],
+                "kb_calls": [{"query": "孕期营养 叶酸 DHA 钙 铁", "results_count": 6, "product_ids": ["prod_050"],
+                    "sources": [
+                        {"file_name": "孕期营养指南.pdf", "chunk_id": "chunk_070", "chunk_content": "孕4个月是胎儿快速发育期，重点补充叶酸400-800μg/天预防神经管缺陷...", "relevance": 0.94},
+                        {"file_name": "DHA产品说明.pdf", "chunk_id": "chunk_072", "chunk_content": "DHA促进胎儿大脑发育，建议选择藻油DHA更纯净，每日200-300mg...", "relevance": 0.91}
+                    ]
+                }],
                 "llm_calls": [{"module": "dialogue_response", "prompt_tokens": 550, "completion_tokens": 140, "total_tokens": 690, "response_time_ms": 900, "success": True}],
                 "recommended_products": ["prod_050"],
                 "trace_nodes": [
@@ -289,7 +344,12 @@ SCENARIOS = [
                 "agent": "孕期补充这些营养素是安全的，但需要注意：\n\n1. **叶酸** - 孕期必需，安全剂量内无害\n2. **DHA** - 选择藻油DHA更纯净\n3. **钙** - 不超过2000mg/天\n4. **铁** - 遵医嘱，过量可能便秘\n\n建议在产科医生指导下服用，定期产检。",
                 "intent": "safety_inquiry",
                 "intent_confidence": 0.93,
-                "kb_calls": [{"query": "孕期 营养素 安全性", "results_count": 4, "product_ids": []}],
+                "kb_calls": [{"query": "孕期 营养素 安全性", "results_count": 4, "product_ids": [],
+                    "sources": [
+                        {"file_name": "孕期安全手册.pdf", "chunk_id": "chunk_074", "chunk_content": "孕期补充营养素安全，叶酸安全剂量内无害，钙不超过2000mg/天，铁需遵医嘱...", "relevance": 0.92},
+                        {"file_name": "产检指南.pdf", "chunk_id": "chunk_076", "chunk_content": "建议在产科医生指导下服用营养素，定期产检监测胎儿发育情况...", "relevance": 0.88}
+                    ]
+                }],
                 "llm_calls": [{"module": "dialogue_response", "prompt_tokens": 480, "completion_tokens": 120, "total_tokens": 600, "response_time_ms": 780, "success": True}],
                 "recommended_products": [],
                 "trace_nodes": [
@@ -312,7 +372,12 @@ SCENARIOS = [
                 "agent": "糖尿病患者选择保健品需要非常谨慎。以下产品可能有一定辅助作用：\n\n1. **铬元素** - 可能改善胰岛素敏感性\n2. **苦瓜提取物** - 传统降糖食材\n3. **膳食纤维** - 延缓糖分吸收\n\n但请注意：保健品不能替代降糖药物！",
                 "intent": "product_recommend",
                 "intent_confidence": 0.87,
-                "kb_calls": [{"query": "糖尿病 保健品 降糖", "results_count": 4, "product_ids": ["prod_060", "prod_061"]}],
+                "kb_calls": [{"query": "糖尿病 保健品 降糖", "results_count": 4, "product_ids": ["prod_060", "prod_061"],
+                    "sources": [
+                        {"file_name": "糖尿病保健指南.pdf", "chunk_id": "chunk_080", "chunk_content": "铬元素可能改善胰岛素敏感性，苦瓜提取物是传统降糖食材，膳食纤维延缓糖分吸收...", "relevance": 0.82},
+                        {"file_name": "医疗免责声明.pdf", "chunk_id": "chunk_082", "chunk_content": "保健品不能替代降糖药物，糖尿病患者任何用药调整必须咨询医生...", "relevance": 0.90}
+                    ]
+                }],
                 "llm_calls": [{"module": "dialogue_response", "prompt_tokens": 600, "completion_tokens": 150, "total_tokens": 750, "response_time_ms": 950, "success": True}],
                 "recommended_products": ["prod_060", "prod_061"],
                 "trace_nodes": [
@@ -355,7 +420,12 @@ SCENARIOS = [
                 "agent": "健身人群的营养补充很关键！根据您的训练频率，推荐以下产品：\n\n1. **乳清蛋白粉** - 训练后30分钟内补充，促进肌肉修复\n2. **支链氨基酸(BCAA)** - 训练中饮用，减少肌肉分解\n3. **肌酸** - 提升爆发力和训练容量\n4. **镁+锌** - 促进恢复和睡眠质量\n\n请问您的训练目标是什么？增肌还是减脂？",
                 "intent": "product_recommend",
                 "intent_confidence": 0.94,
-                "kb_calls": [{"query": "健身 蛋白粉 BCAA 肌酸", "results_count": 7, "product_ids": ["prod_070", "prod_071", "prod_072", "prod_073"]}],
+                "kb_calls": [{"query": "健身 蛋白粉 BCAA 肌酸", "results_count": 7, "product_ids": ["prod_070", "prod_071", "prod_072", "prod_073"],
+                    "sources": [
+                        {"file_name": "运动营养指南.pdf", "chunk_id": "chunk_090", "chunk_content": "乳清蛋白粉训练后30分钟内补充30g促进肌肉修复，BCAA训练中饮用减少肌肉分解...", "relevance": 0.93},
+                        {"file_name": "肌酸使用手册.pdf", "chunk_id": "chunk_092", "chunk_content": "肌酸可提升爆发力和训练容量，建议每日5g，配合充足水分摄入...", "relevance": 0.90}
+                    ]
+                }],
                 "llm_calls": [
                     {"module": "intent_recognition", "prompt_tokens": 130, "completion_tokens": 50, "total_tokens": 180, "response_time_ms": 620, "success": True},
                     {"module": "product_recommendation", "prompt_tokens": 650, "completion_tokens": 170, "total_tokens": 820, "response_time_ms": 1450, "success": True}
@@ -373,7 +443,12 @@ SCENARIOS = [
                 "agent": "增肌期的补充方案建议：\n\n**训练日：**\n- 训练前30分钟：肌酸5g + BCAA 10g\n- 训练后30分钟内：乳清蛋白粉30g\n- 睡前：酪蛋白或镁+锌\n\n**休息日：**\n- 早餐：乳清蛋白粉20g\n- 睡前：镁+锌\n\n同时确保每日蛋白质摄入达到1.6-2.2g/kg体重。",
                 "intent": "usage_guidance",
                 "intent_confidence": 0.92,
-                "kb_calls": [{"query": "增肌 蛋白粉 服用方法", "results_count": 3, "product_ids": ["prod_070"]}],
+                "kb_calls": [{"query": "增肌 蛋白粉 服用方法", "results_count": 3, "product_ids": ["prod_070"],
+                    "sources": [
+                        {"file_name": "增肌营养方案.pdf", "chunk_id": "chunk_094", "chunk_content": "增肌期每日蛋白质摄入1.6-2.2g/kg体重，训练日训练后30分钟内补充乳清蛋白30g...", "relevance": 0.91},
+                        {"file_name": "补剂搭配指南.pdf", "chunk_id": "chunk_096", "chunk_content": "肌酸5g+BCAA 10g训练前，乳清蛋白30g训练后，睡前镁+锌促进恢复...", "relevance": 0.88}
+                    ]
+                }],
                 "llm_calls": [{"module": "dialogue_response", "prompt_tokens": 580, "completion_tokens": 180, "total_tokens": 760, "response_time_ms": 1000, "success": True}],
                 "recommended_products": ["prod_070"],
                 "trace_nodes": [
@@ -396,7 +471,12 @@ SCENARIOS = [
                 "agent": "换季容易感冒确实与免疫力下降有关。以下营养素有助于增强免疫系统：\n\n1. **维生素C** - 增强白细胞活性\n2. **维生素D** - 调节免疫反应\n3. **锌** - 促进免疫细胞生成\n4. **益生菌** - 70%免疫细胞在肠道\n5. **蜂胶/蜂皇浆** - 天然抗菌成分\n\n建议组合补充，同时保持充足睡眠和适度运动。",
                 "intent": "product_recommend",
                 "intent_confidence": 0.93,
-                "kb_calls": [{"query": "免疫力 维生素C 维生素D 锌 益生菌", "results_count": 6, "product_ids": ["prod_080", "prod_081", "prod_082"]}],
+                "kb_calls": [{"query": "免疫力 维生素C 维生素D 锌 益生菌", "results_count": 6, "product_ids": ["prod_080", "prod_081", "prod_082"],
+                    "sources": [
+                        {"file_name": "免疫力提升指南.pdf", "chunk_id": "chunk_100", "chunk_content": "维生素C增强白细胞活性，维生素D调节免疫反应，锌促进免疫细胞生成...", "relevance": 0.90},
+                        {"file_name": "肠道健康手册.pdf", "chunk_id": "chunk_102", "chunk_content": "70%免疫细胞在肠道，益生菌4-8周调节肠道菌群，蜂胶1-2周有初步感受...", "relevance": 0.87}
+                    ]
+                }],
                 "llm_calls": [
                     {"module": "intent_recognition", "prompt_tokens": 120, "completion_tokens": 45, "total_tokens": 165, "response_time_ms": 580, "success": True},
                     {"module": "product_recommendation", "prompt_tokens": 600, "completion_tokens": 160, "total_tokens": 760, "response_time_ms": 1350, "success": True}
@@ -414,7 +494,12 @@ SCENARIOS = [
                 "agent": "免疫力提升是一个渐进过程，通常需要：\n\n- **维生素C/D、锌** - 2-4周开始感受到效果\n- **益生菌** - 4-8周调节肠道菌群\n- **蜂胶** - 1-2周可能有初步感受\n\n建议至少连续补充3个月，配合健康生活方式。如果感冒频率没有改善，建议就医检查是否有其他免疫问题。",
                 "intent": "usage_guidance",
                 "intent_confidence": 0.89,
-                "kb_calls": [{"query": "免疫力 见效时间", "results_count": 3, "product_ids": []}],
+                "kb_calls": [{"query": "免疫力 见效时间", "results_count": 3, "product_ids": [],
+                    "sources": [
+                        {"file_name": "免疫力提升指南.pdf", "chunk_id": "chunk_104", "chunk_content": "维生素C/D、锌2-4周见效，益生菌4-8周调节肠道菌群，蜂胶1-2周有初步感受...", "relevance": 0.85},
+                        {"file_name": "营养补充周期.pdf", "chunk_id": "chunk_106", "chunk_content": "建议至少连续补充3个月，配合健康生活方式，如无效建议就医检查...", "relevance": 0.82}
+                    ]
+                }],
                 "llm_calls": [{"module": "dialogue_response", "prompt_tokens": 450, "completion_tokens": 130, "total_tokens": 580, "response_time_ms": 800, "success": True}],
                 "recommended_products": [],
                 "trace_nodes": [
@@ -437,7 +522,12 @@ SCENARIOS = [
                 "agent": "70岁长辈同时有高血压和糖尿病，选择保健品需要特别谨慎。针对记忆力下降，以下成分可能有帮助：\n\n1. **DHA/EPA** - 支持脑部健康（选择低钠配方）\n2. **磷脂酰丝氨酸(PS)** - 改善认知功能\n3. **维生素B12** - 老年人常缺乏，影响神经功能\n\n但必须先咨询主治医生，确保与现有药物没有冲突！",
                 "intent": "health_consult",
                 "intent_confidence": 0.90,
-                "kb_calls": [{"query": "老年人 高血压 糖尿病 记忆力 DHA", "results_count": 5, "product_ids": ["prod_090"]}],
+                "kb_calls": [{"query": "老年人 高血压 糖尿病 记忆力 DHA", "results_count": 5, "product_ids": ["prod_090"],
+                    "sources": [
+                        {"file_name": "老年脑健康指南.pdf", "chunk_id": "chunk_110", "chunk_content": "DHA/EPA支持脑部健康，70岁老人选择低钠配方，磷脂酰丝氨酸改善认知...", "relevance": 0.86},
+                        {"file_name": "慢病用药注意.pdf", "chunk_id": "chunk_112", "chunk_content": "高血压糖尿病患者服用保健品前必须咨询医生，注意药物相互作用...", "relevance": 0.91}
+                    ]
+                }],
                 "llm_calls": [{"module": "dialogue_response", "prompt_tokens": 700, "completion_tokens": 170, "total_tokens": 870, "response_time_ms": 1100, "success": True}],
                 "recommended_products": ["prod_090"],
                 "trace_nodes": [
@@ -452,7 +542,12 @@ SCENARIOS = [
                 "agent": "您提到的药物与保健品的相互作用需要专业评估：\n\n- **阿司匹林** + 鱼油/DHA - 可能增加出血风险，需医生确认剂量\n- **格列美脲** + 大部分保健品 - 一般无明显冲突\n\n**强烈建议**：在服用任何保健品前，请携带产品成分表咨询您父亲的主治医生或药师。系统无法替代专业医疗建议。",
                 "intent": "safety_inquiry",
                 "intent_confidence": 0.94,
-                "kb_calls": [{"query": "阿司匹林 格列美脲 保健品 相互作用", "results_count": 4, "product_ids": []}],
+                "kb_calls": [{"query": "阿司匹林 格列美脲 保健品 相互作用", "results_count": 4, "product_ids": [],
+                    "sources": [
+                        {"file_name": "药物相互作用手册.pdf", "chunk_id": "chunk_114", "chunk_content": "阿司匹林+鱼油可能增加出血风险，需医生确认剂量，格列美脲与大部分保健品无明显冲突...", "relevance": 0.84},
+                        {"file_name": "慢病用药注意.pdf", "chunk_id": "chunk_116", "chunk_content": "服用保健品前请携带产品成分表咨询主治医生或药师，系统无法替代专业医疗建议...", "relevance": 0.88}
+                    ]
+                }],
                 "llm_calls": [{"module": "dialogue_response", "prompt_tokens": 600, "completion_tokens": 150, "total_tokens": 750, "response_time_ms": 950, "success": True}],
                 "recommended_products": [],
                 "trace_nodes": [
@@ -531,6 +626,7 @@ def generate_conversation_data():
                         "results_count": kb["results_count"],
                         "product_ids": kb.get("product_ids", []),
                         "response_time_ms": 200 + turn_idx * 50,
+                        "sources": kb.get("sources", []),
                         "timestamp": msg_time.isoformat()
                     } for kb in turn.get("kb_calls", [])
                 ],
