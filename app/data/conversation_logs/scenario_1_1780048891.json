@@ -1,0 +1,282 @@
+{
+  "session_id": "scenario_1_1780048891",
+  "user_id": "",
+  "started_at": "2026-05-29T18:01:31.768636",
+  "ended_at": null,
+  "messages": [
+    {
+      "message_id": "scenario_1_1780048891_user_0",
+      "message_type": "user",
+      "content": "你好，我今年42岁，女性",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:01:31.769636"
+    },
+    {
+      "message_id": "scenario_1_1780048891_agent_1",
+      "message_type": "agent",
+      "content": "您好呀～42岁的姐姐正是精力与智慧并存的黄金年龄呢！🌸  \n我是泰小虎，您的健康顾问，温和又靠谱～  \n可以帮您聊聊【睡眠、精力、情绪、体重管理、更年期前期调理】这些常见困扰，也能推荐适合的营养支持方案。  \n最近身体有什么特别的感受吗？比如容易疲劳、睡不好、怕冷、皮肤变干，或者月经有点变化？😊  \n（温馨提示：我的建议不替代医生诊断哦～）",
+      "intent": "other",
+      "intent_confidence": 0.0,
+      "state": "boundary",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [
+        {
+          "module": "boundary_handler",
+          "prompt_tokens": 607,
+          "completion_tokens": 107,
+          "total_tokens": 714,
+          "response_time_ms": 3549,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-05-29T18:01:35.332936"
+        }
+      ],
+      "timestamp": "2026-05-29T18:01:35.332936"
+    },
+    {
+      "message_id": "scenario_1_1780048891_user_2",
+      "message_type": "user",
+      "content": "最近总是失眠，睡不好",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:01:35.541514"
+    },
+    {
+      "message_id": "scenario_1_1780048891_agent_3",
+      "message_type": "agent",
+      "content": "理解您失眠的困扰。这种情况持续多久了？",
+      "intent": "health_consult",
+      "intent_confidence": 0.0,
+      "state": "symptom_collection",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:01:35.549022"
+    },
+    {
+      "message_id": "scenario_1_1780048891_user_4",
+      "message_type": "user",
+      "content": "已经有一个月了",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:01:35.759967"
+    },
+    {
+      "message_id": "scenario_1_1780048891_agent_5",
+      "message_type": "agent",
+      "content": "理解您失眠的困扰。这种情况持续多久了？",
+      "intent": "health_consult",
+      "intent_confidence": 0.0,
+      "state": "symptom_collection",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:01:35.766474"
+    },
+    {
+      "message_id": "scenario_1_1780048891_user_6",
+      "message_type": "user",
+      "content": "有什么产品可以推荐吗？",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:01:35.980434"
+    },
+    {
+      "message_id": "scenario_1_1780048891_agent_7",
+      "message_type": "agent",
+      "content": "根据您的情况，我为您推荐以下产品：\n\n1. 【泰吉眠沙棘茶氨酸】  \n   功效：30分钟助放松入睡，延长深睡时间，舒缓压力、改善睡眠质量  \n   适用人群：42岁女性，失眠1个月，无高血压/糖尿病等禁忌  \n   服用方法：每晚睡前30分钟含服2片  \n\n温馨提示：以上产品为营养补充支持，【不能替代药物治疗】，如失眠持续或伴焦虑、心悸、情绪低落，请及时就医检查哦～ 🌙",
+      "intent": "health_consult",
+      "intent_confidence": 0.0,
+      "state": "recommendation",
+      "recommended_products": [
+        "泰吉眠沙棘茶氨酸"
+      ],
+      "knowledge_base_calls": [
+        {
+          "query": "有什么产品可以推荐吗？ 失眠 42岁 女",
+          "intent": "recommendation",
+          "results_count": 1,
+          "product_ids": [
+            "PRD001"
+          ],
+          "response_time_ms": 0,
+          "timestamp": "2026-05-29T18:01:39.241319"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "recommendation_engine",
+          "prompt_tokens": 951,
+          "completion_tokens": 122,
+          "total_tokens": 1073,
+          "response_time_ms": 3255,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-05-29T18:01:39.241319"
+        }
+      ],
+      "timestamp": "2026-05-29T18:01:39.241319"
+    },
+    {
+      "message_id": "scenario_1_1780048891_user_8",
+      "message_type": "user",
+      "content": "泰吉眠有什么功效？",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:01:39.452748"
+    },
+    {
+      "message_id": "scenario_1_1780048891_agent_9",
+      "message_type": "agent",
+      "content": "【泰吉眠沙棘茶氨酸】  \n- 功效：帮助30分钟内放松入睡、延长深睡时间、改善整晚睡眠质量，同时舒缓情绪压力、提升免疫力、辅助抗衰老  \n- 适用人群：失眠、易醒、睡不沉、作息紊乱的成年人（3岁以上均可）  \n- 服用方法：睡前30分钟咀嚼2片（可少量饮水送服）  \n- 注意事项：天然食品级配方，【无依赖、无副作用】，不含安眠药成分  \n\n温馨提示：保健品不能替代药物治疗，若长期失眠伴明显情绪或身体不适，建议及时就医哦～ 🌙",
+      "intent": "product_consult",
+      "intent_confidence": 0.0,
+      "state": "product_consult",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [
+        {
+          "module": "product_consult",
+          "prompt_tokens": 1201,
+          "completion_tokens": 141,
+          "total_tokens": 1342,
+          "response_time_ms": 3662,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-05-29T18:01:43.120229"
+        }
+      ],
+      "timestamp": "2026-05-29T18:01:43.120229"
+    },
+    {
+      "message_id": "scenario_1_1780048891_user_10",
+      "message_type": "user",
+      "content": "还有其他助眠产品吗？",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:01:43.334356"
+    },
+    {
+      "message_id": "scenario_1_1780048891_agent_11",
+      "message_type": "agent",
+      "content": "除了【泰吉眠沙棘茶氨酸】，我们还有：\n\n【泰美畅酸枣仁软糖】  \n- 功效：温和安神、缓解入睡困难，适合轻度失眠或压力大时日常调理  \n- 适用人群：42岁女性，偏好软糖口感、希望更轻松助眠者  \n- 服用方法：睡前30分钟嚼食2粒  \n\n温馨提示：两款均为天然营养支持，【不替代药物】。若您有高血压、甲状腺问题或正在服药，建议先咨询医生哦～ 🌙",
+      "intent": "product_consult",
+      "intent_confidence": 0.0,
+      "state": "product_consult",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [
+        {
+          "module": "product_consult",
+          "prompt_tokens": 1332,
+          "completion_tokens": 119,
+          "total_tokens": 1451,
+          "response_time_ms": 3575,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-05-29T18:01:46.915982"
+        }
+      ],
+      "timestamp": "2026-05-29T18:01:46.915982"
+    },
+    {
+      "message_id": "scenario_1_1780048891_user_12",
+      "message_type": "user",
+      "content": "智忆高是什么？",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:01:47.124298"
+    },
+    {
+      "message_id": "scenario_1_1780048891_agent_13",
+      "message_type": "agent",
+      "content": "关于您问的【智忆高】，我了解到：\n\n它是复合磷脂酰丝氨酸压片糖果，主要含PS（磷脂酰丝氨酸），这种成分是大脑细胞膜的重要组成，有助于支持注意力、记忆力和思维清晰度。\n\n【实用建议】  \n✅ 适合用脑多、易忘事、精力下降的中青年；  \n✅ 每日1片，随餐服用更易吸收；  \n✅ 配合规律睡眠、适度运动效果更好。\n\n⚠️ 温馨提醒：它属于营养补充食品，【不能治疗疾病或替代药物】。如有认知明显下降或持续健忘，建议及时就医检查哦～ 🌟",
+      "intent": "knowledge_query",
+      "intent_confidence": 0.0,
+      "state": "knowledge_qa",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [
+        {
+          "module": "knowledge_qa",
+          "prompt_tokens": 1055,
+          "completion_tokens": 144,
+          "total_tokens": 1199,
+          "response_time_ms": 4090,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-05-29T18:01:51.226201"
+        }
+      ],
+      "timestamp": "2026-05-29T18:01:51.226201"
+    },
+    {
+      "message_id": "scenario_1_1780048891_user_14",
+      "message_type": "user",
+      "content": "好的，我先试试泰吉眠",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:01:51.442016"
+    },
+    {
+      "message_id": "scenario_1_1780048891_agent_15",
+      "message_type": "agent",
+      "content": "太好啦！😊  \n【泰吉眠】睡前30分钟嚼2片，温水送服也OK～  \n头几天可以留意下入睡速度和晨起精神状态，慢慢您会发现睡得更深、更稳，白天也更清爽 🌙✨  \n\n记得：坚持5–7天效果更明显哦～  \n如果试用中有任何疑问，随时来找我聊聊～  \n祝您今夜好眠，明天神采奕奕！💛",
+      "intent": "product_consult",
+      "intent_confidence": 0.0,
+      "state": "product_consult",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [
+        {
+          "module": "product_consult",
+          "prompt_tokens": 1465,
+          "completion_tokens": 100,
+          "total_tokens": 1565,
+          "response_time_ms": 3237,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-05-29T18:01:54.693272"
+        }
+      ],
+      "timestamp": "2026-05-29T18:01:54.693272"
+    }
+  ],
+  "user_profile": {},
+  "total_messages": 16,
+  "is_active": true
+}

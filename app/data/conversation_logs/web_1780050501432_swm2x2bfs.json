@@ -1,0 +1,153 @@
+{
+  "session_id": "web_1780050501432_swm2x2bfs",
+  "user_id": "",
+  "started_at": "2026-05-29T18:28:48.281682",
+  "ended_at": null,
+  "messages": [
+    {
+      "message_id": "web_1780050501432_swm2x2bfs_user_0",
+      "message_type": "user",
+      "content": "睡不着",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:28:48.281682"
+    },
+    {
+      "message_id": "web_1780050501432_swm2x2bfs_agent_1",
+      "message_type": "agent",
+      "content": "理解您失眠的困扰。这种情况持续多久了？",
+      "intent": "health_consult",
+      "intent_confidence": 0.0,
+      "state": "symptom_collection",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:28:48.287682"
+    },
+    {
+      "message_id": "web_1780050501432_swm2x2bfs_user_2",
+      "message_type": "user",
+      "content": "三天了",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:28:55.116705"
+    },
+    {
+      "message_id": "web_1780050501432_swm2x2bfs_agent_3",
+      "message_type": "agent",
+      "content": "三天失眠确实让人疲惫呢~【短期失眠常与压力、作息变化有关】，建议先试试：睡前1小时调暗灯光、避免刷手机、喝点温热的牛奶或洋甘菊茶。如果连续超过2周睡不好，【建议及时就医排查原因】哦。需要我帮您了解些温和助眠的营养支持方案吗？😊",
+      "intent": "other",
+      "intent_confidence": 0.0,
+      "state": "boundary",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [
+        {
+          "module": "boundary_handler",
+          "prompt_tokens": 616,
+          "completion_tokens": 79,
+          "total_tokens": 695,
+          "response_time_ms": 2484,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-05-29T18:28:57.603351"
+        }
+      ],
+      "timestamp": "2026-05-29T18:28:57.603351"
+    },
+    {
+      "message_id": "web_1780050501432_swm2x2bfs_user_4",
+      "message_type": "user",
+      "content": "有什么产品推荐吗",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:29:06.622793"
+    },
+    {
+      "message_id": "web_1780050501432_swm2x2bfs_agent_5",
+      "message_type": "agent",
+      "content": "抱歉，我没有找到相关的产品信息。您可以告诉我您想了解什么健康问题，我来帮您推荐合适的产品~",
+      "intent": "product_consult",
+      "intent_confidence": 0.0,
+      "state": "product_consult",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:29:06.623793"
+    },
+    {
+      "message_id": "web_1780050501432_swm2x2bfs_user_6",
+      "message_type": "user",
+      "content": "需要",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:29:24.781786"
+    },
+    {
+      "message_id": "web_1780050501432_swm2x2bfs_agent_7",
+      "message_type": "agent",
+      "content": "好的！针对短期失眠，【褪黑素软糖】（每粒含1-3mg）是常见选择，帮助调节睡眠节律；【镁元素】（如甘氨酸镁）也有助放松神经。⚠️注意：这些是非处方营养补充剂，【不能替代药物，也不治疗疾病】。使用前建议确认无服用镇静类药物，孕妇、哺乳期或正在服药者请先咨询医生。需要我为您说明具体用法或注意事项吗？🌙",
+      "intent": "other",
+      "intent_confidence": 0.0,
+      "state": "boundary",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [
+        {
+          "module": "boundary_handler",
+          "prompt_tokens": 745,
+          "completion_tokens": 105,
+          "total_tokens": 850,
+          "response_time_ms": 3082,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-05-29T18:29:27.867710"
+        }
+      ],
+      "timestamp": "2026-05-29T18:29:27.867710"
+    },
+    {
+      "message_id": "web_1780050501432_swm2x2bfs_user_8",
+      "message_type": "user",
+      "content": "有什么产品推荐吗",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:29:37.057401"
+    },
+    {
+      "message_id": "web_1780050501432_swm2x2bfs_agent_9",
+      "message_type": "agent",
+      "content": "抱歉，我没有找到相关的产品信息。您可以告诉我您想了解什么健康问题，我来帮您推荐合适的产品~",
+      "intent": "product_consult",
+      "intent_confidence": 0.0,
+      "state": "product_consult",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:29:37.059398"
+    }
+  ],
+  "user_profile": {},
+  "total_messages": 10,
+  "is_active": true
+}
