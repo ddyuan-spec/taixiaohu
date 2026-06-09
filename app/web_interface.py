@@ -244,6 +244,9 @@ def list_conversations():
         from conversation_logger import get_conversation_logger
         logger = get_conversation_logger()
         
+        # 强制重新加载数据（确保Railway上数据最新）
+        logger._load_existing_sessions()
+        
         limit = request.args.get('limit', 100, type=int)
         sessions = logger.get_all_sessions(limit=limit)
         
