@@ -76,6 +76,49 @@
         .detail-modal .modal-body { padding: 0; }
         .detail-modal .modal-dialog { max-width: 950px; }
 
+        /* Tab 导航 */
+        .detail-tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            background: #fafafa;
+        }
+        .detail-tabs .tab-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #666;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .detail-tabs .tab-item:hover { color: #1890ff; }
+        .detail-tabs .tab-item.active {
+            color: #1890ff;
+            border-bottom-color: #1890ff;
+            background: #fff;
+            font-weight: 600;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* 用户画像表单 */
+        .profile-form { padding: 20px; }
+        .profile-form .form-label { font-size: 12px; font-weight: 600; color: #555; margin-bottom: 4px; }
+        .profile-form .form-control { font-size: 13px; }
+
+        /* Badcase 列表 */
+        .badcase-list { padding: 16px 20px; }
+        .badcase-item {
+            background: #fff; border: 1px solid #f0f0f0; border-radius: 8px;
+            padding: 12px 14px; margin-bottom: 10px;
+        }
+        .badcase-item:last-child { margin-bottom: 0; }
+        .badcase-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .badcase-category { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+        .badcase-severity-high { background: #fde8e8; color: #c0392b; }
+        .badcase-severity-medium { background: #fef3cd; color: #856404; }
+        .badcase-severity-low { background: #e6f7ff; color: #1890ff; }
+
         /* 对话消息 */
         .chat-message { display: flex; margin-bottom: 0; gap: 10px; padding: 16px 20px; border-bottom: 1px solid #f5f5f5; }
         .chat-message:hover { background: #fafafa; }
@@ -101,6 +144,34 @@
         .tag-state { background: #f0f5ff; color: #2f54eb; }
         .tag-kb { background: #e6f7ff; color: #1890ff; cursor: pointer; }
         .tag-kb:hover { background: #bae7ff; }
+
+        /* Badcase 标记按钮 */
+        .badcase-btn {
+            opacity: 0;
+            transition: opacity 0.2s;
+            cursor: pointer;
+            font-size: 12px;
+            color: #c0392b;
+            border: 1px solid #fde8e8;
+            background: #fff;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+        }
+        .chat-message:hover .badcase-btn { opacity: 1; }
+        .badcase-btn:hover { background: #fde8e8; }
+        .badcase-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #fde8e8;
+            color: #c0392b;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
 
         /* 知识库调用详情展开面板 */
         .kb-detail-panel {
@@ -131,6 +202,180 @@
             padding: 8px 12px; margin-bottom: 6px; font-size: 12px;
             border-left: 3px solid #722ed1;
             display: flex; justify-content: space-between; align-items: center;
+        }
+
+        /* 链路追踪折叠面板 */
+        .trace-panel {
+            margin-top: 10px;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fafafa;
+        }
+        .trace-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: #f0f5ff;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .trace-panel-header:hover {
+            background: #e6f0ff;
+        }
+        .trace-panel-header .trace-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2f54eb;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .trace-panel-header .trace-summary {
+            font-size: 12px;
+            color: #888;
+        }
+        .trace-panel-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .trace-panel-content.expanded {
+            max-height: 800px;
+            overflow-y: auto;
+        }
+        .trace-panel-inner {
+            padding: 14px 16px;
+        }
+        .trace-timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+        .trace-timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e8e8e8;
+        }
+        .trace-node {
+            position: relative;
+            margin-bottom: 16px;
+            padding: 12px 14px;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #e8e8e8;
+        }
+        .trace-node:last-child {
+            margin-bottom: 0;
+        }
+        .trace-node::before {
+            content: '';
+            position: absolute;
+            left: -21px;
+            top: 16px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #52c41a;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px #52c41a;
+        }
+        .trace-node.error::before {
+            background: #ff4d4f;
+            box-shadow: 0 0 0 2px #ff4d4f;
+        }
+        .trace-node-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .trace-node-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+        }
+        .trace-node-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: #888;
+        }
+        .trace-node-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .trace-node-status.success {
+            color: #52c41a;
+        }
+        .trace-node-status.error {
+            color: #ff4d4f;
+        }
+        .trace-node-duration {
+            background: #f5f5f5;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .trace-kb-sources {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f6ffed;
+            border-radius: 6px;
+            border-left: 3px solid #52c41a;
+        }
+        .trace-kb-sources-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #389e0d;
+            margin-bottom: 8px;
+        }
+        .trace-kb-source-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 8px;
+            background: #fff;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+        .trace-kb-source-item:last-child {
+            margin-bottom: 0;
+        }
+        .trace-kb-source-name {
+            color: #333;
+        }
+        .trace-kb-source-score {
+            color: #52c41a;
+            font-weight: 600;
+        }
+        .trace-empty {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 13px;
+        }
+
+        /* Badcase 标记按钮 */
+        .badcase-btn {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            border: 1px solid #ff4d4f;
+            background: #fff;
+            color: #ff4d4f;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .badcase-btn:hover {
+            background: #ff4d4f;
+            color: #fff;
         }
 
         .empty-state { text-align: center; padding: 60px; color: #999; }
@@ -288,6 +533,62 @@
         </div>
     </div>
 
+    <!-- Badcase 标记 Modal -->
+    <div class="modal fade" id="badcaseModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill me-2 text-danger"></i>标记 Badcase</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="badcaseForm">
+                        <input type="hidden" id="bcSessionId">
+                        <input type="hidden" id="bcMessageIndex">
+                        <div class="mb-3">
+                            <label class="form-label">分类 <span class="text-danger">*</span></label>
+                            <select class="form-select" id="bcCategory" required>
+                                <option value="意图识别错误">意图识别错误</option>
+                                <option value="推荐不当">推荐不当</option>
+                                <option value="回复不当">回复不当</option>
+                                <option value="知识缺失">知识缺失</option>
+                                <option value="安全风险">安全风险</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">严重程度 <span class="text-danger">*</span></label>
+                            <select class="form-select" id="bcSeverity" required>
+                                <option value="low">低</option>
+                                <option value="medium" selected>中</option>
+                                <option value="high">高</option>
+                                <option value="critical">严重</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">问题描述 <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="bcDescription" rows="3" placeholder="请描述具体问题..." required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">处理人</label>
+                            <input type="text" class="form-control" id="bcAssignedTo" value="管理员">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">对话片段</label>
+                            <textarea class="form-control" id="bcSnippet" rows="3" readonly style="background:#f8f9fa; font-size:12px;"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="submitBadcase()">
+                        <i class="bi bi-flag-fill me-1"></i>提交标记
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="toast-container" id="toastContainer"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -434,6 +735,8 @@
 
         function renderDetail(session) {
             const body = document.getElementById('modalBody');
+            // 缓存当前会话消息，供 Badcase 标记使用
+            currentSessionMessages = session.messages || [];
 
             // 会话信息头
             let html = `
@@ -452,17 +755,32 @@
                         </span>
                     </div>
                 </div>
+
+                <!-- Tab 导航 -->
+                <div class="detail-tabs">
+                    <div class="tab-item active" data-tab="messages" onclick="switchTab(this, 'messages')">
+                        <i class="bi bi-chat-dots me-1"></i>对话消息
+                    </div>
+                    <div class="tab-item" data-tab="profile" onclick="switchTab(this, 'profile')">
+                        <i class="bi bi-person me-1"></i>用户画像
+                    </div>
+                    <div class="tab-item" data-tab="badcases" onclick="switchTab(this, 'badcases')">
+                        <i class="bi bi-exclamation-triangle me-1"></i>Badcase记录
+                    </div>
+                </div>
+
+                <!-- 对话消息 Tab -->
+                <div class="tab-content active" id="tab-messages">
+                    <div style="max-height: 60vh; overflow-y: auto;">
             `;
 
-            // 消息列表
-            html += '<div style="max-height: 65vh; overflow-y: auto;">';
             session.messages.forEach((msg, idx) => {
                 const isUser = msg.message_type === 'user';
                 const hasKb = msg.knowledge_base_calls && msg.knowledge_base_calls.length > 0;
                 const hasLlm = msg.llm_calls && msg.llm_calls.length > 0;
 
                 html += `
-                    <div class="chat-message ${isUser ? 'user' : 'agent'}">
+                    <div class="chat-message ${isUser ? 'user' : 'agent'}" data-msg-idx="${idx}">
                         <div class="chat-avatar">${isUser ? '👤' : '🐯'}</div>
                         <div class="chat-bubble">
                             <div class="chat-content">${escapeHtml(msg.content)}</div>
@@ -476,17 +794,226 @@
                                     `<span class="tag tag-kb" onclick="toggleKbDetail('kbPanel_${idx}')">
                                         <i class="bi bi-database me-1"></i>查看调用详情
                                     </span>` : ''}
+                                ${!isUser ? `
+                                    <span class="badcase-btn" onclick="openBadcaseModal('${session.session_id}', ${idx})">
+                                        <i class="bi bi-flag me-1"></i>标记Badcase
+                                    </span>
+                                    <span class="badcase-badge" id="bc-badge-${session.session_id}-${idx}" style="display:none;">
+                                        <i class="bi bi-exclamation-triangle-fill"></i>Badcase
+                                    </span>
+                                ` : ''}
                             </div>
 
                             <!-- 知识库/LLM调用详情展开面板 -->
                             ${(hasKb || hasLlm) ? renderKbDetailPanel(msg, idx) : ''}
+
+                            <!-- 链路追踪折叠面板（仅助手消息） -->
+                            ${!isUser ? renderTracePanel(session.session_id, idx) : ''}
                         </div>
                     </div>
                 `;
             });
-            html += '</div>';
+
+            // 渲染完成后，加载该会话所有 Badcase 并更新徽章显示
+            html += `<script>loadBadcaseBadgesForSession('${session.session_id}');</script>`;
+
+            html += `
+                    </div>
+                </div>
+
+                <!-- 用户画像 Tab -->
+                <div class="tab-content" id="tab-profile">
+                    <div class="profile-form" id="profileFormContainer">
+                        <div class="text-center py-4">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                            <span class="ms-2 text-muted" style="font-size:13px;">加载用户画像...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Badcase记录 Tab -->
+                <div class="tab-content" id="tab-badcases">
+                    <div class="badcase-list" id="badcaseListContainer">
+                        <div class="text-center py-4">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                            <span class="ms-2 text-muted" style="font-size:13px;">加载Badcase记录...</span>
+                        </div>
+                    </div>
+                </div>
+            `;
 
             body.innerHTML = html;
+
+            // 缓存当前会话信息，供 Tab 加载使用
+            body.dataset.sessionId = session.session_id;
+            body.dataset.userId = session.user_id || '';
+        }
+
+        function switchTab(el, tabName) {
+            document.querySelectorAll('.detail-tabs .tab-item').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+
+            const body = document.getElementById('modalBody');
+            const sessionId = body.dataset.sessionId;
+            const userId = body.dataset.userId;
+
+            if (tabName === 'profile' && userId) {
+                loadSessionProfile(userId);
+            } else if (tabName === 'badcases' && sessionId) {
+                loadSessionBadcases(sessionId);
+            }
+        }
+
+        async function loadSessionProfile(userId) {
+            const container = document.getElementById('profileFormContainer');
+            try {
+                const resp = await fetch(`/api/admin/profiles/${userId}`);
+                const data = await resp.json();
+                if (data.success && data.profile) {
+                    const p = data.profile;
+                    container.innerHTML = `
+                        <form id="sessionProfileForm" onsubmit="saveSessionProfile(event, '${userId}')">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">用户ID</label>
+                                    <input type="text" class="form-control" value="${escapeHtml(p.user_id || userId)}" disabled>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">姓名</label>
+                                    <input type="text" class="form-control" name="name" value="${escapeHtml(p.name || '')}" placeholder="未填写">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">年龄</label>
+                                    <input type="text" class="form-control" name="age" value="${escapeHtml(p.age ? String(p.age) : '')}" placeholder="未填写">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">性别</label>
+                                    <select class="form-select" name="gender">
+                                        <option value="" ${!p.gender ? 'selected' : ''}>未填写</option>
+                                        <option value="男" ${p.gender === '男' ? 'selected' : ''}>男</option>
+                                        <option value="女" ${p.gender === '女' ? 'selected' : ''}>女</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">慢性病史</label>
+                                    <input type="text" class="form-control" name="chronic_diseases" value="${escapeHtml(p.chronic_diseases || '')}" placeholder="未填写">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">过敏史</label>
+                                    <input type="text" class="form-control" name="allergy_history" value="${escapeHtml(p.allergy_history || '')}" placeholder="未填写">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">当前用药</label>
+                                    <input type="text" class="form-control" name="current_medication" value="${escapeHtml(p.current_medication || '')}" placeholder="未填写">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">健康关注点</label>
+                                    <input type="text" class="form-control" name="health_concerns" value="${escapeHtml(p.health_concerns || '')}" placeholder="未填写">
+                                </div>
+                            </div>
+                            <div class="mt-3 text-end">
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-check-lg me-1"></i>保存修改
+                                </button>
+                            </div>
+                        </form>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-person-x" style="font-size:2rem;"></i>
+                            <p class="mt-2" style="font-size:13px;">暂无用户画像数据</p>
+                        </div>
+                    `;
+                }
+            } catch (e) {
+                container.innerHTML = `
+                    <div class="text-center py-4 text-danger">
+                        <i class="bi bi-exclamation-circle" style="font-size:2rem;"></i>
+                        <p class="mt-2" style="font-size:13px;">加载失败: ${escapeHtml(String(e))}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function saveSessionProfile(event, userId) {
+            event.preventDefault();
+            const form = document.getElementById('sessionProfileForm');
+            const formData = new FormData(form);
+            const payload = {};
+            formData.forEach((v, k) => { payload[k] = v; });
+
+            try {
+                const resp = await fetch(`/api/admin/profiles/${userId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await resp.json();
+                if (data.success) {
+                    showToast('用户画像已保存');
+                } else {
+                    showToast(data.error || '保存失败', 'error');
+                }
+            } catch (e) {
+                showToast('保存失败: ' + e, 'error');
+            }
+        }
+
+        async function loadSessionBadcases(sessionId) {
+            const container = document.getElementById('badcaseListContainer');
+            try {
+                const resp = await fetch(`/api/admin/badcases?limit=100`);
+                const data = await resp.json();
+                if (data.success && data.badcases) {
+                    const sessionBadcases = data.badcases.filter(b => b.session_id === sessionId);
+                    if (sessionBadcases.length === 0) {
+                        container.innerHTML = `
+                            <div class="text-center py-4 text-muted">
+                                <i class="bi bi-check-circle" style="font-size:2rem; color:#52c41a;"></i>
+                                <p class="mt-2" style="font-size:13px;">当前会话暂无Badcase记录</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    container.innerHTML = sessionBadcases.map(b => {
+                        const severityClass = b.severity === 'high' ? 'badcase-severity-high' : (b.severity === 'medium' ? 'badcase-severity-medium' : 'badcase-severity-low');
+                        return `
+                            <div class="badcase-item">
+                                <div class="badcase-header">
+                                    <span>
+                                        <span class="badcase-category ${severityClass}">${b.severity || 'medium'}</span>
+                                        <span class="ms-2 fw-bold" style="font-size:13px;">${b.category || 'other'}</span>
+                                    </span>
+                                    <small class="text-muted">${formatTime(b.created_at)}</small>
+                                </div>
+                                <div style="font-size:13px; color:#555; line-height:1.6;">${escapeHtml(b.description || '无描述')}</div>
+                                ${b.conversation_snippet ? `<div style="margin-top:8px; padding:8px; background:#f5f5f5; border-radius:6px; font-size:12px; color:#666;">${escapeHtml(b.conversation_snippet)}</div>` : ''}
+                                <div class="mt-2" style="font-size:11px; color:#999;">
+                                    状态: <span class="fw-bold" style="color:${b.status === 'open' ? '#c0392b' : '#52c41a'};">${b.status || 'open'}</span>
+                                    ${b.assigned_to ? ` | 指派给: ${escapeHtml(b.assigned_to)}` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = `
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox" style="font-size:2rem;"></i>
+                            <p class="mt-2" style="font-size:13px;">暂无Badcase数据</p>
+                        </div>
+                    `;
+                }
+            } catch (e) {
+                container.innerHTML = `
+                    <div class="text-center py-4 text-danger">
+                        <i class="bi bi-exclamation-circle" style="font-size:2rem;"></i>
+                        <p class="mt-2" style="font-size:13px;">加载失败: ${escapeHtml(String(e))}</p>
+                    </div>
+                `;
+            }
         }
 
         function renderKbDetailPanel(msg, idx) {
@@ -549,6 +1076,159 @@
             }
         }
 
+        // ==================== 链路追踪面板 ====================
+
+        function renderTracePanel(sessionId, msgIdx) {
+            return `
+                <div class="trace-panel" id="tracePanel_${sessionId}_${msgIdx}">
+                    <div class="trace-panel-header" onclick="toggleTracePanel('tracePanel_${sessionId}_${msgIdx}')">
+                        <div class="trace-title">
+                            <i class="bi bi-diagram-3"></i>
+                            <span>链路追踪</span>
+                        </div>
+                        <div class="trace-summary">
+                            <span id="traceSummary_${sessionId}_${msgIdx}">加载中...</span>
+                            <i class="bi bi-chevron-down ms-2" id="traceIcon_${sessionId}_${msgIdx}"></i>
+                        </div>
+                    </div>
+                    <div class="trace-panel-content" id="traceContent_${sessionId}_${msgIdx}">
+                        <div class="trace-panel-inner" id="traceInner_${sessionId}_${msgIdx}">
+                            <div class="text-center py-3">
+                                <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                <span class="ms-2 text-muted" style="font-size:13px;">加载链路数据...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function toggleTracePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            if (!panel) return;
+            const content = panel.querySelector('.trace-panel-content');
+            const icon = panel.querySelector('[id^="traceIcon_"]');
+            const isExpanded = content.classList.contains('expanded');
+
+            if (!isExpanded) {
+                content.classList.add('expanded');
+                if (icon) icon.classList.replace('bi-chevron-down', 'bi-chevron-up');
+                // 首次展开时加载数据
+                const innerId = content.querySelector('[id^="traceInner_"]')?.id;
+                if (innerId && document.getElementById(innerId).dataset.loaded !== 'true') {
+                    const parts = panelId.split('_');
+                    const sessionId = parts.slice(1, parts.length - 1).join('_');
+                    const msgIdx = parts[parts.length - 1];
+                    await loadTraceData(sessionId, msgIdx);
+                }
+            } else {
+                content.classList.remove('expanded');
+                if (icon) icon.classList.replace('bi-chevron-up', 'bi-chevron-down');
+            }
+            event.stopPropagation();
+        }
+
+        async function loadTraceData(sessionId, msgIdx) {
+            const inner = document.getElementById(`traceInner_${sessionId}_${msgIdx}`);
+            const summary = document.getElementById(`traceSummary_${sessionId}_${msgIdx}`);
+            if (!inner) return;
+
+            try {
+                const resp = await fetch(`/api/admin/traces/by-session/${sessionId}`);
+                const data = await resp.json();
+                if (data.success && data.traces && data.traces.length > 0) {
+                    // 根据消息索引匹配对应的 trace（简单策略：按顺序匹配助手消息对应的 trace）
+                    const assistantMsgIndices = [];
+                    const allMessages = document.querySelectorAll('.chat-message.agent');
+                    allMessages.forEach((el, i) => {
+                        const idx = parseInt(el.dataset.msgIdx, 10);
+                        assistantMsgIndices.push(idx);
+                    });
+                    const traceIndex = assistantMsgIndices.indexOf(parseInt(msgIdx, 10));
+                    const trace = (traceIndex >= 0 && traceIndex < data.traces.length) ? data.traces[traceIndex] : data.traces[0];
+
+                    if (trace) {
+                        const totalDuration = trace.total_duration_ms || 0;
+                        const nodeCount = trace.nodes ? trace.nodes.length : 0;
+                        if (summary) summary.textContent = `${nodeCount} 个节点 · ${totalDuration}ms`;
+
+                        inner.innerHTML = renderTraceTimeline(trace);
+                        inner.dataset.loaded = 'true';
+                        return;
+                    }
+                }
+                // 无数据
+                if (summary) summary.textContent = '暂无数据';
+                inner.innerHTML = '<div class="trace-empty"><i class="bi bi-inbox" style="font-size:1.5rem;"></i><p class="mt-2">暂无链路追踪数据</p></div>';
+                inner.dataset.loaded = 'true';
+            } catch (e) {
+                console.error('加载链路追踪失败:', e);
+                if (summary) summary.textContent = '加载失败';
+                inner.innerHTML = '<div class="trace-empty text-danger"><i class="bi bi-exclamation-circle" style="font-size:1.5rem;"></i><p class="mt-2">加载失败</p></div>';
+                inner.dataset.loaded = 'true';
+            }
+        }
+
+        function renderTraceTimeline(trace) {
+            if (!trace.nodes || trace.nodes.length === 0) {
+                return '<div class="trace-empty">暂无节点数据</div>';
+            }
+
+            const nodeTypeMap = {
+                'intent_recognition': '意图识别',
+                'profile_query': '画像查询',
+                'knowledge_query': '知识查询',
+                'knowledge_retrieval': '知识检索',
+                'product_recommend': '推荐生成',
+                'dialogue_response': '回复生成',
+                'answer_generation': '回复生成',
+                'safety_check': '安全检查',
+                'profile_collection': '画像采集'
+            };
+
+            let html = '<div class="trace-timeline">';
+            trace.nodes.forEach(node => {
+                const nodeName = nodeTypeMap[node.node_type] || node.node_type;
+                const isError = node.status === 'error';
+                const statusIcon = isError ? '<i class="bi bi-x-circle-fill"></i>' : '<i class="bi bi-check-circle-fill"></i>';
+                const statusClass = isError ? 'error' : 'success';
+
+                let kbSourcesHtml = '';
+                if (node.node_type === 'knowledge_retrieval' || node.node_type === 'knowledge_query') {
+                    const docs = node.output_data && node.output_data.retrieved_docs ? node.output_data.retrieved_docs : [];
+                    if (docs.length > 0) {
+                        kbSourcesHtml = `
+                            <div class="trace-kb-sources">
+                                <div class="trace-kb-sources-title"><i class="bi bi-journal-text me-1"></i>命中知识库来源</div>
+                                ${docs.map(doc => `
+                                    <div class="trace-kb-source-item">
+                                        <span class="trace-kb-source-name">${escapeHtml(doc.title || doc.doc_id || '未知来源')}</span>
+                                        <span class="trace-kb-source-score">${(doc.relevance || 0).toFixed(2)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    }
+                }
+
+                html += `
+                    <div class="trace-node ${isError ? 'error' : ''}">
+                        <div class="trace-node-header">
+                            <span class="trace-node-name">${escapeHtml(nodeName)}</span>
+                            <div class="trace-node-meta">
+                                <span class="trace-node-duration">${node.duration_ms || 0}ms</span>
+                                <span class="trace-node-status ${statusClass}">${statusIcon} ${isError ? '失败' : '成功'}</span>
+                            </div>
+                        </div>
+                        ${node.error_message ? `<div style="color:#ff4d4f; font-size:12px; margin-top:4px;"><i class="bi bi-exclamation-triangle me-1"></i>${escapeHtml(node.error_message)}</div>` : ''}
+                        ${kbSourcesHtml}
+                    </div>
+                `;
+            });
+            html += '</div>';
+            return html;
+        }
+
         // ==================== 工具函数 ====================
 
         function refreshData() {
@@ -569,6 +1249,107 @@
         function escapeHtml(text) {
             if (!text) return '';
             return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\n/g,'<br>');
+        }
+
+        // ==================== Badcase 标记功能 ====================
+
+        let currentSessionMessages = [];
+
+        function openBadcaseModal(sessionId, msgIdx) {
+            const msg = currentSessionMessages[msgIdx];
+            if (!msg) return;
+
+            // 找到前一条用户消息作为对话片段的一部分
+            let userMsg = '';
+            for (let i = msgIdx - 1; i >= 0; i--) {
+                if (currentSessionMessages[i].message_type === 'user') {
+                    userMsg = currentSessionMessages[i].content;
+                    break;
+                }
+            }
+            const assistantReply = msg.content || '';
+            const snippet = `用户: ${userMsg}\n\n助手: ${assistantReply.substring(0, 200)}${assistantReply.length > 200 ? '...' : ''}`;
+
+            document.getElementById('bcSessionId').value = sessionId;
+            document.getElementById('bcMessageIndex').value = msgIdx;
+            document.getElementById('bcCategory').value = '其他';
+            document.getElementById('bcSeverity').value = 'medium';
+            document.getElementById('bcDescription').value = '';
+            document.getElementById('bcAssignedTo').value = '管理员';
+            document.getElementById('bcSnippet').value = snippet;
+
+            const modal = new bootstrap.Modal(document.getElementById('badcaseModal'));
+            modal.show();
+        }
+
+        async function submitBadcase() {
+            const sessionId = document.getElementById('bcSessionId').value;
+            const msgIdx = parseInt(document.getElementById('bcMessageIndex').value, 10);
+            const category = document.getElementById('bcCategory').value;
+            const severity = document.getElementById('bcSeverity').value;
+            const description = document.getElementById('bcDescription').value.trim();
+            const assignedTo = document.getElementById('bcAssignedTo').value;
+            const conversationSnippet = document.getElementById('bcSnippet').value;
+
+            if (!description) {
+                showToast('请填写问题描述', 'error');
+                return;
+            }
+
+            try {
+                const resp = await fetch('/api/admin/badcases', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        category: category,
+                        severity: severity,
+                        description: description,
+                        assigned_to: assignedTo,
+                        conversation_snippet: conversationSnippet
+                    })
+                });
+                const data = await resp.json();
+                if (data.success) {
+                    showToast('Badcase 标记成功');
+                    const modalEl = document.getElementById('badcaseModal');
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) modal.hide();
+
+                    // 在当前消息旁显示红色 Badcase 标记徽章
+                    const badge = document.getElementById(`bc-badge-${sessionId}-${msgIdx}`);
+                    if (badge) badge.style.display = 'inline-flex';
+
+                    // 如果当前在 Badcase Tab，刷新列表
+                    const badcasesTab = document.querySelector('.detail-tabs .tab-item[data-tab="badcases"]');
+                    if (badcasesTab && badcasesTab.classList.contains('active')) {
+                        loadSessionBadcases(sessionId);
+                    }
+                } else {
+                    showToast(data.error || '标记失败', 'error');
+                }
+            } catch (e) {
+                showToast('提交失败: ' + e, 'error');
+            }
+        }
+
+        async function loadBadcaseBadgesForSession(sessionId) {
+            try {
+                const resp = await fetch(`/api/admin/badcases?limit=100`);
+                const data = await resp.json();
+                if (data.success && data.badcases) {
+                    const sessionBadcases = data.badcases.filter(b => b.session_id === sessionId);
+                    // 简单策略：将会话中所有助手消息都标记上徽章（因为目前后端没有 message_index 字段精确匹配）
+                    // 如果后端有 message_index 可以精确匹配，这里可根据 b.message_index 来显示
+                    // 目前先将会话下所有助手消息的徽章都显示出来
+                    const badges = document.querySelectorAll(`[id^="bc-badge-${sessionId}-"]`);
+                    if (sessionBadcases.length > 0) {
+                        badges.forEach(b => b.style.display = 'inline-flex');
+                    }
+                }
+            } catch (e) {
+                console.error('加载 Badcase 徽章失败:', e);
+            }
         }
 
         function showToast(msg, type='success') {

@@ -688,6 +688,33 @@ def admin_profiles():
                            stats=stats)
 
 
+@app.route('/api/admin/profiles/<user_id>', methods=['GET'])
+def api_get_profile(user_id):
+    """获取指定用户画像（JSON格式）"""
+    try:
+        from admin_service import profile_service
+        profile = profile_service.get_profile_by_id(user_id)
+        if not profile:
+            return jsonify({'success': False, 'error': '用户画像不存在'}), 404
+        return jsonify({'success': True, 'profile': profile})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/profiles/<user_id>', methods=['PUT'])
+def api_update_profile(user_id):
+    """更新指定用户画像"""
+    try:
+        from admin_service import profile_service
+        data = request.json or {}
+        updated = profile_service.update_profile(user_id, data)
+        if not updated:
+            return jsonify({'success': False, 'error': '用户画像不存在或更新失败'}), 404
+        return jsonify({'success': True, 'profile': updated})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 @app.route('/admin/profiles/<user_id>')
 def admin_profile_detail(user_id):
     """用户画像详情页面"""
@@ -904,6 +931,20 @@ def get_model_call_stats():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+@app.route('/api/admin/model-calls/<call_id>', methods=['GET'])
+def get_model_call(call_id):
+    """获取单条模型调用记录"""
+    try:
+        from data_service import get_model_call_service
+        service = get_model_call_service()
+        call = service.get_call(call_id)
+        if call:
+            return jsonify({'success': True, 'call': call})
+        return jsonify({'success': False, 'error': '调用记录不存在'}), 404
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 # ---------- 调用链路追踪 API ----------
 @app.route('/api/admin/traces', methods=['GET'])
 def list_traces():
@@ -928,6 +969,18 @@ def get_trace_detail(trace_id):
         if trace:
             return jsonify({'success': True, 'trace': trace})
         return jsonify({'success': False, 'error': '链路不存在'}), 404
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/traces/by-session/<session_id>', methods=['GET'])
+def get_traces_by_session(session_id):
+    """根据会话ID获取链路追踪列表"""
+    try:
+        from data_service import get_trace_service
+        service = get_trace_service()
+        traces = service.list_traces(session_id=session_id)
+        return jsonify({'success': True, 'traces': traces})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 

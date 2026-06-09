@@ -114,6 +114,13 @@
             margin-bottom: 16px;
         }
         .back-btn:hover { color: #333; }
+
+        /* 编辑 Modal */
+        .edit-modal .modal-dialog { max-width: 600px; }
+        .edit-modal .form-label { font-size: 0.82rem; font-weight: 600; color: #555; margin-bottom: 4px; }
+        .edit-modal .form-control, .edit-modal .form-select { font-size: 0.9rem; }
+
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
     </style>
 </head>
 <body>
@@ -314,9 +321,12 @@
                                     </small>
                                 </div>
                                 <div class="col-md-1 text-center">
-                                    <a href="/admin/profiles/{{ p.user_id }}" class="btn btn-sm btn-outline-primary" title="查看详情">
+                                    <a href="/admin/profiles/{{ p.user_id }}" class="btn btn-sm btn-outline-primary me-1" title="查看详情">
                                         <i class="bi bi-eye"></i>
                                     </a>
+                                    <button type="button" class="btn btn-sm btn-outline-success" title="编辑" onclick="event.stopPropagation(); openEditModal('{{ p.user_id }}')">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
                                 </div>
                             </div>
                             {% endfor %}
@@ -334,6 +344,142 @@
         </div>
     </div>
 
+    <!-- 编辑画像 Modal -->
+    <div class="modal fade edit-modal" id="editProfileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>编辑用户画像</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editProfileForm">
+                        <input type="hidden" name="user_id" id="editUserId">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">用户ID</label>
+                                <input type="text" class="form-control" id="editUserIdDisplay" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">姓名</label>
+                                <input type="text" class="form-control" name="name" id="editName" placeholder="未填写">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">年龄</label>
+                                <input type="text" class="form-control" name="age" id="editAge" placeholder="未填写">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">性别</label>
+                                <select class="form-select" name="gender" id="editGender">
+                                    <option value="">未填写</option>
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">慢性病史</label>
+                                <input type="text" class="form-control" name="chronic_diseases" id="editChronic" placeholder="未填写">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">过敏史</label>
+                                <input type="text" class="form-control" name="allergy_history" id="editAllergy" placeholder="未填写">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">当前用药</label>
+                                <input type="text" class="form-control" name="current_medication" id="editMedication" placeholder="未填写">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">健康关注点</label>
+                                <input type="text" class="form-control" name="health_concerns" id="editHealth" placeholder="未填写">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="saveProfileEdit()">
+                        <i class="bi bi-check-lg me-1"></i>保存修改
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let editModal = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            editModal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+        });
+
+        async function openEditModal(userId) {
+            try {
+                const resp = await fetch(`/api/admin/profiles/${userId}`);
+                const data = await resp.json();
+                if (data.success && data.profile) {
+                    const p = data.profile;
+                    document.getElementById('editUserId').value = p.user_id || userId;
+                    document.getElementById('editUserIdDisplay').value = p.user_id || userId;
+                    document.getElementById('editName').value = p.name || '';
+                    document.getElementById('editAge').value = p.age ? String(p.age) : '';
+                    document.getElementById('editGender').value = p.gender || '';
+                    document.getElementById('editChronic').value = p.chronic_diseases || '';
+                    document.getElementById('editAllergy').value = p.allergy_history || '';
+                    document.getElementById('editMedication').value = p.current_medication || '';
+                    document.getElementById('editHealth').value = p.health_concerns || '';
+                    editModal.show();
+                } else {
+                    showToast('加载画像失败: ' + (data.error || '未知错误'), 'error');
+                }
+            } catch (e) {
+                showToast('加载画像失败: ' + e, 'error');
+            }
+        }
+
+        async function saveProfileEdit() {
+            const userId = document.getElementById('editUserId').value;
+            const payload = {
+                name: document.getElementById('editName').value,
+                age: document.getElementById('editAge').value,
+                gender: document.getElementById('editGender').value,
+                chronic_diseases: document.getElementById('editChronic').value,
+                allergy_history: document.getElementById('editAllergy').value,
+                current_medication: document.getElementById('editMedication').value,
+                health_concerns: document.getElementById('editHealth').value
+            };
+
+            try {
+                const resp = await fetch(`/api/admin/profiles/${userId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await resp.json();
+                if (data.success) {
+                    showToast('用户画像已保存');
+                    editModal.hide();
+                    // 刷新页面以显示更新后的数据
+                    setTimeout(() => location.reload(), 600);
+                } else {
+                    showToast(data.error || '保存失败', 'error');
+                }
+            } catch (e) {
+                showToast('保存失败: ' + e, 'error');
+            }
+        }
+
+        function showToast(msg, type='success') {
+            const c = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            t.className = `toast show ${type==='success'?'bg-success':'bg-danger'} text-white`;
+            t.innerHTML = `<div class="toast-body">${msg}</div>`;
+            t.style.minWidth = '200px';
+            c.appendChild(t);
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2000);
+        }
+    </script>
 </body>
 </html>
