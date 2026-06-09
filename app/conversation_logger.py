@@ -100,18 +100,31 @@ class ConversationLogger:
     
     def _load_existing_sessions(self):
         """加载已存在的会话记录"""
+        print(f"[ConversationLogger] 尝试加载会话目录: {CONVERSATION_LOG_DIR}")
+        print(f"[ConversationLogger] 目录是否存在: {os.path.exists(CONVERSATION_LOG_DIR)}")
+        
         if not os.path.exists(CONVERSATION_LOG_DIR):
+            print(f"[ConversationLogger] 目录不存在，跳过加载")
             return
         
-        for filename in os.listdir(CONVERSATION_LOG_DIR):
-            if filename.endswith('.json'):
-                try:
-                    with open(os.path.join(CONVERSATION_LOG_DIR, filename), 'r', encoding='utf-8') as f:
-                        data = json.load(f)
-                        session = self._dict_to_session(data)
-                        self.sessions[session.session_id] = session
-                except Exception as e:
-                    print(f"加载会话记录失败 {filename}: {e}")
+        files = [f for f in os.listdir(CONVERSATION_LOG_DIR) if f.endswith('.json')]
+        print(f"[ConversationLogger] 找到 {len(files)} 个JSON文件: {files}")
+        
+        for filename in files:
+            try:
+                filepath = os.path.join(CONVERSATION_LOG_DIR, filename)
+                print(f"[ConversationLogger] 正在加载: {filename}")
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    session = self._dict_to_session(data)
+                    self.sessions[session.session_id] = session
+                    print(f"[ConversationLogger] 成功加载: {session.session_id}, 消息数: {len(session.messages)}")
+            except Exception as e:
+                print(f"[ConversationLogger] 加载会话记录失败 {filename}: {e}")
+                import traceback
+                traceback.print_exc()
+        
+        print(f"[ConversationLogger] 总共加载了 {len(self.sessions)} 个会话")
     
     def _dict_to_session(self, data: Dict) -> ConversationSession:
         """将字典转换为 ConversationSession 对象，递归处理嵌套结构"""

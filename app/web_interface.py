@@ -1343,6 +1343,30 @@ def admin_data_export():
     return render_template('admin_data_export.html')
 
 
+# ============================================================
+# 启动时预加载数据
+# ============================================================
+@app.before_first_request
+def preload_data():
+    """启动时预加载所有数据"""
+    print("[Startup] 正在预加载数据...")
+    try:
+        from conversation_logger import get_conversation_logger, CONVERSATION_LOG_DIR
+        import os
+        print(f"[Startup] 数据目录: {CONVERSATION_LOG_DIR}")
+        print(f"[Startup] 目录是否存在: {os.path.exists(CONVERSATION_LOG_DIR)}")
+        if os.path.exists(CONVERSATION_LOG_DIR):
+            files = os.listdir(CONVERSATION_LOG_DIR)
+            print(f"[Startup] 目录内容: {files}")
+        logger = get_conversation_logger()
+        logger._load_existing_sessions()
+        print(f"[Startup] 已加载 {len(logger.sessions)} 个对话会话")
+    except Exception as e:
+        print(f"[Startup] 预加载数据失败: {e}")
+        import traceback
+        traceback.print_exc()
+
+
 if __name__ == '__main__':
     import os
     port = int(os.environ.get('PORT', 5000))
