@@ -1,14 +1,14 @@
 {
   "session_id": "sess_demo_006",
   "user_id": "user_demo_006",
-  "started_at": "2026-06-04T07:52:05.116967",
-  "ended_at": "2026-06-04T07:58:05.116967",
+  "started_at": "2026-06-04T07:57:15.119028",
+  "ended_at": "2026-06-04T08:03:15.119028",
   "messages": [
     {
       "message_id": "sess_demo_006_user_0",
       "message_type": "user",
       "content": "我怀孕了，现在4个月，需要补充什么营养吗？",
-      "timestamp": "2026-06-04T07:52:05.116967"
+      "timestamp": "2026-06-04T07:57:15.119028"
     },
     {
       "message_id": "sess_demo_006_agent_0",
@@ -28,7 +28,7 @@
             "prod_050"
           ],
           "response_time_ms": 200,
-          "timestamp": "2026-06-04T07:53:05.116967"
+          "timestamp": "2026-06-04T07:58:15.119028"
         }
       ],
       "llm_calls": [
@@ -40,16 +40,16 @@
           "response_time_ms": 900,
           "success": true,
           "error_message": "",
-          "timestamp": "2026-06-04T07:53:05.116967"
+          "timestamp": "2026-06-04T07:58:15.119028"
         }
       ],
-      "timestamp": "2026-06-04T07:53:05.116967"
+      "timestamp": "2026-06-04T07:58:15.119028"
     },
     {
       "message_id": "sess_demo_006_user_1",
       "message_type": "user",
       "content": "这些对胎儿不会有影响吧？",
-      "timestamp": "2026-06-04T07:55:05.116967"
+      "timestamp": "2026-06-04T08:00:15.119028"
     },
     {
       "message_id": "sess_demo_006_agent_1",
@@ -65,7 +65,7 @@
           "results_count": 4,
           "product_ids": [],
           "response_time_ms": 250,
-          "timestamp": "2026-06-04T07:56:05.116967"
+          "timestamp": "2026-06-04T08:01:15.119028"
         }
       ],
       "llm_calls": [
@@ -77,10 +77,10 @@
           "response_time_ms": 780,
           "success": true,
           "error_message": "",
-          "timestamp": "2026-06-04T07:56:05.116967"
+          "timestamp": "2026-06-04T08:01:15.119028"
         }
       ],
-      "timestamp": "2026-06-04T07:56:05.116967"
+      "timestamp": "2026-06-04T08:01:15.119028"
     }
   ],
   "user_profile": {

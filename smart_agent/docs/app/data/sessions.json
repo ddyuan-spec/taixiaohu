@@ -2,14 +2,14 @@
   {
     "session_id": "sess_demo_001",
     "user_id": "user_demo_001",
-    "started_at": "2026-06-09T17:52:05.116967",
-    "ended_at": "2026-06-09T18:01:05.116967",
+    "started_at": "2026-06-09T17:57:15.119028",
+    "ended_at": "2026-06-09T18:06:15.119028",
     "messages": [
       {
         "message_id": "sess_demo_001_user_0",
         "message_type": "user",
         "content": "你好，我想给我妈买点保健品，她今年65岁了",
-        "timestamp": "2026-06-09T17:52:05.116967"
+        "timestamp": "2026-06-09T17:57:15.119028"
       },
       {
         "message_id": "sess_demo_001_agent_0",
@@ -28,7 +28,7 @@
               "prod_002"
             ],
             "response_time_ms": 200,
-            "timestamp": "2026-06-09T17:53:05.116967"
+            "timestamp": "2026-06-09T17:58:15.119028"
           }
         ],
         "llm_calls": [
@@ -40,16 +40,16 @@
             "response_time_ms": 800,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-09T17:53:05.116967"
+            "timestamp": "2026-06-09T17:58:15.119028"
           }
         ],
-        "timestamp": "2026-06-09T17:53:05.116967"
+        "timestamp": "2026-06-09T17:58:15.119028"
       },
       {
         "message_id": "sess_demo_001_user_1",
         "message_type": "user",
         "content": "她有高血压，平时在吃降压药",
-        "timestamp": "2026-06-09T17:55:05.116967"
+        "timestamp": "2026-06-09T18:00:15.119028"
       },
       {
         "message_id": "sess_demo_001_agent_1",
@@ -73,7 +73,7 @@
               "prod_005"
             ],
             "response_time_ms": 250,
-            "timestamp": "2026-06-09T17:56:05.116967"
+            "timestamp": "2026-06-09T18:01:15.119028"
           }
         ],
         "llm_calls": [
@@ -85,7 +85,7 @@
             "response_time_ms": 700,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-09T17:56:05.116967"
+            "timestamp": "2026-06-09T18:01:15.119028"
           },
           {
             "module": "product_recommendation",
@@ -95,16 +95,16 @@
             "response_time_ms": 1500,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-09T17:56:05.116967"
+            "timestamp": "2026-06-09T18:01:15.119028"
           }
         ],
-        "timestamp": "2026-06-09T17:56:05.116967"
+        "timestamp": "2026-06-09T18:01:15.119028"
       },
       {
         "message_id": "sess_demo_001_user_2",
         "message_type": "user",
         "content": "她没有过敏史，这些大概多少钱？",
-        "timestamp": "2026-06-09T17:58:05.116967"
+        "timestamp": "2026-06-09T18:03:15.119028"
       },
       {
         "message_id": "sess_demo_001_agent_2",
@@ -128,7 +128,7 @@
               "prod_005"
             ],
             "response_time_ms": 300,
-            "timestamp": "2026-06-09T17:59:05.116967"
+            "timestamp": "2026-06-09T18:04:15.119028"
           }
         ],
         "llm_calls": [
@@ -140,10 +140,10 @@
             "response_time_ms": 900,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-09T17:59:05.116967"
+            "timestamp": "2026-06-09T18:04:15.119028"
           }
         ],
-        "timestamp": "2026-06-09T17:59:05.116967"
+        "timestamp": "2026-06-09T18:04:15.119028"
       }
     ],
     "user_profile": {
@@ -160,14 +160,14 @@
   {
     "session_id": "sess_demo_002",
     "user_id": "user_demo_002",
-    "started_at": "2026-06-08T15:52:05.116967",
-    "ended_at": "2026-06-08T15:58:05.116967",
+    "started_at": "2026-06-08T15:57:15.119028",
+    "ended_at": "2026-06-08T16:03:15.119028",
     "messages": [
       {
         "message_id": "sess_demo_002_user_0",
         "message_type": "user",
         "content": "我家孩子3岁了，最近不爱吃饭，有什么办法吗？",
-        "timestamp": "2026-06-08T15:52:05.116967"
+        "timestamp": "2026-06-08T15:57:15.119028"
       },
       {
         "message_id": "sess_demo_002_agent_0",
@@ -187,7 +187,7 @@
               "prod_010"
             ],
             "response_time_ms": 200,
-            "timestamp": "2026-06-08T15:53:05.116967"
+            "timestamp": "2026-06-08T15:58:15.119028"
           }
         ],
         "llm_calls": [
@@ -199,16 +199,16 @@
             "response_time_ms": 750,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-08T15:53:05.116967"
+            "timestamp": "2026-06-08T15:58:15.119028"
           }
         ],
-        "timestamp": "2026-06-08T15:53:05.116967"
+        "timestamp": "2026-06-08T15:58:15.119028"
       },
       {
         "message_id": "sess_demo_002_user_1",
         "message_type": "user",
         "content": "那维生素会不会有副作用？",
-        "timestamp": "2026-06-08T15:55:05.116967"
+        "timestamp": "2026-06-08T16:00:15.119028"
       },
       {
         "message_id": "sess_demo_002_agent_1",
@@ -224,7 +224,7 @@
             "results_count": 2,
             "product_ids": [],
             "response_time_ms": 250,
-            "timestamp": "2026-06-08T15:56:05.116967"
+            "timestamp": "2026-06-08T16:01:15.119028"
           }
         ],
         "llm_calls": [
@@ -236,10 +236,10 @@
             "response_time_ms": 600,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-08T15:56:05.116967"
+            "timestamp": "2026-06-08T16:01:15.119028"
           }
         ],
-        "timestamp": "2026-06-08T15:56:05.116967"
+        "timestamp": "2026-06-08T16:01:15.119028"
       }
     ],
     "user_profile": {
@@ -256,14 +256,14 @@
   {
     "session_id": "sess_demo_003",
     "user_id": "user_demo_003",
-    "started_at": "2026-06-07T13:52:05.116967",
-    "ended_at": "2026-06-07T13:58:05.116967",
+    "started_at": "2026-06-07T13:57:15.119028",
+    "ended_at": "2026-06-07T14:03:15.119028",
     "messages": [
       {
         "message_id": "sess_demo_003_user_0",
         "message_type": "user",
         "content": "我想减肥，有什么推荐的保健品吗？",
-        "timestamp": "2026-06-07T13:52:05.116967"
+        "timestamp": "2026-06-07T13:57:15.119028"
       },
       {
         "message_id": "sess_demo_003_agent_0",
@@ -287,7 +287,7 @@
               "prod_022"
             ],
             "response_time_ms": 200,
-            "timestamp": "2026-06-07T13:53:05.116967"
+            "timestamp": "2026-06-07T13:58:15.119028"
           }
         ],
         "llm_calls": [
@@ -299,7 +299,7 @@
             "response_time_ms": 650,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-07T13:53:05.116967"
+            "timestamp": "2026-06-07T13:58:15.119028"
           },
           {
             "module": "product_recommendation",
@@ -309,16 +309,16 @@
             "response_time_ms": 1400,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-07T13:53:05.116967"
+            "timestamp": "2026-06-07T13:58:15.119028"
           }
         ],
-        "timestamp": "2026-06-07T13:53:05.116967"
+        "timestamp": "2026-06-07T13:58:15.119028"
       },
       {
         "message_id": "sess_demo_003_user_1",
         "message_type": "user",
         "content": "这些和节食一起吃效果更好吗？",
-        "timestamp": "2026-06-07T13:55:05.116967"
+        "timestamp": "2026-06-07T14:00:15.119028"
       },
       {
         "message_id": "sess_demo_003_agent_1",
@@ -334,7 +334,7 @@
             "results_count": 4,
             "product_ids": [],
             "response_time_ms": 250,
-            "timestamp": "2026-06-07T13:56:05.116967"
+            "timestamp": "2026-06-07T14:01:15.119028"
           }
         ],
         "llm_calls": [
@@ -346,10 +346,10 @@
             "response_time_ms": 950,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-07T13:56:05.116967"
+            "timestamp": "2026-06-07T14:01:15.119028"
           }
         ],
-        "timestamp": "2026-06-07T13:56:05.116967"
+        "timestamp": "2026-06-07T14:01:15.119028"
       }
     ],
     "user_profile": {
@@ -366,14 +366,14 @@
   {
     "session_id": "sess_demo_004",
     "user_id": "user_demo_004",
-    "started_at": "2026-06-06T11:52:05.116967",
-    "ended_at": "2026-06-06T12:01:05.116967",
+    "started_at": "2026-06-06T11:57:15.119028",
+    "ended_at": "2026-06-06T12:06:15.119028",
     "messages": [
       {
         "message_id": "sess_demo_004_user_0",
         "message_type": "user",
         "content": "你好",
-        "timestamp": "2026-06-06T11:52:05.116967"
+        "timestamp": "2026-06-06T11:57:15.119028"
       },
       {
         "message_id": "sess_demo_004_agent_0",
@@ -392,16 +392,16 @@
             "response_time_ms": 400,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-06T11:53:05.116967"
+            "timestamp": "2026-06-06T11:58:15.119028"
           }
         ],
-        "timestamp": "2026-06-06T11:53:05.116967"
+        "timestamp": "2026-06-06T11:58:15.119028"
       },
       {
         "message_id": "sess_demo_004_user_1",
         "message_type": "user",
         "content": "我28岁，男",
-        "timestamp": "2026-06-06T11:55:05.116967"
+        "timestamp": "2026-06-06T12:00:15.119028"
       },
       {
         "message_id": "sess_demo_004_agent_1",
@@ -420,16 +420,16 @@
             "response_time_ms": 450,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-06T11:56:05.116967"
+            "timestamp": "2026-06-06T12:01:15.119028"
           }
         ],
-        "timestamp": "2026-06-06T11:56:05.116967"
+        "timestamp": "2026-06-06T12:01:15.119028"
       },
       {
         "message_id": "sess_demo_004_user_2",
         "message_type": "user",
         "content": "没有慢性病，就是经常熬夜",
-        "timestamp": "2026-06-06T11:58:05.116967"
+        "timestamp": "2026-06-06T12:03:15.119028"
       },
       {
         "message_id": "sess_demo_004_agent_2",
@@ -453,7 +453,7 @@
               "prod_032"
             ],
             "response_time_ms": 300,
-            "timestamp": "2026-06-06T11:59:05.116967"
+            "timestamp": "2026-06-06T12:04:15.119028"
           }
         ],
         "llm_calls": [
@@ -465,7 +465,7 @@
             "response_time_ms": 600,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-06T11:59:05.116967"
+            "timestamp": "2026-06-06T12:04:15.119028"
           },
           {
             "module": "product_recommendation",
@@ -475,10 +475,10 @@
             "response_time_ms": 1200,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-06T11:59:05.116967"
+            "timestamp": "2026-06-06T12:04:15.119028"
           }
         ],
-        "timestamp": "2026-06-06T11:59:05.116967"
+        "timestamp": "2026-06-06T12:04:15.119028"
       }
     ],
     "user_profile": {
@@ -495,14 +495,14 @@
   {
     "session_id": "sess_demo_005",
     "user_id": "user_demo_005",
-    "started_at": "2026-06-05T09:52:05.116967",
-    "ended_at": "2026-06-05T09:58:05.116967",
+    "started_at": "2026-06-05T09:57:15.119028",
+    "ended_at": "2026-06-05T10:03:15.119028",
     "messages": [
       {
         "message_id": "sess_demo_005_user_0",
         "message_type": "user",
         "content": "我膝盖不太好，上下楼梯会疼，有什么保健品能吃吗？",
-        "timestamp": "2026-06-05T09:52:05.116967"
+        "timestamp": "2026-06-05T09:57:15.119028"
       },
       {
         "message_id": "sess_demo_005_agent_0",
@@ -524,7 +524,7 @@
               "prod_041"
             ],
             "response_time_ms": 200,
-            "timestamp": "2026-06-05T09:53:05.116967"
+            "timestamp": "2026-06-05T09:58:15.119028"
           }
         ],
         "llm_calls": [
@@ -536,16 +536,16 @@
             "response_time_ms": 850,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-05T09:53:05.116967"
+            "timestamp": "2026-06-05T09:58:15.119028"
           }
         ],
-        "timestamp": "2026-06-05T09:53:05.116967"
+        "timestamp": "2026-06-05T09:58:15.119028"
       },
       {
         "message_id": "sess_demo_005_user_1",
         "message_type": "user",
         "content": "我55岁了，疼了大概半年",
-        "timestamp": "2026-06-05T09:55:05.116967"
+        "timestamp": "2026-06-05T10:00:15.119028"
       },
       {
         "message_id": "sess_demo_005_agent_1",
@@ -567,7 +567,7 @@
               "prod_042"
             ],
             "response_time_ms": 250,
-            "timestamp": "2026-06-05T09:56:05.116967"
+            "timestamp": "2026-06-05T10:01:15.119028"
           }
         ],
         "llm_calls": [
@@ -579,7 +579,7 @@
             "response_time_ms": 680,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-05T09:56:05.116967"
+            "timestamp": "2026-06-05T10:01:15.119028"
           },
           {
             "module": "product_recommendation",
@@ -589,10 +589,10 @@
             "response_time_ms": 1300,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-05T09:56:05.116967"
+            "timestamp": "2026-06-05T10:01:15.119028"
           }
         ],
-        "timestamp": "2026-06-05T09:56:05.116967"
+        "timestamp": "2026-06-05T10:01:15.119028"
       }
     ],
     "user_profile": {
@@ -609,14 +609,14 @@
   {
     "session_id": "sess_demo_006",
     "user_id": "user_demo_006",
-    "started_at": "2026-06-04T07:52:05.116967",
-    "ended_at": "2026-06-04T07:58:05.116967",
+    "started_at": "2026-06-04T07:57:15.119028",
+    "ended_at": "2026-06-04T08:03:15.119028",
     "messages": [
       {
         "message_id": "sess_demo_006_user_0",
         "message_type": "user",
         "content": "我怀孕了，现在4个月，需要补充什么营养吗？",
-        "timestamp": "2026-06-04T07:52:05.116967"
+        "timestamp": "2026-06-04T07:57:15.119028"
       },
       {
         "message_id": "sess_demo_006_agent_0",
@@ -636,7 +636,7 @@
               "prod_050"
             ],
             "response_time_ms": 200,
-            "timestamp": "2026-06-04T07:53:05.116967"
+            "timestamp": "2026-06-04T07:58:15.119028"
           }
         ],
         "llm_calls": [
@@ -648,16 +648,16 @@
             "response_time_ms": 900,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-04T07:53:05.116967"
+            "timestamp": "2026-06-04T07:58:15.119028"
           }
         ],
-        "timestamp": "2026-06-04T07:53:05.116967"
+        "timestamp": "2026-06-04T07:58:15.119028"
       },
       {
         "message_id": "sess_demo_006_user_1",
         "message_type": "user",
         "content": "这些对胎儿不会有影响吧？",
-        "timestamp": "2026-06-04T07:55:05.116967"
+        "timestamp": "2026-06-04T08:00:15.119028"
       },
       {
         "message_id": "sess_demo_006_agent_1",
@@ -673,7 +673,7 @@
             "results_count": 4,
             "product_ids": [],
             "response_time_ms": 250,
-            "timestamp": "2026-06-04T07:56:05.116967"
+            "timestamp": "2026-06-04T08:01:15.119028"
           }
         ],
         "llm_calls": [
@@ -685,10 +685,10 @@
             "response_time_ms": 780,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-04T07:56:05.116967"
+            "timestamp": "2026-06-04T08:01:15.119028"
           }
         ],
-        "timestamp": "2026-06-04T07:56:05.116967"
+        "timestamp": "2026-06-04T08:01:15.119028"
       }
     ],
     "user_profile": {
@@ -705,14 +705,14 @@
   {
     "session_id": "sess_demo_007",
     "user_id": "user_demo_007",
-    "started_at": "2026-06-03T05:52:05.116967",
-    "ended_at": "2026-06-03T05:58:05.116967",
+    "started_at": "2026-06-03T05:57:15.119028",
+    "ended_at": "2026-06-03T06:03:15.119028",
     "messages": [
       {
         "message_id": "sess_demo_007_user_0",
         "message_type": "user",
         "content": "我有糖尿病，平时血糖控制得不太好，有什么保健品能辅助降糖吗？",
-        "timestamp": "2026-06-03T05:52:05.116967"
+        "timestamp": "2026-06-03T05:57:15.119028"
       },
       {
         "message_id": "sess_demo_007_agent_0",
@@ -734,7 +734,7 @@
               "prod_061"
             ],
             "response_time_ms": 200,
-            "timestamp": "2026-06-03T05:53:05.116967"
+            "timestamp": "2026-06-03T05:58:15.119028"
           }
         ],
         "llm_calls": [
@@ -746,16 +746,16 @@
             "response_time_ms": 950,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-03T05:53:05.116967"
+            "timestamp": "2026-06-03T05:58:15.119028"
           }
         ],
-        "timestamp": "2026-06-03T05:53:05.116967"
+        "timestamp": "2026-06-03T05:58:15.119028"
       },
       {
         "message_id": "sess_demo_007_user_1",
         "message_type": "user",
         "content": "那我可以停掉二甲双胍只吃这些吗？",
-        "timestamp": "2026-06-03T05:55:05.116967"
+        "timestamp": "2026-06-03T06:00:15.119028"
       },
       {
         "message_id": "sess_demo_007_agent_1",
@@ -774,10 +774,10 @@
             "response_time_ms": 500,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-03T05:56:05.116967"
+            "timestamp": "2026-06-03T06:01:15.119028"
           }
         ],
-        "timestamp": "2026-06-03T05:56:05.116967"
+        "timestamp": "2026-06-03T06:01:15.119028"
       }
     ],
     "user_profile": {
@@ -794,14 +794,14 @@
   {
     "session_id": "sess_demo_008",
     "user_id": "user_demo_008",
-    "started_at": "2026-06-02T03:52:05.116967",
-    "ended_at": "2026-06-02T03:58:05.116967",
+    "started_at": "2026-06-02T03:57:15.119028",
+    "ended_at": "2026-06-02T04:03:15.119028",
     "messages": [
       {
         "message_id": "sess_demo_008_user_0",
         "message_type": "user",
         "content": "我每周健身4次，想买点蛋白粉和恢复类的保健品",
-        "timestamp": "2026-06-02T03:52:05.116967"
+        "timestamp": "2026-06-02T03:57:15.119028"
       },
       {
         "message_id": "sess_demo_008_agent_0",
@@ -827,7 +827,7 @@
               "prod_073"
             ],
             "response_time_ms": 200,
-            "timestamp": "2026-06-02T03:53:05.116967"
+            "timestamp": "2026-06-02T03:58:15.119028"
           }
         ],
         "llm_calls": [
@@ -839,7 +839,7 @@
             "response_time_ms": 620,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-02T03:53:05.116967"
+            "timestamp": "2026-06-02T03:58:15.119028"
           },
           {
             "module": "product_recommendation",
@@ -849,16 +849,16 @@
             "response_time_ms": 1450,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-02T03:53:05.116967"
+            "timestamp": "2026-06-02T03:58:15.119028"
           }
         ],
-        "timestamp": "2026-06-02T03:53:05.116967"
+        "timestamp": "2026-06-02T03:58:15.119028"
       },
       {
         "message_id": "sess_demo_008_user_1",
         "message_type": "user",
         "content": "主要是增肌，这些怎么吃比较好？",
-        "timestamp": "2026-06-02T03:55:05.116967"
+        "timestamp": "2026-06-02T04:00:15.119028"
       },
       {
         "message_id": "sess_demo_008_agent_1",
@@ -878,7 +878,7 @@
               "prod_070"
             ],
             "response_time_ms": 250,
-            "timestamp": "2026-06-02T03:56:05.116967"
+            "timestamp": "2026-06-02T04:01:15.119028"
           }
         ],
         "llm_calls": [
@@ -890,10 +890,10 @@
             "response_time_ms": 1000,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-02T03:56:05.116967"
+            "timestamp": "2026-06-02T04:01:15.119028"
           }
         ],
-        "timestamp": "2026-06-02T03:56:05.116967"
+        "timestamp": "2026-06-02T04:01:15.119028"
       }
     ],
     "user_profile": {
@@ -910,14 +910,14 @@
   {
     "session_id": "sess_demo_009",
     "user_id": "user_demo_009",
-    "started_at": "2026-06-01T01:52:05.116967",
-    "ended_at": "2026-06-01T01:58:05.116967",
+    "started_at": "2026-06-01T01:57:15.119028",
+    "ended_at": "2026-06-01T02:03:15.119028",
     "messages": [
       {
         "message_id": "sess_demo_009_user_0",
         "message_type": "user",
         "content": "最近换季老是感冒，有什么能提高免疫力的？",
-        "timestamp": "2026-06-01T01:52:05.116967"
+        "timestamp": "2026-06-01T01:57:15.119028"
       },
       {
         "message_id": "sess_demo_009_agent_0",
@@ -941,7 +941,7 @@
               "prod_082"
             ],
             "response_time_ms": 200,
-            "timestamp": "2026-06-01T01:53:05.116967"
+            "timestamp": "2026-06-01T01:58:15.119028"
           }
         ],
         "llm_calls": [
@@ -953,7 +953,7 @@
             "response_time_ms": 580,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-01T01:53:05.116967"
+            "timestamp": "2026-06-01T01:58:15.119028"
           },
           {
             "module": "product_recommendation",
@@ -963,16 +963,16 @@
             "response_time_ms": 1350,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-01T01:53:05.116967"
+            "timestamp": "2026-06-01T01:58:15.119028"
           }
         ],
-        "timestamp": "2026-06-01T01:53:05.116967"
+        "timestamp": "2026-06-01T01:58:15.119028"
       },
       {
         "message_id": "sess_demo_009_user_1",
         "message_type": "user",
         "content": "这些要吃多久才能见效？",
-        "timestamp": "2026-06-01T01:55:05.116967"
+        "timestamp": "2026-06-01T02:00:15.119028"
       },
       {
         "message_id": "sess_demo_009_agent_1",
@@ -988,7 +988,7 @@
             "results_count": 3,
             "product_ids": [],
             "response_time_ms": 250,
-            "timestamp": "2026-06-01T01:56:05.116967"
+            "timestamp": "2026-06-01T02:01:15.119028"
           }
         ],
         "llm_calls": [
@@ -1000,10 +1000,10 @@
             "response_time_ms": 800,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-06-01T01:56:05.116967"
+            "timestamp": "2026-06-01T02:01:15.119028"
           }
         ],
-        "timestamp": "2026-06-01T01:56:05.116967"
+        "timestamp": "2026-06-01T02:01:15.119028"
       }
     ],
     "user_profile": {
@@ -1020,14 +1020,14 @@
   {
     "session_id": "sess_demo_010",
     "user_id": "user_demo_010",
-    "started_at": "2026-05-30T23:52:05.116967",
-    "ended_at": "2026-05-31T00:01:05.116967",
+    "started_at": "2026-05-30T23:57:15.119028",
+    "ended_at": "2026-05-31T00:06:15.119028",
     "messages": [
       {
         "message_id": "sess_demo_010_user_0",
         "message_type": "user",
         "content": "我爸70岁了，有高血压和糖尿病，最近记忆力下降，有什么能吃的？",
-        "timestamp": "2026-05-30T23:52:05.116967"
+        "timestamp": "2026-05-30T23:57:15.119028"
       },
       {
         "message_id": "sess_demo_010_agent_0",
@@ -1047,7 +1047,7 @@
               "prod_090"
             ],
             "response_time_ms": 200,
-            "timestamp": "2026-05-30T23:53:05.116967"
+            "timestamp": "2026-05-30T23:58:15.119028"
           }
         ],
         "llm_calls": [
@@ -1059,16 +1059,16 @@
             "response_time_ms": 1100,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-05-30T23:53:05.116967"
+            "timestamp": "2026-05-30T23:58:15.119028"
           }
         ],
-        "timestamp": "2026-05-30T23:53:05.116967"
+        "timestamp": "2026-05-30T23:58:15.119028"
       },
       {
         "message_id": "sess_demo_010_user_1",
         "message_type": "user",
         "content": "他平时在吃阿司匹林和格列美脲，会有冲突吗？",
-        "timestamp": "2026-05-30T23:55:05.116967"
+        "timestamp": "2026-05-31T00:00:15.119028"
       },
       {
         "message_id": "sess_demo_010_agent_1",
@@ -1084,7 +1084,7 @@
             "results_count": 4,
             "product_ids": [],
             "response_time_ms": 250,
-            "timestamp": "2026-05-30T23:56:05.116967"
+            "timestamp": "2026-05-31T00:01:15.119028"
           }
         ],
         "llm_calls": [
@@ -1096,16 +1096,16 @@
             "response_time_ms": 950,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-05-30T23:56:05.116967"
+            "timestamp": "2026-05-31T00:01:15.119028"
           }
         ],
-        "timestamp": "2026-05-30T23:56:05.116967"
+        "timestamp": "2026-05-31T00:01:15.119028"
       },
       {
         "message_id": "sess_demo_010_user_2",
         "message_type": "user",
         "content": "好的，我会先问医生。谢谢",
-        "timestamp": "2026-05-30T23:58:05.116967"
+        "timestamp": "2026-05-31T00:03:15.119028"
       },
       {
         "message_id": "sess_demo_010_agent_2",
@@ -1124,10 +1124,10 @@
             "response_time_ms": 600,
             "success": true,
             "error_message": "",
-            "timestamp": "2026-05-30T23:59:05.116967"
+            "timestamp": "2026-05-31T00:04:15.119028"
           }
         ],
-        "timestamp": "2026-05-30T23:59:05.116967"
+        "timestamp": "2026-05-31T00:04:15.119028"
       }
     ],
     "user_profile": {

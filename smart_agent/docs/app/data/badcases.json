@@ -8,8 +8,8 @@
     "status": "open",
     "assigned_to": "产品团队",
     "conversation_snippet": "用户：那维生素会不会有副作用？\n系统：儿童维生素一般很安全，按照推荐剂量服用即可。\n问题：未针对3岁儿童给出具体剂量建议和风险提示",
-    "created_at": "2026-06-08T15:58:05.116967",
-    "updated_at": "2026-06-08T15:58:05.116967",
+    "created_at": "2026-06-08T16:03:15.119028",
+    "updated_at": "2026-06-08T16:03:15.119028",
     "resolution": "",
     "resolution_time": null
   },
@@ -22,8 +22,8 @@
     "status": "open",
     "assigned_to": "产品团队",
     "conversation_snippet": "用户：那我可以停掉二甲双胍只吃这些吗？\n系统：不建议这样做。保健品只能作为辅助，不能替代处方药物。\n问题：回答过于简短，未提供替代方案建议，缺乏就医指导",
-    "created_at": "2026-06-03T05:58:05.116967",
-    "updated_at": "2026-06-03T05:58:05.116967",
+    "created_at": "2026-06-03T06:03:15.119028",
+    "updated_at": "2026-06-03T06:03:15.119028",
     "resolution": "",
     "resolution_time": null
   }

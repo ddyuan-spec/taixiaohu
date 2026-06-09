@@ -108,10 +108,50 @@ class ConversationLogger:
                 try:
                     with open(os.path.join(CONVERSATION_LOG_DIR, filename), 'r', encoding='utf-8') as f:
                         data = json.load(f)
-                        session = ConversationSession(**data)
+                        session = self._dict_to_session(data)
                         self.sessions[session.session_id] = session
                 except Exception as e:
                     print(f"加载会话记录失败 {filename}: {e}")
+    
+    def _dict_to_session(self, data: Dict) -> ConversationSession:
+        """将字典转换为 ConversationSession 对象，递归处理嵌套结构"""
+        # 处理 messages 列表
+        messages = []
+        for msg_data in data.get('messages', []):
+            # 处理 knowledge_base_calls
+            kb_calls = []
+            for kb in msg_data.get('knowledge_base_calls', []):
+                kb_calls.append(KnowledgeBaseCall(**kb))
+            
+            # 处理 llm_calls
+            llm_calls = []
+            for llm in msg_data.get('llm_calls', []):
+                llm_calls.append(LLMCall(**llm))
+            
+            message = ConversationMessage(
+                message_id=msg_data.get('message_id', ''),
+                message_type=msg_data.get('message_type', ''),
+                content=msg_data.get('content', ''),
+                intent=msg_data.get('intent'),
+                intent_confidence=msg_data.get('intent_confidence', 0.0),
+                state=msg_data.get('state'),
+                recommended_products=msg_data.get('recommended_products', []),
+                knowledge_base_calls=kb_calls,
+                llm_calls=llm_calls,
+                timestamp=msg_data.get('timestamp', datetime.now().isoformat())
+            )
+            messages.append(message)
+        
+        return ConversationSession(
+            session_id=data.get('session_id', ''),
+            user_id=data.get('user_id', ''),
+            started_at=data.get('started_at', ''),
+            ended_at=data.get('ended_at'),
+            messages=messages,
+            user_profile=data.get('user_profile', {}),
+            total_messages=data.get('total_messages', len(messages)),
+            is_active=data.get('is_active', True)
+        )
     
     def create_session(self, session_id: str, user_id: str = "") -> ConversationSession:
         """创建新会话"""

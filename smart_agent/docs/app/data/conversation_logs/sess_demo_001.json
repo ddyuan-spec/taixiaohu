@@ -1,14 +1,14 @@
 {
   "session_id": "sess_demo_001",
   "user_id": "user_demo_001",
-  "started_at": "2026-06-09T17:52:05.116967",
-  "ended_at": "2026-06-09T18:01:05.116967",
+  "started_at": "2026-06-09T17:57:15.119028",
+  "ended_at": "2026-06-09T18:06:15.119028",
   "messages": [
     {
       "message_id": "sess_demo_001_user_0",
       "message_type": "user",
       "content": "你好，我想给我妈买点保健品，她今年65岁了",
-      "timestamp": "2026-06-09T17:52:05.116967"
+      "timestamp": "2026-06-09T17:57:15.119028"
     },
     {
       "message_id": "sess_demo_001_agent_0",
@@ -27,7 +27,7 @@
             "prod_002"
           ],
           "response_time_ms": 200,
-          "timestamp": "2026-06-09T17:53:05.116967"
+          "timestamp": "2026-06-09T17:58:15.119028"
         }
       ],
       "llm_calls": [
@@ -39,16 +39,16 @@
           "response_time_ms": 800,
           "success": true,
           "error_message": "",
-          "timestamp": "2026-06-09T17:53:05.116967"
+          "timestamp": "2026-06-09T17:58:15.119028"
         }
       ],
-      "timestamp": "2026-06-09T17:53:05.116967"
+      "timestamp": "2026-06-09T17:58:15.119028"
     },
     {
       "message_id": "sess_demo_001_user_1",
       "message_type": "user",
       "content": "她有高血压，平时在吃降压药",
-      "timestamp": "2026-06-09T17:55:05.116967"
+      "timestamp": "2026-06-09T18:00:15.119028"
     },
     {
       "message_id": "sess_demo_001_agent_1",
@@ -72,7 +72,7 @@
             "prod_005"
           ],
           "response_time_ms": 250,
-          "timestamp": "2026-06-09T17:56:05.116967"
+          "timestamp": "2026-06-09T18:01:15.119028"
         }
       ],
       "llm_calls": [
@@ -84,7 +84,7 @@
           "response_time_ms": 700,
           "success": true,
           "error_message": "",
-          "timestamp": "2026-06-09T17:56:05.116967"
+          "timestamp": "2026-06-09T18:01:15.119028"
         },
         {
           "module": "product_recommendation",
@@ -94,16 +94,16 @@
           "response_time_ms": 1500,
           "success": true,
           "error_message": "",
-          "timestamp": "2026-06-09T17:56:05.116967"
+          "timestamp": "2026-06-09T18:01:15.119028"
         }
       ],
-      "timestamp": "2026-06-09T17:56:05.116967"
+      "timestamp": "2026-06-09T18:01:15.119028"
     },
     {
       "message_id": "sess_demo_001_user_2",
       "message_type": "user",
       "content": "她没有过敏史，这些大概多少钱？",
-      "timestamp": "2026-06-09T17:58:05.116967"
+      "timestamp": "2026-06-09T18:03:15.119028"
     },
     {
       "message_id": "sess_demo_001_agent_2",
@@ -127,7 +127,7 @@
             "prod_005"
           ],
           "response_time_ms": 300,
-          "timestamp": "2026-06-09T17:59:05.116967"
+          "timestamp": "2026-06-09T18:04:15.119028"
         }
       ],
       "llm_calls": [
@@ -139,10 +139,10 @@
           "response_time_ms": 900,
           "success": true,
           "error_message": "",
-          "timestamp": "2026-06-09T17:59:05.116967"
+          "timestamp": "2026-06-09T18:04:15.119028"
         }
       ],
-      "timestamp": "2026-06-09T17:59:05.116967"
+      "timestamp": "2026-06-09T18:04:15.119028"
     }
   ],
   "user_profile": {

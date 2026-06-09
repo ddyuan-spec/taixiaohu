@@ -1,14 +1,14 @@
 {
   "session_id": "sess_demo_007",
   "user_id": "user_demo_007",
-  "started_at": "2026-06-03T05:52:05.116967",
-  "ended_at": "2026-06-03T05:58:05.116967",
+  "started_at": "2026-06-03T05:57:15.119028",
+  "ended_at": "2026-06-03T06:03:15.119028",
   "messages": [
     {
       "message_id": "sess_demo_007_user_0",
       "message_type": "user",
       "content": "我有糖尿病，平时血糖控制得不太好，有什么保健品能辅助降糖吗？",
-      "timestamp": "2026-06-03T05:52:05.116967"
+      "timestamp": "2026-06-03T05:57:15.119028"
     },
     {
       "message_id": "sess_demo_007_agent_0",
@@ -30,7 +30,7 @@
             "prod_061"
           ],
           "response_time_ms": 200,
-          "timestamp": "2026-06-03T05:53:05.116967"
+          "timestamp": "2026-06-03T05:58:15.119028"
         }
       ],
       "llm_calls": [
@@ -42,16 +42,16 @@
           "response_time_ms": 950,
           "success": true,
           "error_message": "",
-          "timestamp": "2026-06-03T05:53:05.116967"
+          "timestamp": "2026-06-03T05:58:15.119028"
         }
       ],
-      "timestamp": "2026-06-03T05:53:05.116967"
+      "timestamp": "2026-06-03T05:58:15.119028"
     },
     {
       "message_id": "sess_demo_007_user_1",
       "message_type": "user",
       "content": "那我可以停掉二甲双胍只吃这些吗？",
-      "timestamp": "2026-06-03T05:55:05.116967"
+      "timestamp": "2026-06-03T06:00:15.119028"
     },
     {
       "message_id": "sess_demo_007_agent_1",
@@ -70,10 +70,10 @@
           "response_time_ms": 500,
           "success": true,
           "error_message": "",
-          "timestamp": "2026-06-03T05:56:05.116967"
+          "timestamp": "2026-06-03T06:01:15.119028"
         }
       ],
-      "timestamp": "2026-06-03T05:56:05.116967"
+      "timestamp": "2026-06-03T06:01:15.119028"
     }
   ],
   "user_profile": {

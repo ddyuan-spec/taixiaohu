@@ -1,14 +1,14 @@
 {
   "session_id": "sess_demo_008",
   "user_id": "user_demo_008",
-  "started_at": "2026-06-02T03:52:05.116967",
-  "ended_at": "2026-06-02T03:58:05.116967",
+  "started_at": "2026-06-02T03:57:15.119028",
+  "ended_at": "2026-06-02T04:03:15.119028",
   "messages": [
     {
       "message_id": "sess_demo_008_user_0",
       "message_type": "user",
       "content": "我每周健身4次，想买点蛋白粉和恢复类的保健品",
-      "timestamp": "2026-06-02T03:52:05.116967"
+      "timestamp": "2026-06-02T03:57:15.119028"
     },
     {
       "message_id": "sess_demo_008_agent_0",
@@ -34,7 +34,7 @@
             "prod_073"
           ],
           "response_time_ms": 200,
-          "timestamp": "2026-06-02T03:53:05.116967"
+          "timestamp": "2026-06-02T03:58:15.119028"
         }
       ],
       "llm_calls": [
@@ -46,7 +46,7 @@
           "response_time_ms": 620,
           "success": true,
           "error_message": "",
-          "timestamp": "2026-06-02T03:53:05.116967"
+          "timestamp": "2026-06-02T03:58:15.119028"
         },
         {
           "module": "product_recommendation",
@@ -56,16 +56,16 @@
           "response_time_ms": 1450,
           "success": true,
           "error_message": "",
-          "timestamp": "2026-06-02T03:53:05.116967"
+          "timestamp": "2026-06-02T03:58:15.119028"
         }
       ],
-      "timestamp": "2026-06-02T03:53:05.116967"
+      "timestamp": "2026-06-02T03:58:15.119028"
     },
     {
       "message_id": "sess_demo_008_user_1",
       "message_type": "user",
       "content": "主要是增肌，这些怎么吃比较好？",
-      "timestamp": "2026-06-02T03:55:05.116967"
+      "timestamp": "2026-06-02T04:00:15.119028"
     },
     {
       "message_id": "sess_demo_008_agent_1",
@@ -85,7 +85,7 @@
             "prod_070"
           ],
           "response_time_ms": 250,
-          "timestamp": "2026-06-02T03:56:05.116967"
+          "timestamp": "2026-06-02T04:01:15.119028"
         }
       ],
       "llm_calls": [
@@ -97,10 +97,10 @@
           "response_time_ms": 1000,
           "success": true,
           "error_message": "",
-          "timestamp": "2026-06-02T03:56:05.116967"
+          "timestamp": "2026-06-02T04:01:15.119028"
         }
       ],
-      "timestamp": "2026-06-02T03:56:05.116967"
+      "timestamp": "2026-06-02T04:01:15.119028"
     }
   ],
   "user_profile": {

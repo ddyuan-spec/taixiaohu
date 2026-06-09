@@ -1,14 +1,14 @@
 {
   "session_id": "sess_demo_002",
   "user_id": "user_demo_002",
-  "started_at": "2026-06-08T15:52:05.116967",
-  "ended_at": "2026-06-08T15:58:05.116967",
+  "started_at": "2026-06-08T15:57:15.119028",
+  "ended_at": "2026-06-08T16:03:15.119028",
   "messages": [
     {
       "message_id": "sess_demo_002_user_0",
       "message_type": "user",
       "content": "我家孩子3岁了，最近不爱吃饭，有什么办法吗？",
-      "timestamp": "2026-06-08T15:52:05.116967"
+      "timestamp": "2026-06-08T15:57:15.119028"
     },
     {
       "message_id": "sess_demo_002_agent_0",
@@ -28,7 +28,7 @@
             "prod_010"
           ],
           "response_time_ms": 200,
-          "timestamp": "2026-06-08T15:53:05.116967"
+          "timestamp": "2026-06-08T15:58:15.119028"
         }
       ],
       "llm_calls": [
@@ -40,16 +40,16 @@
           "response_time_ms": 750,
           "success": true,
           "error_message": "",
-          "timestamp": "2026-06-08T15:53:05.116967"
+          "timestamp": "2026-06-08T15:58:15.119028"
         }
       ],
-      "timestamp": "2026-06-08T15:53:05.116967"
+      "timestamp": "2026-06-08T15:58:15.119028"
     },
     {
       "message_id": "sess_demo_002_user_1",
       "message_type": "user",
       "content": "那维生素会不会有副作用？",
-      "timestamp": "2026-06-08T15:55:05.116967"
+      "timestamp": "2026-06-08T16:00:15.119028"
     },
     {
       "message_id": "sess_demo_002_agent_1",
@@ -65,7 +65,7 @@
           "results_count": 2,
           "product_ids": [],
           "response_time_ms": 250,
-          "timestamp": "2026-06-08T15:56:05.116967"
+          "timestamp": "2026-06-08T16:01:15.119028"
         }
       ],
       "llm_calls": [
@@ -77,10 +77,10 @@
           "response_time_ms": 600,
           "success": true,
           "error_message": "",
-          "timestamp": "2026-06-08T15:56:05.116967"
+          "timestamp": "2026-06-08T16:01:15.119028"
         }
       ],
-      "timestamp": "2026-06-08T15:56:05.116967"
+      "timestamp": "2026-06-08T16:01:15.119028"
     }
   ],
   "user_profile": {
