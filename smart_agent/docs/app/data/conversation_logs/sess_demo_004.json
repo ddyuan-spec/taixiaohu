@@ -1,0 +1,129 @@
+{
+  "session_id": "sess_demo_004",
+  "user_id": "user_demo_004",
+  "started_at": "2026-06-06T11:52:05.116967",
+  "ended_at": "2026-06-06T12:01:05.116967",
+  "messages": [
+    {
+      "message_id": "sess_demo_004_user_0",
+      "message_type": "user",
+      "content": "你好",
+      "timestamp": "2026-06-06T11:52:05.116967"
+    },
+    {
+      "message_id": "sess_demo_004_agent_0",
+      "message_type": "agent",
+      "content": "您好！我是泰小虎，您的健康顾问。为了更好地为您服务，能否告诉我您的年龄和性别？",
+      "intent": "greeting",
+      "intent_confidence": 0.97,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [
+        {
+          "module": "intent_recognition",
+          "prompt_tokens": 50,
+          "completion_tokens": 30,
+          "total_tokens": 80,
+          "response_time_ms": 400,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-06T11:53:05.116967"
+        }
+      ],
+      "timestamp": "2026-06-06T11:53:05.116967"
+    },
+    {
+      "message_id": "sess_demo_004_user_1",
+      "message_type": "user",
+      "content": "我28岁，男",
+      "timestamp": "2026-06-06T11:55:05.116967"
+    },
+    {
+      "message_id": "sess_demo_004_agent_1",
+      "message_type": "agent",
+      "content": "收到！28岁男性。请问您有什么慢性病或正在服用的药物吗？（如高血压、糖尿病等）",
+      "intent": "profile_collection",
+      "intent_confidence": 0.96,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [
+        {
+          "module": "dialogue_response",
+          "prompt_tokens": 100,
+          "completion_tokens": 40,
+          "total_tokens": 140,
+          "response_time_ms": 450,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-06T11:56:05.116967"
+        }
+      ],
+      "timestamp": "2026-06-06T11:56:05.116967"
+    },
+    {
+      "message_id": "sess_demo_004_user_2",
+      "message_type": "user",
+      "content": "没有慢性病，就是经常熬夜",
+      "timestamp": "2026-06-06T11:58:05.116967"
+    },
+    {
+      "message_id": "sess_demo_004_agent_2",
+      "message_type": "agent",
+      "content": "了解了。熬夜会影响免疫力和肝脏代谢。针对您的情况，我建议关注以下方面：\n\n1. **护肝类** - 奶蓟草提取物\n2. **维生素B族** - 缓解疲劳\n3. **褪黑素** - 改善睡眠质量\n\n同时建议尽量调整作息，保证每天7-8小时睡眠。",
+      "intent": "product_recommend",
+      "intent_confidence": 0.9,
+      "recommended_products": [
+        "prod_030",
+        "prod_031",
+        "prod_032"
+      ],
+      "knowledge_base_calls": [
+        {
+          "query": "熬夜 护肝 维生素B 褪黑素",
+          "intent": "product_recommend",
+          "results_count": 5,
+          "product_ids": [
+            "prod_030",
+            "prod_031",
+            "prod_032"
+          ],
+          "response_time_ms": 300,
+          "timestamp": "2026-06-06T11:59:05.116967"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "intent_recognition",
+          "prompt_tokens": 120,
+          "completion_tokens": 50,
+          "total_tokens": 170,
+          "response_time_ms": 600,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-06T11:59:05.116967"
+        },
+        {
+          "module": "product_recommendation",
+          "prompt_tokens": 500,
+          "completion_tokens": 150,
+          "total_tokens": 650,
+          "response_time_ms": 1200,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-06T11:59:05.116967"
+        }
+      ],
+      "timestamp": "2026-06-06T11:59:05.116967"
+    }
+  ],
+  "user_profile": {
+    "age": 28,
+    "gender": "男",
+    "chronic_disease": "无",
+    "allergies": "",
+    "medications": "",
+    "health_concerns": "熬夜恢复、肝脏健康"
+  },
+  "total_messages": 6,
+  "is_active": false
+}

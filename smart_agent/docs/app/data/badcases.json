@@ -1,0 +1,30 @@
+[
+  {
+    "id": "bc_sess_demo_002",
+    "session_id": "sess_demo_002",
+    "category": "inappropriate_response",
+    "description": "3岁儿童服用维生素需要更谨慎的剂量指导，系统回答过于笼统，未提及过量风险",
+    "severity": "high",
+    "status": "open",
+    "assigned_to": "产品团队",
+    "conversation_snippet": "用户：那维生素会不会有副作用？\n系统：儿童维生素一般很安全，按照推荐剂量服用即可。\n问题：未针对3岁儿童给出具体剂量建议和风险提示",
+    "created_at": "2026-06-08T15:58:05.116967",
+    "updated_at": "2026-06-08T15:58:05.116967",
+    "resolution": "",
+    "resolution_time": null
+  },
+  {
+    "id": "bc_sess_demo_007",
+    "session_id": "sess_demo_007",
+    "category": "knowledge_gap",
+    "description": "系统未充分强调糖尿病患者不能停用处方药的重要性，回答过于简短，缺乏医学免责声明",
+    "severity": "critical",
+    "status": "open",
+    "assigned_to": "产品团队",
+    "conversation_snippet": "用户：那我可以停掉二甲双胍只吃这些吗？\n系统：不建议这样做。保健品只能作为辅助，不能替代处方药物。\n问题：回答过于简短，未提供替代方案建议，缺乏就医指导",
+    "created_at": "2026-06-03T05:58:05.116967",
+    "updated_at": "2026-06-03T05:58:05.116967",
+    "resolution": "",
+    "resolution_time": null
+  }
+]

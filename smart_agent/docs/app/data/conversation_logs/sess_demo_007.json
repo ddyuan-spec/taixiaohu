@@ -1,0 +1,89 @@
+{
+  "session_id": "sess_demo_007",
+  "user_id": "user_demo_007",
+  "started_at": "2026-06-03T05:52:05.116967",
+  "ended_at": "2026-06-03T05:58:05.116967",
+  "messages": [
+    {
+      "message_id": "sess_demo_007_user_0",
+      "message_type": "user",
+      "content": "我有糖尿病，平时血糖控制得不太好，有什么保健品能辅助降糖吗？",
+      "timestamp": "2026-06-03T05:52:05.116967"
+    },
+    {
+      "message_id": "sess_demo_007_agent_0",
+      "message_type": "agent",
+      "content": "糖尿病患者选择保健品需要非常谨慎。以下产品可能有一定辅助作用：\n\n1. **铬元素** - 可能改善胰岛素敏感性\n2. **苦瓜提取物** - 传统降糖食材\n3. **膳食纤维** - 延缓糖分吸收\n\n但请注意：保健品不能替代降糖药物！",
+      "intent": "product_recommend",
+      "intent_confidence": 0.87,
+      "recommended_products": [
+        "prod_060",
+        "prod_061"
+      ],
+      "knowledge_base_calls": [
+        {
+          "query": "糖尿病 保健品 降糖",
+          "intent": "product_recommend",
+          "results_count": 4,
+          "product_ids": [
+            "prod_060",
+            "prod_061"
+          ],
+          "response_time_ms": 200,
+          "timestamp": "2026-06-03T05:53:05.116967"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "dialogue_response",
+          "prompt_tokens": 600,
+          "completion_tokens": 150,
+          "total_tokens": 750,
+          "response_time_ms": 950,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-03T05:53:05.116967"
+        }
+      ],
+      "timestamp": "2026-06-03T05:53:05.116967"
+    },
+    {
+      "message_id": "sess_demo_007_user_1",
+      "message_type": "user",
+      "content": "那我可以停掉二甲双胍只吃这些吗？",
+      "timestamp": "2026-06-03T05:55:05.116967"
+    },
+    {
+      "message_id": "sess_demo_007_agent_1",
+      "message_type": "agent",
+      "content": "不建议这样做。保健品只能作为辅助，不能替代处方药物。",
+      "intent": "medical_advice",
+      "intent_confidence": 0.9,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [
+        {
+          "module": "dialogue_response",
+          "prompt_tokens": 350,
+          "completion_tokens": 60,
+          "total_tokens": 410,
+          "response_time_ms": 500,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-03T05:56:05.116967"
+        }
+      ],
+      "timestamp": "2026-06-03T05:56:05.116967"
+    }
+  ],
+  "user_profile": {
+    "age": 52,
+    "gender": "男",
+    "chronic_disease": "2型糖尿病",
+    "allergies": "",
+    "medications": "二甲双胍",
+    "health_concerns": "血糖控制"
+  },
+  "total_messages": 4,
+  "is_active": false
+}

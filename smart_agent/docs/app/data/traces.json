@@ -1,0 +1,1497 @@
+[
+  {
+    "trace_id": "txh_sess_demo_001_0",
+    "session_id": "sess_demo_001",
+    "user_message": "你好，我想给我妈买点保健品，她今年65岁了",
+    "status": "completed",
+    "total_duration_ms": 2300,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_001_0_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "你好，我想给我妈买点保健品，她今年65岁了"
+        },
+        "output_data": {
+          "intent": "health_consult",
+          "confidence": 0.95
+        },
+        "duration_ms": 800,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-09T17:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_001_0_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "老年人保健品推荐"
+        },
+        "output_data": {
+          "results_count": 5,
+          "top_relevance": 0.92
+        },
+        "duration_ms": 300,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-09T17:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_001_0_node_2",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "用户为65岁母亲咨询保健品"
+        },
+        "output_data": {
+          "response": "询问健康状况"
+        },
+        "duration_ms": 1200,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-09T17:55:05.116967"
+      }
+    ],
+    "created_at": "2026-06-09T17:55:05.116967",
+    "completed_at": "2026-06-09T17:55:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_001_1",
+    "session_id": "sess_demo_001",
+    "user_message": "她有高血压，平时在吃降压药",
+    "status": "completed",
+    "total_duration_ms": 3550,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_001_1_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "她有高血压，平时在吃降压药"
+        },
+        "output_data": {
+          "intent": "product_recommend",
+          "confidence": 0.93
+        },
+        "duration_ms": 700,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-09T17:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_001_1_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "高血压 保健品 推荐"
+        },
+        "output_data": {
+          "results_count": 3,
+          "top_relevance": 0.89
+        },
+        "duration_ms": 250,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-09T17:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_001_1_node_2",
+        "node_type": "product_recommend",
+        "input_data": {
+          "products": [
+            "prod_003",
+            "prod_004",
+            "prod_005"
+          ]
+        },
+        "output_data": {
+          "recommended": [
+            "prod_003",
+            "prod_004",
+            "prod_005"
+          ]
+        },
+        "duration_ms": 1500,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-09T17:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_001_1_node_3",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "推荐高血压适用保健品"
+        },
+        "output_data": {
+          "response": "推荐3款产品"
+        },
+        "duration_ms": 1100,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-09T17:58:05.116967"
+      }
+    ],
+    "created_at": "2026-06-09T17:58:05.116967",
+    "completed_at": "2026-06-09T17:58:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_001_2",
+    "session_id": "sess_demo_001",
+    "user_message": "她没有过敏史，这些大概多少钱？",
+    "status": "completed",
+    "total_duration_ms": 1700,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_001_2_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "她没有过敏史，这些大概多少钱？"
+        },
+        "output_data": {
+          "intent": "price_inquiry",
+          "confidence": 0.91
+        },
+        "duration_ms": 600,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-09T18:01:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_001_2_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "产品价格"
+        },
+        "output_data": {
+          "results_count": 3,
+          "top_relevance": 0.95
+        },
+        "duration_ms": 200,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-09T18:01:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_001_2_node_2",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "询问产品价格"
+        },
+        "output_data": {
+          "response": "报价信息"
+        },
+        "duration_ms": 900,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-09T18:01:05.116967"
+      }
+    ],
+    "created_at": "2026-06-09T18:01:05.116967",
+    "completed_at": "2026-06-09T18:01:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_002_0",
+    "session_id": "sess_demo_002",
+    "user_message": "我家孩子3岁了，最近不爱吃饭，有什么办法吗？",
+    "status": "completed",
+    "total_duration_ms": 2030,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_002_0_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "我家孩子3岁了，最近不爱吃饭，有什么办法吗？"
+        },
+        "output_data": {
+          "intent": "health_consult",
+          "confidence": 0.88
+        },
+        "duration_ms": 750,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-08T15:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_002_0_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "儿童不爱吃饭"
+        },
+        "output_data": {
+          "results_count": 4,
+          "top_relevance": 0.85
+        },
+        "duration_ms": 280,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-08T15:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_002_0_node_2",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "3岁儿童不爱吃饭"
+        },
+        "output_data": {
+          "response": "建议+维生素推荐"
+        },
+        "duration_ms": 1000,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-08T15:55:05.116967"
+      }
+    ],
+    "created_at": "2026-06-08T15:55:05.116967",
+    "completed_at": "2026-06-08T15:55:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_002_1",
+    "session_id": "sess_demo_002",
+    "user_message": "那维生素会不会有副作用？",
+    "status": "completed",
+    "total_duration_ms": 6400,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_002_1_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "那维生素会不会有副作用？"
+        },
+        "output_data": {
+          "intent": "safety_inquiry",
+          "confidence": 0.85
+        },
+        "duration_ms": 600,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-08T15:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_002_1_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "儿童维生素 副作用"
+        },
+        "output_data": {
+          "results_count": 2,
+          "top_relevance": 0.78
+        },
+        "duration_ms": 200,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-08T15:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_002_1_node_2",
+        "node_type": "safety_check",
+        "input_data": {
+          "condition": "3岁儿童",
+          "product": "复合维生素"
+        },
+        "output_data": {
+          "error": "安全检查超时"
+        },
+        "duration_ms": 5000,
+        "status": "error",
+        "error_message": "安全检查服务响应超时",
+        "created_at": "2026-06-08T15:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_002_1_node_3",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "询问维生素安全性"
+        },
+        "output_data": {
+          "response": "简单回答安全性"
+        },
+        "duration_ms": 600,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-08T15:58:05.116967"
+      }
+    ],
+    "created_at": "2026-06-08T15:58:05.116967",
+    "completed_at": "2026-06-08T15:58:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_003_0",
+    "session_id": "sess_demo_003",
+    "user_message": "我想减肥，有什么推荐的保健品吗？",
+    "status": "completed",
+    "total_duration_ms": 3420,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_003_0_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "我想减肥，有什么推荐的保健品吗？"
+        },
+        "output_data": {
+          "intent": "product_recommend",
+          "confidence": 0.94
+        },
+        "duration_ms": 650,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-07T13:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_003_0_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "减肥 保健品"
+        },
+        "output_data": {
+          "results_count": 6,
+          "top_relevance": 0.91,
+          "sources": [
+            {
+              "file": "减肥营养指南.pdf",
+              "chunk_id": "chunk_001",
+              "relevance": 0.91
+            },
+            {
+              "file": "运动营养手册.pdf",
+              "chunk_id": "chunk_002",
+              "relevance": 0.87
+            }
+          ]
+        },
+        "duration_ms": 320,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-07T13:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_003_0_node_2",
+        "node_type": "product_recommend",
+        "input_data": {
+          "products": [
+            "prod_020",
+            "prod_021",
+            "prod_022"
+          ]
+        },
+        "output_data": {
+          "recommended": [
+            "prod_020",
+            "prod_021",
+            "prod_022"
+          ]
+        },
+        "duration_ms": 1400,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-07T13:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_003_0_node_3",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "减肥保健品推荐"
+        },
+        "output_data": {
+          "response": "推荐3款产品+膳食指南引用"
+        },
+        "duration_ms": 1050,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-07T13:55:05.116967"
+      }
+    ],
+    "created_at": "2026-06-07T13:55:05.116967",
+    "completed_at": "2026-06-07T13:55:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_003_1",
+    "session_id": "sess_demo_003",
+    "user_message": "这些和节食一起吃效果更好吗？",
+    "status": "completed",
+    "total_duration_ms": 1850,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_003_1_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "这些和节食一起吃效果更好吗？"
+        },
+        "output_data": {
+          "intent": "knowledge_query",
+          "confidence": 0.89
+        },
+        "duration_ms": 620,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-07T13:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_003_1_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "节食 基础代谢"
+        },
+        "output_data": {
+          "results_count": 4,
+          "top_relevance": 0.88,
+          "sources": [
+            {
+              "file": "减肥营养指南.pdf",
+              "chunk_id": "chunk_003",
+              "relevance": 0.88
+            }
+          ]
+        },
+        "duration_ms": 280,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-07T13:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_003_1_node_2",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "节食与保健品搭配"
+        },
+        "output_data": {
+          "response": "不建议过度节食"
+        },
+        "duration_ms": 950,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-07T13:58:05.116967"
+      }
+    ],
+    "created_at": "2026-06-07T13:58:05.116967",
+    "completed_at": "2026-06-07T13:58:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_004_0",
+    "session_id": "sess_demo_004",
+    "user_message": "你好",
+    "status": "completed",
+    "total_duration_ms": 1200,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_004_0_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "你好"
+        },
+        "output_data": {
+          "intent": "greeting",
+          "confidence": 0.97
+        },
+        "duration_ms": 400,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-06T11:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_004_0_node_1",
+        "node_type": "profile_collection",
+        "input_data": {
+          "step": "init"
+        },
+        "output_data": {
+          "asked_fields": [
+            "age",
+            "gender"
+          ]
+        },
+        "duration_ms": 300,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-06T11:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_004_0_node_2",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "新用户问候"
+        },
+        "output_data": {
+          "response": "问候+请求画像信息"
+        },
+        "duration_ms": 500,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-06T11:55:05.116967"
+      }
+    ],
+    "created_at": "2026-06-06T11:55:05.116967",
+    "completed_at": "2026-06-06T11:55:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_004_1",
+    "session_id": "sess_demo_004",
+    "user_message": "我28岁，男",
+    "status": "completed",
+    "total_duration_ms": 1030,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_004_1_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "我28岁，男"
+        },
+        "output_data": {
+          "intent": "profile_collection",
+          "confidence": 0.96
+        },
+        "duration_ms": 380,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-06T11:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_004_1_node_1",
+        "node_type": "profile_collection",
+        "input_data": {
+          "step": "age_gender",
+          "data": {
+            "age": 28,
+            "gender": "男"
+          }
+        },
+        "output_data": {
+          "asked_fields": [
+            "chronic_disease"
+          ]
+        },
+        "duration_ms": 200,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-06T11:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_004_1_node_2",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "收集画像-年龄性别"
+        },
+        "output_data": {
+          "response": "询问慢性病"
+        },
+        "duration_ms": 450,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-06T11:58:05.116967"
+      }
+    ],
+    "created_at": "2026-06-06T11:58:05.116967",
+    "completed_at": "2026-06-06T11:58:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_004_2",
+    "session_id": "sess_demo_004",
+    "user_message": "没有慢性病，就是经常熬夜",
+    "status": "completed",
+    "total_duration_ms": 3100,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_004_2_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "没有慢性病，就是经常熬夜"
+        },
+        "output_data": {
+          "intent": "product_recommend",
+          "confidence": 0.9
+        },
+        "duration_ms": 600,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-06T12:01:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_004_2_node_1",
+        "node_type": "profile_collection",
+        "input_data": {
+          "step": "health_status",
+          "data": {
+            "chronic_disease": "无",
+            "lifestyle": "经常熬夜"
+          }
+        },
+        "output_data": {
+          "completed": true
+        },
+        "duration_ms": 150,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-06T12:01:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_004_2_node_2",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "熬夜 保健品"
+        },
+        "output_data": {
+          "results_count": 5,
+          "top_relevance": 0.9
+        },
+        "duration_ms": 250,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-06T12:01:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_004_2_node_3",
+        "node_type": "product_recommend",
+        "input_data": {
+          "products": [
+            "prod_030",
+            "prod_031",
+            "prod_032"
+          ]
+        },
+        "output_data": {
+          "recommended": [
+            "prod_030",
+            "prod_031",
+            "prod_032"
+          ]
+        },
+        "duration_ms": 1200,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-06T12:01:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_004_2_node_4",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "熬夜人群保健品推荐"
+        },
+        "output_data": {
+          "response": "推荐护肝+维B+褪黑素"
+        },
+        "duration_ms": 900,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-06T12:01:05.116967"
+      }
+    ],
+    "created_at": "2026-06-06T12:01:05.116967",
+    "completed_at": "2026-06-06T12:01:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_005_0",
+    "session_id": "sess_demo_005",
+    "user_message": "我膝盖不太好，上下楼梯会疼，有什么保健品能吃吗？",
+    "status": "completed",
+    "total_duration_ms": 1850,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_005_0_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "我膝盖不太好，上下楼梯会疼，有什么保健品能吃吗？"
+        },
+        "output_data": {
+          "intent": "health_consult",
+          "confidence": 0.92
+        },
+        "duration_ms": 700,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-05T09:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_005_0_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "膝盖疼痛 关节保健品"
+        },
+        "output_data": {
+          "results_count": 5,
+          "top_relevance": 0.93
+        },
+        "duration_ms": 300,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-05T09:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_005_0_node_2",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "膝盖疼痛咨询"
+        },
+        "output_data": {
+          "response": "推荐氨糖软骨素等"
+        },
+        "duration_ms": 850,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-05T09:55:05.116967"
+      }
+    ],
+    "created_at": "2026-06-05T09:55:05.116967",
+    "completed_at": "2026-06-05T09:55:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_005_1",
+    "session_id": "sess_demo_005",
+    "user_message": "我55岁了，疼了大概半年",
+    "status": "completed",
+    "total_duration_ms": 3260,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_005_1_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "我55岁了，疼了大概半年"
+        },
+        "output_data": {
+          "intent": "product_recommend",
+          "confidence": 0.91
+        },
+        "duration_ms": 680,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-05T09:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_005_1_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "中老年 关节养护"
+        },
+        "output_data": {
+          "results_count": 3,
+          "top_relevance": 0.9
+        },
+        "duration_ms": 280,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-05T09:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_005_1_node_2",
+        "node_type": "product_recommend",
+        "input_data": {
+          "products": [
+            "prod_040",
+            "prod_042"
+          ]
+        },
+        "output_data": {
+          "recommended": [
+            "prod_040",
+            "prod_042"
+          ]
+        },
+        "duration_ms": 1300,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-05T09:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_005_1_node_3",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "55岁膝盖疼痛半年"
+        },
+        "output_data": {
+          "response": "建议就医+产品推荐"
+        },
+        "duration_ms": 1000,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-05T09:58:05.116967"
+      }
+    ],
+    "created_at": "2026-06-05T09:58:05.116967",
+    "completed_at": "2026-06-05T09:58:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_006_0",
+    "session_id": "sess_demo_006",
+    "user_message": "我怀孕了，现在4个月，需要补充什么营养吗？",
+    "status": "completed",
+    "total_duration_ms": 1970,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_006_0_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "我怀孕了，现在4个月，需要补充什么营养吗？"
+        },
+        "output_data": {
+          "intent": "health_consult",
+          "confidence": 0.95
+        },
+        "duration_ms": 720,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-04T07:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_006_0_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "孕期营养 4个月"
+        },
+        "output_data": {
+          "results_count": 6,
+          "top_relevance": 0.94
+        },
+        "duration_ms": 350,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-04T07:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_006_0_node_2",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "孕4个月营养咨询"
+        },
+        "output_data": {
+          "response": "叶酸+DHA+钙+铁推荐"
+        },
+        "duration_ms": 900,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-04T07:55:05.116967"
+      }
+    ],
+    "created_at": "2026-06-04T07:55:05.116967",
+    "completed_at": "2026-06-04T07:55:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_006_1",
+    "session_id": "sess_demo_006",
+    "user_message": "这些对胎儿不会有影响吧？",
+    "status": "completed",
+    "total_duration_ms": 2230,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_006_1_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "这些对胎儿不会有影响吧？"
+        },
+        "output_data": {
+          "intent": "safety_inquiry",
+          "confidence": 0.93
+        },
+        "duration_ms": 650,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-04T07:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_006_1_node_1",
+        "node_type": "safety_check",
+        "input_data": {
+          "condition": "孕期4个月",
+          "products": [
+            "叶酸",
+            "DHA",
+            "钙",
+            "铁"
+          ]
+        },
+        "output_data": {
+          "safe": true,
+          "warnings": [
+            "钙不超过2000mg/天",
+            "铁遵医嘱"
+          ]
+        },
+        "duration_ms": 800,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-04T07:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_006_1_node_2",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "孕期安全性咨询"
+        },
+        "output_data": {
+          "response": "安全性说明+剂量建议"
+        },
+        "duration_ms": 780,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-04T07:58:05.116967"
+      }
+    ],
+    "created_at": "2026-06-04T07:58:05.116967",
+    "completed_at": "2026-06-04T07:58:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_007_0",
+    "session_id": "sess_demo_007",
+    "user_message": "我有糖尿病，平时血糖控制得不太好，有什么保健品能辅助降糖吗？",
+    "status": "completed",
+    "total_duration_ms": 2000,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_007_0_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "我有糖尿病，平时血糖控制得不太好，有什么保健品能辅助降糖吗？"
+        },
+        "output_data": {
+          "intent": "product_recommend",
+          "confidence": 0.87
+        },
+        "duration_ms": 750,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-03T05:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_007_0_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "糖尿病 保健品 降糖"
+        },
+        "output_data": {
+          "results_count": 4,
+          "top_relevance": 0.82
+        },
+        "duration_ms": 300,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-03T05:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_007_0_node_2",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "糖尿病保健品咨询"
+        },
+        "output_data": {
+          "response": "推荐铬元素+苦瓜提取物"
+        },
+        "duration_ms": 950,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-03T05:55:05.116967"
+      }
+    ],
+    "created_at": "2026-06-03T05:55:05.116967",
+    "completed_at": "2026-06-03T05:55:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_007_1",
+    "session_id": "sess_demo_007",
+    "user_message": "那我可以停掉二甲双胍只吃这些吗？",
+    "status": "completed",
+    "total_duration_ms": 1680,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_007_1_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "那我可以停掉二甲双胍只吃这些吗？"
+        },
+        "output_data": {
+          "intent": "medical_advice",
+          "confidence": 0.9
+        },
+        "duration_ms": 580,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-03T05:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_007_1_node_1",
+        "node_type": "safety_check",
+        "input_data": {
+          "condition": "糖尿病",
+          "intent": "停药"
+        },
+        "output_data": {
+          "safe": false,
+          "warning": "用户意图停药，需强烈劝阻"
+        },
+        "duration_ms": 600,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-03T05:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_007_1_node_2",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "询问停药"
+        },
+        "output_data": {
+          "response": "劝阻停药"
+        },
+        "duration_ms": 500,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-03T05:58:05.116967"
+      }
+    ],
+    "created_at": "2026-06-03T05:58:05.116967",
+    "completed_at": "2026-06-03T05:58:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_008_0",
+    "session_id": "sess_demo_008",
+    "user_message": "我每周健身4次，想买点蛋白粉和恢复类的保健品",
+    "status": "completed",
+    "total_duration_ms": 3450,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_008_0_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "我每周健身4次，想买点蛋白粉和恢复类的保健品"
+        },
+        "output_data": {
+          "intent": "product_recommend",
+          "confidence": 0.94
+        },
+        "duration_ms": 620,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-02T03:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_008_0_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "健身 蛋白粉 BCAA 肌酸"
+        },
+        "output_data": {
+          "results_count": 7,
+          "top_relevance": 0.93
+        },
+        "duration_ms": 280,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-02T03:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_008_0_node_2",
+        "node_type": "product_recommend",
+        "input_data": {
+          "products": [
+            "prod_070",
+            "prod_071",
+            "prod_072",
+            "prod_073"
+          ]
+        },
+        "output_data": {
+          "recommended": [
+            "prod_070",
+            "prod_071",
+            "prod_072",
+            "prod_073"
+          ]
+        },
+        "duration_ms": 1450,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-02T03:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_008_0_node_3",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "健身人群产品推荐"
+        },
+        "output_data": {
+          "response": "推荐蛋白粉+BCAA+肌酸+镁锌"
+        },
+        "duration_ms": 1100,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-02T03:55:05.116967"
+      }
+    ],
+    "created_at": "2026-06-02T03:55:05.116967",
+    "completed_at": "2026-06-02T03:55:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_008_1",
+    "session_id": "sess_demo_008",
+    "user_message": "主要是增肌，这些怎么吃比较好？",
+    "status": "completed",
+    "total_duration_ms": 1870,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_008_1_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "主要是增肌，这些怎么吃比较好？"
+        },
+        "output_data": {
+          "intent": "usage_guidance",
+          "confidence": 0.92
+        },
+        "duration_ms": 650,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-02T03:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_008_1_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "增肌 服用方法"
+        },
+        "output_data": {
+          "results_count": 3,
+          "top_relevance": 0.91
+        },
+        "duration_ms": 220,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-02T03:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_008_1_node_2",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "增肌服用指导"
+        },
+        "output_data": {
+          "response": "详细的服用时间和剂量"
+        },
+        "duration_ms": 1000,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-02T03:58:05.116967"
+      }
+    ],
+    "created_at": "2026-06-02T03:58:05.116967",
+    "completed_at": "2026-06-02T03:58:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_009_0",
+    "session_id": "sess_demo_009",
+    "user_message": "最近换季老是感冒，有什么能提高免疫力的？",
+    "status": "completed",
+    "total_duration_ms": 3280,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_009_0_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "最近换季老是感冒，有什么能提高免疫力的？"
+        },
+        "output_data": {
+          "intent": "product_recommend",
+          "confidence": 0.93
+        },
+        "duration_ms": 580,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-01T01:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_009_0_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "免疫力 换季感冒"
+        },
+        "output_data": {
+          "results_count": 6,
+          "top_relevance": 0.9
+        },
+        "duration_ms": 300,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-01T01:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_009_0_node_2",
+        "node_type": "product_recommend",
+        "input_data": {
+          "products": [
+            "prod_080",
+            "prod_081",
+            "prod_082"
+          ]
+        },
+        "output_data": {
+          "recommended": [
+            "prod_080",
+            "prod_081",
+            "prod_082"
+          ]
+        },
+        "duration_ms": 1350,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-01T01:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_009_0_node_3",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "免疫力提升推荐"
+        },
+        "output_data": {
+          "response": "维C+维D+锌+益生菌+蜂胶"
+        },
+        "duration_ms": 1050,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-01T01:55:05.116967"
+      }
+    ],
+    "created_at": "2026-06-01T01:55:05.116967",
+    "completed_at": "2026-06-01T01:55:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_009_1",
+    "session_id": "sess_demo_009",
+    "user_message": "这些要吃多久才能见效？",
+    "status": "completed",
+    "total_duration_ms": 1600,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_009_1_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "这些要吃多久才能见效？"
+        },
+        "output_data": {
+          "intent": "usage_guidance",
+          "confidence": 0.89
+        },
+        "duration_ms": 600,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-01T01:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_009_1_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "免疫力 见效时间"
+        },
+        "output_data": {
+          "results_count": 3,
+          "top_relevance": 0.85
+        },
+        "duration_ms": 200,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-01T01:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_009_1_node_2",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "询问见效时间"
+        },
+        "output_data": {
+          "response": "各产品见效时间说明"
+        },
+        "duration_ms": 800,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-06-01T01:58:05.116967"
+      }
+    ],
+    "created_at": "2026-06-01T01:58:05.116967",
+    "completed_at": "2026-06-01T01:58:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_010_0",
+    "session_id": "sess_demo_010",
+    "user_message": "我爸70岁了，有高血压和糖尿病，最近记忆力下降，有什么能吃的？",
+    "status": "completed",
+    "total_duration_ms": 3130,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_010_0_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "我爸70岁了，有高血压和糖尿病，最近记忆力下降，有什么能吃的？"
+        },
+        "output_data": {
+          "intent": "health_consult",
+          "confidence": 0.9
+        },
+        "duration_ms": 780,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-05-30T23:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_010_0_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "老年人 高血压 糖尿病 记忆力"
+        },
+        "output_data": {
+          "results_count": 5,
+          "top_relevance": 0.86
+        },
+        "duration_ms": 350,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-05-30T23:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_010_0_node_2",
+        "node_type": "safety_check",
+        "input_data": {
+          "condition": "高血压+糖尿病",
+          "age": 70
+        },
+        "output_data": {
+          "safe": true,
+          "warnings": [
+            "需医生确认",
+            "注意药物相互作用"
+          ]
+        },
+        "duration_ms": 900,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-05-30T23:55:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_010_0_node_3",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "70岁多病老人记忆力下降"
+        },
+        "output_data": {
+          "response": "DHA+PS+B12推荐+就医提醒"
+        },
+        "duration_ms": 1100,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-05-30T23:55:05.116967"
+      }
+    ],
+    "created_at": "2026-05-30T23:55:05.116967",
+    "completed_at": "2026-05-30T23:55:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_010_1",
+    "session_id": "sess_demo_010",
+    "user_message": "他平时在吃阿司匹林和格列美脲，会有冲突吗？",
+    "status": "completed",
+    "total_duration_ms": 2840,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_010_1_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "他平时在吃阿司匹林和格列美脲，会有冲突吗？"
+        },
+        "output_data": {
+          "intent": "safety_inquiry",
+          "confidence": 0.94
+        },
+        "duration_ms": 720,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-05-30T23:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_010_1_node_1",
+        "node_type": "knowledge_query",
+        "input_data": {
+          "query": "阿司匹林 格列美脲 相互作用"
+        },
+        "output_data": {
+          "results_count": 4,
+          "top_relevance": 0.84
+        },
+        "duration_ms": 320,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-05-30T23:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_010_1_node_2",
+        "node_type": "safety_check",
+        "input_data": {
+          "medications": [
+            "阿司匹林",
+            "格列美脲"
+          ],
+          "supplements": [
+            "DHA",
+            "PS",
+            "B12"
+          ]
+        },
+        "output_data": {
+          "safe": "conditional",
+          "warnings": [
+            "阿司匹林+鱼油可能增加出血风险"
+          ]
+        },
+        "duration_ms": 850,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-05-30T23:58:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_010_1_node_3",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "药物相互作用咨询"
+        },
+        "output_data": {
+          "response": "相互作用说明+就医建议"
+        },
+        "duration_ms": 950,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-05-30T23:58:05.116967"
+      }
+    ],
+    "created_at": "2026-05-30T23:58:05.116967",
+    "completed_at": "2026-05-30T23:58:05.116967"
+  },
+  {
+    "trace_id": "txh_sess_demo_010_2",
+    "session_id": "sess_demo_010",
+    "user_message": "好的，我会先问医生。谢谢",
+    "status": "completed",
+    "total_duration_ms": 1050,
+    "nodes": [
+      {
+        "node_id": "txh_sess_demo_010_2_node_0",
+        "node_type": "intent_recognition",
+        "input_data": {
+          "user_message": "好的，我会先问医生。谢谢"
+        },
+        "output_data": {
+          "intent": "greeting",
+          "confidence": 0.88
+        },
+        "duration_ms": 450,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-05-31T00:01:05.116967"
+      },
+      {
+        "node_id": "txh_sess_demo_010_2_node_1",
+        "node_type": "dialogue_response",
+        "input_data": {
+          "context": "用户感谢结束对话"
+        },
+        "output_data": {
+          "response": "安全建议+祝福"
+        },
+        "duration_ms": 600,
+        "status": "success",
+        "error_message": "",
+        "created_at": "2026-05-31T00:01:05.116967"
+      }
+    ],
+    "created_at": "2026-05-31T00:01:05.116967",
+    "completed_at": "2026-05-31T00:01:05.116967"
+  }
+]

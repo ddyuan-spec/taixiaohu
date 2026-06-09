@@ -1,0 +1,116 @@
+{
+  "session_id": "sess_demo_008",
+  "user_id": "user_demo_008",
+  "started_at": "2026-06-02T03:52:05.116967",
+  "ended_at": "2026-06-02T03:58:05.116967",
+  "messages": [
+    {
+      "message_id": "sess_demo_008_user_0",
+      "message_type": "user",
+      "content": "我每周健身4次，想买点蛋白粉和恢复类的保健品",
+      "timestamp": "2026-06-02T03:52:05.116967"
+    },
+    {
+      "message_id": "sess_demo_008_agent_0",
+      "message_type": "agent",
+      "content": "健身人群的营养补充很关键！根据您的训练频率，推荐以下产品：\n\n1. **乳清蛋白粉** - 训练后30分钟内补充，促进肌肉修复\n2. **支链氨基酸(BCAA)** - 训练中饮用，减少肌肉分解\n3. **肌酸** - 提升爆发力和训练容量\n4. **镁+锌** - 促进恢复和睡眠质量\n\n请问您的训练目标是什么？增肌还是减脂？",
+      "intent": "product_recommend",
+      "intent_confidence": 0.94,
+      "recommended_products": [
+        "prod_070",
+        "prod_071",
+        "prod_072",
+        "prod_073"
+      ],
+      "knowledge_base_calls": [
+        {
+          "query": "健身 蛋白粉 BCAA 肌酸",
+          "intent": "product_recommend",
+          "results_count": 7,
+          "product_ids": [
+            "prod_070",
+            "prod_071",
+            "prod_072",
+            "prod_073"
+          ],
+          "response_time_ms": 200,
+          "timestamp": "2026-06-02T03:53:05.116967"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "intent_recognition",
+          "prompt_tokens": 130,
+          "completion_tokens": 50,
+          "total_tokens": 180,
+          "response_time_ms": 620,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-02T03:53:05.116967"
+        },
+        {
+          "module": "product_recommendation",
+          "prompt_tokens": 650,
+          "completion_tokens": 170,
+          "total_tokens": 820,
+          "response_time_ms": 1450,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-02T03:53:05.116967"
+        }
+      ],
+      "timestamp": "2026-06-02T03:53:05.116967"
+    },
+    {
+      "message_id": "sess_demo_008_user_1",
+      "message_type": "user",
+      "content": "主要是增肌，这些怎么吃比较好？",
+      "timestamp": "2026-06-02T03:55:05.116967"
+    },
+    {
+      "message_id": "sess_demo_008_agent_1",
+      "message_type": "agent",
+      "content": "增肌期的补充方案建议：\n\n**训练日：**\n- 训练前30分钟：肌酸5g + BCAA 10g\n- 训练后30分钟内：乳清蛋白粉30g\n- 睡前：酪蛋白或镁+锌\n\n**休息日：**\n- 早餐：乳清蛋白粉20g\n- 睡前：镁+锌\n\n同时确保每日蛋白质摄入达到1.6-2.2g/kg体重。",
+      "intent": "usage_guidance",
+      "intent_confidence": 0.92,
+      "recommended_products": [
+        "prod_070"
+      ],
+      "knowledge_base_calls": [
+        {
+          "query": "增肌 蛋白粉 服用方法",
+          "intent": "usage_guidance",
+          "results_count": 3,
+          "product_ids": [
+            "prod_070"
+          ],
+          "response_time_ms": 250,
+          "timestamp": "2026-06-02T03:56:05.116967"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "dialogue_response",
+          "prompt_tokens": 580,
+          "completion_tokens": 180,
+          "total_tokens": 760,
+          "response_time_ms": 1000,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-02T03:56:05.116967"
+        }
+      ],
+      "timestamp": "2026-06-02T03:56:05.116967"
+    }
+  ],
+  "user_profile": {
+    "age": 26,
+    "gender": "男",
+    "chronic_disease": "",
+    "allergies": "",
+    "medications": "",
+    "health_concerns": "增肌、运动恢复"
+  },
+  "total_messages": 4,
+  "is_active": false
+}

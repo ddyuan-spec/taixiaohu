@@ -1,0 +1,114 @@
+{
+  "session_id": "sess_demo_005",
+  "user_id": "user_demo_005",
+  "started_at": "2026-06-05T09:52:05.116967",
+  "ended_at": "2026-06-05T09:58:05.116967",
+  "messages": [
+    {
+      "message_id": "sess_demo_005_user_0",
+      "message_type": "user",
+      "content": "我膝盖不太好，上下楼梯会疼，有什么保健品能吃吗？",
+      "timestamp": "2026-06-05T09:52:05.116967"
+    },
+    {
+      "message_id": "sess_demo_005_agent_0",
+      "message_type": "agent",
+      "content": "膝盖疼痛在中老年人群中很常见，通常与关节软骨磨损有关。建议关注以下成分：\n\n1. **氨糖软骨素** - 修复软骨组织\n2. **胶原蛋白** - 维持关节弹性\n3. **MSM（有机硫）** - 缓解炎症\n\n请问您今年多大年纪？疼痛持续多久了？",
+      "intent": "health_consult",
+      "intent_confidence": 0.92,
+      "recommended_products": [
+        "prod_040",
+        "prod_041"
+      ],
+      "knowledge_base_calls": [
+        {
+          "query": "膝盖疼痛 关节 保健品",
+          "intent": "health_consult",
+          "results_count": 5,
+          "product_ids": [
+            "prod_040",
+            "prod_041"
+          ],
+          "response_time_ms": 200,
+          "timestamp": "2026-06-05T09:53:05.116967"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "dialogue_response",
+          "prompt_tokens": 500,
+          "completion_tokens": 130,
+          "total_tokens": 630,
+          "response_time_ms": 850,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-05T09:53:05.116967"
+        }
+      ],
+      "timestamp": "2026-06-05T09:53:05.116967"
+    },
+    {
+      "message_id": "sess_demo_005_user_1",
+      "message_type": "user",
+      "content": "我55岁了，疼了大概半年",
+      "timestamp": "2026-06-05T09:55:05.116967"
+    },
+    {
+      "message_id": "sess_demo_005_agent_1",
+      "message_type": "agent",
+      "content": "55岁出现膝盖疼痛半年，建议先去医院做个X光检查，排除骨关节炎。在保健品方面，以下产品比较适合您：\n\n1. **氨糖软骨素复合片** - ￥168/60片\n2. **钙+维生素D3** - ￥89/90片\n\n建议连续服用3个月以上观察效果。同时注意减少爬楼梯和深蹲动作。",
+      "intent": "product_recommend",
+      "intent_confidence": 0.91,
+      "recommended_products": [
+        "prod_040",
+        "prod_042"
+      ],
+      "knowledge_base_calls": [
+        {
+          "query": "55岁 膝盖疼痛 氨糖软骨素",
+          "intent": "product_recommend",
+          "results_count": 3,
+          "product_ids": [
+            "prod_040",
+            "prod_042"
+          ],
+          "response_time_ms": 250,
+          "timestamp": "2026-06-05T09:56:05.116967"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "intent_recognition",
+          "prompt_tokens": 140,
+          "completion_tokens": 55,
+          "total_tokens": 195,
+          "response_time_ms": 680,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-05T09:56:05.116967"
+        },
+        {
+          "module": "product_recommendation",
+          "prompt_tokens": 600,
+          "completion_tokens": 160,
+          "total_tokens": 760,
+          "response_time_ms": 1300,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-05T09:56:05.116967"
+        }
+      ],
+      "timestamp": "2026-06-05T09:56:05.116967"
+    }
+  ],
+  "user_profile": {
+    "age": 55,
+    "gender": "男",
+    "chronic_disease": "",
+    "allergies": "",
+    "medications": "",
+    "health_concerns": "关节健康"
+  },
+  "total_messages": 4,
+  "is_active": false
+}

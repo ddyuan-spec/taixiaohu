@@ -1,0 +1,110 @@
+{
+  "session_id": "sess_demo_003",
+  "user_id": "user_demo_003",
+  "started_at": "2026-06-07T13:52:05.116967",
+  "ended_at": "2026-06-07T13:58:05.116967",
+  "messages": [
+    {
+      "message_id": "sess_demo_003_user_0",
+      "message_type": "user",
+      "content": "我想减肥，有什么推荐的保健品吗？",
+      "timestamp": "2026-06-07T13:52:05.116967"
+    },
+    {
+      "message_id": "sess_demo_003_agent_0",
+      "message_type": "agent",
+      "content": "减肥是一个系统工程，保健品只能作为辅助。根据《中国居民膳食指南》，健康减重建议每周减少0.5-1kg。\n\n推荐的辅助产品：\n1. **膳食纤维** - 增加饱腹感\n2. **左旋肉碱** - 促进脂肪代谢\n3. **益生菌** - 调节肠道菌群\n\n但最重要的是控制饮食和增加运动。",
+      "intent": "product_recommend",
+      "intent_confidence": 0.94,
+      "recommended_products": [
+        "prod_020",
+        "prod_021",
+        "prod_022"
+      ],
+      "knowledge_base_calls": [
+        {
+          "query": "减肥 保健品 膳食纤维 左旋肉碱",
+          "intent": "product_recommend",
+          "results_count": 6,
+          "product_ids": [
+            "prod_020",
+            "prod_021",
+            "prod_022"
+          ],
+          "response_time_ms": 200,
+          "timestamp": "2026-06-07T13:53:05.116967"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "intent_recognition",
+          "prompt_tokens": 110,
+          "completion_tokens": 40,
+          "total_tokens": 150,
+          "response_time_ms": 650,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-07T13:53:05.116967"
+        },
+        {
+          "module": "product_recommendation",
+          "prompt_tokens": 700,
+          "completion_tokens": 180,
+          "total_tokens": 880,
+          "response_time_ms": 1400,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-07T13:53:05.116967"
+        }
+      ],
+      "timestamp": "2026-06-07T13:53:05.116967"
+    },
+    {
+      "message_id": "sess_demo_003_user_1",
+      "message_type": "user",
+      "content": "这些和节食一起吃效果更好吗？",
+      "timestamp": "2026-06-07T13:55:05.116967"
+    },
+    {
+      "message_id": "sess_demo_003_agent_1",
+      "message_type": "agent",
+      "content": "不建议过度节食。根据营养学研究，过度节食会导致基础代谢率下降，反而容易反弹。建议：\n\n1. 每日热量摄入不低于1200大卡\n2. 蛋白质摄入要充足（每公斤体重1-1.2g）\n3. 配合有氧运动（每周150分钟）\n\n保健品在合理饮食基础上才能发挥最佳效果。",
+      "intent": "knowledge_query",
+      "intent_confidence": 0.89,
+      "recommended_products": [],
+      "knowledge_base_calls": [
+        {
+          "query": "节食 基础代谢 反弹",
+          "intent": "knowledge_query",
+          "results_count": 4,
+          "product_ids": [],
+          "response_time_ms": 250,
+          "timestamp": "2026-06-07T13:56:05.116967"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "dialogue_response",
+          "prompt_tokens": 550,
+          "completion_tokens": 160,
+          "total_tokens": 710,
+          "response_time_ms": 950,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-07T13:56:05.116967"
+        }
+      ],
+      "timestamp": "2026-06-07T13:56:05.116967"
+    }
+  ],
+  "user_profile": {
+    "age": 28,
+    "gender": "女",
+    "chronic_disease": "",
+    "allergies": "",
+    "medications": "",
+    "health_concerns": "体重管理"
+  },
+  "total_messages": 4,
+  "is_active": false
+}

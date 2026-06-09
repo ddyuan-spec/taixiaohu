@@ -1,0 +1,110 @@
+{
+  "session_id": "sess_demo_009",
+  "user_id": "user_demo_009",
+  "started_at": "2026-06-01T01:52:05.116967",
+  "ended_at": "2026-06-01T01:58:05.116967",
+  "messages": [
+    {
+      "message_id": "sess_demo_009_user_0",
+      "message_type": "user",
+      "content": "最近换季老是感冒，有什么能提高免疫力的？",
+      "timestamp": "2026-06-01T01:52:05.116967"
+    },
+    {
+      "message_id": "sess_demo_009_agent_0",
+      "message_type": "agent",
+      "content": "换季容易感冒确实与免疫力下降有关。以下营养素有助于增强免疫系统：\n\n1. **维生素C** - 增强白细胞活性\n2. **维生素D** - 调节免疫反应\n3. **锌** - 促进免疫细胞生成\n4. **益生菌** - 70%免疫细胞在肠道\n5. **蜂胶/蜂皇浆** - 天然抗菌成分\n\n建议组合补充，同时保持充足睡眠和适度运动。",
+      "intent": "product_recommend",
+      "intent_confidence": 0.93,
+      "recommended_products": [
+        "prod_080",
+        "prod_081",
+        "prod_082"
+      ],
+      "knowledge_base_calls": [
+        {
+          "query": "免疫力 维生素C 维生素D 锌 益生菌",
+          "intent": "product_recommend",
+          "results_count": 6,
+          "product_ids": [
+            "prod_080",
+            "prod_081",
+            "prod_082"
+          ],
+          "response_time_ms": 200,
+          "timestamp": "2026-06-01T01:53:05.116967"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "intent_recognition",
+          "prompt_tokens": 120,
+          "completion_tokens": 45,
+          "total_tokens": 165,
+          "response_time_ms": 580,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-01T01:53:05.116967"
+        },
+        {
+          "module": "product_recommendation",
+          "prompt_tokens": 600,
+          "completion_tokens": 160,
+          "total_tokens": 760,
+          "response_time_ms": 1350,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-01T01:53:05.116967"
+        }
+      ],
+      "timestamp": "2026-06-01T01:53:05.116967"
+    },
+    {
+      "message_id": "sess_demo_009_user_1",
+      "message_type": "user",
+      "content": "这些要吃多久才能见效？",
+      "timestamp": "2026-06-01T01:55:05.116967"
+    },
+    {
+      "message_id": "sess_demo_009_agent_1",
+      "message_type": "agent",
+      "content": "免疫力提升是一个渐进过程，通常需要：\n\n- **维生素C/D、锌** - 2-4周开始感受到效果\n- **益生菌** - 4-8周调节肠道菌群\n- **蜂胶** - 1-2周可能有初步感受\n\n建议至少连续补充3个月，配合健康生活方式。如果感冒频率没有改善，建议就医检查是否有其他免疫问题。",
+      "intent": "usage_guidance",
+      "intent_confidence": 0.89,
+      "recommended_products": [],
+      "knowledge_base_calls": [
+        {
+          "query": "免疫力 见效时间",
+          "intent": "usage_guidance",
+          "results_count": 3,
+          "product_ids": [],
+          "response_time_ms": 250,
+          "timestamp": "2026-06-01T01:56:05.116967"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "dialogue_response",
+          "prompt_tokens": 450,
+          "completion_tokens": 130,
+          "total_tokens": 580,
+          "response_time_ms": 800,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-01T01:56:05.116967"
+        }
+      ],
+      "timestamp": "2026-06-01T01:56:05.116967"
+    }
+  ],
+  "user_profile": {
+    "age": 35,
+    "gender": "女",
+    "chronic_disease": "",
+    "allergies": "",
+    "medications": "",
+    "health_concerns": "免疫力提升"
+  },
+  "total_messages": 4,
+  "is_active": false
+}

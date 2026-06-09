@@ -1,0 +1,1144 @@
+[
+  {
+    "session_id": "sess_demo_001",
+    "user_id": "user_demo_001",
+    "started_at": "2026-06-09T17:52:05.116967",
+    "ended_at": "2026-06-09T18:01:05.116967",
+    "messages": [
+      {
+        "message_id": "sess_demo_001_user_0",
+        "message_type": "user",
+        "content": "你好，我想给我妈买点保健品，她今年65岁了",
+        "timestamp": "2026-06-09T17:52:05.116967"
+      },
+      {
+        "message_id": "sess_demo_001_agent_0",
+        "message_type": "agent",
+        "content": "您好！为65岁的长辈选择保健品，建议先了解她的健康状况。请问您母亲目前有什么慢性病或正在服用的药物吗？",
+        "intent": "health_consult",
+        "intent_confidence": 0.95,
+        "recommended_products": [],
+        "knowledge_base_calls": [
+          {
+            "query": "老年人保健品推荐",
+            "intent": "health_consult",
+            "results_count": 5,
+            "product_ids": [
+              "prod_001",
+              "prod_002"
+            ],
+            "response_time_ms": 200,
+            "timestamp": "2026-06-09T17:53:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "intent_recognition",
+            "prompt_tokens": 120,
+            "completion_tokens": 45,
+            "total_tokens": 165,
+            "response_time_ms": 800,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-09T17:53:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-09T17:53:05.116967"
+      },
+      {
+        "message_id": "sess_demo_001_user_1",
+        "message_type": "user",
+        "content": "她有高血压，平时在吃降压药",
+        "timestamp": "2026-06-09T17:55:05.116967"
+      },
+      {
+        "message_id": "sess_demo_001_agent_1",
+        "message_type": "agent",
+        "content": "了解了。高血压患者在选择保健品时需要特别注意。我推荐以下几款适合高血压人群的保健品：\n\n1. **深海鱼油** - 有助于调节血脂，选择低钠配方\n2. **辅酶Q10** - 对心血管健康有益\n3. **维生素D+钙** - 老年人普遍缺乏\n\n请问您母亲有没有其他过敏史或特殊饮食要求？",
+        "intent": "product_recommend",
+        "intent_confidence": 0.93,
+        "recommended_products": [
+          "prod_003",
+          "prod_004",
+          "prod_005"
+        ],
+        "knowledge_base_calls": [
+          {
+            "query": "高血压 保健品 推荐",
+            "intent": "product_recommend",
+            "results_count": 3,
+            "product_ids": [
+              "prod_003",
+              "prod_004",
+              "prod_005"
+            ],
+            "response_time_ms": 250,
+            "timestamp": "2026-06-09T17:56:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "intent_recognition",
+            "prompt_tokens": 150,
+            "completion_tokens": 50,
+            "total_tokens": 200,
+            "response_time_ms": 700,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-09T17:56:05.116967"
+          },
+          {
+            "module": "product_recommendation",
+            "prompt_tokens": 800,
+            "completion_tokens": 200,
+            "total_tokens": 1000,
+            "response_time_ms": 1500,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-09T17:56:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-09T17:56:05.116967"
+      },
+      {
+        "message_id": "sess_demo_001_user_2",
+        "message_type": "user",
+        "content": "她没有过敏史，这些大概多少钱？",
+        "timestamp": "2026-06-09T17:58:05.116967"
+      },
+      {
+        "message_id": "sess_demo_001_agent_2",
+        "message_type": "agent",
+        "content": "好的，以下是推荐产品的价格信息：\n\n1. **深海鱼油（60粒装）** - ￥128\n2. **辅酶Q10（30粒装）** - ￥198\n3. **维生素D+钙（90片装）** - ￥89\n\n三件套组合价￥358（省￥57）。需要我帮您生成订单吗？",
+        "intent": "price_inquiry",
+        "intent_confidence": 0.91,
+        "recommended_products": [
+          "prod_003",
+          "prod_004",
+          "prod_005"
+        ],
+        "knowledge_base_calls": [
+          {
+            "query": "产品价格 鱼油 辅酶Q10 钙片",
+            "intent": "price_inquiry",
+            "results_count": 3,
+            "product_ids": [
+              "prod_003",
+              "prod_004",
+              "prod_005"
+            ],
+            "response_time_ms": 300,
+            "timestamp": "2026-06-09T17:59:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "dialogue_response",
+            "prompt_tokens": 600,
+            "completion_tokens": 150,
+            "total_tokens": 750,
+            "response_time_ms": 900,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-09T17:59:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-09T17:59:05.116967"
+      }
+    ],
+    "user_profile": {
+      "age": 65,
+      "gender": "女",
+      "chronic_disease": "高血压",
+      "allergies": "无",
+      "medications": "降压药",
+      "health_concerns": "心血管健康、骨骼健康"
+    },
+    "total_messages": 6,
+    "is_active": false
+  },
+  {
+    "session_id": "sess_demo_002",
+    "user_id": "user_demo_002",
+    "started_at": "2026-06-08T15:52:05.116967",
+    "ended_at": "2026-06-08T15:58:05.116967",
+    "messages": [
+      {
+        "message_id": "sess_demo_002_user_0",
+        "message_type": "user",
+        "content": "我家孩子3岁了，最近不爱吃饭，有什么办法吗？",
+        "timestamp": "2026-06-08T15:52:05.116967"
+      },
+      {
+        "message_id": "sess_demo_002_agent_0",
+        "message_type": "agent",
+        "content": "3岁孩子不爱吃饭是常见问题。建议：\n1. 营造愉快的用餐氛围\n2. 控制零食摄入\n3. 增加食物多样性\n\n另外，可以适当补充儿童复合维生素。",
+        "intent": "health_consult",
+        "intent_confidence": 0.88,
+        "recommended_products": [
+          "prod_010"
+        ],
+        "knowledge_base_calls": [
+          {
+            "query": "儿童不爱吃饭 解决办法",
+            "intent": "health_consult",
+            "results_count": 4,
+            "product_ids": [
+              "prod_010"
+            ],
+            "response_time_ms": 200,
+            "timestamp": "2026-06-08T15:53:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "intent_recognition",
+            "prompt_tokens": 130,
+            "completion_tokens": 60,
+            "total_tokens": 190,
+            "response_time_ms": 750,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-08T15:53:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-08T15:53:05.116967"
+      },
+      {
+        "message_id": "sess_demo_002_user_1",
+        "message_type": "user",
+        "content": "那维生素会不会有副作用？",
+        "timestamp": "2026-06-08T15:55:05.116967"
+      },
+      {
+        "message_id": "sess_demo_002_agent_1",
+        "message_type": "agent",
+        "content": "儿童维生素一般很安全，按照推荐剂量服用即可。",
+        "intent": "safety_inquiry",
+        "intent_confidence": 0.85,
+        "recommended_products": [],
+        "knowledge_base_calls": [
+          {
+            "query": "儿童维生素 副作用",
+            "intent": "safety_inquiry",
+            "results_count": 2,
+            "product_ids": [],
+            "response_time_ms": 250,
+            "timestamp": "2026-06-08T15:56:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "dialogue_response",
+            "prompt_tokens": 400,
+            "completion_tokens": 80,
+            "total_tokens": 480,
+            "response_time_ms": 600,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-08T15:56:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-08T15:56:05.116967"
+      }
+    ],
+    "user_profile": {
+      "age": 32,
+      "gender": "女",
+      "chronic_disease": "",
+      "allergies": "",
+      "medications": "",
+      "health_concerns": "儿童营养"
+    },
+    "total_messages": 4,
+    "is_active": false
+  },
+  {
+    "session_id": "sess_demo_003",
+    "user_id": "user_demo_003",
+    "started_at": "2026-06-07T13:52:05.116967",
+    "ended_at": "2026-06-07T13:58:05.116967",
+    "messages": [
+      {
+        "message_id": "sess_demo_003_user_0",
+        "message_type": "user",
+        "content": "我想减肥，有什么推荐的保健品吗？",
+        "timestamp": "2026-06-07T13:52:05.116967"
+      },
+      {
+        "message_id": "sess_demo_003_agent_0",
+        "message_type": "agent",
+        "content": "减肥是一个系统工程，保健品只能作为辅助。根据《中国居民膳食指南》，健康减重建议每周减少0.5-1kg。\n\n推荐的辅助产品：\n1. **膳食纤维** - 增加饱腹感\n2. **左旋肉碱** - 促进脂肪代谢\n3. **益生菌** - 调节肠道菌群\n\n但最重要的是控制饮食和增加运动。",
+        "intent": "product_recommend",
+        "intent_confidence": 0.94,
+        "recommended_products": [
+          "prod_020",
+          "prod_021",
+          "prod_022"
+        ],
+        "knowledge_base_calls": [
+          {
+            "query": "减肥 保健品 膳食纤维 左旋肉碱",
+            "intent": "product_recommend",
+            "results_count": 6,
+            "product_ids": [
+              "prod_020",
+              "prod_021",
+              "prod_022"
+            ],
+            "response_time_ms": 200,
+            "timestamp": "2026-06-07T13:53:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "intent_recognition",
+            "prompt_tokens": 110,
+            "completion_tokens": 40,
+            "total_tokens": 150,
+            "response_time_ms": 650,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-07T13:53:05.116967"
+          },
+          {
+            "module": "product_recommendation",
+            "prompt_tokens": 700,
+            "completion_tokens": 180,
+            "total_tokens": 880,
+            "response_time_ms": 1400,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-07T13:53:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-07T13:53:05.116967"
+      },
+      {
+        "message_id": "sess_demo_003_user_1",
+        "message_type": "user",
+        "content": "这些和节食一起吃效果更好吗？",
+        "timestamp": "2026-06-07T13:55:05.116967"
+      },
+      {
+        "message_id": "sess_demo_003_agent_1",
+        "message_type": "agent",
+        "content": "不建议过度节食。根据营养学研究，过度节食会导致基础代谢率下降，反而容易反弹。建议：\n\n1. 每日热量摄入不低于1200大卡\n2. 蛋白质摄入要充足（每公斤体重1-1.2g）\n3. 配合有氧运动（每周150分钟）\n\n保健品在合理饮食基础上才能发挥最佳效果。",
+        "intent": "knowledge_query",
+        "intent_confidence": 0.89,
+        "recommended_products": [],
+        "knowledge_base_calls": [
+          {
+            "query": "节食 基础代谢 反弹",
+            "intent": "knowledge_query",
+            "results_count": 4,
+            "product_ids": [],
+            "response_time_ms": 250,
+            "timestamp": "2026-06-07T13:56:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "dialogue_response",
+            "prompt_tokens": 550,
+            "completion_tokens": 160,
+            "total_tokens": 710,
+            "response_time_ms": 950,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-07T13:56:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-07T13:56:05.116967"
+      }
+    ],
+    "user_profile": {
+      "age": 28,
+      "gender": "女",
+      "chronic_disease": "",
+      "allergies": "",
+      "medications": "",
+      "health_concerns": "体重管理"
+    },
+    "total_messages": 4,
+    "is_active": false
+  },
+  {
+    "session_id": "sess_demo_004",
+    "user_id": "user_demo_004",
+    "started_at": "2026-06-06T11:52:05.116967",
+    "ended_at": "2026-06-06T12:01:05.116967",
+    "messages": [
+      {
+        "message_id": "sess_demo_004_user_0",
+        "message_type": "user",
+        "content": "你好",
+        "timestamp": "2026-06-06T11:52:05.116967"
+      },
+      {
+        "message_id": "sess_demo_004_agent_0",
+        "message_type": "agent",
+        "content": "您好！我是泰小虎，您的健康顾问。为了更好地为您服务，能否告诉我您的年龄和性别？",
+        "intent": "greeting",
+        "intent_confidence": 0.97,
+        "recommended_products": [],
+        "knowledge_base_calls": [],
+        "llm_calls": [
+          {
+            "module": "intent_recognition",
+            "prompt_tokens": 50,
+            "completion_tokens": 30,
+            "total_tokens": 80,
+            "response_time_ms": 400,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-06T11:53:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-06T11:53:05.116967"
+      },
+      {
+        "message_id": "sess_demo_004_user_1",
+        "message_type": "user",
+        "content": "我28岁，男",
+        "timestamp": "2026-06-06T11:55:05.116967"
+      },
+      {
+        "message_id": "sess_demo_004_agent_1",
+        "message_type": "agent",
+        "content": "收到！28岁男性。请问您有什么慢性病或正在服用的药物吗？（如高血压、糖尿病等）",
+        "intent": "profile_collection",
+        "intent_confidence": 0.96,
+        "recommended_products": [],
+        "knowledge_base_calls": [],
+        "llm_calls": [
+          {
+            "module": "dialogue_response",
+            "prompt_tokens": 100,
+            "completion_tokens": 40,
+            "total_tokens": 140,
+            "response_time_ms": 450,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-06T11:56:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-06T11:56:05.116967"
+      },
+      {
+        "message_id": "sess_demo_004_user_2",
+        "message_type": "user",
+        "content": "没有慢性病，就是经常熬夜",
+        "timestamp": "2026-06-06T11:58:05.116967"
+      },
+      {
+        "message_id": "sess_demo_004_agent_2",
+        "message_type": "agent",
+        "content": "了解了。熬夜会影响免疫力和肝脏代谢。针对您的情况，我建议关注以下方面：\n\n1. **护肝类** - 奶蓟草提取物\n2. **维生素B族** - 缓解疲劳\n3. **褪黑素** - 改善睡眠质量\n\n同时建议尽量调整作息，保证每天7-8小时睡眠。",
+        "intent": "product_recommend",
+        "intent_confidence": 0.9,
+        "recommended_products": [
+          "prod_030",
+          "prod_031",
+          "prod_032"
+        ],
+        "knowledge_base_calls": [
+          {
+            "query": "熬夜 护肝 维生素B 褪黑素",
+            "intent": "product_recommend",
+            "results_count": 5,
+            "product_ids": [
+              "prod_030",
+              "prod_031",
+              "prod_032"
+            ],
+            "response_time_ms": 300,
+            "timestamp": "2026-06-06T11:59:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "intent_recognition",
+            "prompt_tokens": 120,
+            "completion_tokens": 50,
+            "total_tokens": 170,
+            "response_time_ms": 600,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-06T11:59:05.116967"
+          },
+          {
+            "module": "product_recommendation",
+            "prompt_tokens": 500,
+            "completion_tokens": 150,
+            "total_tokens": 650,
+            "response_time_ms": 1200,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-06T11:59:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-06T11:59:05.116967"
+      }
+    ],
+    "user_profile": {
+      "age": 28,
+      "gender": "男",
+      "chronic_disease": "无",
+      "allergies": "",
+      "medications": "",
+      "health_concerns": "熬夜恢复、肝脏健康"
+    },
+    "total_messages": 6,
+    "is_active": false
+  },
+  {
+    "session_id": "sess_demo_005",
+    "user_id": "user_demo_005",
+    "started_at": "2026-06-05T09:52:05.116967",
+    "ended_at": "2026-06-05T09:58:05.116967",
+    "messages": [
+      {
+        "message_id": "sess_demo_005_user_0",
+        "message_type": "user",
+        "content": "我膝盖不太好，上下楼梯会疼，有什么保健品能吃吗？",
+        "timestamp": "2026-06-05T09:52:05.116967"
+      },
+      {
+        "message_id": "sess_demo_005_agent_0",
+        "message_type": "agent",
+        "content": "膝盖疼痛在中老年人群中很常见，通常与关节软骨磨损有关。建议关注以下成分：\n\n1. **氨糖软骨素** - 修复软骨组织\n2. **胶原蛋白** - 维持关节弹性\n3. **MSM（有机硫）** - 缓解炎症\n\n请问您今年多大年纪？疼痛持续多久了？",
+        "intent": "health_consult",
+        "intent_confidence": 0.92,
+        "recommended_products": [
+          "prod_040",
+          "prod_041"
+        ],
+        "knowledge_base_calls": [
+          {
+            "query": "膝盖疼痛 关节 保健品",
+            "intent": "health_consult",
+            "results_count": 5,
+            "product_ids": [
+              "prod_040",
+              "prod_041"
+            ],
+            "response_time_ms": 200,
+            "timestamp": "2026-06-05T09:53:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "dialogue_response",
+            "prompt_tokens": 500,
+            "completion_tokens": 130,
+            "total_tokens": 630,
+            "response_time_ms": 850,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-05T09:53:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-05T09:53:05.116967"
+      },
+      {
+        "message_id": "sess_demo_005_user_1",
+        "message_type": "user",
+        "content": "我55岁了，疼了大概半年",
+        "timestamp": "2026-06-05T09:55:05.116967"
+      },
+      {
+        "message_id": "sess_demo_005_agent_1",
+        "message_type": "agent",
+        "content": "55岁出现膝盖疼痛半年，建议先去医院做个X光检查，排除骨关节炎。在保健品方面，以下产品比较适合您：\n\n1. **氨糖软骨素复合片** - ￥168/60片\n2. **钙+维生素D3** - ￥89/90片\n\n建议连续服用3个月以上观察效果。同时注意减少爬楼梯和深蹲动作。",
+        "intent": "product_recommend",
+        "intent_confidence": 0.91,
+        "recommended_products": [
+          "prod_040",
+          "prod_042"
+        ],
+        "knowledge_base_calls": [
+          {
+            "query": "55岁 膝盖疼痛 氨糖软骨素",
+            "intent": "product_recommend",
+            "results_count": 3,
+            "product_ids": [
+              "prod_040",
+              "prod_042"
+            ],
+            "response_time_ms": 250,
+            "timestamp": "2026-06-05T09:56:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "intent_recognition",
+            "prompt_tokens": 140,
+            "completion_tokens": 55,
+            "total_tokens": 195,
+            "response_time_ms": 680,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-05T09:56:05.116967"
+          },
+          {
+            "module": "product_recommendation",
+            "prompt_tokens": 600,
+            "completion_tokens": 160,
+            "total_tokens": 760,
+            "response_time_ms": 1300,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-05T09:56:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-05T09:56:05.116967"
+      }
+    ],
+    "user_profile": {
+      "age": 55,
+      "gender": "男",
+      "chronic_disease": "",
+      "allergies": "",
+      "medications": "",
+      "health_concerns": "关节健康"
+    },
+    "total_messages": 4,
+    "is_active": false
+  },
+  {
+    "session_id": "sess_demo_006",
+    "user_id": "user_demo_006",
+    "started_at": "2026-06-04T07:52:05.116967",
+    "ended_at": "2026-06-04T07:58:05.116967",
+    "messages": [
+      {
+        "message_id": "sess_demo_006_user_0",
+        "message_type": "user",
+        "content": "我怀孕了，现在4个月，需要补充什么营养吗？",
+        "timestamp": "2026-06-04T07:52:05.116967"
+      },
+      {
+        "message_id": "sess_demo_006_agent_0",
+        "message_type": "agent",
+        "content": "恭喜您！孕4个月是胎儿快速发育期，营养需求增加。重点补充：\n\n1. **叶酸** - 预防神经管缺陷（400-800μg/天）\n2. **DHA** - 促进胎儿大脑发育\n3. **钙+维生素D** - 骨骼发育\n4. **铁剂** - 预防孕期贫血\n\n建议选择孕妇专用复合维生素。",
+        "intent": "health_consult",
+        "intent_confidence": 0.95,
+        "recommended_products": [
+          "prod_050"
+        ],
+        "knowledge_base_calls": [
+          {
+            "query": "孕期营养 叶酸 DHA 钙 铁",
+            "intent": "health_consult",
+            "results_count": 6,
+            "product_ids": [
+              "prod_050"
+            ],
+            "response_time_ms": 200,
+            "timestamp": "2026-06-04T07:53:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "dialogue_response",
+            "prompt_tokens": 550,
+            "completion_tokens": 140,
+            "total_tokens": 690,
+            "response_time_ms": 900,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-04T07:53:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-04T07:53:05.116967"
+      },
+      {
+        "message_id": "sess_demo_006_user_1",
+        "message_type": "user",
+        "content": "这些对胎儿不会有影响吧？",
+        "timestamp": "2026-06-04T07:55:05.116967"
+      },
+      {
+        "message_id": "sess_demo_006_agent_1",
+        "message_type": "agent",
+        "content": "孕期补充这些营养素是安全的，但需要注意：\n\n1. **叶酸** - 孕期必需，安全剂量内无害\n2. **DHA** - 选择藻油DHA更纯净\n3. **钙** - 不超过2000mg/天\n4. **铁** - 遵医嘱，过量可能便秘\n\n建议在产科医生指导下服用，定期产检。",
+        "intent": "safety_inquiry",
+        "intent_confidence": 0.93,
+        "recommended_products": [],
+        "knowledge_base_calls": [
+          {
+            "query": "孕期 营养素 安全性",
+            "intent": "safety_inquiry",
+            "results_count": 4,
+            "product_ids": [],
+            "response_time_ms": 250,
+            "timestamp": "2026-06-04T07:56:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "dialogue_response",
+            "prompt_tokens": 480,
+            "completion_tokens": 120,
+            "total_tokens": 600,
+            "response_time_ms": 780,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-04T07:56:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-04T07:56:05.116967"
+      }
+    ],
+    "user_profile": {
+      "age": 30,
+      "gender": "女",
+      "chronic_disease": "",
+      "allergies": "",
+      "medications": "",
+      "health_concerns": "孕期营养"
+    },
+    "total_messages": 4,
+    "is_active": false
+  },
+  {
+    "session_id": "sess_demo_007",
+    "user_id": "user_demo_007",
+    "started_at": "2026-06-03T05:52:05.116967",
+    "ended_at": "2026-06-03T05:58:05.116967",
+    "messages": [
+      {
+        "message_id": "sess_demo_007_user_0",
+        "message_type": "user",
+        "content": "我有糖尿病，平时血糖控制得不太好，有什么保健品能辅助降糖吗？",
+        "timestamp": "2026-06-03T05:52:05.116967"
+      },
+      {
+        "message_id": "sess_demo_007_agent_0",
+        "message_type": "agent",
+        "content": "糖尿病患者选择保健品需要非常谨慎。以下产品可能有一定辅助作用：\n\n1. **铬元素** - 可能改善胰岛素敏感性\n2. **苦瓜提取物** - 传统降糖食材\n3. **膳食纤维** - 延缓糖分吸收\n\n但请注意：保健品不能替代降糖药物！",
+        "intent": "product_recommend",
+        "intent_confidence": 0.87,
+        "recommended_products": [
+          "prod_060",
+          "prod_061"
+        ],
+        "knowledge_base_calls": [
+          {
+            "query": "糖尿病 保健品 降糖",
+            "intent": "product_recommend",
+            "results_count": 4,
+            "product_ids": [
+              "prod_060",
+              "prod_061"
+            ],
+            "response_time_ms": 200,
+            "timestamp": "2026-06-03T05:53:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "dialogue_response",
+            "prompt_tokens": 600,
+            "completion_tokens": 150,
+            "total_tokens": 750,
+            "response_time_ms": 950,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-03T05:53:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-03T05:53:05.116967"
+      },
+      {
+        "message_id": "sess_demo_007_user_1",
+        "message_type": "user",
+        "content": "那我可以停掉二甲双胍只吃这些吗？",
+        "timestamp": "2026-06-03T05:55:05.116967"
+      },
+      {
+        "message_id": "sess_demo_007_agent_1",
+        "message_type": "agent",
+        "content": "不建议这样做。保健品只能作为辅助，不能替代处方药物。",
+        "intent": "medical_advice",
+        "intent_confidence": 0.9,
+        "recommended_products": [],
+        "knowledge_base_calls": [],
+        "llm_calls": [
+          {
+            "module": "dialogue_response",
+            "prompt_tokens": 350,
+            "completion_tokens": 60,
+            "total_tokens": 410,
+            "response_time_ms": 500,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-03T05:56:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-03T05:56:05.116967"
+      }
+    ],
+    "user_profile": {
+      "age": 52,
+      "gender": "男",
+      "chronic_disease": "2型糖尿病",
+      "allergies": "",
+      "medications": "二甲双胍",
+      "health_concerns": "血糖控制"
+    },
+    "total_messages": 4,
+    "is_active": false
+  },
+  {
+    "session_id": "sess_demo_008",
+    "user_id": "user_demo_008",
+    "started_at": "2026-06-02T03:52:05.116967",
+    "ended_at": "2026-06-02T03:58:05.116967",
+    "messages": [
+      {
+        "message_id": "sess_demo_008_user_0",
+        "message_type": "user",
+        "content": "我每周健身4次，想买点蛋白粉和恢复类的保健品",
+        "timestamp": "2026-06-02T03:52:05.116967"
+      },
+      {
+        "message_id": "sess_demo_008_agent_0",
+        "message_type": "agent",
+        "content": "健身人群的营养补充很关键！根据您的训练频率，推荐以下产品：\n\n1. **乳清蛋白粉** - 训练后30分钟内补充，促进肌肉修复\n2. **支链氨基酸(BCAA)** - 训练中饮用，减少肌肉分解\n3. **肌酸** - 提升爆发力和训练容量\n4. **镁+锌** - 促进恢复和睡眠质量\n\n请问您的训练目标是什么？增肌还是减脂？",
+        "intent": "product_recommend",
+        "intent_confidence": 0.94,
+        "recommended_products": [
+          "prod_070",
+          "prod_071",
+          "prod_072",
+          "prod_073"
+        ],
+        "knowledge_base_calls": [
+          {
+            "query": "健身 蛋白粉 BCAA 肌酸",
+            "intent": "product_recommend",
+            "results_count": 7,
+            "product_ids": [
+              "prod_070",
+              "prod_071",
+              "prod_072",
+              "prod_073"
+            ],
+            "response_time_ms": 200,
+            "timestamp": "2026-06-02T03:53:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "intent_recognition",
+            "prompt_tokens": 130,
+            "completion_tokens": 50,
+            "total_tokens": 180,
+            "response_time_ms": 620,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-02T03:53:05.116967"
+          },
+          {
+            "module": "product_recommendation",
+            "prompt_tokens": 650,
+            "completion_tokens": 170,
+            "total_tokens": 820,
+            "response_time_ms": 1450,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-02T03:53:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-02T03:53:05.116967"
+      },
+      {
+        "message_id": "sess_demo_008_user_1",
+        "message_type": "user",
+        "content": "主要是增肌，这些怎么吃比较好？",
+        "timestamp": "2026-06-02T03:55:05.116967"
+      },
+      {
+        "message_id": "sess_demo_008_agent_1",
+        "message_type": "agent",
+        "content": "增肌期的补充方案建议：\n\n**训练日：**\n- 训练前30分钟：肌酸5g + BCAA 10g\n- 训练后30分钟内：乳清蛋白粉30g\n- 睡前：酪蛋白或镁+锌\n\n**休息日：**\n- 早餐：乳清蛋白粉20g\n- 睡前：镁+锌\n\n同时确保每日蛋白质摄入达到1.6-2.2g/kg体重。",
+        "intent": "usage_guidance",
+        "intent_confidence": 0.92,
+        "recommended_products": [
+          "prod_070"
+        ],
+        "knowledge_base_calls": [
+          {
+            "query": "增肌 蛋白粉 服用方法",
+            "intent": "usage_guidance",
+            "results_count": 3,
+            "product_ids": [
+              "prod_070"
+            ],
+            "response_time_ms": 250,
+            "timestamp": "2026-06-02T03:56:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "dialogue_response",
+            "prompt_tokens": 580,
+            "completion_tokens": 180,
+            "total_tokens": 760,
+            "response_time_ms": 1000,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-02T03:56:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-02T03:56:05.116967"
+      }
+    ],
+    "user_profile": {
+      "age": 26,
+      "gender": "男",
+      "chronic_disease": "",
+      "allergies": "",
+      "medications": "",
+      "health_concerns": "增肌、运动恢复"
+    },
+    "total_messages": 4,
+    "is_active": false
+  },
+  {
+    "session_id": "sess_demo_009",
+    "user_id": "user_demo_009",
+    "started_at": "2026-06-01T01:52:05.116967",
+    "ended_at": "2026-06-01T01:58:05.116967",
+    "messages": [
+      {
+        "message_id": "sess_demo_009_user_0",
+        "message_type": "user",
+        "content": "最近换季老是感冒，有什么能提高免疫力的？",
+        "timestamp": "2026-06-01T01:52:05.116967"
+      },
+      {
+        "message_id": "sess_demo_009_agent_0",
+        "message_type": "agent",
+        "content": "换季容易感冒确实与免疫力下降有关。以下营养素有助于增强免疫系统：\n\n1. **维生素C** - 增强白细胞活性\n2. **维生素D** - 调节免疫反应\n3. **锌** - 促进免疫细胞生成\n4. **益生菌** - 70%免疫细胞在肠道\n5. **蜂胶/蜂皇浆** - 天然抗菌成分\n\n建议组合补充，同时保持充足睡眠和适度运动。",
+        "intent": "product_recommend",
+        "intent_confidence": 0.93,
+        "recommended_products": [
+          "prod_080",
+          "prod_081",
+          "prod_082"
+        ],
+        "knowledge_base_calls": [
+          {
+            "query": "免疫力 维生素C 维生素D 锌 益生菌",
+            "intent": "product_recommend",
+            "results_count": 6,
+            "product_ids": [
+              "prod_080",
+              "prod_081",
+              "prod_082"
+            ],
+            "response_time_ms": 200,
+            "timestamp": "2026-06-01T01:53:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "intent_recognition",
+            "prompt_tokens": 120,
+            "completion_tokens": 45,
+            "total_tokens": 165,
+            "response_time_ms": 580,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-01T01:53:05.116967"
+          },
+          {
+            "module": "product_recommendation",
+            "prompt_tokens": 600,
+            "completion_tokens": 160,
+            "total_tokens": 760,
+            "response_time_ms": 1350,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-01T01:53:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-01T01:53:05.116967"
+      },
+      {
+        "message_id": "sess_demo_009_user_1",
+        "message_type": "user",
+        "content": "这些要吃多久才能见效？",
+        "timestamp": "2026-06-01T01:55:05.116967"
+      },
+      {
+        "message_id": "sess_demo_009_agent_1",
+        "message_type": "agent",
+        "content": "免疫力提升是一个渐进过程，通常需要：\n\n- **维生素C/D、锌** - 2-4周开始感受到效果\n- **益生菌** - 4-8周调节肠道菌群\n- **蜂胶** - 1-2周可能有初步感受\n\n建议至少连续补充3个月，配合健康生活方式。如果感冒频率没有改善，建议就医检查是否有其他免疫问题。",
+        "intent": "usage_guidance",
+        "intent_confidence": 0.89,
+        "recommended_products": [],
+        "knowledge_base_calls": [
+          {
+            "query": "免疫力 见效时间",
+            "intent": "usage_guidance",
+            "results_count": 3,
+            "product_ids": [],
+            "response_time_ms": 250,
+            "timestamp": "2026-06-01T01:56:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "dialogue_response",
+            "prompt_tokens": 450,
+            "completion_tokens": 130,
+            "total_tokens": 580,
+            "response_time_ms": 800,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-06-01T01:56:05.116967"
+          }
+        ],
+        "timestamp": "2026-06-01T01:56:05.116967"
+      }
+    ],
+    "user_profile": {
+      "age": 35,
+      "gender": "女",
+      "chronic_disease": "",
+      "allergies": "",
+      "medications": "",
+      "health_concerns": "免疫力提升"
+    },
+    "total_messages": 4,
+    "is_active": false
+  },
+  {
+    "session_id": "sess_demo_010",
+    "user_id": "user_demo_010",
+    "started_at": "2026-05-30T23:52:05.116967",
+    "ended_at": "2026-05-31T00:01:05.116967",
+    "messages": [
+      {
+        "message_id": "sess_demo_010_user_0",
+        "message_type": "user",
+        "content": "我爸70岁了，有高血压和糖尿病，最近记忆力下降，有什么能吃的？",
+        "timestamp": "2026-05-30T23:52:05.116967"
+      },
+      {
+        "message_id": "sess_demo_010_agent_0",
+        "message_type": "agent",
+        "content": "70岁长辈同时有高血压和糖尿病，选择保健品需要特别谨慎。针对记忆力下降，以下成分可能有帮助：\n\n1. **DHA/EPA** - 支持脑部健康（选择低钠配方）\n2. **磷脂酰丝氨酸(PS)** - 改善认知功能\n3. **维生素B12** - 老年人常缺乏，影响神经功能\n\n但必须先咨询主治医生，确保与现有药物没有冲突！",
+        "intent": "health_consult",
+        "intent_confidence": 0.9,
+        "recommended_products": [
+          "prod_090"
+        ],
+        "knowledge_base_calls": [
+          {
+            "query": "老年人 高血压 糖尿病 记忆力 DHA",
+            "intent": "health_consult",
+            "results_count": 5,
+            "product_ids": [
+              "prod_090"
+            ],
+            "response_time_ms": 200,
+            "timestamp": "2026-05-30T23:53:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "dialogue_response",
+            "prompt_tokens": 700,
+            "completion_tokens": 170,
+            "total_tokens": 870,
+            "response_time_ms": 1100,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-05-30T23:53:05.116967"
+          }
+        ],
+        "timestamp": "2026-05-30T23:53:05.116967"
+      },
+      {
+        "message_id": "sess_demo_010_user_1",
+        "message_type": "user",
+        "content": "他平时在吃阿司匹林和格列美脲，会有冲突吗？",
+        "timestamp": "2026-05-30T23:55:05.116967"
+      },
+      {
+        "message_id": "sess_demo_010_agent_1",
+        "message_type": "agent",
+        "content": "您提到的药物与保健品的相互作用需要专业评估：\n\n- **阿司匹林** + 鱼油/DHA - 可能增加出血风险，需医生确认剂量\n- **格列美脲** + 大部分保健品 - 一般无明显冲突\n\n**强烈建议**：在服用任何保健品前，请携带产品成分表咨询您父亲的主治医生或药师。系统无法替代专业医疗建议。",
+        "intent": "safety_inquiry",
+        "intent_confidence": 0.94,
+        "recommended_products": [],
+        "knowledge_base_calls": [
+          {
+            "query": "阿司匹林 格列美脲 保健品 相互作用",
+            "intent": "safety_inquiry",
+            "results_count": 4,
+            "product_ids": [],
+            "response_time_ms": 250,
+            "timestamp": "2026-05-30T23:56:05.116967"
+          }
+        ],
+        "llm_calls": [
+          {
+            "module": "dialogue_response",
+            "prompt_tokens": 600,
+            "completion_tokens": 150,
+            "total_tokens": 750,
+            "response_time_ms": 950,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-05-30T23:56:05.116967"
+          }
+        ],
+        "timestamp": "2026-05-30T23:56:05.116967"
+      },
+      {
+        "message_id": "sess_demo_010_user_2",
+        "message_type": "user",
+        "content": "好的，我会先问医生。谢谢",
+        "timestamp": "2026-05-30T23:58:05.116967"
+      },
+      {
+        "message_id": "sess_demo_010_agent_2",
+        "message_type": "agent",
+        "content": "不客气！您的做法非常正确。对于有多种慢性病且正在服药的长辈，先咨询医生是最安全的选择。\n\n如果医生确认可以服用，建议从单一产品开始，观察1-2周后再考虑添加其他产品。\n\n祝您父亲健康！如有其他问题随时咨询。",
+        "intent": "greeting",
+        "intent_confidence": 0.88,
+        "recommended_products": [],
+        "knowledge_base_calls": [],
+        "llm_calls": [
+          {
+            "module": "dialogue_response",
+            "prompt_tokens": 300,
+            "completion_tokens": 90,
+            "total_tokens": 390,
+            "response_time_ms": 600,
+            "success": true,
+            "error_message": "",
+            "timestamp": "2026-05-30T23:59:05.116967"
+          }
+        ],
+        "timestamp": "2026-05-30T23:59:05.116967"
+      }
+    ],
+    "user_profile": {
+      "age": 45,
+      "gender": "女",
+      "chronic_disease": "",
+      "allergies": "",
+      "medications": "",
+      "health_concerns": "父亲健康管理"
+    },
+    "total_messages": 6,
+    "is_active": false
+  }
+]

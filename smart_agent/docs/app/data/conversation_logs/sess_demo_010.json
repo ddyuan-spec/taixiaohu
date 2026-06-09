@@ -1,0 +1,124 @@
+{
+  "session_id": "sess_demo_010",
+  "user_id": "user_demo_010",
+  "started_at": "2026-05-30T23:52:05.116967",
+  "ended_at": "2026-05-31T00:01:05.116967",
+  "messages": [
+    {
+      "message_id": "sess_demo_010_user_0",
+      "message_type": "user",
+      "content": "我爸70岁了，有高血压和糖尿病，最近记忆力下降，有什么能吃的？",
+      "timestamp": "2026-05-30T23:52:05.116967"
+    },
+    {
+      "message_id": "sess_demo_010_agent_0",
+      "message_type": "agent",
+      "content": "70岁长辈同时有高血压和糖尿病，选择保健品需要特别谨慎。针对记忆力下降，以下成分可能有帮助：\n\n1. **DHA/EPA** - 支持脑部健康（选择低钠配方）\n2. **磷脂酰丝氨酸(PS)** - 改善认知功能\n3. **维生素B12** - 老年人常缺乏，影响神经功能\n\n但必须先咨询主治医生，确保与现有药物没有冲突！",
+      "intent": "health_consult",
+      "intent_confidence": 0.9,
+      "recommended_products": [
+        "prod_090"
+      ],
+      "knowledge_base_calls": [
+        {
+          "query": "老年人 高血压 糖尿病 记忆力 DHA",
+          "intent": "health_consult",
+          "results_count": 5,
+          "product_ids": [
+            "prod_090"
+          ],
+          "response_time_ms": 200,
+          "timestamp": "2026-05-30T23:53:05.116967"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "dialogue_response",
+          "prompt_tokens": 700,
+          "completion_tokens": 170,
+          "total_tokens": 870,
+          "response_time_ms": 1100,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-05-30T23:53:05.116967"
+        }
+      ],
+      "timestamp": "2026-05-30T23:53:05.116967"
+    },
+    {
+      "message_id": "sess_demo_010_user_1",
+      "message_type": "user",
+      "content": "他平时在吃阿司匹林和格列美脲，会有冲突吗？",
+      "timestamp": "2026-05-30T23:55:05.116967"
+    },
+    {
+      "message_id": "sess_demo_010_agent_1",
+      "message_type": "agent",
+      "content": "您提到的药物与保健品的相互作用需要专业评估：\n\n- **阿司匹林** + 鱼油/DHA - 可能增加出血风险，需医生确认剂量\n- **格列美脲** + 大部分保健品 - 一般无明显冲突\n\n**强烈建议**：在服用任何保健品前，请携带产品成分表咨询您父亲的主治医生或药师。系统无法替代专业医疗建议。",
+      "intent": "safety_inquiry",
+      "intent_confidence": 0.94,
+      "recommended_products": [],
+      "knowledge_base_calls": [
+        {
+          "query": "阿司匹林 格列美脲 保健品 相互作用",
+          "intent": "safety_inquiry",
+          "results_count": 4,
+          "product_ids": [],
+          "response_time_ms": 250,
+          "timestamp": "2026-05-30T23:56:05.116967"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "dialogue_response",
+          "prompt_tokens": 600,
+          "completion_tokens": 150,
+          "total_tokens": 750,
+          "response_time_ms": 950,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-05-30T23:56:05.116967"
+        }
+      ],
+      "timestamp": "2026-05-30T23:56:05.116967"
+    },
+    {
+      "message_id": "sess_demo_010_user_2",
+      "message_type": "user",
+      "content": "好的，我会先问医生。谢谢",
+      "timestamp": "2026-05-30T23:58:05.116967"
+    },
+    {
+      "message_id": "sess_demo_010_agent_2",
+      "message_type": "agent",
+      "content": "不客气！您的做法非常正确。对于有多种慢性病且正在服药的长辈，先咨询医生是最安全的选择。\n\n如果医生确认可以服用，建议从单一产品开始，观察1-2周后再考虑添加其他产品。\n\n祝您父亲健康！如有其他问题随时咨询。",
+      "intent": "greeting",
+      "intent_confidence": 0.88,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [
+        {
+          "module": "dialogue_response",
+          "prompt_tokens": 300,
+          "completion_tokens": 90,
+          "total_tokens": 390,
+          "response_time_ms": 600,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-05-30T23:59:05.116967"
+        }
+      ],
+      "timestamp": "2026-05-30T23:59:05.116967"
+    }
+  ],
+  "user_profile": {
+    "age": 45,
+    "gender": "女",
+    "chronic_disease": "",
+    "allergies": "",
+    "medications": "",
+    "health_concerns": "父亲健康管理"
+  },
+  "total_messages": 6,
+  "is_active": false
+}

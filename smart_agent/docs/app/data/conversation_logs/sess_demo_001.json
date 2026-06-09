@@ -1,0 +1,158 @@
+{
+  "session_id": "sess_demo_001",
+  "user_id": "user_demo_001",
+  "started_at": "2026-06-09T17:52:05.116967",
+  "ended_at": "2026-06-09T18:01:05.116967",
+  "messages": [
+    {
+      "message_id": "sess_demo_001_user_0",
+      "message_type": "user",
+      "content": "你好，我想给我妈买点保健品，她今年65岁了",
+      "timestamp": "2026-06-09T17:52:05.116967"
+    },
+    {
+      "message_id": "sess_demo_001_agent_0",
+      "message_type": "agent",
+      "content": "您好！为65岁的长辈选择保健品，建议先了解她的健康状况。请问您母亲目前有什么慢性病或正在服用的药物吗？",
+      "intent": "health_consult",
+      "intent_confidence": 0.95,
+      "recommended_products": [],
+      "knowledge_base_calls": [
+        {
+          "query": "老年人保健品推荐",
+          "intent": "health_consult",
+          "results_count": 5,
+          "product_ids": [
+            "prod_001",
+            "prod_002"
+          ],
+          "response_time_ms": 200,
+          "timestamp": "2026-06-09T17:53:05.116967"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "intent_recognition",
+          "prompt_tokens": 120,
+          "completion_tokens": 45,
+          "total_tokens": 165,
+          "response_time_ms": 800,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-09T17:53:05.116967"
+        }
+      ],
+      "timestamp": "2026-06-09T17:53:05.116967"
+    },
+    {
+      "message_id": "sess_demo_001_user_1",
+      "message_type": "user",
+      "content": "她有高血压，平时在吃降压药",
+      "timestamp": "2026-06-09T17:55:05.116967"
+    },
+    {
+      "message_id": "sess_demo_001_agent_1",
+      "message_type": "agent",
+      "content": "了解了。高血压患者在选择保健品时需要特别注意。我推荐以下几款适合高血压人群的保健品：\n\n1. **深海鱼油** - 有助于调节血脂，选择低钠配方\n2. **辅酶Q10** - 对心血管健康有益\n3. **维生素D+钙** - 老年人普遍缺乏\n\n请问您母亲有没有其他过敏史或特殊饮食要求？",
+      "intent": "product_recommend",
+      "intent_confidence": 0.93,
+      "recommended_products": [
+        "prod_003",
+        "prod_004",
+        "prod_005"
+      ],
+      "knowledge_base_calls": [
+        {
+          "query": "高血压 保健品 推荐",
+          "intent": "product_recommend",
+          "results_count": 3,
+          "product_ids": [
+            "prod_003",
+            "prod_004",
+            "prod_005"
+          ],
+          "response_time_ms": 250,
+          "timestamp": "2026-06-09T17:56:05.116967"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "intent_recognition",
+          "prompt_tokens": 150,
+          "completion_tokens": 50,
+          "total_tokens": 200,
+          "response_time_ms": 700,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-09T17:56:05.116967"
+        },
+        {
+          "module": "product_recommendation",
+          "prompt_tokens": 800,
+          "completion_tokens": 200,
+          "total_tokens": 1000,
+          "response_time_ms": 1500,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-09T17:56:05.116967"
+        }
+      ],
+      "timestamp": "2026-06-09T17:56:05.116967"
+    },
+    {
+      "message_id": "sess_demo_001_user_2",
+      "message_type": "user",
+      "content": "她没有过敏史，这些大概多少钱？",
+      "timestamp": "2026-06-09T17:58:05.116967"
+    },
+    {
+      "message_id": "sess_demo_001_agent_2",
+      "message_type": "agent",
+      "content": "好的，以下是推荐产品的价格信息：\n\n1. **深海鱼油（60粒装）** - ￥128\n2. **辅酶Q10（30粒装）** - ￥198\n3. **维生素D+钙（90片装）** - ￥89\n\n三件套组合价￥358（省￥57）。需要我帮您生成订单吗？",
+      "intent": "price_inquiry",
+      "intent_confidence": 0.91,
+      "recommended_products": [
+        "prod_003",
+        "prod_004",
+        "prod_005"
+      ],
+      "knowledge_base_calls": [
+        {
+          "query": "产品价格 鱼油 辅酶Q10 钙片",
+          "intent": "price_inquiry",
+          "results_count": 3,
+          "product_ids": [
+            "prod_003",
+            "prod_004",
+            "prod_005"
+          ],
+          "response_time_ms": 300,
+          "timestamp": "2026-06-09T17:59:05.116967"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "dialogue_response",
+          "prompt_tokens": 600,
+          "completion_tokens": 150,
+          "total_tokens": 750,
+          "response_time_ms": 900,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-09T17:59:05.116967"
+        }
+      ],
+      "timestamp": "2026-06-09T17:59:05.116967"
+    }
+  ],
+  "user_profile": {
+    "age": 65,
+    "gender": "女",
+    "chronic_disease": "高血压",
+    "allergies": "无",
+    "medications": "降压药",
+    "health_concerns": "心血管健康、骨骼健康"
+  },
+  "total_messages": 6,
+  "is_active": false
+}
