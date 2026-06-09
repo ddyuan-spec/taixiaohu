@@ -1346,7 +1346,6 @@ def admin_data_export():
 # ============================================================
 # 启动时预加载数据
 # ============================================================
-@app.before_first_request
 def preload_data():
     """启动时预加载所有数据"""
     print("[Startup] 正在预加载数据...")
@@ -1365,6 +1364,9 @@ def preload_data():
         print(f"[Startup] 预加载数据失败: {e}")
         import traceback
         traceback.print_exc()
+
+with app.app_context():
+    preload_data()
 
 
 if __name__ == '__main__':
