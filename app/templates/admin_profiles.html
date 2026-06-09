@@ -119,32 +119,7 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- 侧边栏 -->
-            <div class="col-md-2 p-0 sidebar">
-                <div class="brand">
-                    <i class="bi bi-shield-check"></i> 泰小虎后台管理
-                </div>
-                <nav class="nav flex-column">
-                    <a href="/admin" class="nav-link">
-                        <i class="bi bi-speedometer2"></i> 仪表盘
-                    </a>
-                    <a href="/admin/knowledge" class="nav-link">
-                        <i class="bi bi-database"></i> 知识库管理
-                    </a>
-                    <a href="/admin/profiles" class="nav-link active">
-                        <i class="bi bi-people"></i> 用户画像
-                    </a>
-                    <a href="/admin/llm" class="nav-link">
-                        <i class="bi bi-cpu"></i> 模型配置
-                    </a>
-                    <a href="/admin/prompt" class="nav-link">
-                        <i class="bi bi-chat-left-text"></i> 提示词配置
-                    </a>
-                    <a href="/" class="nav-link">
-                        <i class="bi bi-chat-dots"></i> 返回前台
-                    </a>
-                </nav>
-            </div>
+            {% set active_page = '/admin/profiles' %}{% include '_sidebar.html' %}
 
             <!-- 主内容区 -->
             <div class="col-md-10 p-4">

@@ -96,56 +96,7 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- 侧边栏 -->
-            <div class="col-md-2 p-0 sidebar">
-                <div class="brand">
-                    <i class="bi bi-shield-check"></i> 泰小虎后台管理
-                </div>
-                <nav class="nav flex-column">
-                    <a href="/admin" class="nav-link">
-                        <i class="bi bi-speedometer2"></i> 仪表盘
-                    </a>
-                    <a href="/admin/conversations" class="nav-link">
-                        <i class="bi bi-chat-square-text"></i> 对话记录
-                    </a>
-                    <a href="/admin/knowledge/chunks" class="nav-link">
-                        <i class="bi bi-database"></i> 知识切片
-                    </a>
-                    <a href="/admin/profiles" class="nav-link">
-                        <i class="bi bi-person-badge"></i> 用户画像
-                    </a>
-                    <a href="/admin/llm" class="nav-link">
-                        <i class="bi bi-cpu"></i> 模型配置
-                    </a>
-                    <a href="/admin/prompt" class="nav-link">
-                        <i class="bi bi-chat-left-text"></i> 提示词配置
-                    </a>
-                    <a href="/admin/badcases" class="nav-link">
-                        <i class="bi bi-bug"></i> Badcase管理
-                    </a>
-                    <a href="/admin/model-calls" class="nav-link">
-                        <i class="bi bi-activity"></i> 模型调用
-                    </a>
-                    <a href="/admin/traces" class="nav-link">
-                        <i class="bi bi-diagram-3"></i> 调用链路
-                    </a>
-                    <a href="/admin/points" class="nav-link">
-                        <i class="bi bi-coin"></i> 积分管理
-                    </a>
-                    <a href="/admin/points/config" class="nav-link active">
-                        <i class="bi bi-sliders"></i> 积分配置
-                    </a>
-                    <a href="/admin/shop" class="nav-link">
-                        <i class="bi bi-shop"></i> 积分商城
-                    </a>
-                    <a href="/admin/data-export" class="nav-link">
-                        <i class="bi bi-download"></i> 数据导出
-                    </a>
-                    <a href="/" class="nav-link">
-                        <i class="bi bi-chat-dots"></i> 返回前台
-                    </a>
-                </nav>
-            </div>
+            {% set active_page = '/admin/points/config' %}{% include '_sidebar.html' %}
 
             <!-- 主内容区 -->
             <div class="col-md-10 p-4">
