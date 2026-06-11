@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泰小虎 Coze 工作流搭建操作手册</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #f5f5fa;
+            line-height: 1.8;
+            color: #333;
+        }
+        .topbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .topbar-inner {
+            max-width: 960px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .topbar a { color: white; text-decoration: none; }
+        .content {
+            max-width: 960px;
+            margin: 30px auto;
+            padding: 40px 48px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        h1 { font-size: 1.8em; color: #1a1a2e; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #667eea; }
+        h1:first-child { margin-top: 0; }
+        h2 { font-size: 1.4em; color: #2d2d5e; margin: 28px 0 12px; padding-left: 12px; border-left: 4px solid #667eea; }
+        h3 { font-size: 1.15em; color: #3d3d6e; margin: 20px 0 8px; }
+        h4 { font-size: 1.05em; color: #4d4d7e; margin: 16px 0 6px; }
+        p { margin: 10px 0; }
+        ul, ol { margin: 10px 0; padding-left: 24px; }
+        li { margin: 6px 0; }
+        code {
+            background: #f4f4f8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #1e1e2e;
+            color: #cdd6f4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 16px 0;
+            font-size: 0.88em;
+            line-height: 1.6;
+        }
+        pre code { background: transparent; padding: 0; color: inherit; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.95em;
+        }
+        th, td {
+            border: 1px solid #e0e0e8;
+            padding: 12px 16px;
+            text-align: left;
+        }
+        th {
+            background: #f8f9ff;
+            font-weight: 600;
+            color: #2d2d5e;
+        }
+        tr:nth-child(even) { background: #fafbff; }
+        hr {
+            border: none;
+            border-top: 1px solid #e8e8f0;
+            margin: 24px 0;
+        }
+        strong { color: #1a1a2e; }
+        a { color: #667eea; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        @media (max-width: 768px) {
+            .content { padding: 20px; margin: 12px; }
+            h1 { font-size: 1.4em; }
+            h2 { font-size: 1.2em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div class="topbar-inner">
+            <span>🐯 泰小虎 文档中心</span>
+            <a href="index.html">← 返回目录</a>
+        </div>
+    </div>
+    <div class="content">
+        <h1>泰小虎 Coze 工作流搭建操作手册</h1>
+
+        <h2>一、概述</h2>
+        <p>本手册指导如何在 Coze 平台上搭建泰小虎智能健康顾问的完整工作流，实现意图识别、健康咨询、产品推荐等核心功能。</p>
+
+        <hr>
+
+        <h2>二、前置准备</h2>
+
+        <h3>2.1 注册与登录</h3>
+        <ol>
+            <li>访问 <a href="https://www.coze.cn" target="_blank">Coze 官网</a></li>
+            <li>使用抖音/飞书账号登录</li>
+            <li>进入「个人空间」或「团队空间」</li>
+        </ol>
+
+        <h3>2.2 创建 Bot</h3>
+        <ol>
+            <li>点击「创建 Bot」</li>
+            <li>填写基本信息：
+                <ul>
+                    <li><strong>Bot 名称</strong>：泰小虎健康顾问</li>
+                    <li><strong>Bot 描述</strong>：您的专业健康顾问，提供健康咨询、产品推荐等服务</li>
+                    <li><strong>图标</strong>：上传泰小虎 Logo</li>
+                </ul>
+            </li>
+        </ol>
+
+        <hr>
+
+        <h2>三、工作流整体架构</h2>
+
+        <pre><code>[开始节点]
+    │ 接收参数：user_input, intent, user_id
+    ▼
+[大模型节点：System Prompt]
+    │ 注入全局人设
+    ▼
+[条件分支节点]
+    │ 根据 intent 参数路由
+    ├── intent == "health_consult" → [症状分析] → [RAG检索] → [推荐生成]
+    ├── intent == "product_consult" → [产品咨询] → [产品库检索] → [推荐生成]
+    ├── intent == "knowledge_query" → [健康知识库检索] → [知识问答]
+    └── intent == "other" → [边界处理]
+    ▼
+[输出节点]</code></pre>
+
+        <hr>
+
+        <h2>四、详细搭建步骤</h2>
+
+        <h3>4.1 创建工作流</h3>
+        <ol>
+            <li>在 Bot 编辑页面，点击左侧「工作流」</li>
+            <li>点击「创建工作流」</li>
+            <li>填写工作流信息：
+                <ul>
+                    <li><strong>名称</strong>：taixiaohu_main_flow</li>
+                    <li><strong>描述</strong>：泰小虎主工作流，处理用户健康咨询、产品咨询等请求</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>4.2 配置开始节点</h3>
+        <p><strong>节点类型</strong>：开始</p>
+
+        <table>
+            <tr><th>参数名</th><th>类型</th><th>必填</th><th>说明</th></tr>
+            <tr><td>user_input</td><td>String</td><td>是</td><td>用户输入的自然语言内容</td></tr>
+            <tr><td>intent</td><td>String</td><td>是</td><td>用户选择的意图：health_consult / product_consult / knowledge_query / other</td></tr>
+            <tr><td>user_id</td><td>String</td><td>是</td><td>用户唯一标识</td></tr>
+            <tr><td>conversation_id</td><td>String</td><td>否</td><td>会话唯一标识</td></tr>
+        </table>
+
+        <h3>4.3 配置 System Prompt 节点</h3>
+        <p><strong>节点类型</strong>：大模型</p>
+        <p><strong>模型选择</strong>：Doubao-pro-32k 或 GPT-4</p>
+
+        <p><strong>系统提示词（System Prompt）</strong>：</p>
+        <pre><code># 角色定义
+你是「泰小虎」，一位专业、温和、耐心、贴心的健康顾问。
+
+# 核心能力
+1. 健康评估：了解用户身体状况，提供健康方向性建议
+2. 产品咨询：根据健康需求推荐合适保健品
+3. 健康知识：解答健康养生问题
+4. 情感陪伴：倾听健康困扰，给予鼓励支持
+
+# 能力边界（非常重要）
+1. 你不是医生，不能诊断疾病，不能开具处方
+2. 遇到紧急症状必须立即建议就医
+3. 用户描述症状时必须附加免责声明
+4. 不能推荐处方药，只能建议非处方保健品
+5. 不能声称产品可以"治疗""治愈"疾病
+
+# 输出规范
+1. 每次回复控制在100-200字以内
+2. 使用口语化表达，避免专业术语
+3. 重要信息用"【】"标注
+4. 语气温暖亲切，像关心家人的老朋友
+
+# 安全红线
+1. 绝不提供疾病诊断
+2. 绝不推荐处方药
+3. 绝不声称产品可以治疗疾病
+4. 遇到紧急情况必须建议立即就医
+5. 涉及症状时必须附加免责声明
+
+# 免责声明规则
+在以下场景必须附加免责声明：
+- 用户描述身体症状时
+- 讨论涉及疾病话题时
+- 推荐保健产品时
+- 回答用药相关问题时
+
+免责声明："温馨提示：我的建议仅供参考，不能代替医生的专业诊断。"
+
+# 紧急情况处理
+紧急症状包括：胸痛、呼吸困难、剧烈头痛、意识模糊、大量出血、严重外伤、高热不退
+
+紧急情况回复："您的情况需要马上重视！请立刻拨打120或让家人送您去医院！"</code></pre>
+
+        <h3>4.4 配置条件分支节点</h3>
+        <p><strong>节点类型</strong>：选择器</p>
+
+        <table>
+            <tr><th>分支名称</th><th>条件表达式</th></tr>
+            <tr><td>健康咨询</td><td>intent == "health_consult"</td></tr>
+            <tr><td>产品咨询</td><td>intent == "product_consult"</td></tr>
+            <tr><td>健康知识</td><td>intent == "knowledge_query"</td></tr>
+            <tr><td>其他</td><td>intent == "other"</td></tr>
+        </table>
+
+        <h3>4.5 健康咨询分支</h3>
+
+        <h4>4.5.1 症状分析节点</h4>
+        <p><strong>节点类型</strong>：大模型</p>
+        <p><strong>提示词</strong>：分析用户症状，提取关键信息，不给出诊断结论</p>
+
+        <h4>4.5.2 RAG 检索节点</h4>
+        <p><strong>节点类型</strong>：知识库</p>
+        <p><strong>配置</strong>：选择健康知识库，语义检索，Top 5</p>
+
+        <h4>4.5.3 推荐生成节点</h4>
+        <p><strong>节点类型</strong>：大模型</p>
+        <p><strong>提示词</strong>：基于症状分析和检索结果，推荐1-3款合适产品</p>
+
+        <h3>4.6 产品咨询分支</h3>
+
+        <h4>4.6.1 产品咨询节点</h4>
+        <p><strong>节点类型</strong>：大模型</p>
+        <p><strong>提示词</strong>：理解用户产品需求，提取关键信息</p>
+
+        <h4>4.6.2 产品库检索节点</h4>
+        <p><strong>节点类型</strong>：知识库</p>
+        <p><strong>配置</strong>：选择产品知识库，语义检索，Top 3</p>
+
+        <h4>4.6.3 推荐生成节点</h4>
+        <p><strong>节点类型</strong>：大模型</p>
+        <p><strong>提示词</strong>：基于检索结果，推荐合适产品并说明功效</p>
+
+        <h3>4.7 健康知识分支</h3>
+
+        <h4>4.7.1 健康知识库检索节点</h4>
+        <p><strong>节点类型</strong>：知识库</p>
+        <p><strong>配置</strong>：选择健康知识库，语义检索，Top 3</p>
+
+        <h4>4.7.2 知识问答节点</h4>
+        <p><strong>节点类型</strong>：大模型</p>
+        <p><strong>提示词</strong>：基于检索结果，用通俗易懂的语言回答健康问题</p>
+
+        <h3>4.8 其他分支</h3>
+
+        <h4>4.8.1 边界处理节点</h4>
+        <p><strong>节点类型</strong>：大模型</p>
+        <p><strong>提示词</strong>：处理闲聊、投诉、技术问题等，或引导用户回到健康咨询主题</p>
+
+        <h3>4.9 配置输出节点</h3>
+        <p><strong>节点类型</strong>：结束</p>
+
+        <table>
+            <tr><th>参数名</th><th>值</th><th>说明</th></tr>
+            <tr><td>response</td><td>各分支的输出结果</td><td>最终回复内容</td></tr>
+            <tr><td>intent</td><td>start.intent</td><td>用户意图</td></tr>
+        </table>
+
+        <hr>
+
+        <h2>五、知识库配置</h2>
+
+        <h3>5.1 创建健康知识库</h3>
+        <ol>
+            <li>点击「知识」→「创建知识库」</li>
+            <li>上传健康知识文档（PDF、Word、TXT）</li>
+            <li>配置分段规则：
+                <ul>
+                    <li>分段长度：500-800字</li>
+                    <li>重叠长度：100字</li>
+                </ul>
+            </li>
+            <li>等待索引完成</li>
+        </ol>
+
+        <h3>5.2 创建产品知识库</h3>
+        <ol>
+            <li>点击「知识」→「创建知识库」</li>
+            <li>上传产品资料文档</li>
+            <li>包含字段：产品名称、功效、适用人群、服用方法、注意事项</li>
+            <li>配置分段规则同上</li>
+        </ol>
+
+        <hr>
+
+        <h2>六、测试与发布</h2>
+
+        <h3>6.1 工作流测试</h3>
+        <ol>
+            <li>点击工作流编辑页面的「试运行」</li>
+            <li>输入测试参数：</li>
+        </ol>
+        <pre><code>{
+  "user_input": "我最近睡眠质量不好，有什么建议吗？",
+  "intent": "health_consult",
+  "user_id": "test_user_001"
+}</code></pre>
+        <ol start="3">
+            <li>查看各节点输出，检查是否符合预期</li>
+        </ol>
+
+        <h3>6.2 发布工作流</h3>
+        <ol>
+            <li>测试通过后，点击「发布」</li>
+            <li>工作流将自动关联到 Bot</li>
+        </ol>
+
+        <h3>6.3 Bot 发布</h3>
+        <ol>
+            <li>返回 Bot 编辑页面</li>
+            <li>点击右上角「发布」</li>
+            <li>选择发布渠道（豆包、飞书等）</li>
+        </ol>
+
+        <hr>
+
+        <h2>七、客户端集成</h2>
+
+        <h3>7.1 获取 API 密钥</h3>
+        <ol>
+            <li>在 Bot 详情页，点击「API 接入」</li>
+            <li>复制 Bot ID 和 API Key</li>
+        </ol>
+
+        <h3>7.2 调用示例</h3>
+        <pre><code>const response = await fetch('https://api.coze.cn/open_api/v2/chat', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    bot_id: 'YOUR_BOT_ID',
+    user: 'user_001',
+    query: '用户输入内容',
+    custom_variables: {
+      intent: 'health_consult'  // 用户选择的意图
+    }
+  })
+});</code></pre>
+
+        <hr>
+
+        <h2>八、常见问题</h2>
+
+        <p><strong>Q1: 意图识别不准确怎么办？</strong><br>
+        A: 检查 System Prompt 中的意图定义是否清晰，必要时在客户端增加意图确认环节。</p>
+
+        <p><strong>Q2: RAG 检索结果不相关怎么办？</strong><br>
+        A: 优化知识库的分段策略，调整检索参数（Top K 值），或增加重排序节点。</p>
+
+        <p><strong>Q3: 回复太长怎么办？</strong><br>
+        A: 在 System Prompt 中明确限制回复长度（100-200字），并在输出节点增加截断处理。</p>
+
+        <p><strong>Q4: 如何接入微信/小程序？</strong><br>
+        A: 使用 Coze 的「发布」功能选择对应渠道，或通过微信云开发调用 Coze API。</p>
+
+        <hr>
+
+        <h2>九、优化建议</h2>
+
+        <ol>
+            <li><strong>添加意图确认节点</strong>：在条件分支前增加意图确认，提高准确性</li>
+            <li><strong>增加用户画像</strong>：接入用户历史数据，实现个性化推荐</li>
+            <li><strong>添加满意度评价</strong>：在输出节点后增加评价收集</li>
+            <li><strong>配置 fallback 机制</strong>：当知识库检索无结果时，使用大模型通用能力回复</li>
+        </ol>
+
+        <hr>
+
+        <p style="text-align: center; color: #666; margin-top: 40px;">
+            <strong>文档版本</strong>：V1.0 | 
+            <strong>最后更新</strong>：2026-05-26 | 
+            <strong>作者</strong>：泰小虎技术团队
+        </p>
+    </div>
+</body>
+</html>

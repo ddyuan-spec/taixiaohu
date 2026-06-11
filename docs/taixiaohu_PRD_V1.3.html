@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泰小虎PRD V1.3 - 产品需求文档</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #f5f5fa;
+            color: #333;
+            line-height: 1.8;
+        }
+        .topbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .topbar-inner {
+            max-width: 960px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .topbar a { color: #fff; text-decoration: none; font-size: 0.95em; opacity: 0.9; }
+        .topbar a:hover { opacity: 1; }
+        .topbar .home { font-weight: 600; font-size: 1.05em; }
+        .content {
+            max-width: 960px;
+            margin: 30px auto;
+            padding: 40px 48px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .doc-header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+        .doc-header h1 { font-size: 2em; margin-bottom: 12px; border: none; padding: 0; color: white; }
+        .doc-header .subtitle { font-size: 1.1em; opacity: 0.9; margin-bottom: 16px; }
+        .doc-header .meta { display: flex; justify-content: center; gap: 24px; font-size: 0.9em; opacity: 0.85; }
+        h1 { font-size: 1.8em; color: #1a1a2e; margin: 40px 0 20px; padding-bottom: 8px; border-bottom: 2px solid #667eea; }
+        h1:first-of-type { margin-top: 0; }
+        h2 { font-size: 1.35em; color: #2d2d5e; margin: 32px 0 14px; padding-left: 12px; border-left: 4px solid #667eea; }
+        h3 { font-size: 1.1em; color: #3d3d6e; margin: 24px 0 10px; }
+        h4 { font-size: 1em; color: #4d4d7e; margin: 18px 0 8px; }
+        p { margin: 12px 0; }
+        ul, ol { margin: 10px 0 10px 24px; }
+        li { margin: 6px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.9em; }
+        th, td { border: 1px solid #dde0e8; padding: 10px 14px; text-align: left; vertical-align: top; }
+        th { background: #f0f2f8; font-weight: 600; color: #2d2d5e; }
+        tr:nth-child(even) td { background: #fafbfc; }
+        .highlight-box {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+        .highlight-box.blue { background: #e8f4fd; border-left: 4px solid #1890ff; }
+        .highlight-box.green { background: #e6f4ea; border-left: 4px solid #52c41a; }
+        .highlight-box.orange { background: #fff7e6; border-left: 4px solid #fa8c16; }
+        .highlight-box.red { background: #fff1f0; border-left: 4px solid #ff4d4f; }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9em;
+            margin-top: 12px;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #5a6fd6; text-decoration: none; color: white; }
+        .btn.green { background: #52c41a; }
+        .btn.green:hover { background: #389e0d; }
+        strong { color: #1a1a2e; }
+        code { background: #f0f0f5; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; color: #c7254e; }
+        pre { background: #1e1e2e; color: #cdd6f4; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; font-size: 0.88em; }
+        .flow-steps { margin: 16px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; }
+        .flow-steps li { margin: 10px 0; }
+        @media (max-width: 768px) {
+            .content { padding: 20px; margin: 12px; }
+            table { font-size: 0.82em; }
+            th, td { padding: 6px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div class="topbar-inner">
+            <a href="../index.html" class="home">🐯 泰小虎 文档中心</a>
+            <a href="../index.html">← 返回目录</a>
+        </div>
+    </div>
+    <div class="content">
+
+<div class="doc-header">
+    <h1>🐯 泰小虎 智能健康导购助手</h1>
+    <p class="subtitle">产品需求文档（PRD）</p>
+    <div class="meta">
+        <span>版本：V1.3.0</span>
+        <span>状态：已确认</span>
+        <span>编制日期：2026-05-25</span>
+    </div>
+</div>
+
+<h2>一、背景</h2>
+
+<h3>1.1 业务背景</h3>
+
+当前中老年群体健康意识逐渐增强，但健康知识储备不足，对复杂数字化产品适应能力差。保健品市场规模持续增长，但消费者缺乏专业指导，存在误购、过度营养等问题。传统的电商平台和药店导购模式无法满足中老年用户的个性化健康需求。
+
+本产品旨在构建一个基于大模型的智能健康导购助手——<strong>泰小虎</strong>，通过对话式交互，为中老年用户提供健康评估、症状自查、保健品推荐和健康知识科普服务。
+
+<h3>1.2 为什么用大模型解决</h3>
+
+<table>
+<tr><th>对比维度</th><th>传统方案</th><th>大模型方案</th></tr>
+<tr><td>症状理解</td><td>关键词匹配，无法理解自然语言描述</td><td>理解自然语言描述，支持模糊表述</td></tr>
+<tr><td>个性化推荐</td><td>基于规则的统一推荐</td><td>结合用户画像+健康风险动态推荐</td></tr>
+<tr><td>知识库解答</td><td>关键词检索，准确率低</td><td>RAG + 大模型语义理解，准确率高</td></tr>
+<tr><td>交互体验</td><td>菜单式操作，步骤多</td><td>对话式交互，贴近自然沟通</td></tr>
+<tr><td>维护成本</td><td>规则维护成本高</td><td>Prompt调整即可，维护成本低</td></tr>
+</table>
+
+<div class="highlight-box blue">
+<strong>核心优势：</strong>大模型能够理解中老年用户的模糊、非标准化表述，这是传统规则引擎无法做到的。同时RAG技术能够确保健康知识和产品信息的准确性，避免幻觉问题。
+</div>
+
+<h3>1.3 竞品分析</h3>
+
+<table>
+<tr><th>竞品</th><th>优势</th><th>劣势</th><th>泰小虎差异化</th></tr>
+<tr><td>丁香医生</td><td>医疗资质背书，品牌信任度高</td><td>非导购型产品，无保健品推荐</td><td>专注中老年+导购场景</td></tr>
+<tr><td>平安好医生</td><td>B端资源丰富</td><td>产品复杂，中老年使用门槛高</td><td>UI极简，语音交互优先</td></tr>
+<tr><td>小红书健康</td><td>内容生态好</td><td>无AI导购能力，信息不精准</td><td>RAG确保知识准确性</td></tr>
+</table>
+
+<h3>1.4 产品目标</h3>
+
+<strong>业务目标</strong>
+<ul>
+<li>V1.0（MVP）：上线核心功能，验证产品-PMF契合度</li>
+<li>目标用户数：V1.0上线3个月内达到 1000-5000人</li>
+<li>转化率目标：导购转化率 3%-5%</li>
+
+</ul>
+<strong>模型目标</strong>
+<ul>
+<li>健康知识问答准确率 ≥ 90%</li>
+<li>产品推荐相关度 ≥ 80%</li>
+<li>用户对话满意度 ≥ 4.0/5.0</li>
+<li>意图选择转化率 ≥ 85%</li>
+
+</ul>
+<h2>二、需求描述</h2>
+
+<h3>2.1 需求清单</h3>
+
+<table>
+<tr><th>需求ID</th><th>需求名称</th><th>描述</th><th>优先级</th><th>版本</th></tr>
+<tr><td>REQ-001</td><td>健康问卷</td><td>用户填写基本健康信息，生成健康风险评估</td><td>P0</td><td>V1.0</td></tr>
+<tr><td>REQ-002</td><td>症状自查</td><td>对话式症状询问，给出可能风险并引导就医</td><td>P0</td><td>V1.0</td></tr>
+<tr><td>REQ-003</td><td>保健品推荐</td><td>基于健康评估结果推荐保健品</td><td>P0</td><td>V1.0</td></tr>
+<tr><td>REQ-004</td><td>健康知识库</td><td>RAG驱动的健康知识问答</td><td>P0</td><td>V1.0</td></tr>
+<tr><td>REQ-005</td><td>客户分群</td><td>基于健康状态+行为数据对用户分群</td><td>P1</td><td>V1.0</td></tr>
+<tr><td>REQ-006</td><td>语音输入/输出</td><td>支持语音输入和TTS语音播报</td><td>P1</td><td>V1.0</td></tr>
+<tr><td>REQ-007</td><td>后台管理系统</td><td>内容管理+Agent管理+用户管理</td><td>P0</td><td>V1.0</td></tr>
+<tr><td>REQ-008</td><td>人工介入</td><td>AI无法处理时转人工客服</td><td>P2</td><td>V1.1</td></tr>
+<tr><td>REQ-009</td><td>用户历史记忆</td><td>RAG记录用户历史，实现个性化服务</td><td>P1</td><td>V1.1</td></tr>
+</table>
+
+<h3>2.2 需求分类</h3>
+
+<strong>功能需求</strong>
+<ul>
+<li>自然语言理解：支持中文自然语言输入，能够理解中老年用户的方言、模糊描述</li>
+<li>多轮对话：支持追问式交互，如症状自查的逐步引导</li>
+<li>知识检索：基于RAG的健康知识和产品信息检索</li>
+<li>智能推荐：基于用户健康画像的保健品推荐</li>
+<li>分群策略：按健康状态/行为意图对用户分群，差异化服务</li>
+
+</ul>
+<strong>客户分群维度：</strong>
+<ul>
+<li>按年龄段：45-55岁、55-65岁、65岁以上</li>
+<li>按行为意图：主动咨询型、浏览型、购买转化型</li>
+<li>按健康状态：心血管风险、骨骼关节、睡眠问题、免疫力等</li>
+<li>按消费能力：高消费能力、价格敏感、品牌忠诚</li>
+
+</ul>
+<strong>后台管理：</strong> 知识库管理、Agent配置管理、用户管理、数据看板、对话监控、Case下载
+
+<strong>性能需求</strong>
+<ul>
+<li>首次响应时间：简单问答 ≤ 2s，复杂推理 ≤ 5s</li>
+<li>并发支持：支持 50-200 并发用户数</li>
+<li>可用性：99.9%</li>
+
+</ul>
+<strong>安全需求</strong>
+<ul>
+<li>用户健康数据加密存储，符合《个人信息保护法》</li>
+<li>健康数据不出境，模型推理在国内完成</li>
+<li>免责声明：每次症状自查结果必须包含免责提示</li>
+
+</ul>
+<strong>数据需求</strong>
+<ul>
+<li>埋点数据：用户操作链路、对话内容、推荐点击/购买转化</li>
+<li>正/case：用户点赞/购买=正case；用户反馈不准确/投诉=负case</li>
+<li>业务数据：日活跃用户、转化率、客单价、用户留存率</li>
+
+</ul>
+<h2>三、业务流程图</h2>
+
+用户视角的核心操作流程：
+
+<ol class="flow-steps">
+<li>用户进入移动APP</li>
+<li>AI主动打招呼（语音+文字）</li>
+<li>用户在APP界面选择意图类型</li>
+<li>系统根据用户选择路由到对应工作流（健康咨询/产品咨询/其他）</li>
+<li><strong>健康咨询路径：</strong>症状追问 → 风险评估 → 推荐建议 → 引导就医</li>
+<li><strong>产品咨询路径：</strong>需求理解 → 产品推荐 → 购买引导</li>
+</ol>
+
+<div class="highlight-box green">
+<a href="https://ddyuan-spec.github.io/taixiaohu/docs/业务流程图.html" target="_blank" class="btn green">📊 点击查看完整流程图 →</a>
+</div>
+
+<h3>3.1 购买记录关联流程</h3>
+
+<table>
+<tr><th>流程环节</th><th>说明</th></tr>
+<tr><td>用户进入查询</td><td>用户进入APP时，系统自动查询该用户的历史购买记录，加载至会话上下文</td></tr>
+<tr><td>健康咨询关联</td><td>健康咨询时，AI自动关联用户历史购买产品，提供个性化建议</td></tr>
+<tr><td>复购提示</td><td>根据购买周期，在适当时机提示用户复购（如保健品即将用完时）</td></tr>
+<tr><td>订单问题转客服</td><td>涉及订单查询、退换货、物流等问题时，自动转接人工客服</td></tr>
+</table>
+
+<h3>3.2 用户画像补全流程</h3>
+
+<table>
+<tr><th>流程环节</th><th>说明</th></tr>
+<tr><td>画像完整度检测</td><td>系统实时检测用户画像完整度，识别缺失的关键信息字段</td></tr>
+<tr><td>追问触发条件</td><td>当对话涉及健康评估或产品推荐时，若画像不完整则触发追问</td></tr>
+<tr><td>追问优先级</td><td>过敏史 > 慢性病 > 年龄/性别，按优先级依次追问</td></tr>
+<tr><td>关联人画像追问</td><td>识别"给老伴买""给父母买"等场景，创建关联人画像并追问相关信息</td></tr>
+</table>
+
+<h3>3.3 复购推荐流程</h3>
+
+<table>
+<tr><th>流程环节</th><th>说明</th></tr>
+<tr><td>复购场景识别</td><td>根据购买周期、用户主动询问、产品用完提醒等场景识别复购需求</td></tr>
+<tr><td>历史产品推荐</td><td>优先推荐用户历史购买过的产品，同时推荐相关联的补充产品</td></tr>
+<tr><td>复购优惠说明</td><td>展示复购专属优惠（如会员折扣、满减活动、赠品等），提升复购转化率</td></tr>
+</table>
+
+<h3>3.4 画像变更管理流程</h3>
+
+<table>
+<tr><th>流程环节</th><th>说明</th></tr>
+<tr><td>重大变更检测</td><td>检测过敏史、慢性病、用药情况等关键字段的变更</td></tr>
+<tr><td>变更记录存储</td><td>所有画像变更记录存档，包含变更时间、变更内容、变更来源</td></tr>
+<tr><td>风险提示</td><td>重大变更时，系统自动评估对推荐结果的影响，必要时重新推荐并提示用户</td></tr>
+</table>
+
+<h2>四、系统流程图</h2>
+
+系统执行链路（包含AI节点标注）：
+
+<table>
+<tr><th>节点类型</th><th>节点名称</th><th>说明</th></tr>
+<tr><td>用户输入</td><td>文字/语音输入</td><td>支持ASR语音转文字</td></tr>
+<tr><td>LLM调用</td><td>用户意图选择</td><td>用户在APP界面选择意图类型，作为参数传入Coze工作流，无需LLM调用</td></tr>
+<tr><td>LLM调用</td><td>症状分析</td><td>多轮对话追问，预期延迟小于3s</td></tr>
+<tr><td>工具调用</td><td>RAG检索</td><td>健康知识库+产品库检索</td></tr>
+<tr><td>工具调用</td><td>推荐引擎</td><td>基于用户画像的产品推荐</td></tr>
+<tr><td>判断/路由</td><td>合规检查</td><td>检测是否涉及医疗建议，触发免责</td></tr>
+<tr><td>人工介入</td><td>转人工</td><td>AI无法处理时转人工客服</td></tr>
+<tr><td>异常处理</td><td>超时/错误</td><td>LLM调用超时后返回友好提示</td></tr>
+</table>
+
+<h3>4.1 数据库架构说明</h3>
+
+系统核心数据存储架构，包含9张核心表：
+
+<table>
+<tr><th>表名</th><th>类型</th><th>说明</th></tr>
+<tr><td>users</td><td>用户基础表</td><td>存储用户账号、认证信息、注册时间等基础数据</td></tr>
+<tr><td>user_profiles</td><td>用户画像表</td><td>存储用户健康画像信息（年龄、性别、过敏史、慢性病等）</td></tr>
+<tr><td>profile_history</td><td>画像变更记录表</td><td>记录用户画像的所有变更历史，支持审计追溯</td></tr>
+<tr><td>products</td><td>产品信息表</td><td>存储保健品产品信息（名称、功效、成分、适用人群、价格等）</td></tr>
+<tr><td>orders</td><td>订单表</td><td>存储用户购买订单信息</td></tr>
+<tr><td>order_items</td><td>订单明细表</td><td>存储订单中的具体产品明细</td></tr>
+<tr><td>conversations</td><td>对话会话表</td><td>存储用户与AI的对话会话记录</td></tr>
+<tr><td>messages</td><td>对话消息表</td><td>存储对话中的每条消息内容</td></tr>
+<tr><td>recommendations</td><td>推荐记录表</td><td>存储AI推荐记录及用户反馈，用于效果分析</td></tr>
+</table>
+
+<h3>4.2 用户画像系统架构</h3>
+
+用户画像数据模型与处理流程：
+
+<table>
+<tr><th>模块</th><th>功能说明</th></tr>
+<tr><td>基础属性层</td><td>年龄、性别、地区、职业等基础人口属性信息</td></tr>
+<tr><td>健康属性层</td><td>过敏史、慢性病、用药情况、健康关注点、症状历史</td></tr>
+<tr><td>行为属性层</td><td>浏览记录、咨询历史、购买记录、反馈评价</td></tr>
+<tr><td>关联人画像</td><td>支持为家人/亲友创建独立画像，关联到主账号</td></tr>
+<tr><td>画像更新引擎</td><td>实时解析对话内容，提取画像信息，触发更新流程</td></tr>
+<tr><td>完整度评分</td><td>计算画像完整度分数，指导追问优先级</td></tr>
+</table>
+
+<h2>五、模型选型</h2>
+
+<h3>5.1 选型约束条件</h3>
+
+<table>
+<tr><th>约束维度</th><th>要求</th></tr>
+<tr><td>数据安全</td><td>用户健康数据不出境</td></tr>
+<tr><td>成本控制</td><td>MVP阶段月成本 5000-20000元</td></tr>
+<tr><td>响应速度</td><td>简单问答小于等于2s</td></tr>
+<tr><td>部署方式</td><td>混合部署（核心数据私有化，LLM推理走云端API）</td></tr>
+</table>
+
+<h3>5.2 可选模型对比</h3>
+
+<table>
+<tr><th>模型</th><th>参数量</th><th>中文能力</th><th>部署方式</th><th>价格</th><th>适合场景</th></tr>
+<tr><td>通义千问GLM-4</td><td>9B</td><td>优秀</td><td>API</td><td>低</td><td>意图识别+对话</td></tr>
+<tr><td>Qwen2.5-72B</td><td>72B</td><td>优秀</td><td>API</td><td>中</td><td>复杂推理</td></tr>
+<tr><td>Qwen2.5-7B</td><td>7B</td><td>良好</td><td>私有化</td><td>自运营</td><td>用户意图选择</td></tr>
+<tr><td>文心一言4.0</td><td>未公开</td><td>优秀</td><td>API</td><td>低</td><td>MVP快速验证</td></tr>
+<tr><td>DeepSeek-V3</td><td>685B MoE</td><td>优秀</td><td>API</td><td>极低</td><td>成本敏感</td></tr>
+</table>
+
+<h3>5.3 选型结论</h3>
+
+<div class="highlight-box blue">
+<strong>选型方案：</strong>
+<ul>
+<li>基于扣子（coze.cn）平台，使用Coze工作流和对话流</li>
+<li>主模型：使用Coze平台推荐的中文大模型</li>
+<li>备用模型：通过Coze平台failover机制切换</li>
+<li>成本预估：基于目标用户数1000-5000人，结合Coze平台定价估算</li>
+</ul>
+</div>
+
+<h2>六、Prompt工程设计</h2>
+
+<div class="highlight-box green">
+<strong>📄 Prompt完整文档</strong>
+<p>Prompt架构设计、System Prompt、意图选择规范、各场景Prompt详情、Coze集成指南等完整内容请查看：</p>
+<a href="https://ddyuan-spec.github.io/taixiaohu/docs/%E6%B3%B0%E5%B0%8F%E8%99%8E_Prompt%E5%AE%8C%E6%95%B4%E6%96%87%E6%A1%A3_V1.html" target="_blank" class="btn green">打开 Prompt 文档 →</a>
+</div>
+
+<h2>七、训练数据集（RAG知识库）</h2>
+
+<h3>7.1 知识库内容</h3>
+
+<table>
+<tr><th>知识库</th><th>内容说明</th><th>数据来源</th><th>更新频率</th></tr>
+<tr><td>健康知识库</td><td>常见疾病、健康保健、饮食建议等</td><td>已有（健康知识文档）</td><td>每月更新</td></tr>
+<tr><td>产品知识库</td><td>保健品产品信息（功效、成分、适用人群）</td><td>已有（产品资料）</td><td>随产品上新更新</td></tr>
+<tr><td>症状-风险库</td><td>常见症状与健康风险的对应关系</td><td>需采集整理</td><td>每季度更新</td></tr>
+</table>
+
+<div class="highlight-box orange">
+<strong>知识库来源：</strong>健康知识库和产品知识库已有现成资料（产品资料+健康知识文档），症状-风险库需采集整理。<br>
+<strong>技术方案：</strong>暂不对接第三方医学知识图谱API，使用自有知识库通过RAG方案满足需求。
+</div>
+
+<h3>7.2 RAG技术方案</h3>
+
+<ul>
+<li><strong>Embedding模型：</strong>由Coze平台托管（火山引擎RAG内置）</li>
+<li><strong>向量数据库：</strong>由Coze平台托管（火山引擎RAG内置）</li>
+<li><strong>文档切片策略：</strong>按语义段落切片，每段500-800 token</li>
+<li><strong>检索策略：</strong>混合检索（向量相似度 + 关键词匹配）</li>
+
+</ul>
+<h2>八、评测体系</h2>
+
+<div class="highlight-box green">
+<strong>🧪 评测集完整文档</strong>
+<p>评测用例（50+条）、五维度评分标准、测试方法、通过标准等完整内容请查看：</p>
+<a href="https://ddyuan-spec.github.io/taixiaohu/docs/%E6%B3%B0%E5%B0%8F%E8%99%8E_%E8%AF%84%E6%B5%8B%E9%9B%86_V1.html" target="_blank" class="btn green">打开 评测集 文档 →</a>
+</div>
+
+<h2>九、效果保障与稳定性策略</h2>
+
+详见：<a href="https://ddyuan-spec.github.io/taixiaohu/docs/%E6%B3%B0%E5%B0%8F%E8%99%8E_%E6%95%88%E6%9E%9C%E4%BF%9D%E9%9A%9C%E4%B8%8E%E7%A8%B3%E5%AE%9A%E6%80%A7%E8%BF%90%E7%BB%B4%E6%89%8B%E5%86%8C_V1.html" target="_blank">《效果保障与稳定性运维手册》</a>
+
+<h2>十、原型图</h2>
+
+<div class="highlight-box green">
+<strong>🎮 可交互原型</strong>
+<p>可交互演示的原型，包含意图选择、AI对话、产品推荐等核心功能。</p>
+<a href="https://ddyuan-spec.github.io/taixiaohu/prototype.html" target="_blank" class="btn">📱 移动APP交互原型 →</a>
+<a href="https://ddyuan-spec.github.io/taixiaohu/backend-prototype.html" target="_blank" class="btn" style="background: #1A365D; margin-left: 12px;">⚙️ 管理后台交互原型 →</a>
+</div>
+
+<h2>十一、AI能力边界说明</h2>
+
+<strong>能做到：</strong>
+<ul>
+<li>理解中文自然语言描述的健康问题</li>
+<li>基于RAG提供准确的健康知识和产品信息</li>
+<li>根据健康评估推荐合适的保健品</li>
+<li>多轮对话引导用户描述症状</li>
+
+</ul>
+<strong>做不到：</strong>
+<ul>
+<li>不能给出医疗诊断或用药建议</li>
+<li>不能处理急诊情况（如胸痛，大出血等）</li>
+<li>无法保证100%准确率，可能存在偏差</li>
+<li>不支持图片识别（V1.0）</li>
+
+</ul>
+<strong>已知缺陷：</strong>
+<ul>
+<li>V1.0 暂不支持对接可穿戴设备数据</li>
+<li>V1.0 暂不支持体检报告解析</li>
+
+</ul>
+<h2>十二、数据飞轮与迭代机制</h2>
+
+<h3>12.1 迭代闭环流程</h3>
+
+<pre>
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│  收集反馈   │ → │  问题归因   │ → │  优化实施   │ → │  效果验证   │
+│  (Bad Case) │    │  (分类分析) │    │  (Prompt/   │    │  (A/B测试)  │
+│             │    │             │    │  知识库)    │    │             │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+       ↑                                                        │
+       └────────────────────────────────────────────────────────┘
+                        (数据回流)
+</pre>
+
+<h3>12.2 后台功能支撑</h3>
+
+<div class="highlight-box green">
+<strong>数据飞轮工作台</strong>（管理后台功能）：
+<ul>
+<li><strong>Bad Case归因分析：</strong>支持按Prompt问题/知识库缺失/模型限制/意图识别错误分类标记</li>
+<li><strong>优化任务管理：</strong>待优化 → 优化中 → 已验证 → 已上线的全流程跟踪</li>
+<li><strong>A/B测试管理：</strong>Prompt版本对比、流量分配、显著性分析</li>
+<li><strong>知识库优化建议：</strong>自动识别高频未命中问题，推荐新增/更新文档</li>
+</ul>
+<a href="https://ddyuan-spec.github.io/taixiaohu/backend-prototype.html" target="_blank" class="btn">查看 管理后台原型 →</a>
+</div>
+
+<h3>12.3 迭代节奏</h3>
+
+<table>
+<tr><th>周期</th><th>动作</th><th>负责人</th></tr>
+<tr><td>每周</td><td>汇总线上Bad Case，归类失败原因</td><td>运营团队</td></tr>
+<tr><td>每月</td><td>评估Prompt调优需求，实施优化</td><td>产品+技术</td></tr>
+<tr><td>每季度</td><td>评审数据飞轮运转效率，调整策略</td><td>项目组</td></tr>
+</table>
+
+<div style="text-align: center; color: #999; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+<p>泰小虎 产品需求文档 PRD V1.3</p>
+<p>最后更新：2026-05-25</p>
+</div>
+
+    </div>
+</body>
+</html>

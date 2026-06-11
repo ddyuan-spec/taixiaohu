@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泰小虎 - 智能健康导购助手 | 项目文档中心</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            color: #fff;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        .header .version {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 12px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+        }
+        .section-title {
+            color: #fff;
+            font-size: 1.3em;
+            margin: 30px 0 16px;
+            padding-left: 12px;
+            border-left: 4px solid rgba(255,255,255,0.6);
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            color: #333;
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+        }
+        .card .icon {
+            font-size: 2.2em;
+            margin-bottom: 12px;
+        }
+        .card h3 {
+            font-size: 1.25em;
+            margin-bottom: 8px;
+            color: #1a1a2e;
+        }
+        .card .desc {
+            font-size: 0.92em;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        .card .meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .card .tag {
+            font-size: 0.78em;
+            padding: 3px 10px;
+            border-radius: 12px;
+            background: #f0f0f5;
+            color: #555;
+        }
+        .card .tag.primary { background: #e8f0fe; color: #1a73e8; }
+        .card .tag.success { background: #e6f4ea; color: #137333; }
+        .card .tag.warning { background: #fef7e0; color: #b06000; }
+        .card .tag.danger { background: #fce8e6; color: #c5221f; }
+        .card .tag.info { background: #e8f4fd; color: #0066cc; }
+        .card .arrow {
+            position: absolute;
+            right: 24px;
+            top: 28px;
+            font-size: 1.2em;
+            color: #ccc;
+            transition: color 0.3s, transform 0.3s;
+        }
+        .card:hover .arrow {
+            color: #667eea;
+            transform: translateX(4px);
+        }
+        .info-bar {
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 20px 28px;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .info-bar h3 {
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 8px;
+        }
+        .info-item {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        .info-item strong {
+            opacity: 1;
+        }
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85em;
+        }
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8em; }
+            .card-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>🐯 泰小虎</h1>
+    <p class="subtitle">智能健康导购助手 · 项目文档中心</p>
+    <span class="version">V1.4 | 2026-05-25 更新</span>
+</div>
+
+<div class="container">
+
+    <!-- 项目概览 -->
+    <div class="info-bar">
+        <h3>📋 项目概览</h3>
+        <div class="info-grid">
+            <div class="info-item"><strong>产品形态：</strong>移动APP</div>
+            <div class="info-item"><strong>AI平台：</strong>扣子（coze.cn）</div>
+            <div class="info-item"><strong>目标用户：</strong>45-70岁中老年</div>
+            <div class="info-item"><strong>部署方式：</strong>混合部署</div>
+            <div class="info-item"><strong>目标用户量：</strong>1000-5000人</div>
+            <div class="info-item"><strong>转化率目标：</strong>3%-5%</div>
+        </div>
+    </div>
+
+    <!-- 核心文档 -->
+    <div class="section-title">📄 核心文档</div>
+    <div class="card-grid">
+        <a class="card" href="docs/taixiaohu_PRD_V1.3.html">
+            <span class="arrow">→</span>
+            <div class="icon">📋</div>
+            <h3>产品需求文档 PRD V1.3</h3>
+            <p class="desc">产品背景、需求清单、业务流程、系统架构、模型选型、评测体系、上线计划等完整PRD。V1.3更新：新增购买记录关联、画像补全、复购推荐、画像变更管理流程。</p>
+            <div class="meta">
+                <span class="tag primary">核心</span>
+                <span class="tag">HTML</span>
+                <span class="tag success">已确认</span>
+            </div>
+        </a>
+        <a class="card" href="docs/泰小虎_Prompt完整文档_V1.html">
+            <span class="arrow">→</span>
+            <div class="icon">🤖</div>
+            <h3>Prompt 完整文档 V1.3</h3>
+            <p class="desc">14个Prompt模块（System/意图确认/画像追问/症状分析/推荐生成/复购推荐/客服转接等），含客户端意图选择、Coze集成指南。</p>
+            <div class="meta">
+                <span class="tag primary">核心</span>
+                <span class="tag">Markdown</span>
+                <span class="tag warning">V1.3</span>
+            </div>
+        </a>
+        <a class="card" href="docs/泰小虎_数据库设计_V1.html">
+            <span class="arrow">→</span>
+            <div class="icon">🗄️</div>
+            <h3>数据库设计文档 V1.0</h3>
+            <p class="desc">9张核心表设计：用户表、用户画像表、关联人表、购买记录表、画像标签表、画像变更记录表、客服配置表、对话历史表。含SQL语句和初始数据。</p>
+            <div class="meta">
+                <span class="tag primary">核心</span>
+                <span class="tag">SQL</span>
+                <span class="tag success">V1.0</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- 可交互原型 -->
+    <div class="section-title">🎮 可交互原型</div>
+    <div class="card-grid">
+        <a class="card" href="prototype.html">
+            <span class="arrow">→</span>
+            <div class="icon">📱</div>
+            <h3>移动APP交互原型</h3>
+            <p class="desc">可直接交互演示的原型，包含意图选择、AI对话、产品推荐等核心功能。支持点击、输入、查看模拟AI回复。</p>
+            <div class="meta">
+                <span class="tag primary">演示</span>
+                <span class="tag">可交互</span>
+            </div>
+        </a>
+        <a class="card" href="backend-prototype.html">
+            <span class="arrow">→</span>
+            <div class="icon">⚙️</div>
+            <h3>智能体管理后台交互原型</h3>
+            <p class="desc">管理后台交互原型，包含仪表盘、知识库管理、Agent配置、用户管理、对话监控、数据看板、Case管理、系统设置等15个核心页面。</p>
+            <div class="meta">
+                <span class="tag primary">演示</span>
+                <span class="tag">可交互</span>
+                <span class="tag success">15个页面</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- 质量保障 -->
+    <div class="section-title">✅ 质量保障</div>
+    <div class="card-grid">
+        <a class="card" href="docs/泰小虎_评测集_V1.html">
+            <span class="arrow">→</span>
+            <div class="icon">🧪</div>
+            <h3>评测集 V1</h3>
+            <p class="desc">50条评测用例，覆盖健康咨询、产品咨询、边界情况、恶意输入，含五维度评分标准。</p>
+            <div class="meta">
+                <span class="tag danger">质量</span>
+                <span class="tag">50条用例</span>
+                <span class="tag warning">安全一票否决</span>
+            </div>
+        </a>
+        <a class="card" href="docs/泰小虎_效果保障与稳定性运维手册_V1.html" target="_blank">
+            <span class="arrow">→</span>
+            <div class="icon">🔒</div>
+            <h3>效果保障与稳定性运维手册 V1</h3>
+            <p class="desc">RAG引用精准度、关键词过滤、幻觉控制、稳定性工程、一致性验证五大核心策略。包含效果保障验证方案与日常运维指南。</p>
+            <div class="meta">
+                <span class="tag danger">运维</span>
+                <span class="tag">效果保障</span>
+                <span class="tag success">V1</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- 备用/归档 -->
+    <div class="section-title">📦 备用/归档</div>
+    <div class="card-grid">
+        <a class="card" href="docs/泰小虎_LLM意图识别Prompt_V1.html">
+            <span class="arrow">→</span>
+            <div class="icon">🗂️</div>
+            <h3>LLM意图识别Prompt V1.0</h3>
+            <p class="desc">大模型意图识别Prompt完整设计，含4类意图分类、Coze集成指南、评测标准。当前版本采用客户端意图选择，本文档作为备用保留。</p>
+            <div class="meta">
+                <span class="tag info">备用</span>
+                <span class="tag">归档</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- 设计文档 -->
+    <div class="section-title">🎨 设计文档</div>
+    <div class="card-grid">
+        <a class="card" href="docs/泰小虎_前端原型设计.html">
+            <span class="arrow">→</span>
+            <div class="icon">📱</div>
+            <h3>前端原型设计（移动APP）</h3>
+            <p class="desc">11个完整页面原型，含意图选择页、设计规范、交互说明、AI特殊交互规范、用户分群策略。V1.1更新：新增意图选择页，改为APP设计。</p>
+            <div class="meta">
+                <span class="tag success">设计</span>
+                <span class="tag">11个页面</span>
+            </div>
+        </a>
+        <a class="card" href="docs/泰小虎_后台原型设计.html">
+            <span class="arrow">→</span>
+            <div class="icon">⚙️</div>
+            <h3>智能体管理后台原型设计</h3>
+            <p class="desc">15个完整页面原型，含知识库管理、Agent配置、对话监控、数据看板、Case管理、用户画像管理、画像标签管理、客服配置管理。V1.3更新：新增画像相关页面。</p>
+            <div class="meta">
+                <span class="tag success">设计</span>
+                <span class="tag">15个页面</span>
+            </div>
+        </a>
+    </div>
+
+</div>
+
+<div class="footer">
+    <p>泰小虎 · 智能健康导购助手 | 文档自动生成于 2026-05-25</p>
+</div>
+
+</body>
+</html>

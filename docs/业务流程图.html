@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泰小虎业务流程图</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #f5f5fa;
+            color: #333;
+            line-height: 1.8;
+        }
+        .topbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .topbar-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .topbar a { color: #fff; text-decoration: none; font-size: 0.95em; opacity: 0.9; }
+        .topbar a:hover { opacity: 1; }
+        .topbar .home { font-weight: 600; font-size: 1.05em; }
+        .content {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 40px 48px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .doc-header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+        .doc-header h1 { font-size: 2em; margin-bottom: 12px; border: none; padding: 0; color: white; }
+        .doc-header .subtitle { font-size: 1.1em; opacity: 0.9; margin-bottom: 16px; }
+        h2 { font-size: 1.35em; color: #2d2d5e; margin: 32px 0 14px; padding-left: 12px; border-left: 4px solid #667eea; }
+        h3 { font-size: 1.1em; color: #3d3d6e; margin: 24px 0 10px; }
+        p { margin: 12px 0; }
+        
+        /* 流程图样式 */
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 24px 0;
+            padding: 24px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        .flow-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .flow-box {
+            padding: 16px 24px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 140px;
+            font-size: 0.95em;
+            position: relative;
+        }
+        .flow-box.start { background: #e6f4ea; border: 2px solid #52c41a; color: #137333; }
+        .flow-box.process { background: #e8f4fd; border: 2px solid #1890ff; color: #096dd9; }
+        .flow-box.decision { 
+            background: #fff7e6; 
+            border: 2px solid #fa8c16; 
+            color: #d46b08;
+            border-radius: 50px;
+        }
+        .flow-box.end { background: #f6ffed; border: 2px solid #73d13d; color: #389e0d; }
+        .flow-box.system { background: #f9f0ff; border: 2px solid #722ed1; color: #531dab; }
+        .flow-arrow {
+            font-size: 1.5em;
+            color: #999;
+        }
+        .flow-arrow.down {
+            transform: rotate(90deg);
+            display: block;
+            text-align: center;
+            margin: 8px 0;
+        }
+        
+        /* 分支流程 */
+        .branch-container {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+        .branch {
+            flex: 1;
+            min-width: 280px;
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #fff;
+            border: 2px solid #e0e0e0;
+        }
+        .branch.health { border-color: #52c41a; }
+        .branch.product { border-color: #1890ff; }
+        .branch-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .branch.health .branch-title { color: #52c41a; border-color: #d9f7be; }
+        .branch.product .branch-title { color: #1890ff; border-color: #bae7ff; }
+        .branch-steps {
+            list-style: none;
+            padding: 0;
+        }
+        .branch-steps li {
+            padding: 10px 12px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #ccc;
+        }
+        .branch.health .branch-steps li { border-left-color: #52c41a; }
+        .branch.product .branch-steps li { border-left-color: #1890ff; }
+        
+        /* 泳道图样式 */
+        .swimlane {
+            margin: 24px 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .swimlane-header {
+            background: #f0f2f5;
+            padding: 12px 20px;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .swimlane-content {
+            padding: 20px;
+            background: #fff;
+        }
+        
+        /* 表格样式 */
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.9em; }
+        th, td { border: 1px solid #dde0e8; padding: 10px 14px; text-align: left; vertical-align: top; }
+        th { background: #f0f2f8; font-weight: 600; color: #2d2d5e; }
+        tr:nth-child(even) td { background: #fafbfc; }
+        
+        .highlight-box {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+        .highlight-box.blue { background: #e8f4fd; border-left: 4px solid #1890ff; }
+        .highlight-box.green { background: #e6f4ea; border-left: 4px solid #52c41a; }
+        .highlight-box.orange { background: #fff7e6; border-left: 4px solid #fa8c16; }
+        
+        @media (max-width: 768px) {
+            .content { padding: 20px; margin: 12px; }
+            .branch-container { flex-direction: column; }
+            .flow-row { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div class="topbar-inner">
+            <a href="../index.html" class="home">🐯 泰小虎 文档中心</a>
+            <a href="taixiaohu_PRD_V1.3.html">← 返回PRD</a>
+        </div>
+    </div>
+    
+    <div class="content">
+        <div class="doc-header">
+            <h1>📊 泰小虎业务流程图</h1>
+            <p class="subtitle">用户视角与系统视角的完整业务流程</p>
+        </div>
+
+        <h2>一、用户核心操作流程</h2>
+        
+        <div class="flow-container">
+            <div class="flow-row">
+                <div class="flow-box start">👤 用户进入APP</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box process">🤖 AI主动打招呼<br><small>语音+文字</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box decision">🎯 选择意图类型</div>
+            </div>
+            
+            <span class="flow-arrow down">↓</span>
+            
+            <div class="branch-container">
+                <div class="branch health">
+                    <div class="branch-title">🏥 健康咨询路径</div>
+                    <ul class="branch-steps">
+                        <li>1. 症状追问<br><small>了解用户具体症状</small></li>
+                        <li>2. 风险评估<br><small>分析健康风险等级</small></li>
+                        <li>3. 推荐建议<br><small>给出保健品/就医建议</small></li>
+                        <li>4. 引导就医<br><small>高风险时建议及时就医</small></li>
+                    </ul>
+                </div>
+                
+                <div class="branch product">
+                    <div class="branch-title">️ 产品咨询路径</div>
+                    <ul class="branch-steps">
+                        <li>1. 需求理解<br><small>分析用户购买意图</small></li>
+                        <li>2. 产品推荐<br><small>基于画像推荐产品</small></li>
+                        <li>3. 购买引导<br><small>引导完成购买转化</small></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h2>二、系统处理流程</h2>
+        
+        <div class="swimlane">
+            <div class="swimlane-header">🔄 意图识别与路由</div>
+            <div class="swimlane-content">
+                <div class="flow-row">
+                    <div class="flow-box system">接收用户输入</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box system">意图识别</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box system">路由分发</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box system">执行对应工作流</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="swimlane">
+            <div class="swimlane-header">💬 对话处理流程</div>
+            <div class="swimlane-content">
+                <div class="flow-row">
+                    <div class="flow-box system">加载用户画像</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box system">查询知识库<br><small>RAG检索</small></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box system">生成回复</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box system">安全审核</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box system">返回用户</div>
+                </div>
+            </div>
+        </div>
+
+        <h2>三、购买记录关联流程</h2>
+        
+        <div class="flow-container">
+            <div class="flow-row">
+                <div class="flow-box start">用户进入查询</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box system">查询历史购买记录</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box system">加载至会话上下文</div>
+            </div>
+            <span class="flow-arrow down">↓</span>
+            <div class="flow-row">
+                <div class="flow-box process">健康咨询关联</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box process">复购提示</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box process">订单问题转客服</div>
+            </div>
+        </div>
+
+        <table>
+            <tr><th>流程环节</th><th>说明</th></tr>
+            <tr><td>用户进入查询</td><td>用户进入APP时，系统自动查询该用户的历史购买记录，加载至会话上下文</td></tr>
+            <tr><td>健康咨询关联</td><td>健康咨询时，AI自动关联用户历史购买产品，提供个性化建议</td></tr>
+            <tr><td>复购提示</td><td>根据购买周期，在适当时机提示用户复购（如保健品即将用完时）</td></tr>
+            <tr><td>订单问题转客服</td><td>涉及订单查询、退换货、物流等问题时，自动转接人工客服</td></tr>
+        </table>
+
+        <h2>四、用户画像补全流程</h2>
+        
+        <div class="flow-container">
+            <div class="flow-row">
+                <div class="flow-box system">画像完整度检测</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box decision">画像是否完整？</div>
+            </div>
+            <span class="flow-arrow down">↓</span>
+            <div class="branch-container">
+                <div class="branch" style="border-color: #fa8c16;">
+                    <div class="branch-title" style="color: #fa8c16; border-color: #ffe7ba;">❌ 不完整</div>
+                    <ul class="branch-steps">
+                        <li style="border-left-color: #fa8c16;">触发追问逻辑</li>
+                        <li style="border-left-color: #fa8c16;">按优先级追问：<br>过敏史 > 慢性病 > 年龄/性别</li>
+                        <li style="border-left-color: #fa8c16;">关联人画像追问</li>
+                    </ul>
+                </div>
+                <div class="branch" style="border-color: #52c41a;">
+                    <div class="branch-title" style="color: #52c41a; border-color: #d9f7be;">✅ 完整</div>
+                    <ul class="branch-steps">
+                        <li style="border-left-color: #52c41a;">正常进行对话</li>
+                        <li style="border-left-color: #52c41a;">基于完整画像提供服务</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <table>
+            <tr><th>流程环节</th><th>说明</th></tr>
+            <tr><td>画像完整度检测</td><td>系统实时检测用户画像完整度，识别缺失的关键信息字段</td></tr>
+            <tr><td>追问触发条件</td><td>当对话涉及健康评估或产品推荐时，若画像不完整则触发追问</td></tr>
+            <tr><td>追问优先级</td><td>过敏史 > 慢性病 > 年龄/性别，按优先级依次追问</td></tr>
+            <tr><td>关联人画像追问</td><td>识别"给老伴买""给父母买"等场景，创建关联人画像并追问相关信息</td></tr>
+        </table>
+
+        <h2>五、复购推荐流程</h2>
+        
+        <div class="flow-container">
+            <div class="flow-row">
+                <div class="flow-box start">复购场景识别</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box process">历史产品推荐</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box process">关联产品推荐</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box process">复购优惠说明</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box end">引导购买</div>
+            </div>
+        </div>
+
+        <table>
+            <tr><th>流程环节</th><th>说明</th></tr>
+            <tr><td>复购场景识别</td><td>根据购买周期、用户主动询问、产品用完提醒等场景识别复购需求</td></tr>
+            <tr><td>历史产品推荐</td><td>优先推荐用户历史购买过的产品，同时推荐相关联的补充产品</td></tr>
+            <tr><td>复购优惠说明</td><td>展示复购专属优惠（如会员折扣、满减活动、赠品等），提升复购转化率</td></tr>
+        </table>
+
+        <h2>六、数据飞轮闭环流程</h2>
+        
+        <div class="flow-container">
+            <div class="flow-row">
+                <div class="flow-box system">📊 反馈收集</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box system">🔍 问题分析</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box system">⚡ 优化执行</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box system">✅ 效果验证</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box system">📊 反馈收集</div>
+            </div>
+        </div>
+
+        <div class="highlight-box green">
+            <strong>闭环说明：</strong>数据飞轮形成持续迭代闭环，通过用户反馈不断优化产品体验。
+        </div>
+
+    </div>
+</body>
+</html>
