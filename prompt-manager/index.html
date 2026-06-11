@@ -345,6 +345,10 @@
 <body>
     <div class="header">
         <h1>🤖 提示词版本管理系统</h1>
+        <div style="margin-top: 10px; font-size: 13px; opacity: 0.9;">
+            <span>数据存储: GitHub</span>
+            <button onclick="clearToken()" style="margin-left: 15px; background: rgba(255,255,255,0.2); border: none; color: white; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">清除 Token</button>
+        </div>
     </div>
     <div class="container">
         <div class="sidebar">
@@ -401,44 +405,148 @@
     <div class="toast" id="toast"></div>
 
     <script>
+        // GitHub 配置
+        const GITHUB_CONFIG = {
+            owner: 'ddyuan-spec',
+            repo: 'taixiaohu',
+            path: 'prompt-manager/data.json',
+            branch: 'main'
+        };
+
         // 数据存储
-        let nodes = JSON.parse(localStorage.getItem('promptNodes')) || [
-            {
-                id: '1',
-                name: '意图识别节点',
-                systemPrompt: {
-                    current: { version: 1, content: '你是一位杰出的意图识别专家...', timestamp: Date.now() },
-                    preview: { version: 2, content: '你是一位杰出的意图识别专家（优化版）...', timestamp: Date.now() },
-                    history: []
-                },
-                userPrompt: {
-                    current: { version: 1, content: '请识别以下用户意图...', timestamp: Date.now() },
-                    preview: { version: 2, content: '请识别以下用户意图（优化版）...', timestamp: Date.now() },
-                    history: []
-                }
-            },
-            {
-                id: '2',
-                name: '商品知识检索',
-                systemPrompt: {
-                    current: { version: 1, content: '你是商品知识专家...', timestamp: Date.now() },
-                    preview: null,
-                    history: []
-                },
-                userPrompt: {
-                    current: { version: 1, content: '请检索以下商品信息...', timestamp: Date.now() },
-                    preview: null,
-                    history: []
-                }
-            }
-        ];
+        let nodes = [];
         let currentNodeId = null;
         let currentPromptType = 'systemPrompt';
         let editingNodeId = null;
+        let githubToken = localStorage.getItem('githubToken') || '';
 
         // 初始化
-        function init() {
+        async function init() {
+            await loadData();
             renderNodeList();
+        }
+
+        // 从 GitHub 加载数据
+        async function loadData() {
+            try {
+                showToast('正在从 GitHub 加载数据...', 'info');
+                const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.branch}/${GITHUB_CONFIG.path}?t=${Date.now()}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    nodes = data.nodes || [];
+                    showToast('数据加载成功', 'success');
+                } else {
+                    // 如果文件不存在，使用默认数据
+                    nodes = getDefaultData();
+                    showToast('使用默认数据', 'info');
+                }
+            } catch (error) {
+                console.error('加载数据失败:', error);
+                nodes = getDefaultData();
+                showToast('加载失败，使用本地数据', 'error');
+            }
+        }
+
+        // 获取默认数据
+        function getDefaultData() {
+            return [
+                {
+                    id: '1',
+                    name: '意图识别节点',
+                    systemPrompt: {
+                        current: { version: 1, content: '你是一位杰出的意图识别专家，具备极为敏锐的洞察力，能够迅速且精准地判断用户问题的意图类型。', timestamp: Date.now() },
+                        preview: null,
+                        history: []
+                    },
+                    userPrompt: {
+                        current: { version: 1, content: '请识别以下用户意图，仅返回对应的序号。', timestamp: Date.now() },
+                        preview: null,
+                        history: []
+                    }
+                },
+                {
+                    id: '2',
+                    name: '商品知识检索',
+                    systemPrompt: {
+                        current: { version: 1, content: '你是商品知识专家，熟悉所有保健品的功效、成分、适用人群等信息。', timestamp: Date.now() },
+                        preview: null,
+                        history: []
+                    },
+                    userPrompt: {
+                        current: { version: 1, content: '请检索以下商品信息并给出准确的回答。', timestamp: Date.now() },
+                        preview: null,
+                        history: []
+                    }
+                }
+            ];
+        }
+
+        // 保存数据到 GitHub
+        async function saveDataToGitHub() {
+            if (!githubToken) {
+                const token = prompt('请输入 GitHub Token (用于保存数据到仓库):');
+                if (!token) {
+                    showToast('未提供 Token，数据仅保存在本地', 'error');
+                    return false;
+                }
+                githubToken = token;
+                localStorage.setItem('githubToken', token);
+            }
+
+            try {
+                showToast('正在保存到 GitHub...', 'info');
+
+                // 先获取文件的 SHA（如果存在）
+                let sha = null;
+                try {
+                    const getResponse = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}?ref=${GITHUB_CONFIG.branch}`, {
+                        headers: {
+                            'Authorization': `token ${githubToken}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    });
+                    if (getResponse.ok) {
+                        const fileData = await getResponse.json();
+                        sha = fileData.sha;
+                    }
+                } catch (e) {
+                    console.log('文件不存在，将创建新文件');
+                }
+
+                // 准备提交数据
+                const content = btoa(unescape(encodeURIComponent(JSON.stringify({ nodes }, null, 2))));
+                const body = {
+                    message: `Update prompt data: ${new Date().toLocaleString('zh-CN')}`,
+                    content: content,
+                    branch: GITHUB_CONFIG.branch
+                };
+                if (sha) {
+                    body.sha = sha;
+                }
+
+                // 提交到 GitHub
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                if (response.ok) {
+                    showToast('数据已保存到 GitHub', 'success');
+                    return true;
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.message || '保存失败');
+                }
+            } catch (error) {
+                console.error('保存到 GitHub 失败:', error);
+                showToast('保存失败: ' + error.message, 'error');
+                return false;
+            }
         }
 
         // 渲染节点列表
@@ -551,7 +659,7 @@
         }
 
         // 保存节点
-        function saveNode() {
+        async function saveNode() {
             const name = document.getElementById('nodeNameInput').value.trim();
             if (!name) {
                 showToast('请输入节点名称', 'error');
@@ -582,7 +690,7 @@
                 showToast('节点创建成功', 'success');
             }
 
-            saveData();
+            await saveDataToGitHub();
             closeModal('nodeModal');
             renderNodeList();
             renderMainContent();
@@ -595,7 +703,7 @@
             if (currentNodeId === nodeId) {
                 currentNodeId = nodes.length > 0 ? nodes[0].id : null;
             }
-            saveData();
+            await saveDataToGitHub();
             renderNodeList();
             if (currentNodeId) {
                 renderMainContent();
@@ -611,7 +719,7 @@
         }
 
         // 保存预更新版本
-        function savePreview() {
+        async function savePreview() {
             const node = nodes.find(n => n.id === currentNodeId);
             const content = document.getElementById('previewEditor').value;
             const prompt = node[currentPromptType];
@@ -627,14 +735,14 @@
                 prompt.preview.timestamp = Date.now();
             }
 
-            saveData();
+            await saveDataToGitHub();
             renderMainContent();
             renderNodeList();
             showToast('预更新版本已保存', 'success');
         }
 
         // 发布预更新版本
-        function publishPreview() {
+        async function publishPreview() {
             const node = nodes.find(n => n.id === currentNodeId);
             const prompt = node[currentPromptType];
 
@@ -650,14 +758,14 @@
             prompt.current = { ...prompt.preview };
             prompt.preview = null;
 
-            saveData();
+            await saveDataToGitHub();
             renderMainContent();
             renderNodeList();
             showToast('预更新版本已发布为现有版本', 'success');
         }
 
         // 回滚版本
-        function rollbackVersion() {
+        async function rollbackVersion() {
             const node = nodes.find(n => n.id === currentNodeId);
             const prompt = node[currentPromptType];
 
@@ -677,7 +785,7 @@
             const previousVersion = prompt.history.pop();
             prompt.current = previousVersion;
 
-            saveData();
+            await saveDataToGitHub();
             renderMainContent();
             renderNodeList();
             showToast('已回滚到上一版本', 'success');
@@ -751,9 +859,11 @@
             }, 3000);
         }
 
-        // 保存数据到localStorage
-        function saveData() {
-            localStorage.setItem('promptNodes', JSON.stringify(nodes));
+        // 清除 GitHub Token
+        function clearToken() {
+            githubToken = '';
+            localStorage.removeItem('githubToken');
+            showToast('Token 已清除', 'info');
         }
 
         // 点击模态框外部关闭
