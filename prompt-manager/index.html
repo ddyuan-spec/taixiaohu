@@ -697,7 +697,7 @@
         }
 
         // 删除节点
-        function deleteNode(nodeId) {
+        async function deleteNode(nodeId) {
             if (!confirm('确定要删除这个节点吗？')) return;
             nodes = nodes.filter(n => n.id !== nodeId);
             if (currentNodeId === nodeId) {
