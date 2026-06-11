@@ -45,13 +45,25 @@
         .app-header p { font-size: 12px; opacity: 0.8; margin-top: 4px; }
         .chat-container {
             padding: 16px;
-            height: calc(100% - 180px);
+            height: calc(100% - 100px);
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 8px;
         }
         .chat-message {
             display: flex;
             margin-bottom: 16px;
             align-items: flex-start;
+            animation: msgIn 0.4s ease-out;
+        }
+        @keyframes msgIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .chat-message.user { justify-content: flex-end; }
         .avatar {
@@ -73,11 +85,11 @@
             margin-left: 8px;
         }
         .message-bubble {
-            max-width: 240px;
+            max-width: 260px;
             padding: 12px 16px;
             border-radius: 18px;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.6;
             margin: 0 8px;
         }
         .message-bubble.bot {
@@ -92,10 +104,49 @@
             border-bottom-right-radius: 4px;
             order: 1;
         }
+        .inline-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 18px;
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+        }
+        .inline-btn:hover { opacity: 0.85; }
+        .inline-btn:active { transform: scale(0.97); }
+        .inline-btn.used {
+            background: #e0e0e0;
+            color: #999;
+            cursor: default;
+            pointer-events: none;
+        }
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+        }
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ccc;
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
 
         /* 弹窗样式 */
         .modal-overlay {
-            position: fixed;
+            position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.5);
             display: flex;
@@ -115,8 +166,7 @@
             border-radius: 24px 24px 0 0;
             padding: 24px 20px 32px;
             width: 100%;
-            max-width: 375px;
-            max-height: 80vh;
+            max-height: 70vh;
             overflow-y: auto;
             transform: translateY(100%);
             transition: transform 0.3s ease-out;
@@ -299,25 +349,32 @@
         }
 
         /* 演示按钮 */
-        .demo-btn {
+        .demo-btns {
             position: fixed;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 14px 32px;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+        .demo-btn {
+            padding: 14px 24px;
             background: white;
             color: #667eea;
             border: none;
             border-radius: 30px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 100;
         }
         .demo-btn:hover {
-            transform: translateX(-50%) translateY(-2px);
+            transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        .demo-btn.error {
+            color: #f5222d;
         }
     </style>
 </head>
@@ -334,135 +391,196 @@
 
         <!-- 聊天界面 -->
         <div class="chat-container">
-            <div class="chat-message">
-                <div class="avatar">🐯</div>
-                <div class="message-bubble bot">
-                    您好！我是泰小虎，您的健康助手。有什么可以帮您的吗？
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message">
+                    <div class="avatar">🐯</div>
+                    <div class="message-bubble bot">
+                        您好！我是泰小虎，您的健康助手。有什么可以帮您的吗？
+                    </div>
+                </div>
+                <div class="chat-message user">
+                    <div class="avatar user">我</div>
+                    <div class="message-bubble user">
+                        我最近血压有点高，150/90，睡眠也不太好
+                    </div>
+                </div>
+                <div class="chat-message">
+                    <div class="avatar">🐯</div>
+                    <div class="message-bubble bot">
+                        了解到您的血压是150/90 mmHg，睡眠也有问题。建议您定期监测血压，并保持规律作息。需要我为您推荐一些辅助降压的产品吗？
+                    </div>
                 </div>
             </div>
-            <div class="chat-message user">
-                <div class="avatar user">我</div>
-                <div class="message-bubble user">
-                    我最近血压有点高，150/90，睡眠也不太好
+        </div>
+
+        <!-- 弹窗（在手机框架内） -->
+        <div class="modal-overlay" id="profileModal">
+            <div class="modal-sheet">
+                <div class="modal-header">
+                    <div>
+                        <div class="modal-title">🏥 健康档案更新提醒</div>
+                        <div style="font-size: 12px; color: #999; margin-top: 4px;">根据您上次的对话，我们提取到以下信息</div>
+                    </div>
+                    <button class="modal-close" onclick="hideModal()">×</button>
                 </div>
-            </div>
-            <div class="chat-message">
-                <div class="avatar">🐯</div>
-                <div class="message-bubble bot">
-                    了解到您的血压是150/90 mmHg，睡眠也有问题。建议您定期监测血压，并保持规律作息。需要我为您推荐一些辅助降压的产品吗？
+
+                <div class="modal-subtitle">
+                    💡 这些信息将用于为您提供更精准的健康建议和产品推荐。您可以确认、修改或删除。
+                </div>
+
+                <!-- 本人档案 -->
+                <div class="profile-group">
+                    <div class="profile-group-title">
+                        👤 本人档案
+                        <span style="font-size: 11px; color: #999; font-weight: normal;">(默认咨询人)</span>
+                    </div>
+                    
+                    <div class="profile-item">
+                        <div>
+                            <div class="profile-field">血压</div>
+                            <div class="source-tag">来源：您提及"血压150/90"</div>
+                        </div>
+                        <div class="profile-value">
+                            <span class="value-badge badge-new">新增</span>
+                            <span class="value-text">150/90 mmHg</span>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill confidence-high" style="width: 95%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="btn-small btn-confirm" onclick="confirmItem(this)">✓ 确认</button>
+                        <button class="btn-small btn-skip" onclick="editItem(this)">✏️ 修改</button>
+                        <button class="btn-small btn-delete" onclick="deleteItem(this)">🗑️ 删除</button>
+                    </div>
+
+                    <div class="profile-item">
+                        <div>
+                            <div class="profile-field">睡眠时长</div>
+                            <div class="source-tag">来源：您提及"睡眠不太好"</div>
+                        </div>
+                        <div class="profile-value">
+                            <span class="value-badge badge-new">新增</span>
+                            <span class="value-text">睡眠不佳</span>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill confidence-medium" style="width: 70%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="btn-small btn-confirm" onclick="confirmItem(this)">✓ 确认</button>
+                        <button class="btn-small btn-skip" onclick="editItem(this)">✏️ 修改</button>
+                        <button class="btn-small btn-delete" onclick="deleteItem(this)">🗑️ 删除</button>
+                    </div>
+                </div>
+
+                <!-- 其他人档案示例 -->
+                <div class="profile-group">
+                    <div class="profile-group-title">
+                        👵 妈的档案
+                        <span style="font-size: 11px; color: #999; font-weight: normal;">(您上次帮妈妈咨询)</span>
+                    </div>
+                    
+                    <div class="profile-item">
+                        <div>
+                            <div class="profile-field">血压</div>
+                            <div class="source-tag">来源：您提及"我妈血压也有点高"</div>
+                        </div>
+                        <div class="profile-value">
+                            <span class="value-badge badge-update">更新</span>
+                            <span class="value-text">140/85 mmHg</span>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill confidence-high" style="width: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="btn-small btn-confirm" onclick="confirmItem(this)">✓ 确认</button>
+                        <button class="btn-small btn-skip" onclick="editItem(this)">✏️ 修改</button>
+                        <button class="btn-small btn-delete" onclick="deleteItem(this)">🗑️ 删除</button>
+                    </div>
+                </div>
+
+                <!-- 底部操作 -->
+                <div class="modal-footer">
+                    <button class="btn-full btn-secondary-full" onclick="hideModal()">暂不处理</button>
+                    <button class="btn-full btn-primary-full" onclick="confirmAll()">✓ 确认全部</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- 演示按钮 -->
-    <button class="demo-btn" onclick="showModal()">💡 点击演示：健康档案更新提醒</button>
-
-    <!-- 弹窗 -->
-    <div class="modal-overlay" id="profileModal">
-        <div class="modal-sheet">
-            <div class="modal-header">
-                <div>
-                    <div class="modal-title">🏥 健康档案更新提醒</div>
-                    <div style="font-size: 12px; color: #999; margin-top: 4px;">根据您上次的对话，我们提取到以下信息</div>
-                </div>
-                <button class="modal-close" onclick="hideModal()">×</button>
-            </div>
-
-            <div class="modal-subtitle">
-                💡 这些信息将用于为您提供更精准的健康建议和产品推荐。您可以确认、修改或删除。
-            </div>
-
-            <!-- 本人档案 -->
-            <div class="profile-group">
-                <div class="profile-group-title">
-                    👤 本人档案
-                    <span style="font-size: 11px; color: #999; font-weight: normal;">(默认咨询人)</span>
-                </div>
-                
-                <div class="profile-item">
-                    <div>
-                        <div class="profile-field">血压</div>
-                        <div class="source-tag">来源：您提及"血压150/90"</div>
-                    </div>
-                    <div class="profile-value">
-                        <span class="value-badge badge-new">新增</span>
-                        <span class="value-text">150/90 mmHg</span>
-                        <div class="confidence-bar">
-                            <div class="confidence-fill confidence-high" style="width: 95%"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="profile-actions">
-                    <button class="btn-small btn-confirm" onclick="confirmItem(this)">✓ 确认</button>
-                    <button class="btn-small btn-skip" onclick="editItem(this)">✏️ 修改</button>
-                    <button class="btn-small btn-delete" onclick="deleteItem(this)">🗑️ 删除</button>
-                </div>
-
-                <div class="profile-item">
-                    <div>
-                        <div class="profile-field">睡眠时长</div>
-                        <div class="source-tag">来源：您提及"睡眠不太好"</div>
-                    </div>
-                    <div class="profile-value">
-                        <span class="value-badge badge-new">新增</span>
-                        <span class="value-text">睡眠不佳</span>
-                        <div class="confidence-bar">
-                            <div class="confidence-fill confidence-medium" style="width: 70%"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="profile-actions">
-                    <button class="btn-small btn-confirm" onclick="confirmItem(this)">✓ 确认</button>
-                    <button class="btn-small btn-skip" onclick="editItem(this)">✏️ 修改</button>
-                    <button class="btn-small btn-delete" onclick="deleteItem(this)">🗑️ 删除</button>
-                </div>
-            </div>
-
-            <!-- 其他人档案示例 -->
-            <div class="profile-group">
-                <div class="profile-group-title">
-                    👵 妈的档案
-                    <span style="font-size: 11px; color: #999; font-weight: normal;">(您上次帮妈妈咨询)</span>
-                </div>
-                
-                <div class="profile-item">
-                    <div>
-                        <div class="profile-field">血压</div>
-                        <div class="source-tag">来源：您提及"我妈血压也有点高"</div>
-                    </div>
-                    <div class="profile-value">
-                        <span class="value-badge badge-update">更新</span>
-                        <span class="value-text">140/85 mmHg</span>
-                        <div class="confidence-bar">
-                            <div class="confidence-fill confidence-high" style="width: 90%"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="profile-actions">
-                    <button class="btn-small btn-confirm" onclick="confirmItem(this)">✓ 确认</button>
-                    <button class="btn-small btn-skip" onclick="editItem(this)">✏️ 修改</button>
-                    <button class="btn-small btn-delete" onclick="deleteItem(this)">🗑️ 删除</button>
-                </div>
-            </div>
-
-            <!-- 底部操作 -->
-            <div class="modal-footer">
-                <button class="btn-full btn-secondary-full" onclick="hideModal()">暂不处理</button>
-                <button class="btn-full btn-primary-full" onclick="confirmAll()">✓ 确认全部</button>
-            </div>
-        </div>
+    <div class="demo-btns">
+        <button class="demo-btn" onclick="startDemo()">💬 完整流程演示</button>
+        <button class="demo-btn error" onclick="startDemoFail()">❌ 保存失败演示</button>
     </div>
 
     <script>
+        const chatMessages = document.getElementById('chatMessages');
+
+        // 添加消息到聊天
+        function addMessage(text, isUser, withButton, buttonText, buttonCallback) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-message ${isUser ? 'user' : ''}`;
+
+            if (isUser) {
+                msgDiv.innerHTML = `
+                    <div class="avatar user">我</div>
+                    <div class="message-bubble user">${text}</div>
+                `;
+            } else {
+                let btnHtml = '';
+                if (withButton) {
+                    btnHtml = `<button class="inline-btn" id="inlineActionBtn" onclick="${buttonCallback}">${buttonText}</button>`;
+                }
+                msgDiv.innerHTML = `
+                    <div class="avatar">🐯</div>
+                    <div class="message-bubble bot">${text}${btnHtml}</div>
+                `;
+            }
+
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return msgDiv;
+        }
+
+        // 显示打字指示器
+        function showTyping() {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'chat-message';
+            msgDiv.id = 'typingIndicator';
+            msgDiv.innerHTML = `
+                <div class="avatar">🐯</div>
+                <div class="message-bubble bot">
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 移除打字指示器
+        function hideTyping() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
+        // 显示弹窗
         function showModal() {
             document.getElementById('profileModal').classList.add('show');
         }
 
+        // 隐藏弹窗
         function hideModal() {
             document.getElementById('profileModal').classList.remove('show');
         }
 
+        // 确认单个项
         function confirmItem(btn) {
             const item = btn.closest('.profile-item');
             item.style.background = '#f6ffed';
@@ -470,6 +588,7 @@
             btn.closest('.profile-actions').innerHTML = '<span style="color: #52c41a; font-size: 13px;">✓ 已确认</span>';
         }
 
+        // 编辑项
         function editItem(btn) {
             const item = btn.closest('.profile-item');
             const valueText = item.querySelector('.value-text');
@@ -478,11 +597,13 @@
             item.querySelector('.edit-input').focus();
         }
 
+        // 保存编辑
         function saveEdit(input, originalValue) {
             const newValue = input.value.trim() || originalValue;
             input.parentElement.innerHTML = newValue;
         }
 
+        // 删除项
         function deleteItem(btn) {
             const item = btn.closest('.profile-item');
             const actions = btn.closest('.profile-actions');
@@ -491,32 +612,91 @@
             actions.innerHTML = '<span style="color: #f5222d; font-size: 13px;">🗑️ 已删除</span>';
         }
 
+        // 确认全部 → 成功消息
         function confirmAll() {
-            showToast('✓ 所有档案已更新');
             hideModal();
+            const btn = document.getElementById('inlineActionBtn');
+            if (btn) {
+                btn.classList.add('used');
+                btn.textContent = '已查看';
+            }
+
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                addMessage('好的，您的信息泰小虎都记住啦！今天想和泰小虎聊些什么呢？', false);
+            }, 1200);
         }
 
-        function showToast(message) {
-            const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(0,0,0,0.8);
-                color: white;
-                padding: 16px 32px;
-                border-radius: 12px;
-                font-size: 15px;
-                z-index: 2000;
-                animation: fadeIn 0.3s;
-            `;
-            toast.textContent = message;
-            document.body.appendChild(toast);
+        // 完整流程演示
+        function startDemo() {
+            // 禁用按钮
+            const btns = document.querySelectorAll('.demo-btn');
+            btns.forEach(b => { b.style.pointerEvents = 'none'; b.style.opacity = '0.5'; });
+
+            showTyping();
             setTimeout(() => {
-                toast.style.animation = 'fadeOut 0.3s';
-                setTimeout(() => toast.remove(), 300);
-            }, 2000);
+                hideTyping();
+                addMessage(
+                    '检测到您最近聊到了一些新内容，我帮您整理了一些健康档案信息。您希望泰小虎将这些信息保存到您的档案吗？',
+                    false,
+                    true,
+                    '立即查看',
+                    'openModal()'
+                );
+                btns.forEach(b => { b.style.pointerEvents = ''; b.style.opacity = ''; });
+            }, 1500);
+        }
+
+        // 保存失败演示
+        function startDemoFail() {
+            const btns = document.querySelectorAll('.demo-btn');
+            btns.forEach(b => { b.style.pointerEvents = 'none'; b.style.opacity = '0.5'; });
+
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                addMessage(
+                    '检测到您最近聊到了一些新内容，我帮您整理了一些健康档案信息。您希望泰小虎将这些信息保存到您的档案吗？',
+                    false,
+                    true,
+                    '立即查看',
+                    'openModalFail()'
+                );
+                btns.forEach(b => { b.style.pointerEvents = ''; b.style.opacity = ''; });
+            }, 1500);
+        }
+
+        // 打开弹窗（成功场景）
+        function openModal() {
+            const btn = document.getElementById('inlineActionBtn');
+            if (btn) {
+                btn.classList.add('used');
+                btn.textContent = '已查看';
+            }
+            showModal();
+        }
+
+        // 打开弹窗（失败场景）
+        function openModalFail() {
+            const btn = document.getElementById('inlineActionBtn');
+            if (btn) {
+                btn.classList.add('used');
+                btn.textContent = '已查看';
+            }
+            showModal();
+
+            // 修改确认全部按钮为失败场景
+            const confirmBtn = document.querySelector('.btn-primary-full');
+            confirmBtn.textContent = '✓ 确认全部';
+            confirmBtn.onclick = function() {
+                hideModal();
+                showTyping();
+                setTimeout(() => {
+                    hideTyping();
+                    addMessage('保存失败了，请下次再试。', false);
+                }, 1200);
+            };
         }
 
         // 点击遮罩关闭
