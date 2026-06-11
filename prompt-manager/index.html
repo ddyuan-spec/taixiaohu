@@ -481,36 +481,49 @@
             ];
         }
 
+        // 检查并获取 GitHub Token
+        async function ensureGitHubToken() {
+            if (githubToken) return true;
+            
+            const token = prompt('首次使用需要配置 GitHub Token\n\n用于保存数据到仓库，Token 只需输入一次后会自动记住。\n\n获取方式：GitHub → Settings → Developer settings → Personal access tokens → Generate new token（勾选 repo 权限）');
+            if (!token) {
+                showToast('未提供 Token，无法保存到 GitHub', 'error');
+                return false;
+            }
+            githubToken = token;
+            localStorage.setItem('githubToken', token);
+            showToast('Token 已保存，下次无需重复输入', 'success');
+            return true;
+        }
+
         // 保存数据到 GitHub
         async function saveDataToGitHub() {
-            if (!githubToken) {
-                const token = prompt('请输入 GitHub Token (用于保存数据到仓库):');
-                if (!token) {
-                    showToast('未提供 Token，数据仅保存在本地', 'error');
-                    return false;
-                }
-                githubToken = token;
-                localStorage.setItem('githubToken', token);
-            }
+            const hasToken = await ensureGitHubToken();
+            if (!hasToken) return false;
 
             try {
                 showToast('正在保存到 GitHub...', 'info');
 
                 // 先获取文件的 SHA（如果存在）
                 let sha = null;
-                try {
-                    const getResponse = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}?ref=${GITHUB_CONFIG.branch}`, {
-                        headers: {
-                            'Authorization': `token ${githubToken}`,
-                            'Accept': 'application/vnd.github.v3+json'
-                        }
-                    });
-                    if (getResponse.ok) {
-                        const fileData = await getResponse.json();
-                        sha = fileData.sha;
+                const getResponse = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}?ref=${GITHUB_CONFIG.branch}`, {
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Accept': 'application/vnd.github.v3+json'
                     }
-                } catch (e) {
-                    console.log('文件不存在，将创建新文件');
+                });
+                
+                if (getResponse.status === 401) {
+                    // Token 无效或过期
+                    showToast('Token 无效或已过期，请重新配置', 'error');
+                    githubToken = '';
+                    localStorage.removeItem('githubToken');
+                    return await saveDataToGitHub(); // 递归调用，会重新提示输入 Token
+                }
+                
+                if (getResponse.ok) {
+                    const fileData = await getResponse.json();
+                    sha = fileData.sha;
                 }
 
                 // 准备提交数据
@@ -538,6 +551,11 @@
                 if (response.ok) {
                     showToast('数据已保存到 GitHub', 'success');
                     return true;
+                } else if (response.status === 401) {
+                    showToast('Token 无效或已过期，请重新配置', 'error');
+                    githubToken = '';
+                    localStorage.removeItem('githubToken');
+                    return false;
                 } else {
                     const error = await response.json();
                     throw new Error(error.message || '保存失败');
