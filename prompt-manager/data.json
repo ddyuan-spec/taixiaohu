@@ -34,7 +34,7 @@
     },
     {
       "id": "2",
-      "name": "商品知识检索",
+      "name": "产品相关模型节点",
       "systemPrompt": {
         "current": {
           "version": 1,
