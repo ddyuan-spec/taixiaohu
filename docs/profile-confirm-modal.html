@@ -436,8 +436,8 @@
                 <span class="nav-title">泰小虎</span>
             </div>
             <div class="nav-center">
-                <span class="nav-tab" onclick="showPage('home')">健康</span>
-                <span class="nav-tab active" onclick="showPage('health')">
+                <span class="nav-tab" onclick="showPage('health')">健康</span>
+                <span class="nav-tab active" onclick="showPage('chat')">
                     泰小虎
                     <span class="tab-badge" id="navBadge" style="display:none;">3</span>
                 </span>
@@ -450,39 +450,7 @@
 
         <!-- 页面内容 -->
         <div class="page-content" id="pageContent">
-            <!-- 首页（泰小虎对话页） -->
-            <div id="homePage">
-                <div class="home-welcome">
-                    <h1>hi，我是泰小虎，你的<br/>健康好朋友</h1>
-                    <div class="mascot">🐯</div>
-                </div>
-                <div class="quick-card">
-                    <div class="quick-card-title">我是泰小虎，你的专属AI健康守护者</div>
-                    <div class="quick-item" onclick="goToHealth()">
-                        <div class="quick-item-left">
-                            <div class="quick-item-icon">?</div>
-                            <span class="quick-item-text">推荐一下产品</span>
-                        </div>
-                        <span class="quick-item-arrow">→</span>
-                    </div>
-                    <div class="quick-item">
-                        <div class="quick-item-left">
-                            <div class="quick-item-icon">?</div>
-                            <span class="quick-item-text">我最近睡眠不好</span>
-                        </div>
-                        <span class="quick-item-arrow">→</span>
-                    </div>
-                    <div class="quick-item">
-                        <div class="quick-item-left">
-                            <div class="quick-item-icon">?</div>
-                            <span class="quick-item-text">怎么才能减肥</span>
-                        </div>
-                        <span class="quick-item-arrow">→</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 健康栏目页面 -->
+            <!-- 健康栏目页面（默认隐藏） -->
             <div id="healthPage" style="display:none;">
                 <div class="health-header">
                     <h2>🏥 健康档案</h2>
@@ -508,6 +476,38 @@
                     <div class="health-item">
                         <span class="health-item-label">妈妈</span>
                         <span class="health-item-value">查看详情 →</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 泰小虎对话页（默认显示） -->
+            <div id="chatPage">
+                <div class="home-welcome">
+                    <h1>hi，我是泰小虎，你的<br/>健康好朋友</h1>
+                    <div class="mascot">🐯</div>
+                </div>
+                <div class="quick-card">
+                    <div class="quick-card-title">我是泰小虎，你的专属AI健康守护者</div>
+                    <div class="quick-item">
+                        <div class="quick-item-left">
+                            <div class="quick-item-icon">?</div>
+                            <span class="quick-item-text">推荐一下产品</span>
+                        </div>
+                        <span class="quick-item-arrow">→</span>
+                    </div>
+                    <div class="quick-item">
+                        <div class="quick-item-left">
+                            <div class="quick-item-icon">?</div>
+                            <span class="quick-item-text">我最近睡眠不好</span>
+                        </div>
+                        <span class="quick-item-arrow">→</span>
+                    </div>
+                    <div class="quick-item">
+                        <div class="quick-item-left">
+                            <div class="quick-item-icon">?</div>
+                            <span class="quick-item-text">怎么才能减肥</span>
+                        </div>
+                        <span class="quick-item-arrow">→</span>
                     </div>
                 </div>
             </div>
@@ -800,25 +800,23 @@
 
         function showPage(page) {
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            if (page === 'home') {
-                document.getElementById('homePage').style.display = 'block';
-                document.getElementById('healthPage').style.display = 'none';
-                document.querySelectorAll('.nav-tab')[0].classList.add('active');
-            } else if (page === 'health') {
-                document.getElementById('homePage').style.display = 'none';
+            if (page === 'health') {
+                // 点击健康tab：显示健康页面，隐藏泰小虎页面
                 document.getElementById('healthPage').style.display = 'block';
-                document.querySelectorAll('.nav-tab')[1].classList.add('active');
-                // 点击进入健康栏目时，如果有更新则弹出系统弹窗
+                document.getElementById('chatPage').style.display = 'none';
+                document.querySelectorAll('.nav-tab')[0].classList.add('active');
+                // 如果有更新则弹出系统弹窗
                 if (hasUpdates) {
                     setTimeout(() => {
                         document.getElementById('systemModal').classList.add('show');
                     }, 300);
                 }
+            } else if (page === 'chat') {
+                // 点击泰小虎tab：显示泰小虎页面，隐藏健康页面
+                document.getElementById('healthPage').style.display = 'none';
+                document.getElementById('chatPage').style.display = 'block';
+                document.querySelectorAll('.nav-tab')[1].classList.add('active');
             }
-        }
-
-        function goToHealth() {
-            showPage('health');
         }
 
         function closeModal() {
@@ -841,10 +839,9 @@
             }
         });
 
-        // 页面加载后，如果当前是健康页面且有更新，自动弹出弹窗
+        // 页面加载后，默认显示泰小虎页面
         window.onload = function() {
-            // 默认显示首页，不自动弹窗
-            // 用户需要点击"健康"tab才会触发
+            showPage('chat');
         };
     </script>
 </body>
