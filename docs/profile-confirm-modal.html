@@ -34,259 +34,290 @@
             border-radius: 0 0 20px 20px;
             z-index: 10;
         }
-        .app-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 50px 20px 20px;
-            text-align: center;
+        /* 底部Tab栏 */
+        .tab-bar {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 80px;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #e8e8f0;
+            padding-bottom: 20px;
+            z-index: 20;
         }
-        .app-header h1 { font-size: 18px; font-weight: 500; }
-        .app-header p { font-size: 12px; opacity: 0.8; margin-top: 4px; }
-        .chat-container {
-            padding: 16px;
-            height: calc(100% - 100px);
-            overflow-y: auto;
+        .tab-item {
             display: flex;
             flex-direction: column;
-        }
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 8px;
-        }
-        .chat-message {
-            display: flex;
-            margin-bottom: 16px;
-            align-items: flex-start;
-            animation: msgIn 0.4s ease-out;
-        }
-        @keyframes msgIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .chat-message.user { justify-content: flex-end; }
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-        .avatar.user {
-            background: #e0e0e0;
-            color: #666;
-            order: 2;
-            margin-left: 8px;
-        }
-        .message-bubble {
-            max-width: 260px;
-            padding: 12px 16px;
-            border-radius: 18px;
-            font-size: 14px;
-            line-height: 1.6;
-            margin: 0 8px;
-        }
-        .message-bubble.bot {
-            background: white;
-            color: #333;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .message-bubble.user {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-bottom-right-radius: 4px;
-            order: 1;
-        }
-        .inline-btn {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 18px;
-            font-size: 13px;
-            cursor: pointer;
-            border: none;
-            transition: opacity 0.2s;
-        }
-        .inline-btn:hover { opacity: 0.85; }
-        .inline-btn:active { transform: scale(0.97); }
-        .inline-btn.used {
-            background: #e0e0e0;
-            color: #999;
-            cursor: default;
-            pointer-events: none;
-        }
-        .typing-indicator {
-            display: flex;
             align-items: center;
             gap: 4px;
-            padding: 8px 16px;
+            cursor: pointer;
+            color: #999;
+            font-size: 11px;
+            transition: color 0.2s;
         }
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #ccc;
-            animation: typingBounce 1.4s infinite ease-in-out;
+        .tab-item.active {
+            color: #667eea;
         }
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typingBounce {
-            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-            40% { transform: scale(1); opacity: 1; }
+        .tab-icon {
+            width: 24px; height: 24px;
+            font-size: 20px;
         }
-
-        /* 弹窗样式 */
-        .modal-overlay {
+        .tab-badge {
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
+            top: 2px; right: -8px;
+            background: #f5222d;
+            color: white;
+            font-size: 10px;
+            min-width: 16px; height: 16px;
+            border-radius: 8px;
             display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-        .modal-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        .modal-sheet {
-            background: white;
-            border-radius: 24px 24px 0 0;
-            padding: 24px 20px 32px;
-            width: 100%;
-            max-height: 70vh;
-            overflow-y: auto;
-            transform: translateY(100%);
-            transition: transform 0.3s ease-out;
-        }
-        .modal-overlay.show .modal-sheet {
-            transform: translateY(0);
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            justify-content: center;
+            padding: 0 4px;
         }
-        .modal-title {
-            font-size: 18px;
+        /* 页面内容 */
+        .page-content {
+            height: calc(100% - 80px);
+            overflow-y: auto;
+            padding: 50px 16px 16px;
+        }
+        /* 首页 */
+        .home-header {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .home-header h1 {
+            font-size: 22px;
+            color: #1a1a2e;
+        }
+        .home-header p {
+            font-size: 13px;
+            color: #999;
+            margin-top: 4px;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+        }
+        .feature-card:hover {
+            transform: translateY(-2px);
+        }
+        .feature-card .icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        .feature-card .title {
+            font-size: 14px;
             font-weight: 600;
             color: #1a1a2e;
         }
-        .modal-close {
-            width: 32px; height: 32px;
-            border: none;
-            background: #f0f2f5;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
+        .feature-card .desc {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+        .feature-badge {
+            position: absolute;
+            top: 8px; right: 8px;
+            background: #f5222d;
+            color: white;
+            font-size: 10px;
+            min-width: 18px; height: 18px;
+            border-radius: 9px;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 0 5px;
+            animation: pulse 2s infinite;
         }
-        .profile-group {
-            margin-bottom: 20px;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
-        .profile-group-title {
-            font-size: 14px;
+        /* 健康栏目页面 */
+        .health-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px 30px;
+            margin: -50px -16px 20px;
+        }
+        .health-header h2 {
+            font-size: 20px;
             font-weight: 600;
-            color: #667eea;
+        }
+        .health-header p {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+        .health-section {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
             margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
-        .profile-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 16px;
-            background: #fafafa;
-            border-radius: 12px;
-            margin-bottom: 8px;
-            border: 2px solid transparent;
-            transition: all 0.2s;
-        }
-        .profile-item:hover {
-            border-color: #667eea;
-            background: #f8f9ff;
-        }
-        .profile-field {
-            font-size: 14px;
-            color: #666;
-        }
-        .profile-value {
+        .health-section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        .value-text {
+        .health-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .health-item:last-child {
+            border-bottom: none;
+        }
+        .health-item-label {
+            font-size: 14px;
+            color: #666;
+        }
+        .health-item-value {
             font-size: 15px;
             font-weight: 500;
             color: #1a1a2e;
         }
-        .value-badge {
+        /* 系统弹窗样式 */
+        .system-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        .system-modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .system-modal {
+            background: white;
+            border-radius: 20px;
+            width: 320px;
+            max-height: 80vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.9);
+            transition: transform 0.3s ease-out;
+        }
+        .system-modal-overlay.show .system-modal {
+            transform: scale(1);
+        }
+        .system-modal-header {
+            padding: 20px 20px 12px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .system-modal-header .icon {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+        .system-modal-header h3 {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        .system-modal-header p {
+            font-size: 13px;
+            color: #999;
+            margin-top: 4px;
+        }
+        .system-modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+        }
+        .update-card {
+            background: #fafafa;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border-left: 3px solid #667eea;
+        }
+        .update-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .update-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        .update-card-badge {
             padding: 2px 8px;
             border-radius: 4px;
             font-size: 11px;
             font-weight: 500;
         }
-        .badge-new {
-            background: #e6f7ff;
-            color: #1890ff;
+        .badge-new { background: #e6f7ff; color: #1890ff; }
+        .badge-update { background: #fff7e6; color: #fa8c16; }
+        .update-card-content {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.5;
         }
-        .badge-update {
-            background: #fff7e6;
-            color: #fa8c16;
+        .update-card-source {
+            font-size: 11px;
+            color: #999;
+            margin-top: 6px;
         }
-        .modal-footer {
+        .system-modal-footer {
+            padding: 12px 20px 20px;
             display: flex;
-            gap: 12px;
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 1px solid #e8e8f0;
+            gap: 10px;
+            border-top: 1px solid #f0f0f0;
         }
-        .btn-full {
+        .btn {
             flex: 1;
-            padding: 14px;
+            padding: 12px;
             border: none;
-            border-radius: 12px;
-            font-size: 15px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
         }
-        .btn-primary-full {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        .btn-primary-full:hover { opacity: 0.9; }
-        .btn-secondary-full {
+        .btn-secondary {
             background: #f0f2f5;
             color: #666;
         }
-        .btn-secondary-full:hover { background: #e0e2e5; }
-        .source-tag {
-            font-size: 11px;
-            color: #999;
-            margin-top: 4px;
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
-
         /* 演示按钮 */
         .demo-btns {
             position: fixed;
-            bottom: 30px;
+            bottom: 100px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -294,22 +325,15 @@
             z-index: 100;
         }
         .demo-btn {
-            padding: 14px 24px;
+            padding: 12px 20px;
             background: white;
             color: #667eea;
             border: none;
-            border-radius: 30px;
-            font-size: 14px;
+            border-radius: 24px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        .demo-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-        }
-        .demo-btn.error {
-            color: #f5222d;
         }
     </style>
 </head>
@@ -317,266 +341,205 @@
     <!-- 手机框架 -->
     <div class="phone-frame">
         <div class="phone-notch"></div>
-        
-        <!-- App Header -->
-        <div class="app-header">
-            <h1>🐯 泰小虎健康助手</h1>
-            <p>智能健康管理</p>
-        </div>
 
-        <!-- 聊天界面 -->
-        <div class="chat-container">
-            <div class="chat-messages" id="chatMessages">
-                <div class="chat-message">
-                    <div class="avatar">🐯</div>
-                    <div class="message-bubble bot">
-                        您好！我是泰小虎，您的健康助手。有什么可以帮您的吗？
+        <!-- 页面内容 -->
+        <div class="page-content" id="pageContent">
+            <!-- 首页 -->
+            <div id="homePage">
+                <div class="home-header">
+                    <h1>🐯 泰小虎健康助手</h1>
+                    <p>智能健康管理，守护您的健康</p>
+                </div>
+                <div class="feature-grid">
+                    <div class="feature-card" onclick="goToHealth()">
+                        <div class="icon">🏥</div>
+                        <div class="title">健康档案</div>
+                        <div class="desc">管理您的健康数据</div>
+                        <div class="feature-badge" id="healthBadge">3</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">💬</div>
+                        <div class="title">智能对话</div>
+                        <div class="desc">AI健康咨询</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📊</div>
+                        <div class="title">健康报告</div>
+                        <div class="desc">查看健康分析</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">⚙️</div>
+                        <div class="title">设置</div>
+                        <div class="desc">个性化配置</div>
                     </div>
                 </div>
-                <div class="chat-message user">
-                    <div class="avatar user">我</div>
-                    <div class="message-bubble user">
-                        我最近血压有点高，150/90，睡眠也不太好
+            </div>
+
+            <!-- 健康栏目页面 -->
+            <div id="healthPage" style="display:none;">
+                <div class="health-header">
+                    <h2>🏥 健康档案</h2>
+                    <p>查看和管理您的健康信息</p>
+                </div>
+                <div class="health-section">
+                    <div class="health-section-title">👤 本人档案</div>
+                    <div class="health-item">
+                        <span class="health-item-label">身高</span>
+                        <span class="health-item-value">170 cm</span>
+                    </div>
+                    <div class="health-item">
+                        <span class="health-item-label">体重</span>
+                        <span class="health-item-value">65 kg</span>
+                    </div>
+                    <div class="health-item">
+                        <span class="health-item-label">血压</span>
+                        <span class="health-item-value">--</span>
                     </div>
                 </div>
-                <div class="chat-message">
-                    <div class="avatar">🐯</div>
-                    <div class="message-bubble bot">
-                        了解到您的血压是150/90 mmHg，睡眠也有问题。建议您定期监测血压，并保持规律作息。需要我为您推荐一些辅助降压的产品吗？
+                <div class="health-section">
+                    <div class="health-section-title">👵 家人档案</div>
+                    <div class="health-item">
+                        <span class="health-item-label">妈妈</span>
+                        <span class="health-item-value">查看详情 →</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 弹窗（在手机框架内） -->
-        <div class="modal-overlay" id="profileModal">
-            <div class="modal-sheet">
-                <div class="modal-header">
-                    <div>
-                        <div class="modal-title">🏥 健康档案更新提醒</div>
-                        <div style="font-size: 12px; color: #999; margin-top: 4px;">根据您上次的对话，我们提取到以下信息</div>
-                    </div>
-                    <button class="modal-close" onclick="hideModal()">×</button>
-                </div>
+        <!-- 底部Tab栏 -->
+        <div class="tab-bar">
+            <div class="tab-item active" onclick="showPage('home')">
+                <span class="tab-icon">🏠</span>
+                <span>首页</span>
+            </div>
+            <div class="tab-item" onclick="showPage('health')">
+                <span class="tab-icon">🏥</span>
+                <span>健康</span>
+                <span class="tab-badge" id="tabBadge">3</span>
+            </div>
+            <div class="tab-item">
+                <span class="tab-icon">💬</span>
+                <span>对话</span>
+            </div>
+            <div class="tab-item">
+                <span class="tab-icon">👤</span>
+                <span>我的</span>
+            </div>
+        </div>
+    </div>
 
-                <!-- 本人档案 -->
-                <div class="profile-group">
-                    <div class="profile-group-title">
-                        👤 本人档案
-                        <span style="font-size: 11px; color: #999; font-weight: normal;">(默认咨询人)</span>
+    <!-- 系统弹窗（在手机框架外，全屏遮罩） -->
+    <div class="system-modal-overlay" id="systemModal">
+        <div class="system-modal">
+            <div class="system-modal-header">
+                <div class="icon">🐯</div>
+                <h3>健康档案更新提醒</h3>
+                <p>检测到新的健康信息，请确认更新</p>
+            </div>
+            <div class="system-modal-body">
+                <div class="update-card">
+                    <div class="update-card-header">
+                        <span class="update-card-title">👤 本人 - 血压</span>
+                        <span class="update-card-badge badge-new">新增</span>
                     </div>
-                    
-                    <div class="profile-item">
-                        <div>
-                            <div class="profile-field">血压</div>
-                            <div class="source-tag">来源：您提及"血压150/90"</div>
-                        </div>
-                        <div class="profile-value">
-                            <span class="value-badge badge-new">新增</span>
-                            <span class="value-text">150/90 mmHg</span>
-                        </div>
-                    </div>
-
-                    <div class="profile-item">
-                        <div>
-                            <div class="profile-field">睡眠时长</div>
-                            <div class="source-tag">来源：您提及"睡眠不太好"</div>
-                        </div>
-                        <div class="profile-value">
-                            <span class="value-badge badge-new">新增</span>
-                            <span class="value-text">睡眠不佳</span>
-                        </div>
-                    </div>
+                    <div class="update-card-content">150/90 mmHg</div>
+                    <div class="update-card-source">来源：您提及"血压150/90"</div>
                 </div>
-
-                <!-- 其他人档案示例 -->
-                <div class="profile-group">
-                    <div class="profile-group-title">
-                        👵 妈的档案
-                        <span style="font-size: 11px; color: #999; font-weight: normal;">(您上次帮妈妈咨询)</span>
+                <div class="update-card">
+                    <div class="update-card-header">
+                        <span class="update-card-title">👤 本人 - 睡眠时长</span>
+                        <span class="update-card-badge badge-new">新增</span>
                     </div>
-                    
-                    <div class="profile-item">
-                        <div>
-                            <div class="profile-field">血压</div>
-                            <div class="source-tag">来源：您提及"我妈血压也有点高"</div>
-                        </div>
-                        <div class="profile-value">
-                            <span class="value-badge badge-update">更新</span>
-                            <span class="value-text">140/85 mmHg</span>
-                        </div>
+                    <div class="update-card-content">睡眠不佳</div>
+                    <div class="update-card-source">来源：您提及"睡眠不太好"</div>
+                </div>
+                <div class="update-card">
+                    <div class="update-card-header">
+                        <span class="update-card-title">👵 妈 - 血压</span>
+                        <span class="update-card-badge badge-update">更新</span>
                     </div>
+                    <div class="update-card-content">140/85 mmHg</div>
+                    <div class="update-card-source">来源：您提及"我妈血压也有点高"</div>
                 </div>
-
-                <!-- 底部操作 -->
-                <div class="modal-footer">
-                    <button class="btn-full btn-secondary-full" onclick="hideModal()">暂不处理</button>
-                    <button class="btn-full btn-primary-full" onclick="confirmAll()">✓ 确认全部</button>
-                </div>
+            </div>
+            <div class="system-modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">暂不处理</button>
+                <button class="btn btn-primary" onclick="confirmAll()">✓ 确认全部</button>
             </div>
         </div>
     </div>
 
     <!-- 演示按钮 -->
     <div class="demo-btns">
-        <button class="demo-btn" onclick="startDemo()">💬 完整流程演示</button>
-        <button class="demo-btn error" onclick="startDemoFail()">❌ 保存失败演示</button>
+        <button class="demo-btn" onclick="demoWithBadge()">🔔 有更新提醒演示</button>
+        <button class="demo-btn" onclick="demoNoBadge()">✅ 无更新演示</button>
     </div>
 
     <script>
-        const chatMessages = document.getElementById('chatMessages');
+        let hasUpdates = true;
 
-        // 添加消息到聊天
-        function addMessage(text, isUser, withButton, buttonText, buttonCallback) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `chat-message ${isUser ? 'user' : ''}`;
-
-            if (isUser) {
-                msgDiv.innerHTML = `
-                    <div class="avatar user">我</div>
-                    <div class="message-bubble user">${text}</div>
-                `;
-            } else {
-                let btnHtml = '';
-                if (withButton) {
-                    btnHtml = `<button class="inline-btn" id="inlineActionBtn" onclick="${buttonCallback}">${buttonText}</button>`;
+        function showPage(page) {
+            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            if (page === 'home') {
+                document.getElementById('homePage').style.display = 'block';
+                document.getElementById('healthPage').style.display = 'none';
+                document.querySelectorAll('.tab-item')[0].classList.add('active');
+            } else if (page === 'health') {
+                document.getElementById('homePage').style.display = 'none';
+                document.getElementById('healthPage').style.display = 'block';
+                document.querySelectorAll('.tab-item')[1].classList.add('active');
+                // 点击进入健康栏目时，如果有更新则弹出系统弹窗
+                if (hasUpdates) {
+                    setTimeout(() => {
+                        document.getElementById('systemModal').classList.add('show');
+                    }, 300);
                 }
-                msgDiv.innerHTML = `
-                    <div class="avatar">🐯</div>
-                    <div class="message-bubble bot">${text}${btnHtml}</div>
-                `;
             }
-
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            return msgDiv;
         }
 
-        // 显示打字指示器
-        function showTyping() {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'chat-message';
-            msgDiv.id = 'typingIndicator';
-            msgDiv.innerHTML = `
-                <div class="avatar">🐯</div>
-                <div class="message-bubble bot">
-                    <div class="typing-indicator">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                    </div>
-                </div>
-            `;
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        function goToHealth() {
+            showPage('health');
         }
 
-        // 移除打字指示器
-        function hideTyping() {
-            const typing = document.getElementById('typingIndicator');
-            if (typing) typing.remove();
+        function closeModal() {
+            document.getElementById('systemModal').classList.remove('show');
+            // 清除角标
+            document.getElementById('healthBadge').style.display = 'none';
+            document.getElementById('tabBadge').style.display = 'none';
         }
 
-        // 显示弹窗
-        function showModal() {
-            document.getElementById('profileModal').classList.add('show');
-        }
-
-        // 隐藏弹窗
-        function hideModal() {
-            document.getElementById('profileModal').classList.remove('show');
-        }
-
-        // 确认全部 → 成功消息，同时置灰立即查看按钮
         function confirmAll() {
-            hideModal();
-            // 全部确认后才置灰立即查看按钮
-            const btn = document.getElementById('inlineActionBtn');
-            if (btn) {
-                btn.classList.add('used');
-                btn.textContent = '已查看';
-            }
-
-            showTyping();
+            document.getElementById('systemModal').classList.remove('show');
+            // 清除角标
+            document.getElementById('healthBadge').style.display = 'none';
+            document.getElementById('tabBadge').style.display = 'none';
+            hasUpdates = false;
+            // 显示成功提示（可替换为Toast）
             setTimeout(() => {
-                hideTyping();
-                addMessage('好的，您的信息泰小虎都记住啦！您也可以直接去健康模块编辑这些信息，今天想和泰小虎聊些什么呢？', false);
-            }, 1200);
+                alert('好的，您的信息泰小虎都记住啦！');
+            }, 300);
         }
 
-        // 完整流程演示
-        function startDemo() {
-            const btns = document.querySelectorAll('.demo-btn');
-            btns.forEach(b => { b.style.pointerEvents = 'none'; b.style.opacity = '0.5'; });
-
-            showTyping();
-            setTimeout(() => {
-                hideTyping();
-                addMessage(
-                    '检测到您最近聊到了一些新内容，我帮您整理了一些健康档案信息。您希望泰小虎将这些信息保存到您的档案吗？',
-                    false,
-                    true,
-                    '立即查看',
-                    'openModal()'
-                );
-                btns.forEach(b => { b.style.pointerEvents = ''; b.style.opacity = ''; });
-            }, 1500);
+        function demoWithBadge() {
+            hasUpdates = true;
+            document.getElementById('healthBadge').style.display = 'flex';
+            document.getElementById('healthBadge').textContent = '3';
+            document.getElementById('tabBadge').style.display = 'flex';
+            document.getElementById('tabBadge').textContent = '3';
+            showPage('home');
         }
 
-        // 保存失败演示
-        function startDemoFail() {
-            const btns = document.querySelectorAll('.demo-btn');
-            btns.forEach(b => { b.style.pointerEvents = 'none'; b.style.opacity = '0.5'; });
-
-            showTyping();
-            setTimeout(() => {
-                hideTyping();
-                addMessage(
-                    '检测到您最近聊到了一些新内容，我帮您整理了一些健康档案信息。您希望泰小虎将这些信息保存到您的档案吗？',
-                    false,
-                    true,
-                    '立即查看',
-                    'openModalFail()'
-                );
-                btns.forEach(b => { b.style.pointerEvents = ''; b.style.opacity = ''; });
-            }, 1500);
-        }
-
-        // 打开弹窗（成功场景）- 点击立即查看时不置灰
-        function openModal() {
-            // 模拟请求最新数据（实际应调接口）
-            console.log('请求最新档案数据...');
-            showModal();
-        }
-
-        // 打开弹窗（失败场景）- 点击立即查看时不置灰
-        function openModalFail() {
-            console.log('请求最新档案数据...');
-            showModal();
-
-            // 修改确认全部按钮为失败场景
-            const confirmBtn = document.querySelector('.btn-primary-full');
-            confirmBtn.textContent = '✓ 确认全部';
-            confirmBtn.onclick = function() {
-                hideModal();
-                // 失败场景也要置灰按钮
-                const btn = document.getElementById('inlineActionBtn');
-                if (btn) {
-                    btn.classList.add('used');
-                    btn.textContent = '已查看';
-                }
-                showTyping();
-                setTimeout(() => {
-                    hideTyping();
-                    addMessage('保存失败了，请下次再试。', false);
-                }, 1200);
-            };
+        function demoNoBadge() {
+            hasUpdates = false;
+            document.getElementById('healthBadge').style.display = 'none';
+            document.getElementById('tabBadge').style.display = 'none';
+            showPage('home');
         }
 
         // 点击遮罩关闭
-        document.getElementById('profileModal').addEventListener('click', (e) => {
+        document.getElementById('systemModal').addEventListener('click', (e) => {
             if (e.target === e.currentTarget) {
-                hideModal();
+                closeModal();
             }
         });
     </script>
