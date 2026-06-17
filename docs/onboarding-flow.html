@@ -913,6 +913,34 @@
             }
         }
 
+        // 年龄段健康建议配置（后台可配置）
+        const ageAdviceConfig = {
+            '0-18': {
+                label: '成长发育期',
+                weight: 'BMI标准范围内即可，避免过度节食，保证营养摄入支持生长发育',
+                gut: '肠道菌群正在建立，多吃蔬果和发酵食品，少吃高糖高油零食',
+                sleep: '每天需要8-10小时睡眠，生长激素分泌高峰期在夜间，建议22点前入睡'
+            },
+            '18-40': {
+                label: '青壮年时期',
+                weight: '基础代谢率较高，是体重管理的黄金期，建议每周3-5次有氧运动',
+                gut: '工作压力大易影响肠道，注意规律饮食，补充益生菌，减少外卖频率',
+                sleep: '建议7-8小时睡眠，避免熬夜，睡眠不足会导致代谢紊乱和体重增加'
+            },
+            '40-60': {
+                label: '中年转折期',
+                weight: '基础代谢每10年下降2-3%，需控制热量摄入，增加力量训练维持肌肉量',
+                gut: '肠道功能逐渐减弱，增加膳食纤维摄入，关注排便规律，预防便秘',
+                sleep: '睡眠质量可能下降，建议保持规律作息，必要时可补充褪黑素改善睡眠'
+            },
+            '60+': {
+                label: '银发健康期',
+                weight: '适度控制体重，避免过瘦，蛋白质摄入要充足，预防肌少症',
+                gut: '肠道蠕动减慢，多喝水、多吃粗粮，必要时在医生指导下使用益生菌制剂',
+                sleep: '睡眠时间可能缩短至6-7小时，白天可适当午休，避免夜间频繁起夜'
+            }
+        };
+
         function updateAgeFeedback() {
             const now = new Date();
             let age = now.getFullYear() - userData.birthYear;
@@ -923,25 +951,22 @@
             userData.age = age;
             document.getElementById('ageNum').textContent = age;
 
-            let label, desc;
+            let config;
             if (age < 18) {
-                label = '基础代谢高、身体活动水平高';
-                desc = '拥有体重管理的先天优势！';
-            } else if (age < 30) {
-                label = '基础代谢较高、身体活动水平良好';
-                desc = '保持良好习惯，为未来健康打好基础！';
-            } else if (age < 45) {
-                label = '基础代谢开始下降，需关注体重变化';
-                desc = '建议定期体检，保持适量运动。';
+                config = ageAdviceConfig['0-18'];
+            } else if (age < 40) {
+                config = ageAdviceConfig['18-40'];
             } else if (age < 60) {
-                label = '基础代谢明显下降，慢性病风险增加';
-                desc = '建议关注血压、血糖、血脂等指标。';
+                config = ageAdviceConfig['40-60'];
             } else {
-                label = '基础代谢较低，需特别注意慢病管理';
-                desc = '建议保持规律作息，定期复查。';
+                config = ageAdviceConfig['60+'];
             }
-            document.querySelector('.age-label').textContent = label;
-            document.querySelector('.age-desc').textContent = desc;
+
+            document.querySelector('.age-label').textContent = config.label + ' · 专属健康建议';
+            document.querySelector('.age-desc').innerHTML =
+                '<b>体重管理：</b>' + config.weight + '<br>' +
+                '<b>肠道健康：</b>' + config.gut + '<br>' +
+                '<b>睡眠管理：</b>' + config.sleep;
         }
 
         // ===== 性别选择 =====
