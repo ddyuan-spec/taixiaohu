@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泰小虎 - 健康档案初始化</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(180deg, #e8f8f0 0%, #f0f9f4 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: #fff;
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            overflow: hidden;
+            position: relative;
+        }
+        .phone-notch {
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #1a1a2e;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        /* 顶部栏 */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 50px 20px 12px;
+            position: relative;
+        }
+        .header-back {
+            width: 32px; height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #333;
+            cursor: pointer;
+        }
+        .header-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #333;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .header-skip {
+            font-size: 14px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            margin: 0 20px 24px;
+            height: 6px;
+            background: #e8e8e8;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+        .progress-text {
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        /* 步骤内容区 */
+        .step-content {
+            padding: 0 20px;
+            height: calc(100% - 180px);
+            overflow-y: auto;
+        }
+        .step-question {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a2e;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .step-subtitle {
+            font-size: 14px;
+            color: #999;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        /* 选项卡片 */
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .option-card {
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-card:hover {
+            background: #f0f9f4;
+        }
+        .option-card.selected {
+            border-color: #2ecc71;
+            background: #f0f9f4;
+        }
+        .option-card .icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+        .option-card .label {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* 单选列表 */
+        .radio-list {
+            margin-bottom: 20px;
+        }
+        .radio-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .radio-item:hover {
+            background: #f0f9f4;
+        }
+        .radio-item.selected {
+            border-color: #2ecc71;
+            background: #f0f9f4;
+        }
+        .radio-dot {
+            width: 20px; height: 20px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .radio-item.selected .radio-dot {
+            border-color: #2ecc71;
+            background: #2ecc71;
+        }
+        .radio-item.selected .radio-dot::after {
+            content: '';
+            width: 8px; height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+        .radio-label {
+            font-size: 15px;
+            color: #333;
+        }
+
+        /* 数字输入 */
+        .number-input-wrap {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .number-display {
+            font-size: 48px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        .number-unit {
+            font-size: 16px;
+            color: #666;
+            margin-left: 4px;
+        }
+        .number-slider {
+            width: 100%;
+            margin: 30px 0;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #e8e8e8;
+            outline: none;
+        }
+        .number-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(46,204,113,0.4);
+        }
+        .number-scale {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* BMI展示 */
+        .bmi-card {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .bmi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .bmi-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+        .bmi-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        .bmi-status {
+            font-size: 13px;
+            color: #e74c3c;
+            margin-left: 6px;
+        }
+        .bmi-bar {
+            height: 8px;
+            background: linear-gradient(90deg, #3498db, #2ecc71, #f1c40f, #e74c3c);
+            border-radius: 4px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+        .bmi-marker {
+            position: absolute;
+            top: -4px;
+            width: 16px; height: 16px;
+            background: #2ecc71;
+            border: 3px solid white;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: left 0.3s;
+        }
+        .bmi-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #999;
+        }
+        .bmi-desc {
+            font-size: 13px;
+            color: #666;
+            margin-top: 12px;
+            line-height: 1.6;
+        }
+        .bmi-formula {
+            font-size: 11px;
+            color: #bbb;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        /* 睡眠输入 */
+        .sleep-inputs {
+            margin: 20px 0;
+        }
+        .sleep-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+        .sleep-label {
+            font-size: 15px;
+            color: #333;
+        }
+        .sleep-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sleep-btn {
+            width: 32px; height: 32px;
+            border: none;
+            border-radius: 50%;
+            background: #e8e8e8;
+            font-size: 18px;
+            color: #666;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sleep-btn:active {
+            background: #2ecc71;
+            color: white;
+        }
+        .sleep-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a2e;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* 多选标签 */
+        .tag-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tag-item {
+            padding: 10px 18px;
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 24px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tag-item:hover {
+            background: #f0f9f4;
+        }
+        .tag-item.selected {
+            border-color: #2ecc71;
+            background: #f0f9f4;
+            color: #27ae60;
+        }
+
+        /* 其他输入 */
+        .other-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            margin-bottom: 12px;
+            font-family: inherit;
+        }
+        .other-input:focus {
+            border-color: #2ecc71;
+        }
+
+        /* 上传区域 */
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 20px;
+        }
+        .upload-area:hover {
+            border-color: #2ecc71;
+            background: #f0f9f4;
+        }
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .upload-text {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 6px;
+        }
+        .upload-hint {
+            font-size: 12px;
+            color: #999;
+        }
+        .upload-preview {
+            display: none;
+            margin-bottom: 20px;
+        }
+        .upload-preview.show {
+            display: block;
+        }
+        .upload-preview img {
+            width: 100%;
+            border-radius: 12px;
+        }
+
+        /* 底部按钮 */
+        .footer-btn {
+            position: absolute;
+            bottom: 30px;
+            left: 20px; right: 20px;
+        }
+        .btn-next {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+            border-radius: 28px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-next:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .btn-next:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        /* 完成页 */
+        .complete-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+        .complete-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        .complete-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 12px;
+        }
+        .complete-desc {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        /* 隐藏 */
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="phone-notch"></div>
+
+        <!-- 步骤1: 性别 -->
+        <div class="step" id="step1">
+            <div class="header">
+                <div class="header-back" style="visibility:hidden;">←</div>
+                <div class="header-title">健康档案</div>
+                <div class="header-skip" onclick="skipToEnd()">跳过</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 14%;"></div>
+            </div>
+            <div class="progress-text">完成评测，为你生成专属方案</div>
+            <div class="step-content">
+                <div class="step-question">你的性别是？</div>
+                <div class="step-subtitle">这将帮助我们更准确地评估您的健康状况</div>
+                <div class="option-grid">
+                    <div class="option-card" onclick="selectGender('male', this)">
+                        <div class="icon">👨</div>
+                        <div class="label">男</div>
+                    </div>
+                    <div class="option-card" onclick="selectGender('female', this)">
+                        <div class="icon">👩</div>
+                        <div class="label">女</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-btn">
+                <button class="btn-next" id="btn1" disabled onclick="nextStep()">下一步</button>
+            </div>
+        </div>
+
+        <!-- 步骤2: 身高 -->
+        <div class="step hidden" id="step2">
+            <div class="header">
+                <div class="header-back" onclick="prevStep()">←</div>
+                <div class="header-title">健康档案</div>
+                <div class="header-skip" onclick="skipToEnd()">跳过</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 28%;"></div>
+            </div>
+            <div class="progress-text">完成评测，为你生成专属方案</div>
+            <div class="step-content">
+                <div class="step-question">你的身高是？</div>
+                <div class="step-subtitle">用于计算BMI及评估健康指标</div>
+                <div class="number-input-wrap">
+                    <span class="number-display" id="heightDisplay">170<span class="number-unit">cm</span></span>
+                    <input type="range" class="number-slider" id="heightSlider" min="140" max="200" value="170" oninput="updateHeight(this.value)">
+                    <div class="number-scale">
+                        <span>140</span>
+                        <span>160</span>
+                        <span>180</span>
+                        <span>200</span>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-btn">
+                <button class="btn-next" onclick="nextStep()">下一步</button>
+            </div>
+        </div>
+
+        <!-- 步骤3: 体重+BMI -->
+        <div class="step hidden" id="step3">
+            <div class="header">
+                <div class="header-back" onclick="prevStep()">←</div>
+                <div class="header-title">健康档案</div>
+                <div class="header-skip" onclick="skipToEnd()">跳过</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 42%;"></div>
+            </div>
+            <div class="progress-text">完成评测，为你生成专属方案</div>
+            <div class="step-content">
+                <div class="step-question">你的体重是？</div>
+                <div class="step-subtitle">精准体重数据将用于计算你的BMI</div>
+                <div class="number-input-wrap">
+                    <span class="number-display" id="weightDisplay">65.0<span class="number-unit">公斤</span></span>
+                    <input type="range" class="number-slider" id="weightSlider" min="35" max="120" step="0.1" value="65" oninput="updateWeight(this.value)">
+                    <div class="number-scale">
+                        <span>35</span>
+                        <span>60</span>
+                        <span>85</span>
+                        <span>120</span>
+                    </div>
+                </div>
+                <div class="bmi-card">
+                    <div class="bmi-header">
+                        <span class="bmi-title">你的BMI</span>
+                        <span>
+                            <span class="bmi-value" id="bmiValue">22.5</span>
+                            <span class="bmi-status" id="bmiStatus">正常</span>
+                        </span>
+                    </div>
+                    <div class="bmi-bar">
+                        <div class="bmi-marker" id="bmiMarker" style="left: 50%;"></div>
+                    </div>
+                    <div class="bmi-labels">
+                        <span>偏瘦</span>
+                        <span>正常</span>
+                        <span>偏胖</span>
+                        <span>肥胖</span>
+                    </div>
+                    <div class="bmi-desc" id="bmiDesc">您的体重在正常范围内，继续保持良好的生活习惯。</div>
+                    <div class="bmi-formula">BMI(kg/m²) = 体重(kg) / 身高²(m²)</div>
+                </div>
+            </div>
+            <div class="footer-btn">
+                <button class="btn-next" onclick="nextStep()">下一步</button>
+            </div>
+        </div>
+
+        <!-- 步骤4: 睡眠 -->
+        <div class="step hidden" id="step4">
+            <div class="header">
+                <div class="header-back" onclick="prevStep()">←</div>
+                <div class="header-title">健康档案</div>
+                <div class="header-skip" onclick="skipToEnd()">跳过</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 56%;"></div>
+            </div>
+            <div class="progress-text">完成评测，为你生成专属方案</div>
+            <div class="step-content">
+                <div class="step-question">你的睡眠情况如何？</div>
+                <div class="step-subtitle">了解睡眠习惯有助于评估您的健康状态</div>
+                <div class="sleep-inputs">
+                    <div class="sleep-row">
+                        <span class="sleep-label">每晚睡眠时长</span>
+                        <div class="sleep-control">
+                            <button class="sleep-btn" onclick="adjustSleep(-0.5)">−</button>
+                            <span class="sleep-value" id="sleepHours">7.0小时</span>
+                            <button class="sleep-btn" onclick="adjustSleep(0.5)">+</button>
+                        </div>
+                    </div>
+                    <div class="sleep-row">
+                        <span class="sleep-label">夜间起夜次数</span>
+                        <div class="sleep-control">
+                            <button class="sleep-btn" onclick="adjustWake(-1)">−</button>
+                            <span class="sleep-value" id="wakeTimes">0次</span>
+                            <button class="sleep-btn" onclick="adjustWake(1)">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-btn">
+                <button class="btn-next" onclick="nextStep()">下一步</button>
+            </div>
+        </div>
+
+        <!-- 步骤5: 基础病 -->
+        <div class="step hidden" id="step5">
+            <div class="header">
+                <div class="header-back" onclick="prevStep()">←</div>
+                <div class="header-title">健康档案</div>
+                <div class="header-skip" onclick="skipToEnd()">跳过</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 70%;"></div>
+            </div>
+            <div class="progress-text">完成评测，为你生成专属方案</div>
+            <div class="step-content">
+                <div class="step-question">是否有基础疾病？</div>
+                <div class="step-subtitle">可多选，这将帮助我们提供更精准的健康建议</div>
+                <div class="tag-grid" id="diseaseTags">
+                    <div class="tag-item" onclick="toggleTag(this, 'disease')">高血压</div>
+                    <div class="tag-item" onclick="toggleTag(this, 'disease')">糖尿病</div>
+                    <div class="tag-item" onclick="toggleTag(this, 'disease')">高血脂</div>
+                    <div class="tag-item" onclick="toggleTag(this, 'disease')">冠心病</div>
+                    <div class="tag-item" onclick="toggleTag(this, 'disease')">痛风</div>
+                    <div class="tag-item" onclick="toggleTag(this, 'disease')">关节炎</div>
+                    <div class="tag-item" onclick="toggleTag(this, 'disease')">慢性支气管炎</div>
+                    <div class="tag-item" onclick="toggleTag(this, 'disease')">甲状腺疾病</div>
+                </div>
+                <input type="text" class="other-input" id="otherDisease" placeholder="其他疾病，请填写">
+                <div class="radio-item" onclick="selectNone(this, 'disease')">
+                    <div class="radio-dot"></div>
+                    <span class="radio-label">暂无基础疾病</span>
+                </div>
+            </div>
+            <div class="footer-btn">
+                <button class="btn-next" onclick="nextStep()">下一步</button>
+            </div>
+        </div>
+
+        <!-- 步骤6: 用药 -->
+        <div class="step hidden" id="step6">
+            <div class="header">
+                <div class="header-back" onclick="prevStep()">←</div>
+                <div class="header-title">健康档案</div>
+                <div class="header-skip" onclick="skipToEnd()">跳过</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 84%;"></div>
+            </div>
+            <div class="progress-text">完成评测，为你生成专属方案</div>
+            <div class="step-content">
+                <div class="step-question">目前的用药情况？</div>
+                <div class="step-subtitle">根据您的基础病，我们推荐以下常见药品</div>
+                <div class="tag-grid" id="medicineTags">
+                    <div class="tag-item" onclick="toggleTag(this, 'medicine')">氨氯地平</div>
+                    <div class="tag-item" onclick="toggleTag(this, 'medicine')">二甲双胍</div>
+                    <div class="tag-item" onclick="toggleTag(this, 'medicine')">阿司匹林</div>
+                    <div class="tag-item" onclick="toggleTag(this, 'medicine')">阿托伐他汀</div>
+                    <div class="tag-item" onclick="toggleTag(this, 'medicine')">布洛芬</div>
+                    <div class="tag-item" onclick="toggleTag(this, 'medicine')">优甲乐</div>
+                    <div class="tag-item" onclick="toggleTag(this, 'medicine')">胰岛素</div>
+                    <div class="tag-item" onclick="toggleTag(this, 'medicine')">硝酸甘油</div>
+                </div>
+                <input type="text" class="other-input" id="otherMedicine" placeholder="其他药品，请填写">
+                <div class="radio-item" onclick="selectNone(this, 'medicine')">
+                    <div class="radio-dot"></div>
+                    <span class="radio-label">暂无用药</span>
+                </div>
+            </div>
+            <div class="footer-btn">
+                <button class="btn-next" onclick="nextStep()">下一步</button>
+            </div>
+        </div>
+
+        <!-- 步骤7: 体检报告 -->
+        <div class="step hidden" id="step7">
+            <div class="header">
+                <div class="header-back" onclick="prevStep()">←</div>
+                <div class="header-title">健康档案</div>
+                <div class="header-skip" onclick="skipToEnd()">跳过</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 100%;"></div>
+            </div>
+            <div class="progress-text">完成评测，为你生成专属方案</div>
+            <div class="step-content">
+                <div class="step-question">上传体检报告</div>
+                <div class="step-subtitle">上传最近一次体检报告，AI将为您分析关键指标</div>
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📄</div>
+                    <div class="upload-text">点击上传体检报告</div>
+                    <div class="upload-hint">支持 PDF、JPG、PNG 格式</div>
+                </div>
+                <input type="file" id="fileInput" style="display:none;" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this)">
+                <div class="upload-preview" id="uploadPreview">
+                    <img id="previewImg" src="" alt="预览">
+                </div>
+            </div>
+            <div class="footer-btn">
+                <button class="btn-next" onclick="finish()">完成</button>
+            </div>
+        </div>
+
+        <!-- 完成页 -->
+        <div class="step hidden" id="stepComplete">
+            <div class="complete-page">
+                <div class="complete-icon">🎉</div>
+                <div class="complete-title">档案创建完成！</div>
+                <div class="complete-desc">泰小虎已了解您的健康状况<br/>现在可以开始您的健康之旅了</div>
+                <button class="btn-next" style="width:100%;" onclick="restart()">进入首页</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 7;
+        let userData = {
+            gender: '',
+            height: 170,
+            weight: 65,
+            bmi: 22.5,
+            sleepHours: 7,
+            wakeTimes: 0,
+            diseases: [],
+            otherDisease: '',
+            medicines: [],
+            otherMedicine: '',
+            reportFile: null
+        };
+
+        function selectGender(gender, el) {
+            userData.gender = gender;
+            document.querySelectorAll('#step1 .option-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('btn1').disabled = false;
+        }
+
+        function updateHeight(val) {
+            userData.height = parseInt(val);
+            document.getElementById('heightDisplay').innerHTML = val + '<span class="number-unit">cm</span>';
+        }
+
+        function updateWeight(val) {
+            userData.weight = parseFloat(val);
+            document.getElementById('weightDisplay').innerHTML = parseFloat(val).toFixed(1) + '<span class="number-unit">公斤</span>';
+            calculateBMI();
+        }
+
+        function calculateBMI() {
+            const h = userData.height / 100;
+            const bmi = (userData.weight / (h * h)).toFixed(1);
+            userData.bmi = parseFloat(bmi);
+            document.getElementById('bmiValue').textContent = bmi;
+
+            let status, desc, color, pos;
+            if (bmi < 18.5) {
+                status = '偏瘦'; color = '#3498db'; desc = '您的体重偏轻，建议适当增加营养摄入，保持均衡饮食。';
+                pos = 15;
+            } else if (bmi < 24) {
+                status = '正常'; color = '#2ecc71'; desc = '您的体重在正常范围内，继续保持良好的生活习惯。';
+                pos = 40;
+            } else if (bmi < 28) {
+                status = '偏胖'; color = '#f1c40f'; desc = '您的体重略微超标，建议适当控制饮食并增加运动量。';
+                pos = 65;
+            } else {
+                status = '肥胖'; color = '#e74c3c'; desc = '肥胖会增加多种疾病风险，建议制定科学的减重计划。';
+                pos = 88;
+            }
+            document.getElementById('bmiStatus').textContent = status;
+            document.getElementById('bmiStatus').style.color = color;
+            document.getElementById('bmiMarker').style.left = pos + '%';
+            document.getElementById('bmiMarker').style.background = color;
+            document.getElementById('bmiDesc').textContent = desc;
+        }
+
+        function adjustSleep(delta) {
+            userData.sleepHours = Math.max(3, Math.min(12, userData.sleepHours + delta));
+            document.getElementById('sleepHours').textContent = userData.sleepHours.toFixed(1) + '小时';
+        }
+
+        function adjustWake(delta) {
+            userData.wakeTimes = Math.max(0, Math.min(10, userData.wakeTimes + delta));
+            document.getElementById('wakeTimes').textContent = userData.wakeTimes + '次';
+        }
+
+        function toggleTag(el, type) {
+            el.classList.toggle('selected');
+            const text = el.textContent;
+            const arr = type === 'disease' ? userData.diseases : userData.medicines;
+            if (el.classList.contains('selected')) {
+                if (!arr.includes(text)) arr.push(text);
+            } else {
+                const idx = arr.indexOf(text);
+                if (idx > -1) arr.splice(idx, 1);
+            }
+            // 取消"暂无"选择
+            const parent = el.closest('.step-content');
+            const noneItem = parent.querySelector('.radio-item');
+            if (noneItem) noneItem.classList.remove('selected');
+        }
+
+        function selectNone(el, type) {
+            el.classList.toggle('selected');
+            const parent = el.closest('.step-content');
+            const tags = parent.querySelectorAll('.tag-item');
+            if (el.classList.contains('selected')) {
+                tags.forEach(t => t.classList.remove('selected'));
+                if (type === 'disease') {
+                    userData.diseases = [];
+                    userData.otherDisease = '';
+                    document.getElementById('otherDisease').value = '';
+                } else {
+                    userData.medicines = [];
+                    userData.otherMedicine = '';
+                    document.getElementById('otherMedicine').value = '';
+                }
+            }
+        }
+
+        function handleFile(input) {
+            const file = input.files[0];
+            if (file) {
+                userData.reportFile = file.name;
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('previewImg').src = e.target.result;
+                        document.getElementById('uploadPreview').classList.add('show');
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    document.getElementById('uploadPreview').innerHTML = '<div style="padding:20px;background:#f0f9f4;border-radius:12px;text-align:center;">📄 ' + file.name + '</div>';
+                    document.getElementById('uploadPreview').classList.add('show');
+                }
+            }
+        }
+
+        function nextStep() {
+            // 保存当前步骤数据
+            if (currentStep === 5) {
+                userData.otherDisease = document.getElementById('otherDisease').value;
+            }
+            if (currentStep === 6) {
+                userData.otherMedicine = document.getElementById('otherMedicine').value;
+            }
+
+            document.getElementById('step' + currentStep).classList.add('hidden');
+            currentStep++;
+            if (currentStep <= totalSteps) {
+                document.getElementById('step' + currentStep).classList.remove('hidden');
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                document.getElementById('step' + currentStep).classList.add('hidden');
+                currentStep--;
+                document.getElementById('step' + currentStep).classList.remove('hidden');
+            }
+        }
+
+        function skipToEnd() {
+            if (confirm('跳过将使用默认数据创建档案，是否继续？')) {
+                finish();
+            }
+        }
+
+        function finish() {
+            console.log('用户数据:', userData);
+            document.getElementById('step' + currentStep).classList.add('hidden');
+            document.getElementById('stepComplete').classList.remove('hidden');
+        }
+
+        function restart() {
+            currentStep = 1;
+            userData = {
+                gender: '', height: 170, weight: 65, bmi: 22.5,
+                sleepHours: 7, wakeTimes: 0,
+                diseases: [], otherDisease: '',
+                medicines: [], otherMedicine: '',
+                reportFile: null
+            };
+            document.querySelectorAll('.step').forEach(s => s.classList.add('hidden'));
+            document.getElementById('step1').classList.remove('hidden');
+            document.querySelectorAll('.option-card, .tag-item, .radio-item').forEach(el => el.classList.remove('selected'));
+            document.getElementById('btn1').disabled = true;
+            document.getElementById('uploadPreview').classList.remove('show');
+            document.getElementById('previewImg').src = '';
+        }
+
+        // 初始化BMI
+        calculateBMI();
+    </script>
+</body>
+</html>
