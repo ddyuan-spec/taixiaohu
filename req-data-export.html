@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>需求文档 - 数据导出</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; }
+        .requirement-card { border-left: 4px solid #3b82f6; }
+        .requirement-card.p3 { border-left-color: #ec4899; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-sm font-medium">P3</span>
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">后台管理</span>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-900">数据导出</h1>
+                    <p class="text-gray-500 mt-2">支持对话记录、用户数据、积分流水等数据的导出功能</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-gray-400">版本</div>
+                    <div class="text-lg font-semibold">v1.0</div>
+                    <div class="text-sm text-gray-400 mt-1">2024-01-15</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overview -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-bullseye text-blue-500 mr-2"></i>需求概述</h2>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                为运营和数据分析人员提供数据导出功能，支持将系统中的对话记录、用户积分数据、
+                模型调用记录等导出为Excel/CSV格式，便于离线分析和报表制作。
+            </p>
+            <div class="grid grid-cols-3 gap-4 mt-4">
+                <div class="bg-blue-50 rounded-lg p-4 text-center">
+                    <i class="fas fa-file-excel text-blue-500 text-2xl mb-2"></i>
+                    <div class="text-sm font-medium">Excel导出</div>
+                    <div class="text-xs text-gray-500">.xlsx格式</div>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4 text-center">
+                    <i class="fas fa-file-csv text-green-500 text-2xl mb-2"></i>
+                    <div class="text-sm font-medium">CSV导出</div>
+                    <div class="text-xs text-gray-500">纯文本格式</div>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4 text-center">
+                    <i class="fas fa-filter text-purple-500 text-2xl mb-2"></i>
+                    <div class="text-sm font-medium">条件导出</div>
+                    <div class="text-xs text-gray-500">带筛选条件</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Functional Requirements -->
+        <div class="space-y-4 mb-6">
+            <h2 class="text-xl font-bold"><i class="fas fa-list-check text-purple-500 mr-2"></i>功能需求</h2>
+
+            <div class="requirement-card p3 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR1 - 对话记录导出</h3>
+                    <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs">P3</span>
+                </div>
+                <p class="text-gray-700 mb-3">导出对话记录数据，支持按筛选条件导出。</p>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="text-sm font-semibold mb-2">导出字段：</div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-white px-2 py-1 rounded text-xs border">会话ID</span>
+                        <span class="bg-white px-2 py-1 rounded text-xs border">时间</span>
+                        <span class="bg-white px-2 py-1 rounded text-xs border">用户消息</span>
+                        <span class="bg-white px-2 py-1 rounded text-xs border">AI回复</span>
+                        <span class="bg-white px-2 py-1 rounded text-xs border">意图类型</span>
+                        <span class="bg-white px-2 py-1 rounded text-xs border">知识库调用</span>
+                        <span class="span class="bg-white px-2 py-1 rounded text-xs border">推荐产品</span>
+                        <span class="bg-white px-2 py-1 rounded text-xs border">对话轮数</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="requirement-card p3 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR2 - 积分数据导出</h3>
+                    <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs">P3</span>
+                </div>
+                <p class="text-gray-700">导出用户积分账户和积分流水数据。</p>
+            </div>
+
+            <div class="requirement-card p3 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR3 - 模型调用记录导出</h3>
+                    <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs">P3</span>
+                </div>
+                <p class="text-gray-700">导出LLM模型调用记录，用于成本分析和性能评估。</p>
+            </div>
+
+            <div class="requirement-card p3 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR4 - 导出格式选择</h3>
+                    <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs">P3</span>
+                </div>
+                <p class="text-gray-700">支持Excel(.xlsx)和CSV两种格式导出。</p>
+            </div>
+
+            <div class="requirement-card p3 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR5 - 异步导出</h3>
+                    <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs">P3</span>
+                </div>
+                <p class="text-gray-700">大数据量导出采用异步方式，导出完成后提供下载链接。</p>
+            </div>
+        </div>
+
+        <!-- UI Mockup -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-desktop text-indigo-500 mr-2"></i>页面设计</h2>
+            
+            <div class="border rounded-xl p-4 bg-gray-50">
+                <div class="bg-white rounded-lg p-4 shadow-sm">
+                    <div class="text-sm font-semibold mb-3">数据导出</div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-sm text-gray-600">导出数据类型</label>
+                            <select class="w-full mt-1 px-3 py-2 border rounded-lg text-sm">
+                                <option>对话记录</option>
+                                <option>积分流水</option>
+                                <option>模型调用记录</option>
+                                <option>用户积分账户</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="text-sm text-gray-600">时间范围</label>
+                            <div class="flex gap-2 mt-1">
+                                <input type="date" class="flex-1 px-3 py-2 border rounded-lg text-sm">
+                                <span class="self-center text-gray-400">至</span>
+                                <input type="date" class="flex-1 px-3 py-2 border rounded-lg text-sm">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="text-sm text-gray-600">导出格式</label>
+                            <div class="flex gap-4 mt-1">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="format" checked>
+                                    <span class="text-sm">Excel (.xlsx)</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="format">
+                                    <span class="text-sm">CSV</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="filter">
+                            <label for="filter" class="text-sm">应用当前筛选条件</label>
+                        </div>
+                        
+                        <button class="w-full bg-blue-500 text-white py-2 rounded-lg text-sm font-medium">
+                            <i class="fas fa-download mr-1"></i>开始导出
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-code text-gray-500 mr-2"></i>接口设计</h2>
+            <div class="space-y-3">
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">POST /api/admin/export/conversations</div>
+                    <div class="text-gray-400 text-xs mt-1">导出对话记录</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">POST /api/admin/export/points</div>
+                    <div class="text-gray-400 text-xs mt-1">导出积分数据</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">POST /api/admin/export/model-calls</div>
+                    <div class="text-gray-400 text-xs mt-1">导出模型调用记录</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/admin/export/status/:task_id</div>
+                    <div class="text-gray-400 text-xs mt-1">查询导出任务状态</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/admin/export/download/:task_id</div>
+                    <div class="text-gray-400 text-xs mt-1">下载导出文件</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

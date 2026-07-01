@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>需求文档 - 提示词配置功能</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.8; color: #333; background: #f5f5f5; padding: 20px; }
+        .container { max-width: 960px; margin: 0 auto; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 20px; }
+        .header h1 { font-size: 1.8em; }
+        .header .meta { opacity: 0.9; margin-top: 8px; font-size: 0.9em; }
+        .section { background: white; border-radius: 12px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        .section h2 { color: #667eea; font-size: 1.3em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e9ecef; }
+        .section h3 { color: #2c3e50; font-size: 1.1em; margin: 20px 0 10px; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.95em; }
+        th, td { border: 1px solid #dee2e6; padding: 10px 12px; text-align: left; }
+        th { background: #e8f4f8; color: #2c3e50; font-weight: 600; }
+        tr:nth-child(even) { background: #f8f9fa; }
+        .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 500; }
+        .tag-p0 { background: #fee2e2; color: #991b1b; }
+        .tag-p1 { background: #fef3c7; color: #92400e; }
+        .tag-p2 { background: #dbeafe; color: #1e40af; }
+        .highlight { background: #fff3cd; padding: 12px 16px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #ffc107; }
+        .code-block { background: #2d3748; color: #e2e8f0; border-radius: 8px; padding: 16px; margin: 15px 0; overflow-x: auto; font-family: 'Consolas', monospace; font-size: 0.9em; }
+        ul, ol { margin-left: 20px; }
+        li { margin: 6px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 提示词配置功能</h1>
+            <div class="meta">需求文档 | 优先级 <span class="tag tag-p0">P0</span> | 版本 v1.0</div>
+        </div>
+
+        <div class="section">
+            <h2>📌 需求概述</h2>
+            <p>提供后台管理界面，支持运营人员动态配置和修改各模块的提示词（Prompt），无需修改代码即可调整智能体的回复风格、规则和行为。</p>
+        </div>
+
+        <div class="section">
+            <h2>🎯 功能目标</h2>
+            <ul>
+                <li>支持查看和编辑所有16个模块的提示词</li>
+                <li>支持提示词版本管理（保存历史版本，可回滚）</li>
+                <li>支持实时预览修改后的效果</li>
+                <li>支持一键恢复默认提示词</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>📋 功能清单</h2>
+            <table>
+                <tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+                <tr><td>提示词列表</td><td>展示所有16个模块的提示词，按分类展示</td><td><span class="tag tag-p0">P0</span></td></tr>
+                <tr><td>提示词编辑</td><td>支持在线编辑提示词内容，带语法高亮</td><td><span class="tag tag-p0">P0</span></td></tr>
+                <tr><td>保存/发布</td><td>保存修改后的提示词，可选择立即生效或草稿</td><td><span class="tag tag-p0">P0</span></td></tr>
+                <tr><td>版本历史</td><td>记录每次修改的历史版本，支持对比和回滚</td><td><span class="tag tag-p1">P1</span></td></tr>
+                <tr><td>实时预览</td><td>修改后可快速测试效果（输入测试对话）</td><td><span class="tag tag-p1">P1</span></td></tr>
+                <tr><td>恢复默认</td><td>一键恢复提示词到默认版本</td><td><span class="tag tag-p1">P1</span></td></tr>
+                <tr><td>导入/导出</td><td>支持批量导入导出提示词（JSON格式）</td><td><span class="tag tag-p2">P2</span></td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>🏗️ 页面设计</h2>
+            <h3>左侧导航栏</h3>
+            <ul>
+                <li>全局人设（System Prompt）</li>
+                <li>总控决策（Orchestrator）</li>
+                <li>安全守卫（Safety Guard）</li>
+                <li>意图识别（Intent Router）</li>
+                <li>画像模块（抽取/收集/追问/关联人切换）</li>
+                <li>业务模块（症状收集/推荐引擎/产品咨询/知识问答）</li>
+                <li>服务保障（边界处理/客服转接/免责声明/欢迎语）</li>
+            </ul>
+            <h3>右侧编辑区</h3>
+            <ul>
+                <li>顶部：模块名称 + 当前版本号 + 保存/发布按钮</li>
+                <li>中部：文本编辑区（支持Markdown语法高亮）</li>
+                <li>底部：功能说明（该提示词的用途和规则）</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>💾 数据存储</h2>
+            <div class="code-block">{
+  "prompt_id": "system_prompt",
+  "name": "System Prompt",
+  "category": "核心",
+  "content": "你是「泰小虎」...",
+  "version": 3,
+  "is_default": false,
+  "created_at": "2024-01-15T10:30:00Z",
+  "updated_at": "2024-01-15T10:30:00Z",
+  "history": [
+    {"version": 2, "content": "...", "updated_at": "..."},
+    {"version": 1, "content": "...", "updated_at": "..."}
+  ]
+}</div>
+        </div>
+
+        <div class="section">
+            <h2>⚠️ 注意事项</h2>
+            <ul>
+                <li>修改提示词后需要点击"发布"才会生效</li>
+                <li>保存为草稿时不会影响线上对话</li>
+                <li>恢复默认操作不可撤销，建议先保存当前版本</li>
+                <li>提示词内容需符合安全规范，不得包含违规内容</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>需求文档 - 积分等级体系</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; }
+        .requirement-card { border-left: 4px solid #3b82f6; }
+        .requirement-card.p3 { border-left-color: #ec4899; }
+        .level-card { transition: all 0.3s; }
+        .level-card:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-sm font-medium">P3</span>
+                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">用户运营</span>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-900">积分等级体系</h1>
+                    <p class="text-gray-500 mt-2">用户根据累计积分获得等级称号和特权，增强用户成就感和粘性</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-gray-400">版本</div>
+                    <div class="text-lg font-semibold">v1.0</div>
+                    <div class="text-sm text-gray-400 mt-1">2024-01-15</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overview -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-bullseye text-blue-500 mr-2"></i>需求概述</h2>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                建立用户等级体系，用户通过累计获得积分提升等级，每个等级有独特的称号和特权。
+                等级体系与积分体系联动，为用户提供长期成长目标，增强产品粘性。
+            </p>
+            <div class="grid grid-cols-3 gap-4 mt-4">
+                <div class="bg-blue-50 rounded-lg p-4 text-center">
+                    <i class="fas fa-trophy text-blue-500 text-2xl mb-2"></i>
+                    <div class="text-sm font-medium">等级称号</div>
+                    <div class="text-xs text-gray-500">10个等级</div>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4 text-center">
+                    <i class="fas fa-star text-purple-500 text-2xl mb-2"></i>
+                    <div class="text-sm font-medium">等级特权</div>
+                    <div class="text-xs text-gray-500">专属权益</div>
+                </div>
+                <div class="bg-amber-50 rounded-lg p-4 text-center">
+                    <i class="fas fa-chart-line text-amber-500 text-2xl mb-2"></i>
+                    <div class="text-sm font-medium">成长进度</div>
+                    <div class="text-xs text-gray-500">可视化展示</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Level Design -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-crown text-amber-500 mr-2"></i>等级设计</h2>
+            
+            <div class="grid grid-cols-5 gap-3">
+                <div class="level-card bg-gray-50 rounded-lg p-3 text-center border-2 border-gray-200">
+                    <div class="text-2xl mb-1">🌱</div>
+                    <div class="font-semibold text-sm">健康新手</div>
+                    <div class="text-xs text-gray-500">0-99分</div>
+                    <div class="text-xs text-gray-400 mt-1">Lv.1</div>
+                </div>
+                <div class="level-card bg-blue-50 rounded-lg p-3 text-center border-2 border-blue-200">
+                    <div class="text-2xl mb-1">🌿</div>
+                    <div class="font-semibold text-sm text-blue-700">健康学徒</div>
+                    <div class="text-xs text-gray-500">100-299分</div>
+                    <div class="text-xs text-gray-400 mt-1">Lv.2</div>
+                </div>
+                <div class="level-card bg-green-50 rounded-lg p-3 text-center border-2 border-green-200">
+                    <div class="text-2xl mb-1">🍀</div>
+                    <div class="font-semibold text-sm text-green-700">健康达人</div>
+                    <div class="text-xs text-gray-500">300-599分</div>
+                    <div class="text-xs text-gray-400 mt-1">Lv.3</div>
+                </div>
+                <div class="level-card bg-purple-50 rounded-lg p-3 text-center border-2 border-purple-200">
+                    <div class="text-2xl mb-1">🌸</div>
+                    <div class="font-semibold text-sm text-purple-700">健康专家</div>
+                    <div class="text-xs text-gray-500">600-999分</div>
+                    <div class="text-xs text-gray-400 mt-1">Lv.4</div>
+                </div>
+                <div class="level-card bg-amber-50 rounded-lg p-3 text-center border-2 border-amber-200">
+                    <div class="text-2xl mb-1">⭐</div>
+                    <div class="font-semibold text-sm text-amber-700">健康之星</div>
+                    <div class="text-xs text-gray-500">1000-1499分</div>
+                    <div class="text-xs text-gray-400 mt-1">Lv.5</div>
+                </div>
+                <div class="level-card bg-orange-50 rounded-lg p-3 text-center border-2 border-orange-200">
+                    <div class="text-2xl mb-1">🌟</div>
+                    <div class="font-semibold text-sm text-orange-700">健康导师</div>
+                    <div class="text-xs text-gray-500">1500-2199分</div>
+                    <div class="text-xs text-gray-400 mt-1">Lv.6</div>
+                </div>
+                <div class="level-card bg-red-50 rounded-lg p-3 text-center border-2 border-red-200">
+                    <div class="text-2xl mb-1">💎</div>
+                    <div class="font-semibold text-sm text-red-700">健康大师</div>
+                    <div class="text-xs text-gray-500">2200-2999分</div>
+                    <div class="text-xs text-gray-400 mt-1">Lv.7</div>
+                </div>
+                <div class="level-card bg-indigo-50 rounded-lg p-3 text-center border-2 border-indigo-200">
+                    <div class="text-2xl mb-1">👑</div>
+                    <div class="font-semibold text-sm text-indigo-700">健康王者</div>
+                    <div class="text-xs text-gray-500">3000-4999分</div>
+                    <div class="text-xs text-gray-400 mt-1">Lv.8</div>
+                </div>
+                <div class="level-card bg-pink-50 rounded-lg p-3 text-center border-2 border-pink-200">
+                    <div class="text-2xl mb-1">🏆</div>
+                    <div class="font-semibold text-sm text-pink-700">健康传奇</div>
+                    <div class="text-xs text-gray-500">5000-9999分</div>
+                    <div class="text-xs text-gray-400 mt-1">Lv.9</div>
+                </div>
+                <div class="level-card bg-gradient-to-br from-amber-50 to-yellow-50 rounded-lg p-3 text-center border-2 border-yellow-300">
+                    <div class="text-2xl mb-1">🦄</div>
+                    <div class="font-semibold text-sm text-yellow-700">健康神话</div>
+                    <div class="text-xs text-gray-500">10000分+</div>
+                    <div class="text-xs text-gray-400 mt-1">Lv.10</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privileges -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-gift text-pink-500 mr-2"></i>等级特权</h2>
+            
+            <div class="space-y-3">
+                <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-percentage text-blue-500"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-medium">积分兑换折扣</div>
+                        <div class="text-sm text-gray-500">高等级用户享受积分商城兑换折扣（Lv.5+ 9折，Lv.8+ 8折）</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-comments text-green-500"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-medium">专属客服标识</div>
+                        <div class="text-sm text-gray-500">高等级用户在对话中显示特殊标识</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-unlock text-purple-500"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-medium">专属功能解锁</div>
+                        <div class="text-sm text-gray-500">Lv.5+ 解锁深度健康报告，Lv.8+ 解锁专属健康方案</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                    <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-birthday-cake text-amber-500"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-medium">等级礼包</div>
+                        <div class="text-sm text-gray-500">升级时自动发放积分礼包</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Functional Requirements -->
+        <div class="space-y-4 mb-6">
+            <h2 class="text-xl font-bold"><i class="fas fa-list-check text-purple-500 mr-2"></i>功能需求</h2>
+
+            <div class="requirement-card p3 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR1 - 等级自动计算</h3>
+                    <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs">P3</span>
+                </div>
+                <p class="text-gray-700">根据用户累计获得积分自动计算等级，等级提升时自动发放奖励。</p>
+            </div>
+
+            <div class="requirement-card p3 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR2 - 等级展示</h3>
+                    <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs">P3</span>
+                </div>
+                <p class="text-gray-700 mb-3">在积分页面展示当前等级、等级称号、升级进度条。</p>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="text-sm font-semibold mb-2">展示内容：</div>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• 当前等级图标和称号</li>
+                        <li>• 当前积分 / 下一级所需积分</li>
+                        <li>• 进度条可视化</li>
+                        <li>• 距离下一级还差多少积分</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="requirement-card p3 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR3 - 等级提升通知</h3>
+                    <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs">P3</span>
+                </div>
+                <p class="text-gray-700">用户等级提升时显示 congratulatory 弹窗，展示新等级特权。</p>
+            </div>
+
+            <div class="requirement-card p3 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR4 - 等级排行榜</h3>
+                    <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs">P3</span>
+                </div>
+                <p class="text-gray-700">展示积分/等级排行榜（可选，前100名），增强用户竞争感。</p>
+            </div>
+        </div>
+
+        <!-- UI Mockup -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-desktop text-indigo-500 mr-2"></i>页面设计</h2>
+            
+            <div class="max-w-md mx-auto border rounded-xl overflow-hidden">
+                <!-- Level Header -->
+                <div class="bg-gradient-to-br from-purple-500 to-indigo-600 p-6 text-white text-center">
+                    <div class="text-4xl mb-2">🌸</div>
+                    <div class="text-xl font-bold">健康专家</div>
+                    <div class="text-sm opacity-80">Lv.4</div>
+                    <div class="mt-4">
+                        <div class="flex justify-between text-xs mb-1">
+                            <span>600</span>
+                            <span>1000</span>
+                        </div>
+                        <div class="h-2 bg-white/30 rounded-full">
+                            <div class="h-2 bg-white rounded-full" style="width: 65%"></div>
+                        </div>
+                        <div class="text-xs mt-1 opacity-80">当前 750 分，还需 250 分升级</div>
+                    </div>
+                </div>
+                
+                <!-- Privileges -->
+                <div class="p-4">
+                    <div class="text-sm font-semibold mb-3">当前特权</div>
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2 text-sm">
+                            <i class="fas fa-check-circle text-green-500"></i>
+                            <span>积分兑换 9.5 折</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm">
+                            <i class="fas fa-check-circle text-green-500"></i>
+                            <span>专属客服标识</span>
+                        </div>
+                    </div>
+                    <div class="text-sm font-semibold mb-3 mt-4">下一级特权</div>
+                    <div class="space-y-2 opacity-60">
+                        <div class="flex items-center gap-2 text-sm">
+                            <i class="fas fa-lock text-gray-400"></i>
+                            <span>积分兑换 9 折</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm">
+                            <i class="fas fa-lock text-gray-400"></i>
+                            <span>深度健康报告</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Model -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-database text-green-500 mr-2"></i>数据模型</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left">字段名</th>
+                            <th class="px-4 py-3 text-left">类型</th>
+                            <th class="px-4 py-3 text-left">说明</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        <tr><td class="px-4 py-3 font-mono">id</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">主键</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">level</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">等级(1-10)</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">title</td><td class="px-4 py-3">String</td><td class="px-4 py-3">等级称号</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">icon</td><td class="px-4 py-3">String</td><td class="px-4 py-3">等级图标</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">min_points</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">最低积分要求</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">max_points</td><td class="px-4 py-3">Integer</td><td class="px-4 py-3">最高积分限制</td></tr>
+                        <tr><td class="px-4 py-3 font-mono">privileges</td><td class="px-4 py-3">JSON</td><td class="px-4 py-3">特权配置</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- API -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-code text-gray-500 mr-2"></i>接口设计</h2>
+            <div class="space-y-3">
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/points/level?session_id=xxx</div>
+                    <div class="text-gray-400 text-xs mt-1">查询用户等级信息</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/points/levels</div>
+                    <div class="text-gray-400 text-xs mt-1">获取所有等级配置</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+{
+  "session_id": "web_browser_test",
+  "user_id": "",
+  "started_at": "2026-05-29T18:33:55.422220",
+  "ended_at": null,
+  "messages": [
+    {
+      "message_id": "web_browser_test_user_0",
+      "message_type": "user",
+      "content": "你好，我最近失眠",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:33:55.422220"
+    },
+    {
+      "message_id": "web_browser_test_agent_1",
+      "message_type": "agent",
+      "content": "理解您失眠的困扰。这种情况持续多久了？",
+      "intent": "health_consult",
+      "intent_confidence": 0.0,
+      "state": "symptom_collection",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:33:55.428370"
+    },
+    {
+      "message_id": "web_browser_test_user_2",
+      "message_type": "user",
+      "content": "有什么产品推荐吗",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:33:55.434372"
+    },
+    {
+      "message_id": "web_browser_test_agent_3",
+      "message_type": "agent",
+      "content": "根据您的情况，我为您推荐以下产品：\n\n1. 【泰吉眠沙棘茶氨酸】  \n   功效：30分钟助入睡，延长深睡时间，舒缓压力、改善睡眠质量  \n   适用人群：失眠、易醒、睡不沉或作息紊乱的成年人  \n   服用方法：每日1次，每次2片，睡前30分钟温水送服  \n\n温馨提示：以上产品仅供参考，不能代替医生的诊断和治疗。【本品不能替代药物，如有长期失眠或伴随焦虑、心悸等症状，请及时就医】",
+      "intent": "health_consult",
+      "intent_confidence": 0.0,
+      "state": "recommendation",
+      "recommended_products": [
+        "泰吉眠沙棘茶氨酸"
+      ],
+      "knowledge_base_calls": [
+        {
+          "query": "有什么产品推荐吗 失眠",
+          "intent": "recommendation",
+          "results_count": 1,
+          "product_ids": [
+            "PRD001"
+          ],
+          "response_time_ms": 0,
+          "timestamp": "2026-05-29T18:33:58.576778"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "recommendation_engine",
+          "prompt_tokens": 784,
+          "completion_tokens": 122,
+          "total_tokens": 906,
+          "response_time_ms": 3136,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-05-29T18:33:58.576778"
+        }
+      ],
+      "timestamp": "2026-05-29T18:33:58.576778"
+    }
+  ],
+  "user_profile": {},
+  "total_messages": 4,
+  "is_active": true
+}

@@ -1,0 +1,96 @@
+{
+  "session_id": "sess_demo_002",
+  "user_id": "user_demo_002",
+  "started_at": "2026-06-08T15:57:15.119028",
+  "ended_at": "2026-06-08T16:03:15.119028",
+  "messages": [
+    {
+      "message_id": "sess_demo_002_user_0",
+      "message_type": "user",
+      "content": "我家孩子3岁了，最近不爱吃饭，有什么办法吗？",
+      "timestamp": "2026-06-08T15:57:15.119028"
+    },
+    {
+      "message_id": "sess_demo_002_agent_0",
+      "message_type": "agent",
+      "content": "3岁孩子不爱吃饭是常见问题。建议：\n1. 营造愉快的用餐氛围\n2. 控制零食摄入\n3. 增加食物多样性\n\n另外，可以适当补充儿童复合维生素。",
+      "intent": "health_consult",
+      "intent_confidence": 0.88,
+      "recommended_products": [
+        "prod_010"
+      ],
+      "knowledge_base_calls": [
+        {
+          "query": "儿童不爱吃饭 解决办法",
+          "intent": "health_consult",
+          "results_count": 4,
+          "product_ids": [
+            "prod_010"
+          ],
+          "response_time_ms": 200,
+          "timestamp": "2026-06-08T15:58:15.119028"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "intent_recognition",
+          "prompt_tokens": 130,
+          "completion_tokens": 60,
+          "total_tokens": 190,
+          "response_time_ms": 750,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-08T15:58:15.119028"
+        }
+      ],
+      "timestamp": "2026-06-08T15:58:15.119028"
+    },
+    {
+      "message_id": "sess_demo_002_user_1",
+      "message_type": "user",
+      "content": "那维生素会不会有副作用？",
+      "timestamp": "2026-06-08T16:00:15.119028"
+    },
+    {
+      "message_id": "sess_demo_002_agent_1",
+      "message_type": "agent",
+      "content": "儿童维生素一般很安全，按照推荐剂量服用即可。",
+      "intent": "safety_inquiry",
+      "intent_confidence": 0.85,
+      "recommended_products": [],
+      "knowledge_base_calls": [
+        {
+          "query": "儿童维生素 副作用",
+          "intent": "safety_inquiry",
+          "results_count": 2,
+          "product_ids": [],
+          "response_time_ms": 250,
+          "timestamp": "2026-06-08T16:01:15.119028"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "dialogue_response",
+          "prompt_tokens": 400,
+          "completion_tokens": 80,
+          "total_tokens": 480,
+          "response_time_ms": 600,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-08T16:01:15.119028"
+        }
+      ],
+      "timestamp": "2026-06-08T16:01:15.119028"
+    }
+  ],
+  "user_profile": {
+    "age": 32,
+    "gender": "女",
+    "chronic_disease": "",
+    "allergies": "",
+    "medications": "",
+    "health_concerns": "儿童营养"
+  },
+  "total_messages": 4,
+  "is_active": false
+}

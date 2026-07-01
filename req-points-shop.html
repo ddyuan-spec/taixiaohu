@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>需求文档 - 积分商城</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; }
+        .requirement-card { border-left: 4px solid #3b82f6; }
+        .requirement-card.p3 { border-left-color: #ec4899; }
+        .product-card { transition: all 0.3s; }
+        .product-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-sm font-medium">P3</span>
+                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">用户运营</span>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-900">积分商城</h1>
+                    <p class="text-gray-500 mt-2">用户使用积分兑换虚拟商品、优惠券、实物奖品等</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-gray-400">版本</div>
+                    <div class="text-lg font-semibold">v1.0</div>
+                    <div class="text-sm text-gray-400 mt-1">2024-01-15</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overview -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-bullseye text-blue-500 mr-2"></i>需求概述</h2>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                建立积分商城，用户可以使用积累的积分兑换各类商品，包括虚拟商品（如专属皮肤、功能解锁）、
+                优惠券（如产品折扣券）、实物奖品等。商城商品由后台管理员配置，支持库存管理和兑换记录。
+            </p>
+            <div class="grid grid-cols-4 gap-4 mt-4">
+                <div class="bg-blue-50 rounded-lg p-4 text-center">
+                    <i class="fas fa-box text-blue-500 text-2xl mb-2"></i>
+                    <div class="text-sm font-medium">商品管理</div>
+                    <div class="text-xs text-gray-500">后台配置</div>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4 text-center">
+                    <i class="fas fa-shopping-cart text-green-500 text-2xl mb-2"></i>
+                    <div class="text-sm font-medium">积分兑换</div>
+                    <div class="text-xs text-gray-500">用户消费</div>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4 text-center">
+                    <i class="fas fa-clipboard-list text-purple-500 text-2xl mb-2"></i>
+                    <div class="text-sm font-medium">兑换记录</div>
+                    <div class="text-xs text-gray-500">完整追溯</div>
+                </div>
+                <div class="bg-amber-50 rounded-lg p-4 text-center">
+                    <i class="fas fa-warehouse text-amber-500 text-2xl mb-2"></i>
+                    <div class="text-sm font-medium">库存管理</div>
+                    <div class="text-xs text-gray-500">限量控制</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Functional Requirements -->
+        <div class="space-y-4 mb-6">
+            <h2 class="text-xl font-bold"><i class="fas fa-list-check text-purple-500 mr-2"></i>功能需求</h2>
+
+            <div class="requirement-card p3 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR1 - 商品列表展示</h3>
+                    <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs">P3</span>
+                </div>
+                <p class="text-gray-700 mb-3">积分商城页面展示所有可兑换商品，支持分类筛选。</p>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="text-sm font-semibold mb-2">商品分类：</div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">虚拟商品</span>
+                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">优惠券</span>
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm">实物奖品</span>
+                        <span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm">功能解锁</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="requirement-card p3 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR2 - 商品兑换</h3>
+                    <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs">P3</span>
+                </div>
+                <p class="text-gray-700 mb-3">用户选择商品进行兑换，系统校验积分余额和库存。</p>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="text-sm font-semibold mb-2">兑换流程：</div>
+                    <ol class="text-sm text-gray-600 space-y-1">
+                        <li>1. 用户点击兑换按钮</li>
+                        <li>2. 系统校验积分余额是否充足</li>
+                        <li>3. 系统校验商品库存是否充足</li>
+                        <li>4. 扣除用户积分</li>
+                        <li>5. 生成兑换记录</li>
+                        <li>6. 发放商品（虚拟商品立即到账，实物需填写地址）</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="requirement-card p3 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR3 - 兑换记录</h3>
+                    <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs">P3</span>
+                </div>
+                <p class="text-gray-700">用户查看自己的兑换历史，包括兑换时间、商品、消耗积分、状态等。</p>
+            </div>
+
+            <div class="requirement-card p3 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR4 - 后台商品管理</h3>
+                    <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs">P3</span>
+                </div>
+                <p class="text-gray-700 mb-3">管理员在后台添加、编辑、下架商品，配置商品信息。</p>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="text-sm font-semibold mb-2">商品字段：</div>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• 商品名称、描述、图片</li>
+                        <li>• 兑换所需积分</li>
+                        <li>• 商品类型（虚拟/优惠券/实物）</li>
+                        <li>• 库存数量（-1表示不限量）</li>
+                        <li>• 每人限购数量</li>
+                        <li>• 上架/下架状态</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="requirement-card p3 bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-bold text-lg">FR5 - 库存管理</h3>
+                    <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs">P3</span>
+                </div>
+                <p class="text-gray-700">商品库存自动扣减，库存不足时显示"已兑完"，支持库存预警。</p>
+            </div>
+        </div>
+
+        <!-- UI Mockup -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-desktop text-indigo-500 mr-2"></i>页面设计</h2>
+            
+            <div class="space-y-6">
+                <!-- Points Header -->
+                <div class="bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl p-4 text-white flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-coins text-2xl"></i>
+                        <div>
+                            <div class="text-sm opacity-80">我的积分</div>
+                            <div class="text-2xl font-bold">1,250</div>
+                        </div>
+                    </div>
+                    <button class="bg-white/20 px-4 py-2 rounded-lg text-sm">
+                        <i class="fas fa-list mr-1"></i>兑换记录
+                    </button>
+                </div>
+
+                <!-- Category Tabs -->
+                <div class="flex gap-2">
+                    <button class="bg-blue-500 text-white px-4 py-2 rounded-full text-sm">全部</button>
+                    <button class="bg-gray-100 text-gray-600 px-4 py-2 rounded-full text-sm">虚拟商品</button>
+                    <button class="bg-gray-100 text-gray-600 px-4 py-2 rounded-full text-sm">优惠券</button>
+                    <button class="bg-gray-100 text-gray-600 px-4 py-2 rounded-full text-sm">实物奖品</button>
+                </div>
+
+                <!-- Product Grid -->
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="product-card bg-white rounded-xl shadow-sm overflow-hidden border">
+                        <div class="h-24 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                            <i class="fas fa-palette text-white text-3xl"></i>
+                        </div>
+                        <div class="p-3">
+                            <div class="font-medium text-sm">专属主题皮肤</div>
+                            <div class="text-xs text-gray-500 mt-1">虚拟商品</div>
+                            <div class="flex items-center justify-between mt-2">
+                                <div class="text-amber-600 font-bold text-sm">
+                                    <i class="fas fa-coins text-xs mr-1"></i>200
+                                </div>
+                                <button class="bg-blue-500 text-white px-3 py-1 rounded text-xs">兑换</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-card bg-white rounded-xl shadow-sm overflow-hidden border">
+                        <div class="h-24 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                            <i class="fas fa-ticket-alt text-white text-3xl"></i>
+                        </div>
+                        <div class="p-3">
+                            <div class="font-medium text-sm">8折优惠券</div>
+                            <div class="text-xs text-gray-500 mt-1">优惠券</div>
+                            <div class="flex items-center justify-between mt-2">
+                                <div class="text-amber-600 font-bold text-sm">
+                                    <i class="fas fa-coins text-xs mr-1"></i>500
+                                </div>
+                                <button class="bg-blue-500 text-white px-3 py-1 rounded text-xs">兑换</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-card bg-white rounded-xl shadow-sm overflow-hidden border">
+                        <div class="h-24 bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+                            <i class="fas fa-gift text-white text-3xl"></i>
+                        </div>
+                        <div class="p-3">
+                            <div class="font-medium text-sm">健康礼包</div>
+                            <div class="text-xs text-gray-500 mt-1">实物奖品</div>
+                            <div class="flex items-center justify-between mt-2">
+                                <div class="text-amber-600 font-bold text-sm">
+                                    <i class="fas fa-coins text-xs mr-1"></i>1000
+                                </div>
+                                <button class="bg-gray-300 text-gray-500 px-3 py-1 rounded text-xs cursor-not-allowed">已兑完</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Model -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-database text-green-500 mr-2"></i>数据模型</h2>
+            
+            <div class="mb-4">
+                <h3 class="font-semibold mb-2 text-gray-700">商品表 (shop_products)</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr><th class="px-4 py-2 text-left">字段名</th><th class="px-4 py-2 text-left">类型</th><th class="px-4 py-2 text-left">说明</th></tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr><td class="px-4 py-2 font-mono">id</td><td class="px-4 py-2">Integer</td><td class="px-4 py-2">主键</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">name</td><td class="px-4 py-2">String</td><td class="px-4 py-2">商品名称</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">description</td><td class="px-4 py-2">String</td><td class="px-4 py-2">商品描述</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">type</td><td class="px-4 py-2">String</td><td class="px-4 py-2">类型(virtual/coupon/physical)</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">points_cost</td><td class="px-4 py-2">Integer</td><td class="px-4 py-2">所需积分</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">stock</td><td class="px-4 py-2">Integer</td><td class="px-4 py-2">库存(-1不限量)</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">limit_per_user</td><td class="px-4 py-2">Integer</td><td class="px-4 py-2">每人限购</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">status</td><td class="px-4 py-2">String</td><td class="px-4 py-2">状态(active/inactive)</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">created_at</td><td class="px-4 py-2">DateTime</td><td class="px-4 py-2">创建时间</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="font-semibold mb-2 text-gray-700">兑换记录表 (exchange_records)</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr><th class="px-4 py-2 text-left">字段名</th><th class="px-4 py-2 text-left">类型</th><th class="px-4 py-2 text-left">说明</th></tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr><td class="px-4 py-2 font-mono">id</td><td class="px-4 py-2">Integer</td><td class="px-4 py-2">主键</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">session_id</td><td class="px-4 py-2">String</td><td class="px-4 py-2">用户ID</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">product_id</td><td class="px-4 py-2">Integer</td><td class="px-4 py-2">商品ID</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">points_cost</td><td class="px-4 py-2">Integer</td><td class="px-4 py-2">消耗积分</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">status</td><td class="px-4 py-2">String</td><td class="px-4 py-2">状态(pending/completed)</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">created_at</td><td class="px-4 py-2">DateTime</td><td class="px-4 py-2">创建时间</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- API -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-code text-gray-500 mr-2"></i>接口设计</h2>
+            <div class="space-y-3">
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/shop/products</div>
+                    <div class="text-gray-400 text-xs mt-1">获取商品列表</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">POST /api/shop/exchange</div>
+                    <div class="text-gray-400 text-xs mt-1">兑换商品</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/shop/exchange-records</div>
+                    <div class="text-gray-400 text-xs mt-1">获取兑换记录</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/admin/shop/products</div>
+                    <div class="text-gray-400 text-xs mt-1">后台商品列表</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">POST /api/admin/shop/products</div>
+                    <div class="text-gray-400 text-xs mt-1">添加商品</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

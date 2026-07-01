@@ -1,0 +1,35 @@
+{
+  "session_id": "test_web_session",
+  "user_id": "",
+  "started_at": "2026-05-29T18:27:56.299142",
+  "ended_at": null,
+  "messages": [
+    {
+      "message_id": "test_web_session_user_0",
+      "message_type": "user",
+      "content": "你好，我最近失眠",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:27:56.300142"
+    },
+    {
+      "message_id": "test_web_session_agent_1",
+      "message_type": "agent",
+      "content": "理解您失眠的困扰。这种情况持续多久了？",
+      "intent": "health_consult",
+      "intent_confidence": 0.0,
+      "state": "symptom_collection",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:27:56.305142"
+    }
+  ],
+  "user_profile": {},
+  "total_messages": 2,
+  "is_active": true
+}

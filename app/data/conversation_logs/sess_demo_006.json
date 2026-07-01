@@ -1,0 +1,96 @@
+{
+  "session_id": "sess_demo_006",
+  "user_id": "user_demo_006",
+  "started_at": "2026-06-04T07:57:15.119028",
+  "ended_at": "2026-06-04T08:03:15.119028",
+  "messages": [
+    {
+      "message_id": "sess_demo_006_user_0",
+      "message_type": "user",
+      "content": "我怀孕了，现在4个月，需要补充什么营养吗？",
+      "timestamp": "2026-06-04T07:57:15.119028"
+    },
+    {
+      "message_id": "sess_demo_006_agent_0",
+      "message_type": "agent",
+      "content": "恭喜您！孕4个月是胎儿快速发育期，营养需求增加。重点补充：\n\n1. **叶酸** - 预防神经管缺陷（400-800μg/天）\n2. **DHA** - 促进胎儿大脑发育\n3. **钙+维生素D** - 骨骼发育\n4. **铁剂** - 预防孕期贫血\n\n建议选择孕妇专用复合维生素。",
+      "intent": "health_consult",
+      "intent_confidence": 0.95,
+      "recommended_products": [
+        "prod_050"
+      ],
+      "knowledge_base_calls": [
+        {
+          "query": "孕期营养 叶酸 DHA 钙 铁",
+          "intent": "health_consult",
+          "results_count": 6,
+          "product_ids": [
+            "prod_050"
+          ],
+          "response_time_ms": 200,
+          "timestamp": "2026-06-04T07:58:15.119028"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "dialogue_response",
+          "prompt_tokens": 550,
+          "completion_tokens": 140,
+          "total_tokens": 690,
+          "response_time_ms": 900,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-04T07:58:15.119028"
+        }
+      ],
+      "timestamp": "2026-06-04T07:58:15.119028"
+    },
+    {
+      "message_id": "sess_demo_006_user_1",
+      "message_type": "user",
+      "content": "这些对胎儿不会有影响吧？",
+      "timestamp": "2026-06-04T08:00:15.119028"
+    },
+    {
+      "message_id": "sess_demo_006_agent_1",
+      "message_type": "agent",
+      "content": "孕期补充这些营养素是安全的，但需要注意：\n\n1. **叶酸** - 孕期必需，安全剂量内无害\n2. **DHA** - 选择藻油DHA更纯净\n3. **钙** - 不超过2000mg/天\n4. **铁** - 遵医嘱，过量可能便秘\n\n建议在产科医生指导下服用，定期产检。",
+      "intent": "safety_inquiry",
+      "intent_confidence": 0.93,
+      "recommended_products": [],
+      "knowledge_base_calls": [
+        {
+          "query": "孕期 营养素 安全性",
+          "intent": "safety_inquiry",
+          "results_count": 4,
+          "product_ids": [],
+          "response_time_ms": 250,
+          "timestamp": "2026-06-04T08:01:15.119028"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "dialogue_response",
+          "prompt_tokens": 480,
+          "completion_tokens": 120,
+          "total_tokens": 600,
+          "response_time_ms": 780,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-06-04T08:01:15.119028"
+        }
+      ],
+      "timestamp": "2026-06-04T08:01:15.119028"
+    }
+  ],
+  "user_profile": {
+    "age": 30,
+    "gender": "女",
+    "chronic_disease": "",
+    "allergies": "",
+    "medications": "",
+    "health_concerns": "孕期营养"
+  },
+  "total_messages": 4,
+  "is_active": false
+}

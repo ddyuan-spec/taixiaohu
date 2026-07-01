@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>需求文档 - 积分获取（分享/打卡）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; }
+        .requirement-card { border-left: 4px solid #3b82f6; }
+        .requirement-card.p2 { border-left-color: #8b5cf6; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-medium">P2</span>
+                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">用户运营</span>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-900">积分获取（分享/打卡）</h1>
+                    <p class="text-gray-500 mt-2">用户通过分享推广和每日打卡获取积分，提升用户活跃度和留存</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-gray-400">版本</div>
+                    <div class="text-lg font-semibold">v1.0</div>
+                    <div class="text-sm text-gray-400 mt-1">2024-01-15</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overview -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-bullseye text-blue-500 mr-2"></i>需求概述</h2>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                提供多种积分获取途径，鼓励用户分享小程序/页面和每日打卡，通过积分激励提升用户活跃度和产品曝光度。
+                每个获取途径有独立的积分规则和频次限制。
+            </p>
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-share-alt text-blue-500"></i>
+                        <span class="font-semibold">分享推广</span>
+                    </div>
+                    <div class="text-sm text-gray-600">分享页面给好友，好友点击后双方获得积分</div>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-calendar-check text-green-500"></i>
+                        <span class="font-semibold">每日打卡</span>
+                    </div>
+                    <div class="text-sm text-gray-600">每日首次进入打卡，连续打卡有额外奖励</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Functional Requirements -->
+        <div class="space-y-4 mb-6">
+            <h2 class="text-xl font-bold"><i class="fas fa-list-check text-purple-500 mr-2"></i>功能需求</h2>
+
+            <!-- Share Module -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="font-bold text-lg mb-4 text-blue-700"><i class="fas fa-share-alt mr-2"></i>分享推广模块</h3>
+                
+                <div class="space-y-4">
+                    <div class="requirement-card p2 bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <h4 class="font-semibold">FR1 - 分享按钮</h4>
+                            <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">P2</span>
+                        </div>
+                        <p class="text-sm text-gray-700">在对话页面和积分页面提供分享按钮，支持分享到微信好友/朋友圈。</p>
+                    </div>
+
+                    <div class="requirement-card p2 bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <h4 class="font-semibold">FR2 - 分享积分奖励</h4>
+                            <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">P2</span>
+                        </div>
+                        <p class="text-sm text-gray-700 mb-2">用户分享后，当被分享者点击链接进入，双方获得积分。</p>
+                        <div class="bg-white rounded p-3 text-sm">
+                            <div class="font-medium mb-1">积分规则：</div>
+                            <ul class="text-gray-600 space-y-1">
+                                <li>• 分享者：+20积分/次</li>
+                                <li>• 被分享者（新用户）：+50积分（首次）</li>
+                                <li>• 每日上限：分享者最多获得100积分/天</li>
+                                <li>• 同一被分享者只计算一次</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="requirement-card p2 bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <h4 class="font-semibold">FR3 - 分享追踪</h4>
+                            <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">P2</span>
+                        </div>
+                        <p class="text-sm text-gray-700">通过URL参数追踪分享来源，记录分享关系链。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Check-in Module -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="font-bold text-lg mb-4 text-green-700"><i class="fas fa-calendar-check mr-2"></i>每日打卡模块</h3>
+                
+                <div class="space-y-4">
+                    <div class="requirement-card p2 bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <h4 class="font-semibold">FR4 - 打卡入口</h4>
+                            <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">P2</span>
+                        </div>
+                        <p class="text-sm text-gray-700">在积分页面提供打卡按钮，显示今日打卡状态。</p>
+                    </div>
+
+                    <div class="requirement-card p2 bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <h4 class="font-semibold">FR5 - 打卡积分规则</h4>
+                            <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">P2</span>
+                        </div>
+                        <p class="text-sm text-gray-700 mb-2">每日打卡获得积分，连续打卡有额外奖励。</p>
+                        <div class="bg-white rounded p-3 text-sm">
+                            <div class="font-medium mb-1">积分规则：</div>
+                            <ul class="text-gray-600 space-y-1">
+                                <li>• 每日打卡：+10积分</li>
+                                <li>• 连续3天：额外+20积分</li>
+                                <li>• 连续7天：额外+50积分</li>
+                                <li>• 连续30天：额外+200积分</li>
+                                <li>• 断签后重新计算</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="requirement-card p2 bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <h4 class="font-semibold">FR6 - 打卡日历</h4>
+                            <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">P2</span>
+                        </div>
+                        <p class="text-sm text-gray-700">展示当月打卡日历，已打卡日期标记为已完成。</p>
+                    </div>
+
+                    <div class="requirement-card p2 bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <h4 class="font-semibold">FR7 - 连续打卡提醒</h4>
+                            <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">P2</span>
+                        </div>
+                        <p class="text-sm text-gray-700">连续打卡即将断签时，在页面显示提醒（如"再打卡2天可获得50积分奖励"）。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- UI Mockup -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-desktop text-indigo-500 mr-2"></i>页面设计</h2>
+            
+            <div class="grid grid-cols-2 gap-6">
+                <!-- Check-in Calendar -->
+                <div>
+                    <h3 class="font-semibold mb-3 text-gray-700">打卡日历</h3>
+                    <div class="border rounded-xl p-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="font-semibold">2024年1月</span>
+                            <span class="text-sm text-green-600">已连续打卡 5 天</span>
+                        </div>
+                        <div class="grid grid-cols-7 gap-2 text-center text-sm">
+                            <div class="text-gray-400">日</div>
+                            <div class="text-gray-400">一</div>
+                            <div class="text-gray-400">二</div>
+                            <div class="text-gray-400">三</div>
+                            <div class="text-gray-400">四</div>
+                            <div class="text-gray-400">五</div>
+                            <div class="text-gray-400">六</div>
+                            <div class="text-gray-300">31</div>
+                            <div class="bg-green-100 text-green-700 rounded-lg py-1">1</div>
+                            <div class="bg-green-100 text-green-700 rounded-lg py-1">2</div>
+                            <div class="bg-green-100 text-green-700 rounded-lg py-1">3</div>
+                            <div class="bg-green-100 text-green-700 rounded-lg py-1">4</div>
+                            <div class="bg-green-100 text-green-700 rounded-lg py-1">5</div>
+                            <div class="bg-blue-500 text-white rounded-lg py-1 font-bold">6</div>
+                            <div class="text-gray-400">7</div>
+                        </div>
+                        <div class="mt-4 p-3 bg-amber-50 rounded-lg text-sm text-amber-800">
+                            <i class="fas fa-gift mr-1"></i>
+                            再打卡2天可获得额外50积分奖励！
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Share Card -->
+                <div>
+                    <h3 class="font-semibold mb-3 text-gray-700">分享推广</h3>
+                    <div class="border rounded-xl p-4">
+                        <div class="text-center mb-4">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <i class="fas fa-share-alt text-blue-500 text-2xl"></i>
+                            </div>
+                            <div class="font-semibold">邀请好友得积分</div>
+                            <div class="text-sm text-gray-500">每成功邀请一位好友，双方都得积分</div>
+                        </div>
+                        <div class="space-y-2 mb-4">
+                            <div class="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-user-plus text-green-500"></i>
+                                    <span class="text-sm">成功邀请</span>
+                                </div>
+                                <span class="font-semibold text-green-600">+20</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-user text-blue-500"></i>
+                                    <span class="text-sm">好友首次访问</span>
+                                </div>
+                                <span class="font-semibold text-blue-600">+50</span>
+                            </div>
+                        </div>
+                        <button class="w-full bg-blue-500 text-white rounded-lg py-2 text-sm font-medium">
+                            <i class="fas fa-share mr-1"></i>立即分享
+                        </button>
+                        <div class="text-center mt-2 text-xs text-gray-500">
+                            今日还可获得 80 积分
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Model -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-database text-green-500 mr-2"></i>数据模型</h2>
+            
+            <div class="mb-4">
+                <h3 class="font-semibold mb-2 text-gray-700">打卡记录表 (checkin_records)</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr><th class="px-4 py-2 text-left">字段名</th><th class="px-4 py-2 text-left">类型</th><th class="px-4 py-2 text-left">说明</th></tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr><td class="px-4 py-2 font-mono">id</td><td class="px-4 py-2">Integer</td><td class="px-4 py-2">主键</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">session_id</td><td class="px-4 py-2">String</td><td class="px-4 py-2">用户会话ID</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">checkin_date</td><td class="px-4 py-2">Date</td><td class="px-4 py-2">打卡日期</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">consecutive_days</td><td class="px-4 py-2">Integer</td><td class="px-4 py-2">连续打卡天数</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">points_earned</td><td class="px-4 py-2">Integer</td><td class="px-4 py-2">获得积分</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">created_at</td><td class="px-4 py-2">DateTime</td><td class="px-4 py-2">创建时间</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="font-semibold mb-2 text-gray-700">分享记录表 (share_records)</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr><th class="px-4 py-2 text-left">字段名</th><th class="px-4 py-2 text-left">类型</th><th class="px-4 py-2 text-left">说明</th></tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr><td class="px-4 py-2 font-mono">id</td><td class="px-4 py-2">Integer</td><td class="px-4 py-2">主键</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">sharer_session_id</td><td class="px-4 py-2">String</td><td class="px-4 py-2">分享者ID</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">visitor_session_id</td><td class="px-4 py-2">String</td><td class="px-4 py-2">访问者ID</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">share_code</td><td class="px-4 py-2">String</td><td class="px-4 py-2">分享码</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">points_given</td><td class="px-4 py-2">Boolean</td><td class="px-4 py-2">是否已发放积分</td></tr>
+                            <tr><td class="px-4 py-2 font-mono">created_at</td><td class="px-4 py-2">DateTime</td><td class="px-4 py-2">创建时间</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- API -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-code text-gray-500 mr-2"></i>接口设计</h2>
+            <div class="space-y-3">
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">POST /api/points/checkin</div>
+                    <div class="text-gray-400 text-xs mt-1">每日打卡</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/points/checkin/status</div>
+                    <div class="text-gray-400 text-xs mt-1">查询打卡状态</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">POST /api/points/share</div>
+                    <div class="text-gray-400 text-xs mt-1">记录分享行为</div>
+                </div>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 font-mono text-sm">GET /api/points/share/verify?code=xxx</div>
+                    <div class="text-gray-400 text-xs mt-1">验证分享码并发放积分</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

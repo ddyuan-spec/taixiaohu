@@ -1,0 +1,236 @@
+{
+  "session_id": "scenario_5_1780048891",
+  "user_id": "",
+  "started_at": "2026-05-29T18:03:02.983326",
+  "ended_at": null,
+  "messages": [
+    {
+      "message_id": "scenario_5_1780048891_user_0",
+      "message_type": "user",
+      "content": "你好，我今年35岁，男性",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:03:02.983326"
+    },
+    {
+      "message_id": "scenario_5_1780048891_agent_1",
+      "message_type": "agent",
+      "content": "您好呀～35岁的年纪正是事业和家庭的黄金期，也特别需要注意身体的小信号哦！😊  \n我是泰小虎，您的健康顾问，可以帮您：  \n✅ 做个简单的健康状态小评估  \n✅ 推荐适合男士的营养支持方案（比如精力、睡眠、护肝、免疫力等）  \n✅ 解答日常养生疑问，不讲大道理，只说实在话  \n\n您最近有没有特别关注的身体变化？比如容易疲劳、睡不好、胃口变差，或者体检有些小异常？咱们慢慢聊～【温馨提示：所有建议都不代替医生诊断哦】",
+      "intent": "other",
+      "intent_confidence": 0.0,
+      "state": "boundary",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [
+        {
+          "module": "boundary_handler",
+          "prompt_tokens": 607,
+          "completion_tokens": 130,
+          "total_tokens": 737,
+          "response_time_ms": 3735,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-05-29T18:03:06.724782"
+        }
+      ],
+      "timestamp": "2026-05-29T18:03:06.724782"
+    },
+    {
+      "message_id": "scenario_5_1780048891_user_2",
+      "message_type": "user",
+      "content": "工作压力大，经常焦虑",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:03:06.934993"
+    },
+    {
+      "message_id": "scenario_5_1780048891_agent_3",
+      "message_type": "agent",
+      "content": "理解您焦虑的困扰。这种情况持续多久了？",
+      "intent": "health_consult",
+      "intent_confidence": 0.0,
+      "state": "symptom_collection",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:03:06.942993"
+    },
+    {
+      "message_id": "scenario_5_1780048891_user_4",
+      "message_type": "user",
+      "content": "睡眠质量也不好",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:03:07.154114"
+    },
+    {
+      "message_id": "scenario_5_1780048891_agent_5",
+      "message_type": "agent",
+      "content": "理解您焦虑的困扰。这种情况持续多久了？",
+      "intent": "health_consult",
+      "intent_confidence": 0.0,
+      "state": "symptom_collection",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:03:07.161621"
+    },
+    {
+      "message_id": "scenario_5_1780048891_user_6",
+      "message_type": "user",
+      "content": "有什么方法可以改善？",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:03:07.372798"
+    },
+    {
+      "message_id": "scenario_5_1780048891_agent_7",
+      "message_type": "agent",
+      "content": "理解您焦虑的困扰。这种情况持续多久了？",
+      "intent": "health_consult",
+      "intent_confidence": 0.0,
+      "state": "symptom_collection",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:03:07.378775"
+    },
+    {
+      "message_id": "scenario_5_1780048891_user_8",
+      "message_type": "user",
+      "content": "有什么产品推荐吗？",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:03:07.591024"
+    },
+    {
+      "message_id": "scenario_5_1780048891_agent_9",
+      "message_type": "agent",
+      "content": "根据您的情况，我为您推荐以下产品：\n\n1. 【泰吉眠沙棘茶氨酸】  \n   功效：舒缓情绪压力、改善焦虑、助入睡、延长深睡  \n   适用人群：工作压力大、易焦虑、睡眠质量差的成年人  \n   服用方法：每日1次，每次2片，睡前30分钟温水送服  \n\n温馨提示：以上产品仅供参考，不能代替医生的诊断和治疗。【如有长期焦虑或严重失眠，请及时就医评估】",
+      "intent": "health_consult",
+      "intent_confidence": 0.0,
+      "state": "recommendation",
+      "recommended_products": [
+        "泰吉眠沙棘茶氨酸"
+      ],
+      "knowledge_base_calls": [
+        {
+          "query": "有什么产品推荐吗？ 焦虑 35岁 男",
+          "intent": "recommendation",
+          "results_count": 1,
+          "product_ids": [
+            "PRD001"
+          ],
+          "response_time_ms": 0,
+          "timestamp": "2026-05-29T18:03:10.436589"
+        }
+      ],
+      "llm_calls": [
+        {
+          "module": "recommendation_engine",
+          "prompt_tokens": 850,
+          "completion_tokens": 108,
+          "total_tokens": 958,
+          "response_time_ms": 2834,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-05-29T18:03:10.436589"
+        }
+      ],
+      "timestamp": "2026-05-29T18:03:10.436589"
+    },
+    {
+      "message_id": "scenario_5_1780048891_user_10",
+      "message_type": "user",
+      "content": "泰吉眠和智忆高有什么区别？",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:03:10.647903"
+    },
+    {
+      "message_id": "scenario_5_1780048891_agent_11",
+      "message_type": "agent",
+      "content": "您好，泰小虎来为您解答～  \n\n【泰吉眠沙棘茶氨酸】主打「舒缓焦虑+改善睡眠」，核心是帮助放松神经、快速入睡、延长深睡，适合您目前的焦虑和睡眠问题；  \n\n【智忆高】则侧重「提升专注力与记忆力」，含磷脂酰丝氨酸、DHA等成分，更适合用脑多、易忘事、注意力不集中的朋友。  \n\n简单说：  \n✅ 泰吉眠——睡得好、心更稳  \n✅ 智忆高——记得牢、脑子清  \n\n温馨提示：两者可搭配使用，但建议间隔1小时服用。【保健品不能替代药物，如有持续焦虑或失眠，请及时就医】",
+      "intent": "product_consult",
+      "intent_confidence": 0.0,
+      "state": "product_consult",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [
+        {
+          "module": "product_consult",
+          "prompt_tokens": 1189,
+          "completion_tokens": 154,
+          "total_tokens": 1343,
+          "response_time_ms": 4159,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-05-29T18:03:14.816239"
+        }
+      ],
+      "timestamp": "2026-05-29T18:03:14.816239"
+    },
+    {
+      "message_id": "scenario_5_1780048891_user_12",
+      "message_type": "user",
+      "content": "那我选泰吉眠吧",
+      "intent": null,
+      "intent_confidence": 0.0,
+      "state": null,
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [],
+      "timestamp": "2026-05-29T18:03:15.026693"
+    },
+    {
+      "message_id": "scenario_5_1780048891_agent_13",
+      "message_type": "agent",
+      "content": "太好啦！选泰吉眠是个温暖又安心的选择～ 🌙  \n它能帮您舒缓焦虑、放松神经，30分钟就容易入睡，还能延长深睡时间，让第二天精神更饱满。  \n\n小提醒：  \n✅ 建议睡前30分钟嚼服2片（可配少量温水）  \n✅ 连续用2周效果更明显，身体会慢慢适应并调节  \n✅ 期间尽量少喝咖啡、少看手机，睡眠环境越安静柔和越好  \n\n需要我帮您规划一个简单的「21天安心睡眠小计划」吗？ 😊",
+      "intent": "product_consult",
+      "intent_confidence": 0.0,
+      "state": "product_consult",
+      "recommended_products": [],
+      "knowledge_base_calls": [],
+      "llm_calls": [
+        {
+          "module": "product_consult",
+          "prompt_tokens": 1335,
+          "completion_tokens": 131,
+          "total_tokens": 1466,
+          "response_time_ms": 4142,
+          "success": true,
+          "error_message": "",
+          "timestamp": "2026-05-29T18:03:19.176681"
+        }
+      ],
+      "timestamp": "2026-05-29T18:03:19.176681"
+    }
+  ],
+  "user_profile": {},
+  "total_messages": 14,
+  "is_active": true
+}
