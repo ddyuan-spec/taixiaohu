@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>BMI参考来源</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .container {
+            max-width: 430px; margin: 0 auto; background: #f5f7fa; min-height: 100vh;
+            position: relative; overflow: hidden;
+        }
+        /* 顶部状态栏 */
+        .status-bar {
+            height: 24px; background: #4CD964; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 16px; font-size: 12px; color: #fff;
+        }
+        /* 导航栏 */
+        .nav-header {
+            background: #4CD964; color: #fff; padding: 8px 16px 16px; display: flex; align-items: center; position: relative;
+        }
+        .nav-back {
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            font-size: 20px; cursor: pointer; position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+        }
+        .nav-title { font-size: 17px; font-weight: 600; margin: 0 auto; text-align: center; }
+
+        /* 内容区域 */
+        .content {
+            padding: 16px;
+        }
+
+        /* 说明卡片 */
+        .section-card {
+            background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 16px;
+        }
+        .section-title {
+            font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 16px;
+        }
+        .section-subtitle {
+            font-size: 14px; color: #666; margin-bottom: 12px; line-height: 1.6;
+        }
+        .bullet-list { list-style: none; }
+        .bullet-list li {
+            font-size: 14px; color: #666; line-height: 1.8; margin-bottom: 10px;
+            padding-left: 16px; position: relative;
+        }
+        .bullet-list li::before {
+            content: '•'; color: #4CD964; font-weight: bold; position: absolute; left: 0; top: 0;
+        }
+
+        /* 参考来源列表 */
+        .ref-card {
+            background: #f8f9fa; border-radius: 10px; padding: 16px; margin-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: flex-start;
+        }
+        .ref-info { flex: 1; }
+        .ref-name { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+        .ref-org { font-size: 13px; color: #4CD964; margin-bottom: 6px; }
+        .ref-desc { font-size: 12px; color: #999; line-height: 1.5; }
+        .ref-link {
+            font-size: 13px; color: #4CD964; font-weight: 500; white-space: nowrap; cursor: pointer; flex-shrink: 0; margin-left: 12px;
+        }
+
+        /* DEMO角标 */
+        .demo-badge {
+            position: fixed; top: 0; right: 0; background: #e74c3c; color: #fff;
+            font-size: 10px; padding: 2px 20px; transform: rotate(45deg) translate(16px, -4px);
+            z-index: 999; font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-badge">DEMO</div>
+    <div class="container">
+        <div class="status-bar">
+            <span>11:59</span>
+            <span>5G</span>
+        </div>
+        <div class="nav-header">
+            <div class="nav-back" onclick="history.back()">&#10094;</div>
+            <div class="nav-title">BMI参考来源</div>
+        </div>
+
+        <div class="content">
+            <!-- BMI计算说明 -->
+            <div class="section-card">
+                <div class="section-title">BMI计算说明</div>
+                <ul class="bullet-list">
+                    <li>BMI（身体质量指数）= 体重（kg）÷ 身高（m）的平方。</li>
+                    <li>BMI 适合用于成人体重状态的初步筛查，不适合作为儿童、孕妇、老年人或高强度运动人群的唯一评估依据。</li>
+                    <li>BMI结果仅供健康管理参考，不作为诊断结论；如需个体化评估，请结合医生或专业营养师建议。</li>
+                </ul>
+            </div>
+
+            <!-- 参考来源 -->
+            <div class="section-card">
+                <div class="section-title">BMI与体重管理参考来源</div>
+                <div class="section-subtitle">以下来源用于说明 BMI 计算、成人体重状态和一般体重管理建议。</div>
+
+                <div class="ref-card">
+                    <div class="ref-info">
+                        <div class="ref-name">Obesity and overweight</div>
+                        <div class="ref-org">World Health Organization</div>
+                        <div class="ref-desc">包含 BMI、超重和肥胖相关定义及一般健康风险说明。</div>
+                    </div>
+                    <div class="ref-link">查看</div>
+                </div>
+
+                <div class="ref-card">
+                    <div class="ref-info">
+                        <div class="ref-name">About Adult BMI</div>
+                        <div class="ref-org">Centers for Disease Control and Prevention</div>
+                        <div class="ref-desc">包含成人 BMI 的用途、局限性及常见解释方式。</div>
+                    </div>
+                    <div class="ref-link">查看</div>
+                </div>
+
+                <div class="ref-card">
+                    <div class="ref-info">
+                        <div class="ref-name">Healthy diet</div>
+                        <div class="ref-org">World Health Organization</div>
+                        <div class="ref-desc">用于体重管理场景中的一般饮食建议公开参考。</div>
+                    </div>
+                    <div class="ref-link">查看</div>
+                </div>
+
+                <div class="ref-card">
+                    <div class="ref-info">
+                        <div class="ref-name">Physical activity</div>
+                        <div class="ref-org">World Health Organization</div>
+                        <div class="ref-desc">用于体重管理场景中的一般运动建议公开参考。</div>
+                    </div>
+                    <div class="ref-link">查看</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
