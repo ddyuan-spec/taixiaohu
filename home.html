@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>泰小虎 - 首页</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { height: 100%; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #f0f2f5;
+            display: flex; align-items: center; justify-content: center;
+        }
+        a { text-decoration: none; color: inherit; }
+
+        .phone-frame {
+            width: 100%; max-width: 414px; height: 100vh; max-height: 896px;
+            background: linear-gradient(180deg, #e8f8f0 0%, #f4fcfb 35%, #ffffff 100%);
+            position: relative; overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+        }
+        @media (min-width: 430px) {
+            .phone-frame { border-radius: 40px; height: 896px; }
+            .phone-notch {
+                position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+                width: 150px; height: 30px; background: #1a1a2e;
+                border-radius: 0 0 20px 20px; z-index: 30;
+            }
+        }
+
+        /* 顶部导航 */
+        .top-nav {
+            position: absolute; top: 0; left: 0; right: 0; height: 84px; z-index: 20;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 44px 16px 0;
+            background: linear-gradient(180deg, rgba(232,248,240,0.95) 0%, rgba(232,248,240,0.5) 70%, rgba(232,248,240,0) 100%);
+        }
+        .nav-menu {
+            width: 28px; height: 20px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;
+        }
+        .nav-menu span { display: block; height: 2px; background: #333; border-radius: 1px; }
+        .nav-menu span:nth-child(1) { width: 18px; }
+        .nav-menu span:nth-child(2) { width: 24px; }
+        .nav-menu span:nth-child(3) { width: 14px; }
+        .nav-tabs {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 24px;
+        }
+        .nav-tab {
+            font-size: 15px; color: #999; cursor: pointer; position: relative; padding-bottom: 4px;
+            transition: color 0.2s;
+        }
+        .nav-tab.active { color: #1a1a2e; font-weight: 600; }
+        .nav-tab.active::after {
+            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 16px; height: 3px; background: #10b981; border-radius: 2px;
+        }
+        .nav-more { font-size: 18px; color: #333; cursor: pointer; letter-spacing: 2px; }
+
+        /* 侧边栏 */
+        .drawer-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100;
+            opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .drawer-overlay.show { opacity: 1; visibility: visible; }
+        .drawer {
+            position: absolute; top: 0; left: 0; width: 260px; height: 100%; background: #fff;
+            transform: translateX(-100%); transition: transform 0.3s ease-out;
+            padding: 44px 20px 20px; display: flex; flex-direction: column;
+        }
+        .drawer-overlay.show .drawer { transform: translateX(0); }
+        .drawer-close { position: absolute; top: 10px; right: 12px; font-size: 20px; color: #999; cursor: pointer; }
+        .drawer-avatar {
+            width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #34d399, #10b981);
+            display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 12px;
+        }
+        .drawer-name { font-size: 17px; font-weight: 600; color: #1a1a2e; margin-bottom: 24px; }
+        .drawer-menu { display: flex; flex-direction: column; gap: 6px; }
+        .drawer-item {
+            display: flex; align-items: center; gap: 12px; padding: 14px 12px; border-radius: 12px;
+            font-size: 15px; color: #333; cursor: pointer; transition: background 0.2s;
+        }
+        .drawer-item:hover, .drawer-item:active { background: #f0fdf6; color: #10b981; }
+        .drawer-item .icon { font-size: 18px; width: 24px; text-align: center; }
+
+        /* 主内容区 */
+        .page-content {
+            position: absolute; top: 84px; left: 0; right: 0; bottom: 132px;
+            overflow-y: auto; padding: 0 16px 16px;
+        }
+        .page-content::-webkit-scrollbar { display: none; }
+
+        /* 欢迎语 */
+        .welcome {
+            position: relative; padding: 8px 0 20px; min-height: 92px;
+        }
+        .welcome h1 {
+            font-size: 25px; font-weight: 700; color: #1a1a2e; line-height: 1.35; letter-spacing: -0.3px;
+            max-width: 240px;
+        }
+        .mascot {
+            position: absolute; top: 0; right: 0; width: 76px; height: 76px;
+        }
+        .mascot svg { width: 100%; height: 100%; }
+
+        /* 引导卡片 */
+        .quick-card {
+            background: #fff; border-radius: 20px; padding: 16px; margin-bottom: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .quick-card-title {
+            font-size: 15px; font-weight: 600; color: #1a1a2e; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .quick-card-title .dot {
+            width: 6px; height: 6px; border-radius: 50%; background: #10b981; flex-shrink: 0;
+        }
+        .quick-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+        .quick-tag {
+            font-size: 12px; color: #059669; background: #f0fdf6; border: 1px solid #d1fae5;
+            border-radius: 12px; padding: 4px 10px; cursor: pointer; transition: all 0.2s;
+        }
+        .quick-tag:hover { background: #d1fae5; }
+        .quick-list { border-top: 1px solid #f5f5f5; }
+        .quick-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 0; border-bottom: 1px solid #f5f5f5; cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .quick-item:last-child { border-bottom: none; }
+        .quick-item:active { transform: scale(0.99); }
+        .quick-item-left { display: flex; align-items: center; gap: 12px; }
+        .quick-item-icon {
+            width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #34d399, #10b981);
+            display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: 600;
+        }
+        .quick-item-text { font-size: 15px; color: #333; }
+        .quick-item-arrow { color: #ccc; font-size: 16px; }
+
+        /* 聊天区（默认隐藏） */
+        .chat-thread {
+            display: none; margin-bottom: 12px; animation: fadeIn 0.3s ease;
+        }
+        .chat-thread.show { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .message { display: flex; margin-bottom: 12px; }
+        .message.user { justify-content: flex-end; }
+        .message.ai { justify-content: flex-start; }
+        .message-bubble {
+            max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.5;
+            word-break: break-word;
+        }
+        .message.user .message-bubble { background: #10b981; color: #fff; border-bottom-right-radius: 4px; }
+        .message.ai .message-bubble { background: #f3f4f6; color: #333; border-bottom-left-radius: 4px; }
+        .typing { display: flex; gap: 4px; align-items: center; padding: 12px 14px; }
+        .typing span { width: 6px; height: 6px; border-radius: 50%; background: #999; animation: typing 1.2s infinite; }
+        .typing span:nth-child(2) { animation-delay: 0.2s; }
+        .typing span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1); } }
+
+        /* 服务入口 */
+        .service-bar {
+            position: absolute; bottom: 60px; left: 0; right: 0; height: 72px;
+            background: #fff; border-top: 1px solid #f0f0f0; z-index: 15;
+            display: flex; align-items: center; gap: 8px; padding: 0 12px; overflow-x: auto;
+        }
+        .service-bar::-webkit-scrollbar { display: none; }
+        .service-item {
+            flex-shrink: 0; min-width: 68px; display: flex; flex-direction: column; align-items: center; gap: 6px;
+            padding: 8px 6px; border-radius: 12px; cursor: pointer; transition: background 0.2s;
+        }
+        .service-item:active { background: #f0fdf6; }
+        .service-item .icon {
+            width: 36px; height: 36px; border-radius: 50%; background: #f0fdf6;
+            display: flex; align-items: center; justify-content: center; font-size: 18px; color: #10b981;
+        }
+        .service-item .label { font-size: 12px; color: #666; }
+
+        /* 输入栏 */
+        .input-bar {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+            background: #fff; border-top: 1px solid #f0f0f0; z-index: 15;
+            display: flex; align-items: center; gap: 8px; padding: 0 12px;
+        }
+        .input-voice {
+            width: 36px; height: 36px; border-radius: 50%; border: 2px solid #e5e7eb;
+            display: flex; align-items: center; justify-content: center; color: #666; font-size: 16px; cursor: pointer;
+            transition: all 0.2s; flex-shrink: 0;
+        }
+        .input-voice:active { background: #f0fdf6; border-color: #10b981; color: #10b981; }
+        .input-wrap {
+            flex: 1; height: 40px; background: #f5f5f5; border-radius: 20px;
+            display: flex; align-items: center; padding: 0 12px; gap: 8px; transition: background 0.2s;
+        }
+        .input-wrap:focus-within { background: #fff; box-shadow: 0 0 0 1px #d1fae5; }
+        .input-field {
+            flex: 1; border: none; background: transparent; font-size: 14px; color: #333; outline: none;
+        }
+        .input-field::placeholder { color: #999; }
+        .camera-btn, .send-btn {
+            width: 36px; height: 36px; border-radius: 50%; border: 2px solid #e5e7eb;
+            display: flex; align-items: center; justify-content: center; color: #666; font-size: 16px; cursor: pointer;
+            flex-shrink: 0; transition: all 0.2s;
+        }
+        .camera-btn:hover, .send-btn:hover { background: #f0fdf6; border-color: #10b981; color: #10b981; }
+        .send-btn { display: none; border-color: #10b981; background: #10b981; color: #fff; }
+        .send-btn:hover { background: #059669; }
+        .file-input { display: none; }
+
+        /* 语音浮层 */
+        .voice-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+            opacity: 0; visibility: hidden; transition: all 0.2s;
+        }
+        .voice-overlay.show { opacity: 1; visibility: visible; }
+        .voice-mic {
+            width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.15);
+            display: flex; align-items: center; justify-content: center; font-size: 56px; color: #fff;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0.3); } 50% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(255,255,255,0); } }
+        .voice-text { color: #fff; font-size: 16px; }
+        .voice-tip { color: rgba(255,255,255,0.7); font-size: 13px; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 180px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: rgba(0,0,0,0.75); color: #fff; font-size: 13px; padding: 10px 16px; border-radius: 20px;
+            opacity: 0; visibility: hidden; transition: all 0.3s; z-index: 250; white-space: nowrap;
+        }
+        .toast.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+    <div class="phone-frame" id="phoneFrame">
+        <div class="phone-notch"></div>
+
+        <!-- 顶部导航 -->
+        <div class="top-nav">
+            <div class="nav-menu" onclick="openDrawer()">
+                <span></span><span></span><span></span>
+            </div>
+            <div class="nav-tabs">
+                <span class="nav-tab" onclick="switchTab('health')">健康</span>
+                <span class="nav-tab active" onclick="switchTab('tai')">泰小虎</span>
+                <span class="nav-tab" onclick="switchTab('service')">服务</span>
+            </div>
+            <div class="nav-more" onclick="showMore()">…</div>
+        </div>
+
+        <!-- 主内容 -->
+        <div class="page-content" id="pageContent">
+            <div class="welcome">
+                <h1>hi，我是泰小虎，你的健康好朋友</h1>
+                <div class="mascot">
+                    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 耳机 -->
+                        <path d="M8 40 C8 16 24 6 40 6 C56 6 72 16 72 40" stroke="#10B981" stroke-width="5" stroke-linecap="round"/>
+                        <rect x="4" y="28" width="12" height="24" rx="6" fill="#34D399"/>
+                        <rect x="64" y="28" width="12" height="24" rx="6" fill="#34D399"/>
+                        <!-- 耳朵 -->
+                        <circle cx="18" cy="22" r="8" fill="#FDBA74"/>
+                        <circle cx="62" cy="22" r="8" fill="#FDBA74"/>
+                        <circle cx="18" cy="22" r="4" fill="#F97316"/>
+                        <circle cx="62" cy="22" r="4" fill="#F97316"/>
+                        <!-- 脸 -->
+                        <circle cx="40" cy="44" r="26" fill="#FDBA74"/>
+                        <circle cx="40" cy="48" r="14" fill="#FFF7ED"/>
+                        <!-- 条纹 -->
+                        <path d="M22 30 L26 34" stroke="#92400E" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M58 30 L54 34" stroke="#92400E" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M28 20 L30 24" stroke="#92400E" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M52 20 L50 24" stroke="#92400E" stroke-width="2" stroke-linecap="round"/>
+                        <!-- 眼睛 -->
+                        <circle cx="32" cy="42" r="2.5" fill="#333"/>
+                        <circle cx="48" cy="42" r="2.5" fill="#333"/>
+                        <!-- 鼻子 -->
+                        <circle cx="40" cy="50" r="2.5" fill="#F472B6"/>
+                        <!-- 嘴巴 -->
+                        <path d="M36 54 Q40 57 44 54" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="quick-card">
+                <div class="quick-card-title"><span class="dot"></span>我是泰小虎，你的专属AI健康守护者</div>
+                <div class="quick-tags">
+                    <span class="quick-tag" onclick="showTagTip('AI服务说明')">AI服务说明</span>
+                    <span class="quick-tag" onclick="showTagTip('参考来源')">参考来源</span>
+                </div>
+                <div class="quick-list">
+                    <div class="quick-item" data-q="怎么才能减肥" onclick="sendQuickQuestion(this)">
+                        <div class="quick-item-left">
+                            <div class="quick-item-icon">?</div>
+                            <div class="quick-item-text">怎么才能减肥</div>
+                        </div>
+                        <div class="quick-item-arrow">→</div>
+                    </div>
+                    <div class="quick-item" data-q="职场亚健康调理" onclick="sendQuickQuestion(this)">
+                        <div class="quick-item-left">
+                            <div class="quick-item-icon">?</div>
+                            <div class="quick-item-text">职场亚健康调理</div>
+                        </div>
+                        <div class="quick-item-arrow">→</div>
+                    </div>
+                    <div class="quick-item" data-q="女性内服养护" onclick="sendQuickQuestion(this)">
+                        <div class="quick-item-left">
+                            <div class="quick-item-icon">?</div>
+                            <div class="quick-item-text">女性内服养护</div>
+                        </div>
+                        <div class="quick-item-arrow">→</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-thread" id="chatThread"></div>
+        </div>
+
+        <!-- 服务入口 -->
+        <div class="service-bar" id="serviceBar">
+            <div class="service-item" onclick="openService('报告解读')">
+                <div class="icon">📝</div>
+                <div class="label">报告解读</div>
+            </div>
+            <div class="service-item" onclick="openService('健康打卡')">
+                <div class="icon">📅</div>
+                <div class="label">健康打卡</div>
+            </div>
+            <div class="service-item" onclick="openService('体质检测')">
+                <div class="icon">🌿</div>
+                <div class="label">体质检测</div>
+            </div>
+            <div class="service-item" onclick="openService('饮食建议')">
+                <div class="icon">🍎</div>
+                <div class="label">饮食建议</div>
+            </div>
+            <div class="service-item" onclick="openService('睡眠管理')">
+                <div class="icon">😴</div>
+                <div class="label">睡眠管理</div>
+            </div>
+            <div class="service-item" onclick="openService('运动计划')">
+                <div class="icon">🏃</div>
+                <div class="label">运动计划</div>
+            </div>
+        </div>
+
+        <!-- 输入栏 -->
+        <div class="input-bar">
+            <div class="input-voice" id="voiceBtn" onmousedown="startVoice()" ontouchstart="startVoice()">🎙</div>
+            <div class="input-wrap">
+                <input type="text" class="input-field" id="inputField" placeholder="输入或按住说话" onkeydown="handleInputKey(event)" oninput="toggleSend()">
+            </div>
+            <div class="camera-btn" id="cameraBtn" onclick="openCamera()">📷</div>
+            <div class="send-btn" id="sendBtn" onclick="sendInput()">➜</div>
+            <input type="file" class="file-input" id="fileInput" accept="image/*" onchange="handleCameraFile(this)">
+        </div>
+
+        <!-- 侧边栏 -->
+        <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer(event)">
+            <div class="drawer" onclick="event.stopPropagation()">
+                <div class="drawer-close" onclick="closeDrawer()">✕</div>
+                <div class="drawer-avatar">🐯</div>
+                <div class="drawer-name">泰小虎</div>
+                <div class="drawer-menu">
+                    <div class="drawer-item" onclick="toast('健康档案（占位）')"><span class="icon">📋</span>健康档案</div>
+                    <div class="drawer-item" onclick="toast('我的订单（占位）')"><span class="icon">🛒</span>我的订单</div>
+                    <div class="drawer-item" onclick="toast('家庭成员（占位）')"><span class="icon">👨‍👩‍👧</span>家庭成员</div>
+                    <div class="drawer-item" onclick="toast('设置（占位）')"><span class="icon">⚙️</span>设置</div>
+                    <div class="drawer-item" onclick="location.reload()"><span class="icon">↻</span>刷新首页</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 语音浮层 -->
+        <div class="voice-overlay" id="voiceOverlay" onmousedown="stopVoice()" ontouchstart="stopVoice()">
+            <div class="voice-mic">🎙</div>
+            <div class="voice-text">正在聆听…</div>
+            <div class="voice-tip">松开结束</div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        const inputField = document.getElementById('inputField');
+        const sendBtn = document.getElementById('sendBtn');
+        const cameraBtn = document.getElementById('cameraBtn');
+        const chatThread = document.getElementById('chatThread');
+        const pageContent = document.getElementById('pageContent');
+        const voiceOverlay = document.getElementById('voiceOverlay');
+        const toastEl = document.getElementById('toast');
+        let toastTimer = null;
+
+        const replies = {
+            '怎么才能减肥': '减肥要「吃动平衡」：控制精制碳水、增加优质蛋白，每周进行150分钟中等强度运动。我可以根据你的体检数据，定制一份安全减脂方案。',
+            '职场亚健康调理': '针对久坐、熬夜、眼疲劳等职场问题，建议从规律作息、工位拉伸、护眼和补气血入手。需要我帮你生成一份周调理计划吗？',
+            '女性内服养护': '女性内服养护需结合年龄、经期和体质，常见的方向有补铁、胶原蛋白、益生菌、维生素D等。你当前有具体的调理目标吗？',
+            'default': '收到你的问题，泰小虎正在思考中… 你可以补充更多症状或体检数据，我会给出更精准的建议。'
+        };
+
+        function toggleSend() {
+            if (inputField.value.trim()) {
+                sendBtn.style.display = 'flex';
+                cameraBtn.style.display = 'none';
+            } else {
+                sendBtn.style.display = 'none';
+                cameraBtn.style.display = 'flex';
+            }
+        }
+
+        function handleInputKey(e) {
+            if (e.key === 'Enter' && inputField.value.trim()) sendInput();
+        }
+
+        function sendInput() {
+            const text = inputField.value.trim();
+            if (!text) return;
+            sendMessage(text);
+            inputField.value = '';
+            toggleSend();
+        }
+
+        function sendQuickQuestion(el) {
+            const q = el.dataset.q;
+            sendMessage(q);
+        }
+
+        function sendMessage(text) {
+            chatThread.classList.add('show');
+            appendUser(text);
+            showTyping();
+            pageContent.scrollTop = pageContent.scrollHeight;
+            const reply = replies[text] || replies['default'];
+            setTimeout(() => {
+                removeTyping();
+                appendAI(reply);
+                pageContent.scrollTop = pageContent.scrollHeight;
+            }, 1200 + Math.random() * 600);
+        }
+
+        function appendUser(text) {
+            const div = document.createElement('div');
+            div.className = 'message user';
+            div.innerHTML = `<div class="message-bubble">${escapeHtml(text)}</div>`;
+            chatThread.appendChild(div);
+        }
+
+        function appendAI(text) {
+            const div = document.createElement('div');
+            div.className = 'message ai';
+            div.innerHTML = `<div class="message-bubble">${escapeHtml(text)}</div>`;
+            chatThread.appendChild(div);
+        }
+
+        function showTyping() {
+            const div = document.createElement('div');
+            div.className = 'message ai typing-box';
+            div.innerHTML = `<div class="message-bubble typing"><span></span><span></span><span></span></div>`;
+            chatThread.appendChild(div);
+        }
+
+        function removeTyping() {
+            document.querySelectorAll('.typing-box').forEach(el => el.remove());
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m]));
+        }
+
+        function switchTab(name) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            const index = { health: 0, tai: 1, service: 2 }[name];
+            document.querySelectorAll('.nav-tab')[index].classList.add('active');
+            if (name === 'tai') {
+                toast('当前已在泰小虎首页');
+            } else {
+                toast('切换至「' + (name === 'health' ? '健康' : '服务') + '」Tab（占位页）');
+            }
+        }
+
+        function openDrawer() {
+            document.getElementById('drawerOverlay').classList.add('show');
+        }
+
+        function closeDrawer(e) {
+            if (e && e.target !== document.getElementById('drawerOverlay')) return;
+            document.getElementById('drawerOverlay').classList.remove('show');
+        }
+
+        function showMore() {
+            toast('更多功能菜单（占位）');
+        }
+
+        function showTagTip(name) {
+            toast(name + '：点击后展示说明弹窗（占位）');
+        }
+
+        function openService(name) {
+            toast('打开「' + name + '」服务页（占位）');
+        }
+
+        function startVoice() {
+            voiceOverlay.classList.add('show');
+        }
+
+        function stopVoice() {
+            voiceOverlay.classList.remove('show');
+            toast('语音输入结束，已转文字');
+            setTimeout(() => sendMessage('帮我分析一下最近的睡眠质量'), 500);
+        }
+
+        function openCamera() {
+            document.getElementById('fileInput').click();
+        }
+
+        function handleCameraFile(input) {
+            if (input.files && input.files[0]) {
+                toast('已选择图片：' + input.files[0].name + '，AI正在识别…');
+                setTimeout(() => {
+                    chatThread.classList.add('show');
+                    appendAI('图片已收到，我正在分析内容。你可以继续描述需要关注的指标。');
+                    pageContent.scrollTop = pageContent.scrollHeight;
+                }, 1500);
+                input.value = '';
+            }
+        }
+
+        function toast(msg) {
+            toastEl.textContent = msg;
+            toastEl.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+        }
+    </script>
+</body>
+</html>
