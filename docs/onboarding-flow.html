@@ -7,7 +7,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
             background: linear-gradient(180deg, #a8e6cf 0%, #dcedc8 100%);
             min-height: 100vh;
             display: flex;
@@ -329,6 +329,17 @@
             margin-top: 8px;
             text-align: center;
         }
+        .bmi-ref-bar {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+        .bmi-ref-link {
+            font-size: 12px;
+            color: #4CD964;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
 
         /* 睡眠输入 */
         .sleep-inputs { margin: 20px 0; }
@@ -363,79 +374,6 @@
             min-width: 60px;
             text-align: center;
         }
-
-        /* 多选标签 */
-        .tag-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .tag-item {
-            padding: 10px 18px;
-            background: #f8f9fa;
-            border: 2px solid transparent;
-            border-radius: 24px;
-            font-size: 14px;
-            color: #333;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .tag-item:hover { background: #e8f8f0; }
-        .tag-item.selected {
-            border-color: #4CD964;
-            background: #e8f8f0;
-            color: #27ae60;
-        }
-
-        /* 其他输入 */
-        .other-input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e8e8e8;
-            border-radius: 12px;
-            font-size: 15px;
-            outline: none;
-            margin-bottom: 12px;
-            font-family: inherit;
-        }
-        .other-input:focus { border-color: #4CD964; }
-
-        /* 单选列表 */
-        .radio-item {
-            display: flex;
-            align-items: center;
-            padding: 16px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 2px solid transparent;
-        }
-        .radio-item:hover { background: #e8f8f0; }
-        .radio-item.selected { border-color: #4CD964; background: #e8f8f0; }
-        .radio-dot {
-            width: 20px; height: 20px;
-            border: 2px solid #ccc;
-            border-radius: 50%;
-            margin-right: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        .radio-item.selected .radio-dot {
-            border-color: #4CD964;
-            background: #4CD964;
-        }
-        .radio-item.selected .radio-dot::after {
-            content: '';
-            width: 8px; height: 8px;
-            background: white;
-            border-radius: 50%;
-        }
-        .radio-label { font-size: 15px; color: #333; }
 
         /* 上传区域 */
         .upload-area {
@@ -501,6 +439,78 @@
             line-height: 1.6;
         }
 
+        /* ===== 跳过确认弹窗 ===== */
+        .skip-modal-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            border-radius: 40px;
+        }
+        .skip-modal-overlay.show { display: flex; }
+        .skip-modal {
+            background: #fff;
+            border-radius: 20px;
+            padding: 24px 20px;
+            width: 280px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        .skip-modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+        .skip-modal-desc {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .skip-modal-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+            user-select: none;
+        }
+        .skip-modal-checkbox input[type="checkbox"] {
+            width: 16px; height: 16px;
+            accent-color: #4CD964;
+            cursor: pointer;
+        }
+        .skip-modal-btns {
+            display: flex;
+            gap: 10px;
+        }
+        .skip-modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .skip-modal-btn-primary {
+            background: #4CD964;
+            color: #fff;
+            font-weight: 600;
+        }
+        .skip-modal-btn-primary:active { transform: scale(0.98); }
+        .skip-modal-btn-default {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .skip-modal-btn-default:active { transform: scale(0.98); background: #e0e0e0; }
+
         /* 隐藏 */
         .hidden { display: none !important; }
     </style>
@@ -514,11 +524,11 @@
             <div class="header">
                 <div class="header-back" style="visibility:hidden;">←</div>
                 <div class="header-title">评测</div>
-                <div class="header-skip" onclick="skipToEnd()">跳过</div>
+                <div class="header-skip" onclick="showSkipModal()">跳过</div>
             </div>
             <div class="card">
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: 12.5%;"></div>
+                    <div class="progress-fill" style="width: 16.7%;"></div>
                 </div>
                 <div class="progress-text">完成评测，为你生成专属方案</div>
                 <div class="step-question">你的性别是？</div>
@@ -544,11 +554,11 @@
             <div class="header">
                 <div class="header-back" onclick="prevStep()">←</div>
                 <div class="header-title">评测</div>
-                <div class="header-skip" onclick="skipToEnd()">跳过</div>
+                <div class="header-skip" onclick="showSkipModal()">跳过</div>
             </div>
             <div class="card">
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: 25%;"></div>
+                    <div class="progress-fill" style="width: 33.3%;"></div>
                 </div>
                 <div class="progress-text">完成评测，为你生成专属方案</div>
                 <div class="step-question">你的出生日期是？</div>
@@ -588,11 +598,11 @@
             <div class="header">
                 <div class="header-back" onclick="prevStep()">←</div>
                 <div class="header-title">评测</div>
-                <div class="header-skip" onclick="skipToEnd()">跳过</div>
+                <div class="header-skip" onclick="showSkipModal()">跳过</div>
             </div>
             <div class="card">
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: 37.5%;"></div>
+                    <div class="progress-fill" style="width: 50%;"></div>
                 </div>
                 <div class="progress-text">完成评测，为你生成专属方案</div>
                 <div class="step-question">你的身高是？</div>
@@ -615,11 +625,11 @@
             <div class="header">
                 <div class="header-back" onclick="prevStep()">←</div>
                 <div class="header-title">评测</div>
-                <div class="header-skip" onclick="skipToEnd()">跳过</div>
+                <div class="header-skip" onclick="showSkipModal()">跳过</div>
             </div>
             <div class="card">
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: 50%;"></div>
+                    <div class="progress-fill" style="width: 66.7%;"></div>
                 </div>
                 <div class="progress-text">完成评测，为你生成专属方案</div>
                 <div class="step-question">你的体重是？</div>
@@ -632,6 +642,9 @@
                     </div>
                 </div>
                 <div class="bmi-card">
+                    <div class="bmi-ref-bar">
+                        <span class="bmi-ref-link" onclick="window.open('bmi-reference.html', '_blank')">BMI参考来源</span>
+                    </div>
                     <div class="bmi-header">
                         <span class="bmi-title">你的BMI</span>
                         <span>
@@ -659,11 +672,11 @@
             <div class="header">
                 <div class="header-back" onclick="prevStep()">←</div>
                 <div class="header-title">评测</div>
-                <div class="header-skip" onclick="skipToEnd()">跳过</div>
+                <div class="header-skip" onclick="showSkipModal()">跳过</div>
             </div>
             <div class="card">
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: 62.5%;"></div>
+                    <div class="progress-fill" style="width: 83.3%;"></div>
                 </div>
                 <div class="progress-text">完成评测，为你生成专属方案</div>
                 <div class="step-question">你的睡眠情况如何？</div>
@@ -692,82 +705,12 @@
             </div>
         </div>
 
-        <!-- 步骤6: 基础病 -->
+        <!-- 步骤6: 体检报告 -->
         <div class="step hidden" id="step6">
             <div class="header">
                 <div class="header-back" onclick="prevStep()">←</div>
                 <div class="header-title">评测</div>
-                <div class="header-skip" onclick="skipToEnd()">跳过</div>
-            </div>
-            <div class="card">
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 75%;"></div>
-                </div>
-                <div class="progress-text">完成评测，为你生成专属方案</div>
-                <div class="step-question">是否有基础疾病？</div>
-                <div class="step-subtitle">可多选，这将帮助我们提供更精准的健康建议</div>
-                <div class="tag-grid" id="diseaseTags">
-                    <div class="tag-item" onclick="toggleTag(this, 'disease')">高血压</div>
-                    <div class="tag-item" onclick="toggleTag(this, 'disease')">糖尿病</div>
-                    <div class="tag-item" onclick="toggleTag(this, 'disease')">高血脂</div>
-                    <div class="tag-item" onclick="toggleTag(this, 'disease')">冠心病</div>
-                    <div class="tag-item" onclick="toggleTag(this, 'disease')">痛风</div>
-                    <div class="tag-item" onclick="toggleTag(this, 'disease')">关节炎</div>
-                    <div class="tag-item" onclick="toggleTag(this, 'disease')">慢性支气管炎</div>
-                    <div class="tag-item" onclick="toggleTag(this, 'disease')">甲状腺疾病</div>
-                </div>
-                <input type="text" class="other-input" id="otherDisease" placeholder="其他疾病，请填写">
-                <div class="radio-item" onclick="selectNone(this, 'disease')">
-                    <div class="radio-dot"></div>
-                    <span class="radio-label">暂无基础疾病</span>
-                </div>
-            </div>
-            <div class="footer-btn">
-                <button class="btn-next" onclick="nextStep()">下一步</button>
-            </div>
-        </div>
-
-        <!-- 步骤7: 用药 -->
-        <div class="step hidden" id="step7">
-            <div class="header">
-                <div class="header-back" onclick="prevStep()">←</div>
-                <div class="header-title">评测</div>
-                <div class="header-skip" onclick="skipToEnd()">跳过</div>
-            </div>
-            <div class="card">
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 87.5%;"></div>
-                </div>
-                <div class="progress-text">完成评测，为你生成专属方案</div>
-                <div class="step-question">目前的用药情况？</div>
-                <div class="step-subtitle">根据您的基础病，我们推荐以下常见药品</div>
-                <div class="tag-grid" id="medicineTags">
-                    <div class="tag-item" onclick="toggleTag(this, 'medicine')">氨氯地平</div>
-                    <div class="tag-item" onclick="toggleTag(this, 'medicine')">二甲双胍</div>
-                    <div class="tag-item" onclick="toggleTag(this, 'medicine')">阿司匹林</div>
-                    <div class="tag-item" onclick="toggleTag(this, 'medicine')">阿托伐他汀</div>
-                    <div class="tag-item" onclick="toggleTag(this, 'medicine')">布洛芬</div>
-                    <div class="tag-item" onclick="toggleTag(this, 'medicine')">优甲乐</div>
-                    <div class="tag-item" onclick="toggleTag(this, 'medicine')">胰岛素</div>
-                    <div class="tag-item" onclick="toggleTag(this, 'medicine')">硝酸甘油</div>
-                </div>
-                <input type="text" class="other-input" id="otherMedicine" placeholder="其他药品，请填写">
-                <div class="radio-item" onclick="selectNone(this, 'medicine')">
-                    <div class="radio-dot"></div>
-                    <span class="radio-label">暂无用药</span>
-                </div>
-            </div>
-            <div class="footer-btn">
-                <button class="btn-next" onclick="nextStep()">下一步</button>
-            </div>
-        </div>
-
-        <!-- 步骤8: 体检报告 -->
-        <div class="step hidden" id="step8">
-            <div class="header">
-                <div class="header-back" onclick="prevStep()">←</div>
-                <div class="header-title">评测</div>
-                <div class="header-skip" onclick="skipToEnd()">跳过</div>
+                <div class="header-skip" onclick="showSkipModal()">跳过</div>
             </div>
             <div class="card">
                 <div class="progress-bar">
@@ -779,9 +722,9 @@
                 <div class="upload-area" onclick="document.getElementById('fileInput').click()">
                     <div class="upload-icon">📄</div>
                     <div class="upload-text">点击上传体检报告</div>
-                    <div class="upload-hint">支持 PDF、JPG、PNG 格式</div>
+                    <div class="upload-hint">支持 JPG、PNG 格式</div>
                 </div>
-                <input type="file" id="fileInput" style="display:none;" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this)">
+                <input type="file" id="fileInput" style="display:none;" accept=".jpg,.jpeg,.png" onchange="handleFile(this)">
                 <div class="upload-preview" id="uploadPreview">
                     <img id="previewImg" src="" alt="预览">
                 </div>
@@ -807,11 +750,23 @@
                 </div>
             </div>
         </div>
+
+        <!-- 跳过确认弹窗 -->
+        <div class="skip-modal-overlay" id="skipModal">
+            <div class="skip-modal">
+                <div class="skip-modal-title">确认跳过</div>
+                <div class="skip-modal-desc">是否不填写健康档案直接进入首页？<br>已填写的内容将自动保存至健康档案，您可随时在档案中补充。</div>
+                <div class="skip-modal-btns">
+                    <button class="skip-modal-btn skip-modal-btn-default" onclick="hideSkipModal()">继续填写</button>
+                    <button class="skip-modal-btn skip-modal-btn-primary" onclick="confirmSkip()">直接进入首页</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         let currentStep = 1;
-        const totalSteps = 8;
+        const totalSteps = 6;
         let userData = {
             gender: '',
             birthYear: 2000,
@@ -823,10 +778,6 @@
             bmi: 22.5,
             sleepHours: 7,
             wakeTimes: 0,
-            diseases: [],
-            otherDisease: '',
-            medicines: [],
-            otherMedicine: '',
             reportFile: null
         };
 
@@ -838,28 +789,24 @@
             const monthInner = document.getElementById('monthInner');
             const dayInner = document.getElementById('dayInner');
 
-            // 年份：1930 ~ 当前年份
             let yearHTML = '';
             for (let y = currentYear; y >= 1930; y--) {
                 yearHTML += `<div class="picker-item" data-val="${y}" onclick="selectPickerItem(this)">${y}年</div>`;
             }
             yearInner.innerHTML = yearHTML;
 
-            // 月份
             let monthHTML = '';
             for (let m = 1; m <= 12; m++) {
                 monthHTML += `<div class="picker-item" data-val="${m}" onclick="selectPickerItem(this)">${String(m).padStart(2,'0')}月</div>`;
             }
             monthInner.innerHTML = monthHTML;
 
-            // 日期
             let dayHTML = '';
             for (let d = 1; d <= 31; d++) {
                 dayHTML += `<div class="picker-item" data-val="${d}" onclick="selectPickerItem(this)">${String(d).padStart(2,'0')}日</div>`;
             }
             dayInner.innerHTML = dayHTML;
 
-            // 默认滚动到2000年1月1日
             setTimeout(() => {
                 scrollToPicker('pickerYear', currentYear - 2000);
                 scrollToPicker('pickerMonth', 0);
@@ -867,7 +814,6 @@
                 updatePickerHighlight();
             }, 100);
 
-            // 监听滚动
             ['pickerYear', 'pickerMonth', 'pickerDay'].forEach(id => {
                 document.getElementById(id).addEventListener('scroll', function() {
                     updatePickerHighlight();
@@ -901,7 +847,6 @@
                     }
                 });
             });
-            // 获取选中值
             const activeYear = document.querySelector('#pickerYear .picker-item.active');
             const activeMonth = document.querySelector('#pickerMonth .picker-item.active');
             const activeDay = document.querySelector('#pickerDay .picker-item.active');
@@ -913,7 +858,6 @@
             }
         }
 
-        // 年龄段健康建议配置（后台可配置）
         const ageAdviceConfig = {
             '0-18': {
                 label: '成长发育期',
@@ -952,15 +896,10 @@
             document.getElementById('ageNum').textContent = age;
 
             let config;
-            if (age < 18) {
-                config = ageAdviceConfig['0-18'];
-            } else if (age < 40) {
-                config = ageAdviceConfig['18-40'];
-            } else if (age < 60) {
-                config = ageAdviceConfig['40-60'];
-            } else {
-                config = ageAdviceConfig['60+'];
-            }
+            if (age < 18) config = ageAdviceConfig['0-18'];
+            else if (age < 40) config = ageAdviceConfig['18-40'];
+            else if (age < 60) config = ageAdviceConfig['40-60'];
+            else config = ageAdviceConfig['60+'];
 
             document.querySelector('.age-label').textContent = config.label + ' · 专属健康建议';
             document.querySelector('.age-desc').innerHTML =
@@ -1022,38 +961,6 @@
             document.getElementById('wakeTimes').textContent = userData.wakeTimes + '次';
         }
 
-        // ===== 标签多选 =====
-        function toggleTag(el, type) {
-            el.classList.toggle('selected');
-            const text = el.textContent;
-            const arr = type === 'disease' ? userData.diseases : userData.medicines;
-            if (el.classList.contains('selected')) {
-                if (!arr.includes(text)) arr.push(text);
-            } else {
-                const idx = arr.indexOf(text);
-                if (idx > -1) arr.splice(idx, 1);
-            }
-            const parent = el.closest('.card');
-            const noneItem = parent.querySelector('.radio-item');
-            if (noneItem) noneItem.classList.remove('selected');
-        }
-
-        function selectNone(el, type) {
-            el.classList.toggle('selected');
-            const parent = el.closest('.card');
-            const tags = parent.querySelectorAll('.tag-item');
-            if (el.classList.contains('selected')) {
-                tags.forEach(t => t.classList.remove('selected'));
-                if (type === 'disease') {
-                    userData.diseases = [];
-                    document.getElementById('otherDisease').value = '';
-                } else {
-                    userData.medicines = [];
-                    document.getElementById('otherMedicine').value = '';
-                }
-            }
-        }
-
         // ===== 上传 =====
         function handleFile(input) {
             const file = input.files[0];
@@ -1075,9 +982,6 @@
 
         // ===== 步骤导航 =====
         function nextStep() {
-            if (currentStep === 6) userData.otherDisease = document.getElementById('otherDisease').value;
-            if (currentStep === 7) userData.otherMedicine = document.getElementById('otherMedicine').value;
-
             document.getElementById('step' + currentStep).classList.add('hidden');
             currentStep++;
             if (currentStep <= totalSteps) {
@@ -1093,37 +997,40 @@
             }
         }
 
-        function skipToEnd() {
-            if (confirm('跳过将使用默认数据创建档案，是否继续？')) {
-                finish();
-            }
+        // ===== 跳过弹窗 =====
+        function showSkipModal() {
+            document.getElementById('skipModal').classList.add('show');
+        }
+
+        function hideSkipModal() {
+            document.getElementById('skipModal').classList.remove('show');
+        }
+
+        function confirmSkip() {
+            hideSkipModal();
+            // 实际业务：调用归档API，将已填写字段 + 当前页已填写字段保存至健康档案
+            // 未填写字段不入库，档案完整度按实际已填字段计算
+            console.log('跳过并保存已填写数据:', userData);
+            // TODO: 调用API /api/v1/health-profile/archive（patch模式，仅更新已填字段）
+            document.getElementById('step' + currentStep).classList.add('hidden');
+            document.getElementById('stepComplete').classList.remove('hidden');
         }
 
         function finish() {
             console.log('用户数据:', userData);
+            // 实际业务：调用API归档到健康档案
             document.getElementById('step' + currentStep).classList.add('hidden');
             document.getElementById('stepComplete').classList.remove('hidden');
         }
 
         function restart() {
-            currentStep = 1;
-            userData = {
-                gender: '', birthYear: 2000, birthMonth: 1, birthDay: 1, age: 26,
-                height: 170, weight: 65, bmi: 22.5,
-                sleepHours: 7, wakeTimes: 0,
-                diseases: [], otherDisease: '',
-                medicines: [], otherMedicine: '',
-                reportFile: null
-            };
-            document.querySelectorAll('.step').forEach(s => s.classList.add('hidden'));
-            document.getElementById('step1').classList.remove('hidden');
-            document.querySelectorAll('.option-card, .tag-item, .radio-item').forEach(el => el.classList.remove('selected'));
-            document.getElementById('btn1').disabled = true;
-            document.getElementById('uploadPreview').classList.remove('show');
-            document.getElementById('previewImg').src = '';
+            // 进入首页
+            window.location.href = 'home.html';
         }
 
         // 初始化
+        // 实际业务入口判断：App启动后若检测到用户已存在健康档案数据，则直接跳转首页，不进入本引导流程
+        // TODO: 调用API /api/v1/health-profile/status 判断 has_profile
         initDatePicker();
         calculateBMI();
     </script>
