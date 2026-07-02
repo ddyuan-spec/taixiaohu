@@ -1012,8 +1012,7 @@
             // 未填写字段不入库，档案完整度按实际已填字段计算
             console.log('跳过并保存已填写数据:', userData);
             // TODO: 调用API /api/v1/health-profile/archive（patch模式，仅更新已填字段）
-            document.getElementById('step' + currentStep).classList.add('hidden');
-            document.getElementById('stepComplete').classList.remove('hidden');
+            window.location.href = '../home.html';
         }
 
         function finish() {
