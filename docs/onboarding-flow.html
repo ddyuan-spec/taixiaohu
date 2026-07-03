@@ -77,6 +77,51 @@
             box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
         }
 
+        /* 欢迎区域（新增 - 第一页整合优化方案） */
+        .welcome-card {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-radius: 16px 16px 0 0;
+            padding: 20px 20px 14px;
+            margin: 46px 16px 0;
+            text-align: center;
+        }
+        .welcome-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .welcome-header {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            flex: 1;
+            text-align: center;
+        }
+        .welcome-skip {
+            font-size: 13px;
+            color: #999;
+            cursor: pointer;
+            white-space: nowrap;
+            padding: 2px 4px;
+        }
+        .welcome-skip:hover {
+            color: #666;
+        }
+        .welcome-desc {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 0;
+            line-height: 1.5;
+        }
+
+        /* 分隔线（无间距，紧贴上下） */
+        .divider {
+            height: 1px;
+            background: #E5E7EB;
+            margin: 0 16px;
+        }
+
         /* 进度条 */
         .progress-bar {
             height: 6px;
@@ -393,12 +438,52 @@
         .upload-preview.show { display: block; }
         .upload-preview img { width: 100%; border-radius: 12px; }
 
+        /* 步骤容器 */
+        .step {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+        }
+        .step::-webkit-scrollbar { display: none; }
+
+        /* step1 卡片：无缝衔接欢迎卡片，flex撑满剩余空间 */
+        #step1 .card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0;
+            min-height: 0;
+            overflow: hidden;
+        }
+        #step1 .card .card-content {
+            flex: 1;
+            padding: 16px 20px 0;
+            overflow-y: auto;
+        }
+        #step1 .card .card-content::-webkit-scrollbar { display: none; }
+
         /* 底部按钮 */
         .footer-btn {
             position: absolute;
             bottom: 30px;
             left: 32px; right: 32px;
             z-index: 5;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        /* step1 按钮在正常流中，不悬浮 */
+        #step1 .footer-btn {
+            position: relative;
+            bottom: auto;
+            left: auto;
+            right: auto;
+            padding: 8px 0 16px;
+            margin: 0 20px;
         }
         .btn-next {
             width: 100%;
@@ -521,31 +606,36 @@
 
         <!-- 步骤1: 性别 -->
         <div class="step" id="step1">
-            <div class="header">
-                <div class="header-back" style="visibility:hidden;">←</div>
-                <div class="header-title">评测</div>
-                <div class="header-skip" onclick="showSkipModal()">跳过</div>
+            <!-- 欢迎区（优化方案：第一页整合） -->
+            <div class="welcome-card">
+                <div class="welcome-header-row">
+                    <div class="welcome-header">Hi，欢迎来到泰小虎 👋</div>
+                    <div class="welcome-skip" onclick="showSkipModal()">跳过</div>
+                </div>
+                <div class="welcome-desc">为了给您提供更好的健康服务，请让我先简单了解一下你</div>
             </div>
             <div class="card">
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 16.7%;"></div>
-                </div>
-                <div class="progress-text">完成评测，为你生成专属方案</div>
-                <div class="step-question">你的性别是？</div>
-                <div class="step-subtitle">这将帮助我们更准确地评估您的健康状况</div>
-                <div class="option-grid">
-                    <div class="option-card" onclick="selectGender('male', this)">
-                        <div class="icon">👨</div>
-                        <div class="label">男</div>
+                <div class="card-content">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 16.7%;"></div>
+                        <div class="progress-text">1/6 · 约 2 分钟</div>
                     </div>
-                    <div class="option-card" onclick="selectGender('female', this)">
-                        <div class="icon">👩</div>
-                        <div class="label">女</div>
+                    <div class="step-question">您的性别是？</div>
+                    <div class="step-subtitle">生理性别会影响代谢和营养需求，帮你获得更精准的建议</div>
+                    <div class="option-grid">
+                        <div class="option-card" onclick="selectGender('male', this)">
+                            <div class="icon">👨</div>
+                            <div class="label">男</div>
+                        </div>
+                        <div class="option-card" onclick="selectGender('female', this)">
+                            <div class="icon">👩</div>
+                            <div class="label">女</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="footer-btn">
-                <button class="btn-next" id="btn1" disabled onclick="nextStep()">下一步</button>
+                <div class="footer-btn">
+                    <button class="btn-next" id="btn1" disabled onclick="nextStep()">下一步</button>
+                </div>
             </div>
         </div>
 
@@ -560,7 +650,7 @@
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 33.3%;"></div>
                 </div>
-                <div class="progress-text">完成评测，为你生成专属方案</div>
+                <div class="progress-text">2/6 · 约 2 分钟</div>
                 <div class="step-question">你的出生日期是？</div>
                 <div class="step-subtitle">年龄与基础代谢水平、身体活动水平息息相关</div>
                 <div class="picker-wrap">
@@ -604,7 +694,7 @@
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 50%;"></div>
                 </div>
-                <div class="progress-text">完成评测，为你生成专属方案</div>
+                <div class="progress-text">3/6 · 约 2 分钟</div>
                 <div class="step-question">你的身高是？</div>
                 <div class="step-subtitle">用于计算BMI及评估健康指标</div>
                 <div class="number-input-wrap">
@@ -631,7 +721,7 @@
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 66.7%;"></div>
                 </div>
-                <div class="progress-text">完成评测，为你生成专属方案</div>
+                <div class="progress-text">4/6 · 约 2 分钟</div>
                 <div class="step-question">你的体重是？</div>
                 <div class="step-subtitle">精准体重数据将用于计算你的BMI</div>
                 <div class="number-input-wrap">
@@ -678,7 +768,7 @@
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 83.3%;"></div>
                 </div>
-                <div class="progress-text">完成评测，为你生成专属方案</div>
+                <div class="progress-text">5/6 · 约 2 分钟</div>
                 <div class="step-question">你的睡眠情况如何？</div>
                 <div class="step-subtitle">了解睡眠习惯有助于评估您的健康状态</div>
                 <div class="sleep-inputs">
@@ -716,7 +806,7 @@
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 100%;"></div>
                 </div>
-                <div class="progress-text">完成评测，为你生成专属方案</div>
+                <div class="progress-text">6/6 · 约 2 分钟</div>
                 <div class="step-question">上传体检报告</div>
                 <div class="step-subtitle">上传最近一次体检报告，AI将为您分析关键指标</div>
                 <div class="upload-area" onclick="document.getElementById('fileInput').click()">
@@ -1012,7 +1102,7 @@
             // 未填写字段不入库，档案完整度按实际已填字段计算
             console.log('跳过并保存已填写数据:', userData);
             // TODO: 调用API /api/v1/health-profile/archive（patch模式，仅更新已填字段）
-            window.location.href = '../home.html';
+            window.location.href = 'https://ddyuan-spec.github.io/taixiaohu/home.html';
         }
 
         function finish() {
@@ -1023,8 +1113,11 @@
         }
 
         function restart() {
-            // 进入首页
-            window.location.href = '../home.html';
+            // 重新开始不使用，保持原有定义但改为跳转到首页
+            window.location.href = 'https://ddyuan-spec.github.io/taixiaohu/home.html';
+        }
+        function goHome() {
+            window.location.href = 'https://ddyuan-spec.github.io/taixiaohu/home.html';
         }
 
         // 初始化
