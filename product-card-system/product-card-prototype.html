@@ -291,6 +291,59 @@ body {
   font-size: 13px;
 }
 .alert-info { background: #e6f7ff; border: 1px solid #91d5ff; color: #096dd9; }
+
+/* ========== 弹窗 / Toast ========== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  display: none; align-items: center; justify-content: center;
+  z-index: 1000; animation: fadeIn .15s ease;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: #fff; width: 480px; max-width: 92vw; max-height: 86vh;
+  border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.2); animation: popIn .18s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { from { transform: translateY(12px) scale(.98); opacity: 0; } to { transform: none; opacity: 1; } }
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; border-bottom: 1px solid #f0f0f0; font-size: 16px; font-weight: 700;
+}
+.modal-close { cursor: pointer; font-size: 22px; color: #999; line-height: 1; padding: 0 4px; }
+.modal-close:hover { color: #333; }
+.modal-body { padding: 20px; overflow-y: auto; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: 1px solid #f0f0f0; }
+.modal .form-row { margin-bottom: 14px; }
+.modal .form-label { width: 84px; }
+.modal .form-input, .modal .form-select { max-width: none; flex: 1; }
+.modal-preview {
+  margin-top: 6px; padding: 10px 12px; background: #fafafa; border-radius: 6px;
+  border: 1px dashed #d9d9d9; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 13px; color: #999;
+}
+.modal-preview .pv-tag { padding: 3px 10px; border-radius: 3px; font-size: 13px; border: 1px solid; }
+.color-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.color-presets { display: flex; gap: 6px; flex-wrap: wrap; }
+.color-presets .sw { width: 24px; height: 24px; border-radius: 4px; cursor: pointer; border: 2px solid transparent; transition: transform .1s; }
+.color-presets .sw:hover { transform: scale(1.12); }
+.import-area {
+  border: 2px dashed #d9d9d9; border-radius: 8px; padding: 22px; text-align: center;
+  color: #999; cursor: pointer; margin-bottom: 12px; transition: all .15s;
+}
+.import-area:hover { border-color: #1890ff; color: #1890ff; }
+.import-area.drag { border-color: #1890ff; background: #e6f7ff; }
+.modal textarea.form-input { min-height: 96px; resize: vertical; font-family: ui-monospace, Menlo, Consolas, monospace; }
+.modal .hint { font-size: 12px; color: #999; margin-top: 6px; }
+/* Toast */
+.toast-wrap { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.toast { background: rgba(0,0,0,0.8); color: #fff; padding: 10px 18px; border-radius: 6px; font-size: 14px; animation: toastIn .2s ease; box-shadow: 0 4px 16px rgba(0,0,0,.2); }
+.toast.ok { background: #52c41a; }
+.toast.warn { background: #fa8c16; }
+.toast.err { background: #ff4d4f; }
+@keyframes toastIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+/* 优先级移动 */
+.priority-item .move { margin-left: auto; cursor: pointer; color: #1890ff; font-size: 13px; user-select: none; display: flex; gap: 10px; }
+.priority-item .move span:hover { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -352,9 +405,9 @@ body {
       <div class="admin-section active" id="admin-tags">
         <h2>标签管理</h2>
         <div style="display:flex;gap:8px;margin-bottom:16px">
-          <button class="admin-btn primary" onclick="alert('新建标签弹窗')">+ 新建标签</button>
-          <button class="admin-btn">批量导入</button>
-          <button class="admin-btn">导出</button>
+          <button class="admin-btn primary" onclick="openTagModal()">+ 新建标签</button>
+          <button class="admin-btn" onclick="openImport()">批量导入</button>
+          <button class="admin-btn" onclick="exportTags()">导出</button>
         </div>
         <table class="admin-table">
           <thead>
@@ -452,7 +505,7 @@ body {
           <div class="form-label">触发条件</div>
           <select class="form-select"><option>产品状态等于</option></select>
           <select class="form-select"><option>直播中</option></select>
-          <button class="admin-btn">+ 添加条件</button>
+          <button class="admin-btn" onclick="addCondition(this)">+ 添加条件</button>
         </div>
         <div class="form-row">
           <div class="form-label">显示位置</div>
@@ -467,7 +520,7 @@ body {
           <div class="form-label">角标动画</div>
           <select class="form-select"><option>呼吸闪烁</option><option>无动画</option><option>脉冲</option></select>
         </div>
-        <button class="admin-btn primary">保存规则</button>
+        <button class="admin-btn primary" onclick="showToast('规则已保存')">保存规则</button>
 
         <hr style="margin:24px 0;border:none;border-top:1px solid #f0f0f0">
 
@@ -492,7 +545,7 @@ body {
           <div class="form-label">倒计时</div>
           <select class="form-select"><option>显示（仅在活动结束前24小时）</option><option>始终显示</option><option>不显示</option></select>
         </div>
-        <button class="admin-btn primary">保存规则</button>
+        <button class="admin-btn primary" onclick="showToast('规则已保存')">保存规则</button>
       </div>
 
       <!-- 按钮规则配置 -->
@@ -593,7 +646,7 @@ body {
           <div class="form-label">图标</div>
           <select class="form-select"><option>直播图标</option><option>购物车</option><option>闪电</option><option>无图标</option></select>
         </div>
-        <button class="admin-btn primary">保存配置</button>
+        <button class="admin-btn primary" onclick="showToast('配置已保存')">保存配置</button>
       </div>
 
       <!-- 产品状态管理 -->
@@ -737,7 +790,7 @@ body {
           <span>正品保证</span>
         </div>
 
-        <button class="admin-btn primary" style="margin-top:16px">保存排序</button>
+        <button class="admin-btn primary" style="margin-top:16px" onclick="showToast('优先级排序已保存')">保存排序</button>
       </div>
 
     </div>
@@ -1056,7 +1109,315 @@ Object.keys(cardConfigs).forEach(function(key) {
   allHtml += renderCard(cardConfigs[key]);
 });
 document.getElementById('allCardsArea').innerHTML = allHtml;
+
+// ============ 后台交互增强 ============
+(function () {
+  var overlay = document.getElementById('modalOverlay');
+  var mTitle = document.getElementById('modalTitle');
+  var mBody = document.getElementById('modalBody');
+  var mFooter = document.getElementById('modalFooter');
+
+  function openModal(title, bodyHtml, footerHtml) {
+    mTitle.textContent = title;
+    mBody.innerHTML = bodyHtml;
+    mFooter.innerHTML = footerHtml || '';
+    overlay.classList.add('show');
+  }
+  window.closeModal = function () { overlay.classList.remove('show'); };
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) closeModal(); });
+
+  function showToast(msg, type) {
+    var wrap = document.querySelector('.toast-wrap');
+    if (!wrap) { wrap = document.createElement('div'); wrap.className = 'toast-wrap'; document.body.appendChild(wrap); }
+    var t = document.createElement('div');
+    t.className = 'toast ' + (type || 'ok');
+    t.textContent = msg;
+    wrap.appendChild(t);
+    setTimeout(function () { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(function () { t.remove(); }, 300); }, 1800);
+  }
+  window.showToast = showToast;
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (m) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m];
+    });
+  }
+
+  // ---------- 标签数据 ----------
+  var typeOptions = ['信任标签', '状态标签', '营销标签', '产品标签'];
+  var palette = ['#f6ffed', '#52c41a', '#fff1f0', '#ff4d4f', '#fff0f6', '#eb2f96',
+    '#fff7e6', '#fa8c16', '#fff2e8', '#fa541c', '#1890ff', '#ffffff',
+    '#f5f5f5', '#666666', '#52c41a'];
+  var tagData = [];
+
+  function parseSeed() {
+    var rows = document.querySelectorAll('#admin-tags .admin-table tbody tr');
+    rows.forEach(function (r) {
+      var c = r.children;
+      var bg = (c[2].querySelector('div').getAttribute('style').match(/background:\s*(#[0-9a-fA-F]{3,6})/i) || [])[1] || '#ffffff';
+      var fg = (c[3].querySelector('div').getAttribute('style').match(/background:\s*(#[0-9a-fA-F]{3,6})/i) || [])[1] || '#333333';
+      tagData.push({
+        name: c[0].textContent.trim(),
+        type: c[1].querySelector('.rule-tag').textContent.trim(),
+        bg: bg, fg: fg,
+        condition: c[4].textContent.trim(),
+        enabled: c[5].textContent.trim() === '启用'
+      });
+    });
+  }
+
+  function renderTagTable() {
+    var tb = document.querySelector('#admin-tags .admin-table tbody');
+    tb.innerHTML = '';
+    tagData.forEach(function (t, i) {
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + esc(t.name) + '</td>' +
+        '<td><span class="rule-tag" style="background:' + t.bg + ';color:' + t.fg + '">' + esc(t.type) + '</span></td>' +
+        '<td><div style="width:20px;height:20px;background:' + t.bg + ';border:1px solid #d9d9d9;border-radius:3px;display:inline-block;vertical-align:middle"></div> ' + t.bg + '</td>' +
+        '<td><div style="width:20px;height:20px;background:' + t.fg + ';border:1px solid #d9d9d9;border-radius:3px;display:inline-block;vertical-align:middle"></div> ' + t.fg + '</td>' +
+        '<td>' + esc(t.condition) + '</td>' +
+        '<td><span class="rule-tag" style="background:#f6ffed;color:#52c41a;border:1px solid #b7eb8f">' + (t.enabled ? '启用' : '禁用') + '</span></td>' +
+        '<td><button class="admin-btn">编辑</button> <button class="admin-btn danger">删除</button></td>';
+      tr.querySelector('button').addEventListener('click', function () { openTagModal(i); });
+      tr.querySelector('.danger').addEventListener('click', function () { openDeleteTag(i); });
+      tb.appendChild(tr);
+    });
+  }
+
+  function tagFormHTML(d) {
+    d = d || { name: '', type: '信任标签', bg: '#f6ffed', fg: '#52c41a', condition: '始终显示', enabled: true };
+    var presets = palette.map(function (c) { return '<div class="sw" data-c="' + c + '" style="background:' + c + '"></div>'; }).join('');
+    return '' +
+      '<div class="form-row"><div class="form-label">标签名称</div><input class="form-input" id="tgName" value="' + esc(d.name) + '" placeholder="如：7天退换"></div>' +
+      '<div class="form-row"><div class="form-label">类型</div><select class="form-select" id="tgType">' + typeOptions.map(function (o) { return '<option ' + (o === d.type ? 'selected' : '') + '>' + o + '</option>'; }).join('') + '</select></div>' +
+      '<div class="form-row"><div class="form-label">背景色</div><div class="color-row"><div class="color-presets" id="tgBgPresets">' + presets + '</div><input type="color" id="tgBg" value="' + d.bg + '"></div></div>' +
+      '<div class="form-row"><div class="form-label">文字色</div><div class="color-row"><div class="color-presets" id="tgFgPresets">' + presets + '</div><input type="color" id="tgFg" value="' + d.fg + '"></div></div>' +
+      '<div class="form-row"><div class="form-label">显示条件</div><input class="form-input" id="tgCond" value="' + esc(d.condition) + '" placeholder="如：始终显示 / 产品状态=直播中"></div>' +
+      '<div class="form-row"><div class="form-label">状态</div><select class="form-select" id="tgEnabled"><option value="1" ' + (d.enabled ? 'selected' : '') + '>启用</option><option value="0" ' + (!d.enabled ? 'selected' : '') + '>禁用</option></select></div>' +
+      '<div class="modal-preview">预览：<span class="pv-tag" id="tgPreview" style="background:' + d.bg + ';color:' + d.fg + ';border-color:' + d.fg + '">' + esc(d.name || '标签预览') + '</span></div>';
+  }
+
+  function wireTagForm() {
+    var bg = document.getElementById('tgBg'), fg = document.getElementById('tgFg'), name = document.getElementById('tgName'), prev = document.getElementById('tgPreview');
+    function upd() { prev.style.background = bg.value; prev.style.color = fg.value; prev.style.borderColor = fg.value; if (name.value) prev.textContent = name.value; }
+    bg.addEventListener('input', upd); fg.addEventListener('input', upd); name.addEventListener('input', upd);
+    document.querySelectorAll('#tgBgPresets .sw').forEach(function (s) { s.addEventListener('click', function () { bg.value = s.dataset.c; upd(); }); });
+    document.querySelectorAll('#tgFgPresets .sw').forEach(function (s) { s.addEventListener('click', function () { fg.value = s.dataset.c; upd(); }); });
+  }
+
+  function openTagModal(idx) {
+    var isEdit = typeof idx === 'number' && idx >= 0;
+    var d = isEdit ? tagData[idx] : null;
+    openModal(isEdit ? '编辑标签' : '新建标签', tagFormHTML(d),
+      '<button class="admin-btn" onclick="closeModal()">取消</button><button class="admin-btn primary" id="tgSave">保存</button>');
+    wireTagForm();
+    document.getElementById('tgSave').addEventListener('click', function () {
+      var nd = {
+        name: document.getElementById('tgName').value.trim(),
+        type: document.getElementById('tgType').value,
+        bg: document.getElementById('tgBg').value,
+        fg: document.getElementById('tgFg').value,
+        condition: document.getElementById('tgCond').value.trim() || '始终显示',
+        enabled: document.getElementById('tgEnabled').value === '1'
+      };
+      if (!nd.name) { showToast('请填写标签名称', 'warn'); return; }
+      if (isEdit) { tagData[idx] = nd; } else { tagData.push(nd); }
+      renderTagTable(); closeModal();
+      showToast(isEdit ? '标签已更新' : '标签已创建');
+    });
+  }
+  window.openTagModal = openTagModal;
+
+  function openDeleteTag(idx) {
+    var d = tagData[idx];
+    openModal('删除标签',
+      '<p style="font-size:14px;line-height:1.7">确定要删除标签 <b>' + esc(d.name) + '</b> 吗？删除后该标签将不再展示在商品卡片上，此操作不可撤销。</p>',
+      '<button class="admin-btn" onclick="closeModal()">取消</button><button class="admin-btn danger" id="tgDel">确认删除</button>');
+    document.getElementById('tgDel').addEventListener('click', function () {
+      tagData.splice(idx, 1); renderTagTable(); closeModal(); showToast('标签已删除', 'warn');
+    });
+  }
+
+  function openImport() {
+    openModal('批量导入标签',
+      '<div class="import-area" id="impDrop">点击选择文件，或将 CSV / JSON 拖拽到此处</div>' +
+      '<textarea class="form-input" id="impText" placeholder="或直接粘贴，每行一个标签，格式：标签名称,类型,显示条件&#10;示例：&#10;顺丰包邮,信任标签,始终显示&#10;买一送一,营销标签,活动期间"></textarea>' +
+      '<p class="hint">支持 CSV（名称,类型,条件）或 JSON 数组 [{name,type,condition}]。</p>',
+      '<button class="admin-btn" onclick="closeModal()">取消</button><button class="admin-btn primary" id="impBtn">导入</button>');
+    var ta = document.getElementById('impText');
+    var drop = document.getElementById('impDrop');
+    drop.addEventListener('click', function () {
+      var inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.csv,.json,.txt';
+      inp.onchange = function (e) { var f = e.target.files[0]; if (!f) return; var rd = new FileReader(); rd.onload = function () { ta.value = rd.result; }; rd.readAsText(f); };
+      inp.click();
+    });
+    ['dragover', 'dragenter'].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('drag'); }); });
+    ['dragleave', 'drop'].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove('drag'); }); });
+    drop.addEventListener('drop', function (e) {
+      var f = e.dataTransfer.files[0]; if (f) { var rd = new FileReader(); rd.onload = function () { ta.value = rd.result; }; rd.readAsText(f); }
+    });
+    document.getElementById('impBtn').addEventListener('click', function () {
+      var text = ta.value.trim(); if (!text) { showToast('请粘贴内容或选择文件', 'warn'); return; }
+      var added = 0;
+      try {
+        if (text.charAt(0) === '[') {
+          JSON.parse(text).forEach(function (o) { if (o.name) { tagData.push({ name: o.name, type: o.type || '营销标签', bg: o.bg || '#fff7e6', fg: o.fg || '#fa8c16', condition: o.condition || '始终显示', enabled: true }); added++; } });
+        } else {
+          var cmap = { '信任标签': ['#f6ffed', '#52c41a'], '状态标签': ['#ff4d4f', '#ffffff'], '营销标签': ['#fff7e6', '#fa8c16'], '产品标签': ['#f5f5f5', '#666666'] };
+          text.split('\n').forEach(function (line) {
+            line = line.trim(); if (!line) return;
+            var p = line.split(/[,，]/); var name = (p[0] || '').trim(); if (!name) return;
+            var type = (p[1] || '营销标签').trim(); var cond = (p[2] || '始终显示').trim();
+            var col = cmap[type] || ['#fff7e6', '#fa8c16'];
+            tagData.push({ name: name, type: type, bg: col[0], fg: col[1], condition: cond, enabled: true }); added++;
+          });
+        }
+      } catch (err) { showToast('解析失败，请检查格式', 'err'); return; }
+      renderTagTable(); closeModal(); showToast('已导入 ' + added + ' 个标签');
+    });
+  }
+  window.openImport = openImport;
+
+  function exportTags() {
+    var csv = '标签名称,类型,背景色,文字色,显示条件,状态\n';
+    tagData.forEach(function (t) { csv += [t.name, t.type, t.bg, t.fg, t.condition, t.enabled ? '启用' : '禁用'].join(',') + '\n'; });
+    var blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = '标签导出.csv'; a.click();
+    URL.revokeObjectURL(a.href);
+    showToast('已导出 ' + tagData.length + ' 个标签');
+  }
+  window.exportTags = exportTags;
+
+  // ---------- 按钮规则编辑 ----------
+  function styleCss(s) {
+    var m = {
+      '蓝色实心': 'background:#1890ff;color:#fff', '红色实心': 'background:#ff4d4f;color:#fff',
+      '橙色实心': 'background:#fa8c16;color:#fff', '橙红实心': 'background:#fa541c;color:#fff',
+      '粉色实心': 'background:#eb2f96;color:#fff', '蓝色描边': 'background:#fff;color:#1890ff;border:1px solid #1890ff',
+      '不显示': 'background:#fafafa;color:#999'
+    };
+    return m[s] || 'background:#1890ff;color:#fff';
+  }
+  function openButtonModal(btn) {
+    var tr = btn.closest('tr'); var c = tr.children;
+    var status = c[0].textContent.trim();
+    var mainText = c[1].textContent.trim();
+    var mainStyle = c[2].textContent.trim();
+    var subText = c[3].textContent.trim();
+    var subStyle = c[4].textContent.trim();
+    var target = c[5].textContent.trim();
+    var styles = ['蓝色实心', '红色实心', '橙色实心', '橙红实心', '粉色实心', '蓝色描边'];
+    var targets = ['商品详情页', '直播间页面', '预售定金页', '下单页', '秒杀下单页', '自定义链接'];
+    openModal('编辑按钮规则 · ' + status,
+      '<div class="form-row"><div class="form-label">产品状态</div><input class="form-input" value="' + esc(status) + '" disabled></div>' +
+      '<div class="form-row"><div class="form-label">主按钮文案</div><input class="form-input" id="btMain" value="' + esc(mainText) + '"></div>' +
+      '<div class="form-row"><div class="form-label">主按钮样式</div><select class="form-select" id="btMainS">' + styles.map(function (s) { return '<option ' + (s === mainStyle ? 'selected' : '') + '>' + s + '</option>'; }).join('') + '</select></div>' +
+      '<div class="form-row"><div class="form-label">次按钮文案</div><input class="form-input" id="btSub" value="' + esc(subText === '—' ? '' : subText) + '" placeholder="留空则不显示"></div>' +
+      '<div class="form-row"><div class="form-label">次按钮样式</div><select class="form-select" id="btSubS">' + styles.map(function (s) { return '<option ' + (s === subStyle ? 'selected' : '') + '>' + s + '</option>'; }).join('') + '</select></div>' +
+      '<div class="form-row"><div class="form-label">跳转目标</div><select class="form-select" id="btTarget">' + targets.map(function (s) { return '<option ' + (s === target ? 'selected' : '') + '>' + s + '</option>'; }).join('') + '</select></div>',
+      '<button class="admin-btn" onclick="closeModal()">取消</button><button class="admin-btn primary" id="btSave">保存</button>');
+    document.getElementById('btSave').addEventListener('click', function () {
+      var sub = document.getElementById('btSub').value.trim();
+      var subStyleVal = sub ? document.getElementById('btSubS').value : '不显示';
+      c[1].textContent = document.getElementById('btMain').value.trim() || '购买';
+      c[2].innerHTML = '<span class="rule-tag" style="' + styleCss(document.getElementById('btMainS').value) + '">' + document.getElementById('btMainS').value + '</span>';
+      c[3].textContent = sub || '—';
+      c[4].innerHTML = '<span class="rule-tag" style="' + styleCss(subStyleVal) + '">' + (sub ? document.getElementById('btSubS').value : '不显示') + '</span>';
+      c[5].textContent = document.getElementById('btTarget').value;
+      closeModal(); showToast('按钮规则已保存');
+    });
+  }
+
+  // ---------- 产品状态编辑 ----------
+  function openStatusModal(btn) {
+    var tr = btn.closest('tr'); var c = tr.children;
+    var name = c[0].textContent.trim();
+    var code = c[1].textContent.trim();
+    var tags = c[2].textContent.trim();
+    var rule = c[3].textContent.trim();
+    var anim = c[4].textContent.trim();
+    var enabled = c[5].textContent.trim() === '启用';
+    openModal('编辑产品状态 · ' + name,
+      '<div class="form-row"><div class="form-label">状态名称</div><input class="form-input" id="stName" value="' + esc(name) + '"></div>' +
+      '<div class="form-row"><div class="form-label">状态码</div><input class="form-input" id="stCode" value="' + esc(code) + '" disabled></div>' +
+      '<div class="form-row"><div class="form-label">关联标签</div><input class="form-input" id="stTags" value="' + esc(tags) + '"></div>' +
+      '<div class="form-row"><div class="form-label">关联按钮</div><input class="form-input" id="stRule" value="' + esc(rule) + '"></div>' +
+      '<div class="form-row"><div class="form-label">角标动画</div><select class="form-select" id="stAnim"><option ' + (anim === '呼吸闪烁' ? 'selected' : '') + '>呼吸闪烁</option><option ' + (anim === '脉冲' ? 'selected' : '') + '>脉冲</option><option ' + (anim === '无' ? 'selected' : '') + '>无</option></select></div>' +
+      '<div class="form-row"><div class="form-label">状态</div><select class="form-select" id="stEnabled"><option value="1" ' + (enabled ? 'selected' : '') + '>启用</option><option value="0" ' + (!enabled ? 'selected' : '') + '>禁用</option></select></div>',
+      '<button class="admin-btn" onclick="closeModal()">取消</button><button class="admin-btn primary" id="stSave">保存</button>');
+    document.getElementById('stSave').addEventListener('click', function () {
+      c[0].textContent = document.getElementById('stName').value.trim() || name;
+      c[2].textContent = document.getElementById('stTags').value.trim();
+      c[3].textContent = document.getElementById('stRule').value.trim();
+      c[4].textContent = document.getElementById('stAnim').value;
+      c[5].innerHTML = '<span class="rule-tag" style="background:#f6ffed;color:#52c41a;border:1px solid #b7eb8f">' + (document.getElementById('stEnabled').value === '1' ? '启用' : '禁用') + '</span>';
+      closeModal(); showToast('产品状态已保存');
+    });
+  }
+
+  // ---------- 添加条件行 ----------
+  window.addCondition = function (btn) {
+    var row = btn.closest('.form-row');
+    var nr = document.createElement('div');
+    nr.className = 'form-row';
+    nr.innerHTML = '<div class="form-label">触发条件</div>' +
+      '<select class="form-select"><option>产品状态等于</option><option>活动开始时间</option><option>活动结束时间</option><option>销量大于等于</option></select>' +
+      '<select class="form-select"><option>直播中</option><option>小于等于</option><option>大于等于</option></select>' +
+      '<input class="form-input" type="text" value="" style="width:120px" placeholder="值">' +
+      '<button class="admin-btn danger" onclick="this.closest(\'.form-row\').remove()">×</button>';
+    row.parentNode.insertBefore(nr, row.nextSibling);
+  };
+
+  // ---------- 优先级拖拽（上下移动） ----------
+  function moveItem(item, dir) {
+    var sibling = dir < 0 ? item.previousElementSibling : item.nextElementSibling;
+    if (!sibling || !sibling.classList.contains('priority-item')) return;
+    if (dir < 0) item.parentNode.insertBefore(item, sibling); else item.parentNode.insertBefore(sibling, item);
+    renumberAll();
+  }
+  function renumberAll() {
+    var content = document.getElementById('admin-priority');
+    var n = 0;
+    Array.from(content.children).forEach(function (ch) {
+      if (ch.classList.contains('priority-item')) { n++; ch.querySelector('.num').textContent = n; }
+      else if (ch.tagName === 'H3') { n = 0; }
+    });
+  }
+  function initPriority() {
+    document.querySelectorAll('#admin-priority .priority-item').forEach(function (item) {
+      var move = document.createElement('span'); move.className = 'move';
+      move.innerHTML = '<span data-d="up">↑</span><span data-d="down">↓</span>';
+      item.appendChild(move);
+      move.querySelector('[data-d="up"]').addEventListener('click', function () { moveItem(item, -1); });
+      move.querySelector('[data-d="down"]').addEventListener('click', function () { moveItem(item, 1); });
+    });
+  }
+
+  // ---------- 初始化 ----------
+  function init() {
+    parseSeed();
+    renderTagTable();
+    document.querySelectorAll('#admin-buttons .admin-table tbody tr').forEach(function (tr) {
+      var b = tr.querySelector('button'); if (b) b.addEventListener('click', function () { openButtonModal(b); });
+    });
+    document.querySelectorAll('#admin-status .admin-table tbody tr').forEach(function (tr) {
+      var b = tr.querySelector('button'); if (b) b.addEventListener('click', function () { openStatusModal(b); });
+    });
+    initPriority();
+  }
+  if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
+})();
 </script>
+
+<!-- ===== 通用弹窗容器 ===== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header"><span id="modalTitle"></span><span class="modal-close" onclick="closeModal()">×</span></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
 
 </body>
 </html>
