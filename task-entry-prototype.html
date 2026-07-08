@@ -162,6 +162,12 @@
     transition:transform .15s, box-shadow .15s;}
   .ob-card .go-btn:active{transform:scale(.95);}
   .ob-card.done .go-btn{background:#ccc;color:#999;pointer-events:none;}
+  /* 领取按钮（状态1：可领取虎力值，必须可点） */
+  .ob-card .claim-btn{background:var(--gold);color:#7a3b00;border:none;border-radius:8px;
+    padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;
+    transition:transform .15s, box-shadow .15s;}
+  .ob-card .claim-btn:active{transform:scale(.95);}
+  .ob-card .claim-btn.done{background:#E8EAED;color:#9AA0AA;pointer-events:none;}
 
   /* 虎力值气泡 */
   .power-bubble{position:absolute;z-index:300;pointer-events:none;
@@ -1471,7 +1477,7 @@ function completeTask(card, pts){
   card.classList.add('done');
   card.querySelector('.st').textContent = '✓';
   card.querySelector('.reward').innerHTML =
-    `<span class="rwd-txt">🎁 已完成，点击领取</span><button class="go-btn" style="background:var(--gold);color:#7a3b00;" onclick="doTask(this,'${card.dataset.task}')">领取虎力值</button>`;
+    `<span class="rwd-txt">🎁 已完成，点击领取</span><button class="claim-btn" onclick="doTask(this,'${card.dataset.task}')">领取虎力值</button>`;
   updateOBProgress();
   // 更新首页待办条角标
   refreshTodoBadge();
@@ -1481,11 +1487,10 @@ function completeTask(card, pts){
 function claimReward(card, pts){
   card.dataset.done = '2';
   // 按钮变为「已完成」灰色不可点
-  const btn = card.querySelector('.go-btn');
+  const btn = card.querySelector('.claim-btn');
   if(btn){
     btn.textContent = '已完成';
-    btn.style.background = '#E8EAED';
-    btn.style.color = '#9AA0AA';
+    btn.classList.add('done');
     btn.style.pointerEvents = 'none';
     btn.onclick = null;
   }
