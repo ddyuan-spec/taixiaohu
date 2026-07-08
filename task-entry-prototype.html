@@ -1,0 +1,1872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>泰小虎 · 任务入口原型 v6</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  :root{
+    --tg:#FF6B2C;--tg-light:#FFF1E9;--tg-dark:#E2551A;--gold:#FFB020;
+    --bg:#F5F6F8;--card:#FFFFFF;--t1:#1A1A1A;--t2:#6B7280;--t3:#9AA0AA;
+    --green:#1FBF75;--green-light:#E8F8EE;--green-dark:#14A866;
+    --red:#FF3B30;--line:#EEF0F3;--green-bg:#D8F5E4;
+    /* 健康档案绿 */
+    --pgreen:#1DBF75;--pgreen-bg:#EAF9EF;--pgreen-dk:#16A062;
+  }
+  body{
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:#E9EBEF;display:flex;justify-content:center;align-items:flex-start;
+    min-height:100vh;color:var(--t1);
+  }
+  .phone{width:390px;height:844px;background:var(--bg);position:relative;overflow:hidden;
+    box-shadow:0 12px 50px rgba(0,0,0,.18);border-radius:0;}
+
+  /* ===== 全局状态栏 ===== */
+  .statusbar{height:44px;background:var(--card);display:flex;align-items:center;
+    justify-content:space-between;padding:0 22px;font-size:15px;font-weight:600;z-index:100;
+    position:relative;}
+  .statusbar .icons{display:flex;gap:5px;align-items:center;font-size:13px;}
+
+  /* ===== 全局顶部导航栏 (☰ | 健康 | 泰小虎 | 服务 | ...) ===== */
+  .gnav{background:var(--card);padding:10px 12px;display:flex;align-items:center;gap:20px;
+    position:relative;z-index:99;border-bottom:1px solid var(--line);}
+  .gnav .menu-btn{font-size:22px;color:var(--t1);cursor:pointer;width:32px;text-align:center;}
+  .gnav .tabs{display:flex;gap:22px;flex:1;margin-left:4px;}
+  .gnav .gtab{font-size:17px;color:var(--t3);cursor:pointer;padding-bottom:2px;
+    white-space:nowrap;position:relative;transition:.2s;}
+  .gnav .gtab.on{color:var(--t1);font-weight:800;}
+  .gnav .more-btn{font-size:20px;color:var(--t3);cursor:pointer;}
+
+  /* ===== 屏幕容器 ===== */
+  .screen{position:absolute;top:89px;left:0;right:0;bottom:0;overflow-y:auto;
+    -webkit-overflow-scrolling:touch;display:none;background:var(--bg);}
+  .screen.active{display:block;}
+
+  /* ==================== SCREEN 1: 首页(泰小虎/AI会话) ==================== */
+
+  /* 欢迎卡片 */
+  .welcome{background:linear-gradient(135deg,#FFF6EF,#FFE9DA);margin:12px;border-radius:16px;
+    padding:16px;display:flex;gap:12px;align-items:flex-start;position:relative;}
+  .mascot{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFB877,#FF6B2C);
+    flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:26px;
+    box-shadow:0 4px 10px rgba(255,107,44,.35);}
+  .wt{font-size:15px;font-weight:700;line-height:1.5;}
+  .wt small{display:block;font-weight:400;color:var(--t2);font-size:12px;margin-top:4px;}
+  .tags{margin-top:8px;display:flex;gap:6px;}
+  .tag{font-size:11px;color:var(--tg-dark);background:var(--tg-light);padding:3px 8px;border-radius:20px;}
+
+  /* 今日待办条 */
+  .todo{margin:12px;background:linear-gradient(100deg,#FFF7EC,#FFEFD8);border:1px solid #FFE0B0;
+    border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;}
+  .todo .ic{width:38px;height:38px;border-radius:10px;background:var(--tg);color:#fff;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;font-size:20px;}
+  .todo .body{flex:1;min-width:0;}
+  .todo .body .l1{font-size:14px;font-weight:700;color:#7A4B13;}
+  .todo .body .l2{font-size:11px;color:#A9803F;margin-top:3px;}
+  .todo .bar{height:5px;background:#FFE3BE;border-radius:3px;margin-top:6px;overflow:hidden;}
+  .todo .bar>i{display:block;height:100%;background:linear-gradient(90deg,#FFB020,#FF6B2C);width:40%;}
+  .todo .arrow{color:#C8923F;font-size:18px;flex:0 0 auto;}
+
+  /* 快捷入口卡 */
+  .quick{display:flex;gap:10px;margin:0 12px 4px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
+  .quick::-webkit-scrollbar{display:none;}
+  .qcard{flex:0 0 140px;background:var(--card);border-radius:14px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+  .qcard .qic{font-size:24px;}
+  .qcard .qt{font-size:14px;font-weight:700;margin-top:8px;}
+  .qcard .qd{font-size:11px;color:var(--t3);margin-top:4px;line-height:1.4;}
+
+  /* 功能图标行 - 任务置顶+横滑 */
+  .fnrow{display:flex;gap:6px;margin:14px 12px;overflow-x:auto;padding:6px 2px 10px;
+    scrollbar-width:none;background:var(--card);border-radius:16px;padding-left:12px;}
+  .fnrow::-webkit-scrollbar{display:none;}
+  .fn{flex:0 0 60px;text-align:center;}
+  .fn .fic{width:46px;height:46px;border-radius:14px;background:#F6F7F9;display:flex;
+    align-items:center;justify-content:center;font-size:22px;margin:0 auto;position:relative;}
+  .fn.task .fic{background:linear-gradient(135deg,#FF8A4C,#FF6B2C);color:#fff;
+    box-shadow:0 4px 10px rgba(255,107,44,.3);}
+  .fn .fl{font-size:11px;color:var(--t2);margin-top:5px;}
+  .fn.task .fl{color:var(--tg-dark);font-weight:700;}
+  .fn .badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:10px;
+    min-width:16px;height:16px;border-radius:9px;padding:0 4px;display:flex;align-items:center;justify-content:center;
+    border:2px solid #fff;font-weight:700;}
+
+  /* 底部输入框 */
+  .inputbar{position:absolute;left:0;right:0;bottom:0;background:var(--card);padding:10px 14px;
+    display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);z-index:50;}
+  .inputbar .ib{flex:1;background:#F2F3F5;border-radius:20px;padding:11px 14px;font-size:13px;color:var(--t3);}
+  .inputbar .send{background:var(--tg);color:#fff;border-radius:50%;width:38px;height:38px;
+    display:flex;align-items:center;justify-content:center;font-size:18px;}
+
+  /* ==================== SCREEN 2: 健康档案 ==================== */
+
+  /* 人员切换区 (绿色背景) */
+  .member-bar{background:var(--pgreen-bg);padding:10px 14px;display:flex;align-items:center;gap:10px;}
+  .member-avatars{display:flex;align-items:center;gap:8px;}
+  .mav-item{display:flex;align-items:center;gap:7px;padding:5px 12px;border-radius:20px;
+    cursor:pointer;transition:.2s;white-space:nowrap;font-size:13px;}
+  .mav-item.active{background:#fff;box-shadow:0 2px 8px rgba(31,191,117,.18);
+    color:var(--pgreen-dk);font-weight:700;}
+  .mav-item.inactive{color:var(--t2);}
+  .mav-avatar{width:26px;height:26px;border-radius:50%;background:#ddd;display:flex;
+    align-items:center;justify-content:center;font-size:14px;overflow:hidden;}
+  .mav-item.active .mav-avatar{background:var(--pgreen);color:#fff;}
+  .mav-actions{margin-left:auto;display:flex;gap:8px;}
+  .mav-btn{font-size:12px;color:var(--pgreen);display:flex;align-items:center;gap:3px;cursor:pointer;}
+
+  /* 健康档案 Tab 行 */
+  .ptabs{display:flex;gap:0;overflow-x:auto;padding:0 8px;background:var(--card);
+    border-bottom:1px solid var(--line);scrollbar-width:none;}
+  .ptabs::-webkit-scrollbar{display:none;}
+  .ptab{flex:0 0 auto;padding:13px 14px;font-size:14px;color:var(--t2);position:relative;white-space:nowrap;}
+  .ptab.on{color:var(--t1);font-weight:700;}
+  .ptab.on::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;
+    border-radius:2px;background:var(--pgreen);}
+  .ptab .dot{display:inline-block;width:7px;height:7px;background:var(--red);border-radius:50%;
+    margin-left:4px;vertical-align:middle;}
+
+  .ptab-body{padding:0 12px 20px;}
+  .appbanner{margin:12px 0 0;background:linear-gradient(100deg,var(--pgreen),#4EDBA0);color:#fff;
+    border-radius:14px;padding:12px 14px;font-size:13px;display:flex;align-items:center;gap:8px;}
+  .appbanner b{font-size:14px;}
+
+  /* 新手引导折叠 */
+  .panel{background:var(--card);border-radius:16px;margin-bottom:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.03);}
+  .ob-head{display:flex;align-items:center;gap:10px;padding:14px 14px;cursor:pointer;}
+  .ob-head .oic{width:34px;height:34px;border-radius:10px;background:var(--tg-light);color:var(--tg);
+    display:flex;align-items:center;justify-content:center;font-size:18px;flex:0 0 auto;}
+  .ob-head .ot{flex:1;}
+  .ob-head .ot .t1{font-size:15px;font-weight:700;}
+  .ob-head .ot .t2{font-size:11px;color:var(--t3);margin-top:2px;}
+  .ob-head .chev{transition:transform .25s ease;color:var(--t3);font-size:14px;}
+  .ob-head.open .chev{transform:rotate(90deg);}
+  .ob-prog{font-size:12px;color:var(--t2);margin-left:8px;}
+  .ob-prog b{color:var(--green);}
+  .ob-body{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+  .ob-body.open{max-height:520px;}
+  .ob-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px 14px;}
+  .ob-card{border:1px solid var(--line);border-radius:12px;padding:12px;position:relative;}
+  .ob-card.done{background:var(--green-light);border-color:var(--green-bg);}
+  .ob-card .st{position:absolute;top:10px;right:10px;font-size:14px;}
+  .ob-card.done .st{color:var(--green);}
+  .ob-card .ocic{font-size:22px;}
+  .ob-card .oct{font-size:13px;font-weight:700;margin-top:6px;}
+  .ob-card .ocd{font-size:10px;color:var(--t3);margin-top:4px;line-height:1.4;}
+  .ob-card .why{font-size:10px;color:var(--tg-dark);background:var(--tg-light);border-radius:6px;
+    padding:3px 6px;margin-top:7px;line-height:1.4;}
+  /* 去完成按钮 & 虎力值奖励 */
+  .ob-card .reward{display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
+  .ob-card .rwd-txt{font-size:10px;color:var(--gold);font-weight:700;}
+  .ob-card .go-btn{background:var(--tg);color:#fff;border:none;border-radius:8px;
+    padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;
+    transition:transform .15s, box-shadow .15s;}
+  .ob-card .go-btn:active{transform:scale(.95);}
+  .ob-card.done .go-btn{background:#ccc;color:#999;pointer-events:none;}
+
+  /* 虎力值气泡 */
+  .power-bubble{position:absolute;z-index:300;pointer-events:none;
+    background:linear-gradient(135deg,#FFD700,#FFA500);color:#7a3b00;
+    padding:10px 16px;border-radius:12px;font-size:13px;font-weight:800;
+    box-shadow:0 4px 16px rgba(255,165,0,.4);
+    opacity:0;transform:translate(-50%,8px) scale(.9);transition:opacity .3s,transform .3s cubic-bezier(.175,.885,.32,1.275);
+    white-space:nowrap;display:flex;align-items:center;gap:6px;top:40%;left:50%;}
+  .power-bubble.show{opacity:1;transform:translate(-50%,0) scale(1);}
+  .power-bubble::after{content:'';position:absolute;bottom:-6px;left:50%;
+    transform:translateX(-50%) rotate(45deg);width:10px;height:10px;
+    background:linear-gradient(135deg,#FFD700,#FFA500);box-shadow:4px 4px 8px rgba(255,165,0,.2);}
+
+  /* 打卡计划 */
+  .sec-title{font-size:14px;color:var(--t1);font-weight:700;margin:4px 2px 8px;
+    display:flex;align-items:center;gap:6px;}
+  .plan{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.03);}
+  .plan .ph{display:flex;align-items:center;justify-content:space-between;}
+  .plan .ph .pn{font-size:15px;font-weight:700;}
+  .plan .ph .ptag{font-size:11px;color:var(--tg-dark);background:var(--tg-light);
+    padding:3px 8px;border-radius:20px;}
+  .plan .pinfo{font-size:12px;color:var(--t2);margin-top:8px;display:flex;justify-content:space-between;}
+  .plan .pinfo b{color:var(--t1);}
+  .grid30{display:grid;grid-template-columns:repeat(15,1fr);gap:4px;margin-top:12px;}
+  .cell{aspect-ratio:1;border-radius:5px;background:#F0F1F3;}
+  .cell.done{background:linear-gradient(135deg,#FFB020,#FF6B2C);}
+  .cell.today{background:#FFF;border:2px solid var(--tg);box-shadow:0 0 0 3px var(--tg-light);}
+  .plan .pbtns{display:flex;gap:10px;margin-top:14px;}
+  .btn{flex:1;text-align:center;padding:11px 0;border-radius:12px;font-size:14px;font-weight:700;}
+  .btn.primary{background:var(--tg);color:#fff;}
+  .btn.ghost{background:#F2F3F5;color:var(--t2);}
+
+  /* 手动任务(原有) */
+  .mtask{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.03);}
+  .mtask .mh{font-size:15px;font-weight:700;}
+  .mtask .mr{font-size:12px;color:var(--t2);margin-top:6px;}
+  .mtask .mbtn{margin-top:12px;border:1px dashed var(--tg);color:var(--tg);background:var(--tg-light);
+    text-align:center;padding:10px;border-radius:12px;font-size:13px;font-weight:700;}
+
+  /* 非本人占位提示 */
+  .not-owner-hint{text-align:center;padding:60px 20px;color:var(--t3);font-size:13px;line-height:1.8;}
+  .not-owner-hint .ni-icon{font-size:48px;margin-bottom:12px;}
+  .not-owner-hint b{color:var(--t1);}
+
+  /* 其他tab占位 */
+  .phold{text-align:center;color:var(--t3);font-size:13px;padding:60px 0;}
+
+  /* ==================== SCREEN 4: 我的(个人中心) - 重设计 ==================== */
+  /* QQ风格等级卡片 */
+  .level-card{background:var(--card);margin:-12px 12px 0;border-radius:16px;padding:18px 16px;
+    position:relative;z-index:2;box-shadow:0 4px 12px rgba(0,0,0,.05);}
+  .level-card .lc-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .level-card .lc-left{display:flex;align-items:center;gap:10px;}
+  .level-card .lc-label{font-size:15px;font-weight:700;color:var(--t1);}
+  .level-card .lc-lv{font-size:22px;font-weight:800;color:var(--t1);}
+  .level-card .lc-rank{background:#FFF8E6;border-radius:20px;padding:4px 12px;
+    font-size:13px;font-weight:700;color:#B8860B;}
+  .level-progress-bar{height:6px;background:#F0F1F3;border-radius:3px;overflow:hidden;
+    margin-bottom:8px;}
+  .level-progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#FFD93D,#FFB020);
+    transition:width .4s ease;width:0%;}
+  .level-tip-row{display:flex;justify-content:space-between;align-items:center;
+    font-size:12px;color:var(--t2);}
+  .level-tip-row .lt-upgrade{color:var(--tg);font-weight:700;cursor:pointer;}
+
+  /* 功能入口卡片行（等级报告） */
+  .mine-cards{padding:0 12px;margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .mine-card{background:var(--card);border-radius:14px;padding:15px 16px;display:flex;
+    align-items:center;justify-content:space-between;cursor:pointer;transition:.15s;box-shadow:0 1px 4px rgba(0,0,0,.03);}
+  .mine-card:active{transform:scale(.98);background:#FAFBFC;}
+  .mine-card .mc-left{display:flex;align-items:center;gap:12px;}
+  .mine-card .mc-icon{width:40px;height:40px;border-radius:12px;background:var(--tg-light);
+    display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--tg);
+    flex-shrink:0;}
+  .mine-card .mc-icon.green-bg{background:var(--pgreen-bg);color:var(--pgreen);}
+  .mine-card .mc-title{font-size:15px;font-weight:700;color:var(--t1);}
+  .mine-card .mc-sub{font-size:12px;color:var(--t3);margin-top:2px;}
+  .mine-card .mc-right{font-size:20px;color:var(--t3);flex-shrink:0;position:relative;}
+  .mc-dot{position:absolute;top:-4px;right:-4px;width:8px;height:8px;border-radius:50%;
+    background:var(--red);border:1.5px solid #fff;}
+
+  /* 原有我的页头部(保留) */
+  .profile-header{background:linear-gradient(160deg,#D8F5E4,#E8F8EE);padding:20px 16px;
+    display:flex;align-items:center;gap:12px;}
+  .pavatar{width:52px;height:52px;border-radius:50%;background:#fff;display:flex;
+    align-items:center;justify-content:center;font-size:26px;border:2px solid var(--pgreen);
+    box-shadow:0 2px 8px rgba(31,191,117,.15);}
+  .pinfo{flex:1;}
+  .pinfo .pid{font-size:17px;font-weight:800;}
+  .pinfo .psub{font-size:12px;color:var(--t3);margin-top:1px;}
+  .pheader-right{text-align:center;}
+  .pheader-right .bell{font-size:22px;color:var(--t2);cursor:pointer;}
+  .pheader-right .bl{font-size:10px;color:var(--t3);margin-top:2px;}
+
+  /* 虎力值 + 储值/余额/积分 */
+  .power-row{display:flex;background:var(--card);margin:-12px 12px 0;
+    border-radius:14px;padding:16px 14px;position:relative;z-index:2;
+    box-shadow:0 4px 12px rgba(0,0,0,.05);}
+  .pow-item{flex:1;text-align:center;position:relative;}
+  .pow-item:not(:last-child)::after{content:'';position:absolute;right:0;top:6px;bottom:6px;width:1px;
+    background:var(--line);}
+  .pow-num{font-size:22px;font-weight:800;color:var(--t1);}
+  .pow-num.gold{color:var(--gold);}
+  .pow-label{font-size:11px;color:var(--t3);margin-top:2px;}
+
+  /* 订单区 */
+  .sec-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px;}
+  .sec-header .sh-t{font-size:16px;font-weight:800;}
+  .sec-header .sh-more{font-size:12px;color:var(--t3);cursor:pointer;}
+  .order-icons{display:flex;background:var(--card);margin:0 12px;border-radius:14px;padding:14px 8px;}
+  .oi-item{flex:1;text-align:center;cursor:pointer;}
+  .oi-item .oi-ic{font-size:24px;margin-bottom:4px;}
+  .oi-item .oi-l{font-size:11px;color:var(--t2);}
+
+  /* 对话记录 */
+  .chat-list{background:var(--card);margin:14px 12px 0;border-radius:14px;padding:0 14px;}
+  .cl-date{font-size:11px;color:var(--t3);padding:12px 0 6px;}
+  .cl-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer;}
+  .cl-item:last-child{border-bottom:none;}
+  .cl-item .cl-t{flex:1;font-size:13px;font-weight:600;}
+  .cl-item .cl-d{font-size:12px;color:var(--t3);}
+
+  .ver-text{text-align:center;color:var(--t3);font-size:11px;padding:30px 0 20px;}
+
+  /* ==================== SCREEN 3: 服务页 ==================== */
+  .banner-slider{margin:12px;border-radius:16px;overflow:hidden;position:relative;}
+  .slides{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;}
+  .slides::-webkit-scrollbar{display:none;}
+  .slide{flex:0 0 100%;scroll-snap-align:start;height:120px;position:relative;}
+  .slide.live{background:linear-gradient(120deg,#3A2A6B,#6B4CA8);color:#fff;}
+  .slide.coupon{background:linear-gradient(120deg,#FF6B2C,#FFB020);color:#fff;cursor:pointer;}
+  .slide .sc{position:absolute;left:18px;top:50%;transform:translateY(-50%);}
+  .slide .stitle{font-size:17px;font-weight:800;}
+  .slide .ssub{font-size:12px;opacity:.9;margin-top:6px;}
+  .slide .sbadge{display:inline-block;background:rgba(255,255,255,.25);border-radius:20px;
+    padding:3px 10px;font-size:11px;margin-top:8px;}
+  .slide .sarrow{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:22px;opacity:.9;}
+  .dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;}
+  .dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);transition:.2s;}
+  .dots i.on{width:16px;border-radius:3px;background:#fff;}
+
+  .sg-title{font-size:16px;font-weight:800;margin:6px 14px 10px;display:flex;align-items:center;gap:6px;}
+  .sg-title small{font-size:11px;color:var(--t3);font-weight:400;}
+  .pgrid{display:flex;gap:10px;overflow-x:auto;padding:0 14px 4px;scrollbar-width:none;}
+  .pgrid::-webkit-scrollbar{display:none;}
+  .pcard{flex:0 0 150px;background:var(--card);border-radius:14px;overflow:hidden;
+    box-shadow:0 2px 8px rgba(0,0,0,.04);}
+  .pcard .img{height:96px;background:linear-gradient(135deg,#FFE0CC,#FFD0B0);
+    display:flex;align-items:center;justify-content:center;font-size:30px;}
+  .pcard .pinfo{padding:10px;}
+  .pcard .pnm{font-size:13px;font-weight:700;}
+  .pcard .ppr{font-size:14px;color:var(--tg);font-weight:800;margin-top:5px;}
+  .pcard .ppr small{font-size:10px;color:var(--t3);font-weight:400;
+    text-decoration:line-through;margin-left:5px;}
+  .news{background:var(--card);border-radius:16px;margin:14px;padding:14px;}
+  .news .n{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);}
+  .news .n:last-child{border-bottom:none;}
+  .news .nimg{width:54px;height:54px;border-radius:10px;background:linear-gradient(135deg,#D6E8FF,#BBD6FF);
+    flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:22px;}
+  .news .nt{font-size:13px;font-weight:600;line-height:1.5;}
+  .news .nm{font-size:11px;color:var(--t3);margin-top:6px;}
+
+  /* toast & modal */
+  .toast{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    background:rgba(0,0,0,.78);color:#fff;padding:14px 20px;border-radius:12px;font-size:13px;
+    z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;max-width:70%;text-align:center;}
+  .toast.show{opacity:1;}
+  .modal{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:150;display:none;
+    align-items:center;justify-content:center;}
+  .modal.show{display:flex;}
+  .modal .box{background:#fff;border-radius:18px;width:300px;padding:24px 20px;text-align:center;}
+  .modal .micon{font-size:46px;}
+  .modal .mt{font-size:17px;font-weight:800;margin-top:8px;}
+  .modal .md{font-size:13px;color:var(--t2);margin-top:8px;line-height:1.6;}
+  .modal .mbtn{margin-top:18px;background:var(--tg);color:#fff;border-radius:12px;padding:12px;font-weight:700;}
+
+  /* ==================== SUB-SCREEN: 体型数据页 (严格复刻截图) ==================== */
+  .sub-screen{position:absolute;top:89px;left:0;right:0;bottom:0;overflow-y:auto;
+    -webkit-overflow-scrolling:touch;display:none;background:var(--bg);z-index:80;}
+  .sub-screen.active{display:block;}
+
+  /* 体型数据页 Tab */
+  .bd-tabs{display:flex;background:var(--card);border-bottom:1px solid var(--line);
+    padding:0 4px;overflow-x:auto;scrollbar-width:none;}
+  .bd-tabs::-webkit-scrollbar{display:none;}
+  .bd-tab{padding:13px 14px;font-size:14px;color:var(--t2);white-space:nowrap;position:relative;cursor:pointer;}
+  .bd-tab.on{color:var(--t1);font-weight:700;}
+  .bd-tab.on::after{content:'';position:absolute;left:14px;right:14px;bottom:0;height:3px;
+    border-radius:2px;background:var(--pgreen);}
+
+  /* Banner */
+  .bd-banner{margin:10px 12px 0;background:linear-gradient(135deg,#E8F8EE,#D4F5E3);
+    border-radius:14px;padding:0;overflow:hidden;position:relative;height:90px;
+    display:flex;align-items:center;justify-content:center;color:var(--pgreen);}
+  .bd-banner-inner{text-align:center;}
+  .bd-banner .bb-title{font-size:16px;font-weight:800;color:var(--pgreen-dk);}
+  .bd-banner .bb-sub{font-size:11px;color:var(--pgreen);margin-top:4px;
+    background:rgba(31,191,117,.15);display:inline-block;padding:2px 10px;border-radius:10px;}
+
+  /* 体型数据 section */
+  .bd-section{background:var(--card);margin:12px 12px 0;border-radius:14px;padding:14px;}
+  .bd-section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .bd-section-head .bsh-t{font-size:16px;font-weight:800;color:var(--t1);}
+  .bd-section-head .bsh-link{font-size:12px;color:var(--pgreen);cursor:pointer;font-weight:600;}
+
+  /* 三列输入卡片 */
+  .bd-input-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+  .bd-input-card{background:#F7F8FA;border-radius:12px;padding:14px 10px;text-align:center;}
+  .bd-input-card .bic-label{font-size:13px;color:var(--t2);margin-bottom:8px;}
+  .bd-input-card .bic-val{font-size:22px;font-weight:800;color:var(--t1);min-height:28px;
+    display:flex;align-items:center;justify-content:center;}
+  .bd-input-card .bic-val.empty{color:var(--t3);}
+  .bd-input-card .bic-add{width:32px;height:32px;border-radius:50%;background:var(--card);
+    border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;
+    margin:8px auto 0;font-size:18px;color:var(--t2);cursor:pointer;
+    transition:all .2s;}
+  .bd-input-card .bic-add:active{background:var(--pgreen-light);border-color:var(--pgreen);color:var(--pgreen);}
+
+  /* 身体体征 卡片网格 */
+  .bd-sign-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+  .bd-sign-card{background:#F7F8FA;border-radius:12px;padding:14px;position:relative;}
+  .bd-sign-card .bsc-name{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:6px;}
+  .bd-sign-card .bsc-hint{font-size:11px;color:var(--t3);margin-bottom:8px;}
+  .bd-sign-card .bsc-unit{font-size:13px;color:var(--t2);font-weight:500;margin-top:4px;}
+  .bd-sign-card .bsc-add{position:absolute;top:14px;right:14px;width:24px;height:24px;
+    border-radius:50%;background:var(--card);border:1.5px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--t2);cursor:pointer;}
+
+  /* 体型数据页顶部导航条 */
+  .sub-nav{background:var(--card);padding:12px 14px;display:flex;align-items:center;gap:10px;
+    border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;}
+  .sub-nav .back-btn{font-size:20px;color:var(--t1);cursor:pointer;width:32px;text-align:center;}
+  .sub-nav .sn-title{flex:1;font-size:16px;font-weight:800;text-align:center;}
+  .sub-nav .sn-right{width:32px;}
+
+  /* 浮动输入弹窗 */
+  .float-input-overlay{position:fixed;inset:0;z-index:400;display:none;
+    align-items:flex-end;justify-content:center;background:rgba(0,0,0,.3);}
+  .float-input-overlay.show{display:flex;}
+  .float-input-panel{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:390px;
+    padding:20px 16px 30px;animation:slideUp .25s ease;}
+  @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+  .fip-title{font-size:16px;font-weight:800;text-align:center;margin-bottom:16px;}
+  .fip-field{background:#F7F8FA;border-radius:12px;padding:14px;text-align:center;margin-bottom:12px;}
+  .fip-input{width:100%;border:none;background:transparent;text-align:center;
+    font-size:36px;font-weight:800;color:var(--t1);outline:none;
+    font-family:-apple-system,"PingFang SC",sans-serif;}
+  .fip-input::placeholder{color:var(--t3);font-size:18px;font-weight:400;}
+  .fip-unit{font-size:13px;color:var(--t3);margin-top:4px;}
+  .fip-btn{width:100%;padding:13px;border-radius:14px;font-size:15px;font-weight:700;
+    background:var(--pgreen);color:#fff;border:none;cursor:pointer;margin-top:4px;}
+  .fip-btn:active{opacity:.85;}
+  .fip-cancel{width:100%;padding:11px;border-radius:14px;font-size:14px;
+    background:transparent;color:var(--t3);border:none;cursor:pointer;margin-top:6px;}
+
+  /* ==================== SUB-SCREEN: 创建任务页 (严格复刻截图) ==================== */
+  .cp-header{background:var(--card);padding:12px 16px;display:flex;align-items:center;
+    justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;}
+  .cp-header .cph-title{font-size:17px;font-weight:800;}
+  .cp-header .cph-actions{display:flex;gap:12px;align-items:center;font-size:18px;color:var(--t3);}
+
+  .cp-form{padding:16px 14px;}
+  .cp-field{background:var(--card);border-radius:14px;padding:14px;margin-bottom:14px;}
+  .cp-label{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:10px;display:flex;align-items:center;gap:4px;}
+  .cp-label .req{color:var(--red);font-size:14px;}
+  .cp-text-wrap{position:relative;}
+  .cp-text-wrap textarea{width:100%;border:1px solid #EEE;border-radius:10px;padding:10px 12px;
+    font-size:14px;color:var(--t1);resize:none;outline:none;font-family:inherit;
+    background:#FAFBFC;line-height:1.5;box-sizing:border-box;}
+  .cp-text-wrap textarea:focus{border-color:var(--pgreen);}
+  .cp-counter{position:absolute;right:10px;bottom:8px;font-size:12px;color:var(--t3);}
+  .cp-text-wrap input{width:100%;border:1px solid #EEE;border-radius:10px;padding:10px 12px;
+    font-size:14px;color:var(--t1);outline:none;font-family:inherit;background:#FAFBFC;box-sizing:border-box;}
+  .cp-reminder{background:var(--card);border-radius:14px;padding:14px;margin-bottom:14px;}
+  .cp-reminder .cr-head{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px;}
+  .cp-reminder .cr-desc{font-size:12px;color:var(--t3);margin-bottom:10px;}
+  .cp-add-reminder{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;
+    border:1.5px dashed var(--line);border-radius:10px;font-size:13px;color:var(--t2);cursor:pointer;
+    background:#FAFBFC;}
+  .cp-add-reminder:active{background:#F0F1F3;}
+
+  .cp-footer{position:absolute;bottom:0;left:0;right:0;background:var(--card);
+    padding:14px 16px 28px;border-top:1px solid var(--line);}
+  .cp-create-btn{width:100%;padding:14px;border-radius:24px;font-size:16px;font-weight:700;
+    background:var(--pgreen);color:#fff;border:none;cursor:pointer;text-align:center;}
+  .cp-create-btn:active{opacity:.85;}
+  /* ==================== SUB-SCREEN: 健康档案初始化(Onboarding) ==================== */
+  .ob-nav{background:var(--card);padding:12px 14px;display:flex;align-items:center;
+    justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;}
+  .ob-nav .obn-title{font-size:17px;font-weight:800;}
+  .ob-nav .obn-close{font-size:18px;color:var(--t3);cursor:pointer;padding:4px 10px;}
+
+  /* 步骤指示器 */
+  .step-ind{display:flex;align-items:center;justify-content:center;padding:16px 20px 8px;gap:6px;}
+  .step-dot{width:10px;height:10px;border-radius:50%;background:#DDD;transition:.3s;}
+  .step-dot.active{background:var(--pgreen);}
+  .step-dot.done{background:var(--pgreen);}
+  .step-line{width:40px;height:2px;background:#DDD;transition:.3s;}
+  .step-line.done{background:var(--pgreen);}
+
+  /* 步骤卡片 */
+  .ob-step{display:none;padding:0 20px;}
+  .ob-step.active{display:block;}
+  .os-head{margin:20px 0 16px;}
+  .os-head .osh-q{font-size:18px;font-weight:800;color:var(--t1);line-height:1.4;}
+  .os-head .osh-sub{font-size:13px;color:var(--t3);margin-top:6px;line-height:1.4;}
+
+  /* 性别选择 */
+  .gender-cards{display:flex;gap:14px;margin-top:20px;}
+  .gender-card{flex:1;background:var(--card);border:2px solid var(--line);border-radius:16px;
+    padding:24px 12px;text-align:center;cursor:pointer;transition:.2s;}
+  .gender-card.selected{border-color:var(--pgreen);background:var(--pgreen-bg);}
+  .gender-card .gc-icon{font-size:44px;margin-bottom:8px;}
+  .gender-card .gc-label{font-size:15px;font-weight:700;color:var(--t1);}
+
+  /* 滚轮选择器 (年/月/日) */
+  .wheel-row{display:flex;gap:8px;justify-content:center;margin-top:20px;}
+  .wheel-col{background:var(--card);border-radius:14px;width:100px;height:220px;
+    overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;position:relative;
+    -webkit-mask:linear-gradient(#000 30%,#000 70%,transparent);
+    mask:linear-gradient(#000 30%,#000 70%,transparent);}
+  .wheel-col::-webkit-scrollbar{display:none;}
+  .wheel-item{height:44px;display:flex;align-items:center;justify-content:center;
+    font-size:17px;color:var(--t3);scroll-snap-align:center;transition:.15s;}
+  .wheel-item.sel{font-size:20px;font-weight:800;color:var(--t1);}
+
+  /* 身高/体重滑块 */
+  .slider-section{margin-top:24px;}
+  .slider-label{display:flex;justify-content:space-between;font-size:13px;color:var(--t2);
+    margin-bottom:10px;}
+  .slider-label b{font-size:24px;font-weight:800;color:var(--t1);}
+  .slider-wrap{position:relative;height:44px;display:flex;align-items:center;}
+  .slider-track{width:100%;height:6px;background:#E8EAED;border-radius:3px;position:relative;}
+  .slider-fill{height:100%;background:linear-gradient(90deg,var(--pgreen),#4EDBA0);
+    border-radius:3px;position:absolute;left:0;top:0;}
+  .slider-thumb{width:28px;height:28px;border-radius:50%;background:var(--pgreen);
+    box-shadow:0 2px 8px rgba(31,191,117,.35);position:absolute;top:-11px;
+    border:3px solid #fff;cursor:pointer;z-index:2;}
+  input[type=range]{-webkit-appearance:none;width:100%;height:6px;background:transparent;
+    position:absolute;top:19px;left:0;z-index:3;margin:0;cursor:pointer;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;
+    border-radius:50%;background:var(--pgreen);border:3px solid #fff;box-shadow:0 2px 8px rgba(31,191,117,.35);}
+
+  /* BMI 结果 */
+  .bmi-result{text-align:center;margin-top:28px;padding:20px;background:var(--pgreen-bg);
+    border-radius:16px;}
+  .bmi-result .br-val{font-size:36px;font-weight:800;color:var(--pgreen-dk);}
+  .bmi-result .br-status{font-size:14px;color:var(--pgreen);margin-top:4px;font-weight:600;}
+  .bmi-result .br-desc{font-size:12px;color:var(--t2);margin-top:6px;line-height:1.5;}
+
+  /* 底部按钮区 */
+  .ob-footer{position:absolute;bottom:0;left:0;right:0;background:var(--card);
+    padding:14px 20px 28px;border-top:1px solid var(--line);}
+  .ob-btn{width:100%;padding:14px;border-radius:24px;font-size:16px;font-weight:700;
+    text-align:center;cursor:pointer;border:none;transition:.2s;}
+  .ob-btn.primary{background:var(--pgreen);color:#fff;}
+  .ob-btn.primary:active{opacity:.85;}
+  .ob-btn.disabled{background:#ccc;color:#999;pointer-events:none;}
+
+  /* ==================== SUB-SCREEN: 打卡记录页 ==================== */
+  .ck-nav{background:var(--card);padding:12px 16px;display:flex;align-items:center;
+    justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;}
+  .ck-nav .ckn-title{font-size:18px;font-weight:800;flex:1;text-align:center;}
+  .ck-nav .ckn-icon{font-size:20px;color:var(--t3);cursor:pointer;width:32px;text-align:center;}
+
+  .ck-body{padding:16px 14px 100px;}
+
+  /* 计划卡片 */
+  .ck-plan-card{background:var(--card);border-radius:14px;padding:16px;display:flex;
+    align-items:center;gap:12px;margin-bottom:20px;}
+  .ck-plan-card .ckpc-check{width:26px;height:26px;border-radius:50%;
+    background:var(--green-light);border:2px solid var(--green);display:flex;
+    align-items:center;justify-content:center;font-size:14px;color:var(--green);flex-shrink:0;}
+  .ck-plan-card .ckpc-info{flex:1;}
+  .ck-plan-card .ckpc-name{font-size:16px;font-weight:700;color:var(--t1);}
+  .ck-plan-card .ckpc-sub{font-size:13px;color:var(--t3);margin-top:2px;}
+
+  /* 感受输入 */
+  .ck-field{margin-bottom:20px;}
+  .ck-label{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:10px;}
+  .ck-textarea{width:100%;border:1px solid #EEE;border-radius:12px;padding:12px 14px;
+    font-size:14px;color:var(--t1);resize:none;outline:none;font-family:inherit;
+    background:#FAFBFC;line-height:1.6;box-sizing:border-box;min-height:120px;}
+  .ck-textarea:focus{border-color:var(--pgreen);}
+  .ck-counter{text-align:right;font-size:12px;color:var(--t3);margin-top:6px;}
+
+  /* 图片上传 */
+  .ck-img-area{display:flex;gap:10px;flex-wrap:wrap;}
+  .ck-img-add{width:90px;height:90px;border-radius:12px;border:1.5px dashed var(--line);
+    background:#FAFBFC;display:flex;align-items:center;justify-content:center;
+    font-size:32px;color:var(--t3);cursor:pointer;transition:.2s;}
+  .ck-img-add:active{background:#F0F1F3;border-color:var(--pgreen);}
+  .ck-img-thumb{width:90px;height:90px;border-radius:12px;background:linear-gradient(135deg,#E8F0FE,#D2E3FC);
+    display:flex;align-items:center;justify-content:center;font-size:28px;position:relative;
+    overflow:hidden;}
+  .ck-img-thumb .ck-del{position:absolute;top:4px;right:4px;width:18px;height:18px;
+    border-radius:50%;background:rgba(0,0,0,.5);color:#fff;font-size:11px;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;}
+
+  /* 底部确认栏 */
+  .ck-footer{position:absolute;bottom:0;left:0;right:0;background:var(--card);
+    padding:12px 16px 28px;border-top:1px solid var(--line);}
+  .ck-footer-hint{text-align:center;font-size:12px;color:var(--t3);margin-bottom:10px;}
+  .ck-confirm-btn{width:100%;padding:14px;border-radius:24px;font-size:16px;font-weight:700;
+    background:var(--pgreen);color:#fff;border:none;cursor:pointer;text-align:center;}
+  .ck-confirm-btn:active{opacity:.85;}
+
+  /* ==================== SUB-SCREEN: 等级报告页 ==================== */
+  .lr-nav{background:var(--card);padding:12px 16px;display:flex;align-items:center;
+    justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;}
+  .lr-nav .lrn-title{font-size:18px;font-weight:800;flex:1;text-align:center;}
+  .lr-nav .lrn-back{font-size:22px;color:var(--t1);cursor:pointer;width:32px;text-align:center;}
+
+  .lr-body{padding:16px 14px 30px;}
+
+  /* 报告标题区 */
+  .lr-hero{margin-bottom:20px;padding-left:4px;}
+  .lr-user{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:14px;color:var(--t2);}
+  .lr-user .lu-avatar{width:28px;height:28px;border-radius:50%;background:#E8EAED;
+    display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--t3);}
+  .lr-title{font-size:26px;font-weight:900;color:var(--t1);letter-spacing:-0.5px;}
+
+  /* 等级信息卡片 */
+  .lr-info-card{background:var(--card);border-radius:16px;padding:20px 16px;margin-bottom:18px;
+    box-shadow:0 2px 8px rgba(0,0,0,.03);}
+  .lr-info-card .ric-head{font-size:15px;font-weight:700;color:var(--t1);margin-bottom:16px;}
+  .ric-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;}
+  .ric-item{text-align:center;padding:8px 4px;}
+  .ric-item .ri-label{font-size:11px;color:var(--t3);margin-bottom:4px;}
+  .ric-item .ri-val{font-size:24px;font-weight:800;color:var(--t1);}
+  .ric-item .ri-sub{font-size:11px;color:var(--t3);margin-top:2px;}
+  .ric-highlight .ri-val{font-size:32px;color:var(--t1);}
+
+  /* 排名区 */
+  .lr-rank-section{background:var(--card);border-radius:16px;padding:18px 16px;margin-bottom:18px;
+    box-shadow:0 2px 8px rgba(0,0,0,.03);}
+  .lrs-head{font-size:16px;font-weight:800;color:var(--t1);margin-bottom:14px;}
+  .rank-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
+  .rank-item{text-align:center;padding:12px 6px 10px;background:#FAFBFC;border-radius:12px;
+    position:relative;}
+  .rank-avatar{width:48px;height:48px;border-radius:50%;margin:0 auto 8px;display:flex;
+    align-items:center;justify-content:center;font-size:24px;position:relative;
+    background:linear-gradient(135deg,#FFE4B5,#FFDAB9);}
+  .rank-avatar.ra1{background:linear-gradient(135deg,#FFE135,#FFB800);}
+  .rank-avatar.ra2{background:linear-gradient(135deg,#C0C0C9,#A0A0AA);}
+  .rank-avatar.ra3{background:linear-gradient(135deg,#CD7F32,#B8860B);}
+  .rank-badge{position:absolute;top:-2px;right:-2px;width:18px;height:18px;border-radius:50%;
+    background:var(--tg);color:#fff;font-size:10px;font-weight:700;display:flex;
+    align-items:center;justify-content:center;border:2px solid #fff;}
+  .rank-name{font-size:12px;font-weight:600;color:var(--t1);margin-bottom:3px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px;}
+  .rank-lv{font-size:15px;font-weight:800;color:var(--t1);}
+  .rank-speed{font-size:10px;color:var(--t3);margin-top:2px;}
+
+  /* 我的排名行 */
+  .my-rank-row{display:flex;align-items:center;padding:12px 0 4px;border-top:1px solid var(--line);
+    margin-top:4px;}
+  .mrr-no{width:28px;font-size:13px;color:var(--t3);text-align:center;}
+  .mrr-x{font-size:18px;color:var(--t3);text-align:center;width:36px;}
+  .mrr-info{flex:1;display:flex;align-items:center;gap:8px;}
+  .mrr-name{font-size:13px;font-weight:600;color:var(--pgreen);} /* 高亮"我" */
+  .mrr-speed{font-size:11px;color:var(--t3);}
+  .mrr-lv{font-size:17px;font-weight:800;color:var(--t1);}
+  .mrr-go{font-size:13px;color:var(--tg);font-weight:600;cursor:pointer;}
+
+  /* 盲盒入口 */
+  .blindbox-card{background:var(--card);border-radius:14px;padding:14px 16px;display:flex;
+    align-items:center;justify-content:space-between;cursor:pointer;}
+  .bbc-left{display:flex;align-items:center;gap:12px;}
+  .bbc-icon{font-size:36px;}
+  .bbc-tit{font-size:15px;font-weight:700;color:var(--t1);}
+  .bbc-sub{font-size:12px;color:var(--t3);margin-top:2px;}
+  .bbc-btn{border:1px solid var(--line);border-radius:16px;padding:5px 14px;
+    font-size:13px;color:var(--t2);font-weight:600;}
+</style>
+</head>
+<body>
+<div class="phone">
+  <!-- 全局状态栏 -->
+  <div class="statusbar"><span>9:41</span><span class="icons">📶 📡 🔋</span></div>
+
+  <!-- 全局顶部导航 (☰ | 健康 | 泰小虎 | 服务) -->
+  <div class="gnav" id="globalNav">
+    <div class="menu-btn" onclick="goMine()">☰</div>
+    <div class="tabs">
+      <div class="gtab" data-g="profile" onclick="switchScreen('s-profile')">健康</div>
+      <div class="gtab on" data-g="home" onclick="switchScreen('s-home')">泰小虎</div>
+      <div class="gtab" data-g="service" onclick="switchScreen('s-service')">服务</div>
+    </div>
+    <div class="more-btn">···</div>
+  </div>
+
+  <!-- ========== SCREEN 1: 泰小虎/首页(AI会话) ========== -->
+  <div class="screen active" id="s-home">
+    <div class="welcome">
+      <div class="mascot">🐯</div>
+      <div class="wt">Hi 小虎，今天想了解哪方面的健康？
+        <small>我是你的智能健康导购助手</small>
+        <div class="tags">
+          <span class="tag">AI服务说明</span><span class="tag">参考来源</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 今日待办条 -->
+    <div class="todo" onclick="goTask('今日待办')">
+      <div class="ic">🎯</div>
+      <div class="body">
+        <div class="l1">减肥打卡 第 12 / 30 天</div>
+        <div class="l2">坚持满 30 天全额返还 ¥199，再领 300 元券 💰</div>
+        <div class="bar"><i></i></div>
+      </div>
+      <div class="arrow">›</div>
+    </div>
+
+    <!-- 快捷入口 -->
+    <div class="quick">
+      <div class="qcard"><div class="qic">💼</div><div class="qt">职场亚健康调理</div><div class="qd">久坐·肩颈·疲劳</div></div>
+      <div class="qcard"><div class="qic">🌸</div><div class="qt">女性内服养护</div><div class="qd">气色·内分泌</div></div>
+      <div class="qcard"><div class="qic">🌿</div><div class="qt">肠道与代谢管理</div><div class="qd">益生·轻体</div></div>
+    </div>
+
+    <!-- 功能图标行：任务置顶 + 横滑 -->
+    <div class="fnrow">
+      <div class="fn task" onclick="goTask('任务图标')">
+        <div class="fic">📋<span class="badge">2</span></div><div class="fl">任务</div>
+      </div>
+      <div class="fn"><div class="fic">🔍</div><div class="fl">看皮肤</div></div>
+      <div class="fn"><div class="fic">👤</div><div class="fl">看面相</div></div>
+      <div class="fn"><div class="fic">🧬</div><div class="fl">体质检测</div></div>
+      <div class="fn"><div class="fic">💬</div><div class="fl">健康问答</div></div>
+      <div class="fn"><div class="fic">🍎</div><div class="fl">饮食记录</div></div>
+      <div class="fn"><div class="fic">🏃</div><div class="fl">运动</div></div>
+      <div class="fn"><div class="fic">😴</div><div class="fl">睡眠</div></div>
+    </div>
+
+    <div style="height:76px"></div><!-- input bar spacer -->
+
+    <!-- 底部输入框 -->
+    <div class="inputbar">
+      <div class="ib">输入你想了解的健康问题...</div>
+      <div class="send">➤</div>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 2: 健康档案 ========== -->
+  <div class="screen" id="s-profile">
+
+    <!-- 人员切换区 (绿色背景) -->
+    <div class="member-bar">
+      <div class="member-avatars">
+        <div class="mav-item active" id="mav-self" onclick="switchMember('self')">
+          <div class="mav-avatar">👩</div>本人
+        </div>
+        <div class="mav-item inactive" id="mav-mom" onclick="switchMember('mom')">
+          <div class="mav-avatar">👵</div>妈妈
+        </div>
+        <div class="mav-item inactive" id="mav-dad" onclick="switchMember('dad')">
+          <div class="mav-avatar">👴</div>爸爸
+        </div>
+      </div>
+      <div class="mav-actions">
+        <div class="mav-btn" onclick="showToast('添加家庭成员')">＋ 添加</div>
+        <div class="mav-btn" onclick="showToast('管理成员')">⚙ 管理</div>
+      </div>
+    </div>
+
+    <!-- Tab 行 -->
+    <div class="ptabs" id="ptabs">
+      <div class="ptab on" data-t="task" onclick="switchPTab('task')">健康任务<span class="dot"></span></div>
+      <div class="ptab" data-t="body" onclick="switchPTab('body')">体型数据</div>
+      <div class="ptab" data-t="sign" onclick="switchPTab('sign')">身体体征</div>
+      <div class="ptab" data-t="sleep" onclick="switchPTab('sleep')">睡眠数据</div>
+      <div class="ptab" data-t="med" onclick="switchPTab('med')">就医记录</div>
+    </div>
+
+    <!-- 健康任务 Tab 内容 -->
+    <div id="ptask" class="ptab-body">
+      <div class="appbanner">🎉 <b>泰小虎 APP 上线啦！</b> 完成打卡任务领 300 元券</div>
+
+      <!-- 仅本人可见：新手引导 + 打卡计划 -->
+      <div id="ownerContent">
+
+        <!-- 新手引导（默认折叠） -->
+        <div class="panel">
+          <div class="ob-head" id="obHead" onclick="toggleOB()">
+            <div class="oic">🧭</div>
+            <div class="ot">
+              <div class="t1">新手引导任务</div>
+              <div class="t2">完成任务，开启你的健康计划</div>
+            </div>
+            <span class="ob-prog">已完成 <b>0</b>/5</span>
+            <span class="chev">›</span>
+          </div>
+          <div class="ob-body" id="obBody">
+            <div class="ob-grid">
+              <div class="ob-card" data-task="profile" data-pts="50" data-done="0">
+                <span class="st">○</span>
+                <div class="ocic">📝</div>
+                <div class="oct">完善健康档案</div>
+                <div class="ocd">填写体型数据</div>
+                <div class="why">💡 档案越完整，推荐越准</div>
+                <div class="reward"><span class="rwd-txt">🎁 完成 +50 虎力值</span><button class="go-btn" onclick="doTask(this,'profile')">去完成</button></div>
+              </div>
+              <div class="ob-card" data-task="plan" data-pts="30" data-done="0">
+                <span class="st">○</span>
+                <div class="ocic">📋</div>
+                <div class="oct">创建我的计划</div>
+                <div class="ocd">选目标+打卡项</div>
+                <div class="why">💡 开启 30 天返现</div>
+                <div class="reward"><span class="rwd-txt">🎁 完成 +30 虎力值</span><button class="go-btn" onclick="doTask(this,'plan')">去完成</button></div>
+              </div>
+              <div class="ob-card" data-task="checkin" data-pts="20" data-done="0">
+                <span class="st">○</span>
+                <div class="ocic">✅</div>
+                <div class="oct">完成首次打卡</div>
+                <div class="ocd">坚持第 1 天</div>
+                <div class="why">💡 返现倒计时启动</div>
+                <div class="reward"><span class="rwd-txt">🎁 完成 +20 虎力值</span><button class="go-btn" onclick="doTask(this,'checkin')">去完成</button></div>
+              </div>
+              <div class="ob-card" data-task="chat" data-pts="15" data-done="0">
+                <span class="st">○</span>
+                <div class="ocic">💬</div>
+                <div class="oct">发起首轮对话</div>
+                <div class="ocd">问问 AI 健康建议</div>
+                <div class="why">💡 解锁智能导购</div>
+                <div class="reward"><span class="rwd-txt">🎁 完成 +15 虎力值</span><button class="go-btn" onclick="doTask(this,'chat')">去完成</button></div>
+              </div>
+              <div class="ob-card" data-task="shop" data-pts="10" data-done="0">
+                <span class="st">○</span>
+                <div class="ocic">🛒</div>
+                <div class="oct">浏览健康好物</div>
+                <div class="ocd">逛逛推荐商品</div>
+                <div class="why">💡 攒券后直接抵扣</div>
+                <div class="reward"><span class="rwd-txt">🎁 完成 +10 虎力值</span><button class="go-btn" onclick="doTask(this,'shop')">去完成</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 我的打卡计划 -->
+        <div class="sec-title">✅ 我的打卡计划</div>
+        <div class="plan">
+          <div class="ph">
+            <div class="pn">减肥打卡计划</div>
+            <div class="ptag">返现中 · ¥199</div>
+          </div>
+          <div class="pinfo">
+            <span>已坚持 <b>12</b> / 30 天</span>
+            <span>连续 <b>12</b> 天</span>
+          </div>
+          <div class="grid30" id="grid30"></div>
+          <div class="pbtns">
+            <div class="btn primary" onclick="checkIn()">今日打卡</div>
+            <div class="btn ghost" onclick="showToast('查看返现规则')">返现规则</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 切换到非本人时显示的占位 -->
+      <div id="nonOwnerHint" style="display:none">
+        <div class="not-owner-hint">
+          <div class="ni-icon">👤</div>
+          当前为 <b id="curMemberName">妈妈</b> 的健康档案<br>
+          新手引导、打卡计划仅<b>本人账号</b>可用<br><br>
+          <small style="color:var(--t3)">切换回「本人」可查看任务与打卡进度</small>
+        </div>
+      </div>
+
+      <!-- 手动任务（所有人可见） -->
+      <div class="sec-title">📋 我的任务（手动添加）</div>
+      <div class="mtask">
+        <div class="mh">减肥任务</div>
+        <div class="mr">0 / 1 人 参与 · 目标：30 天瘦 5 斤</div>
+        <div class="mbtn">+ 添加任务</div>
+      </div>
+    </div>
+
+    <!-- 其他 Tab 占位 -->
+    <div id="pother" class="ptab-body" style="display:none">
+      <div class="phold">该模块内容（原型略）<br><br>可在此展示<br>体型数据 / 身体体征 / 睡眠数据 / 就医记录</div>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 3: 服务页 ========== -->
+  <div class="screen" id="s-service">
+    <!-- 左右滑动 Banner -->
+    <div class="banner-slider">
+      <div class="slides" id="slides" onscroll="updateDots()">
+        <div class="slide live">
+          <div class="sc">
+            <div class="stitle">🔴 直播中</div>
+            <div class="ssub">营养专家在线答疑</div>
+            <div class="sbadge">19:30 开播 · 点击进入</div>
+          </div>
+        </div>
+        <div class="slide coupon" onclick="goTask('赚券Banner')">
+          <div class="sc">
+            <div class="stitle">💰 完成任务领券</div>
+            <div class="ssub">打卡满 30 天，领 300 元指定商品券</div>
+            <div class="sbadge">限新手 · 点击查看任务</div>
+          </div>
+          <div class="sarrow">›</div>
+        </div>
+      </div>
+      <div class="dots" id="dots"><i class="on"></i><i></i></div>
+    </div>
+
+    <div class="sg-title">🛍️ 健康好物 <small>为你精选</small></div>
+    <div class="pgrid">
+      <div class="pcard"><div class="img">💊</div><div class="pinfo"><div class="pnm">Swisse 蔓越莓</div><div class="ppr">¥129 <small>¥159</small></div></div></div>
+      <div class="pcard"><div class="img">🍯</div><div class="pinfo"><div class="pnm">益生菌冻干粉</div><div class="ppr">¥89 <small>¥119</small></div></div></div>
+      <div class="pcard"><div class="img">🫚</div><div class="pinfo"><div class="pnm">姜黄饮片</div><div class="ppr">¥69 <small>¥99</small></div></div></div>
+    </div>
+
+    <div class="sg-title">📰 健康头条</div>
+    <div class="news">
+      <div class="n"><div class="nimg">🥗</div><div><div class="nt">控糖期也能吃的 5 种主食</div><div class="nm">泰小虎内容组 · 阅读 2.3w</div></div></div>
+      <div class="n"><div class="nimg">😴</div><div><div class="nt">睡眠质量差？先调这 3 件事</div><div class="nm">泰小虎内容组 · 阅读 1.8w</div></div></div>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- ========== SCREEN 4: 我的(个人中心) ========== -->
+  <div class="screen" id="s-mine">
+    <!-- 用户信息头 -->
+    <div class="profile-header">
+      <div class="pavatar">🐯</div>
+      <div class="pinfo">
+        <div class="pid">U820096</div>
+        <div class="psub">设置 ›</div>
+      </div>
+      <div class="pheader-right">
+        <div class="bell">🔔</div>
+        <div class="bl">消息</div>
+      </div>
+    </div>
+
+    <!-- QQ风格 等级卡片 -->
+    <div class="level-card" id="levelCard">
+      <div class="lc-row1">
+        <div class="lc-left">
+          <span class="lc-label">我的等级</span>
+          <span class="lc-lv" id="myLevelText">Lv.1</span>
+        </div>
+        <span class="lc-rank" id="myRankNum">好友排名 186</span>
+      </div>
+      <div class="level-progress-bar"><div class="level-progress-fill" id="levelProgressFill"></div></div>
+      <div class="level-tip-row">
+        <span id="levelNextTip">距下一级还有 50 虎力值</span>
+        <span class="lt-upgrade" onclick="goTask('去升级')">去升级 ›</span>
+      </div>
+    </div>
+
+    <!-- 功能入口：等级报告 -->
+    <div class="mine-cards">
+      <div class="mine-card" onclick="openLevelReport()">
+        <div class="mc-left">
+          <div class="mc-icon green-bg">📊</div>
+          <div><div class="mc-title">等级报告</div><div class="mc-sub">等级报告已更新</div></div>
+        </div>
+        <div class="mc-right">📈<span class="mc-dot"></span></div>
+      </div>
+    </div>
+
+    <!-- 我的订单（保留原区域） -->
+    <div class="sec-header"><span class="sh-t">我的订单</span><span class="sh-more">全部订单 ›</span></div>
+    <div class="order-icons">
+      <div class="oi-item" onclick="showToast('待支付')"><div class="oi-ic">💳</div><div class="oi-l">待支付</div></div>
+      <div class="oi-item" onclick="showToast('待发货')"><div class="oi-ic">📦</div><div class="oi-l">待发货</div></div>
+      <div class="oi-item" onclick="showToast('待收货')"><div class="oi-ic">🚚</div><div class="oi-l">待收货</div></div>
+      <div class="oi-item" onclick="showToast('已完成')"><div class="oi-ic">✅</div><div class="oi-l">已完成</div></div>
+      <div class="oi-item" onclick="showToast('售后')"><div class="oi-ic">💱</div><div class="oi-l">售后</div></div>
+    </div>
+
+    <!-- 对话记录 -->
+    <div class="sec-header"><span class="sh-t">对话记录</span></div>
+    <div class="chat-list">
+      <div class="cl-date">最近7天</div>
+      <div class="cl-item"><span class="cl-t">肠道与代谢管理</span><span class="cl-d">7月7日</span></div>
+      <div class="cl-item"><span class="cl-t">看面相</span><span class="cl-d">7月7日</span></div>
+      <div class="cl-item"><span class="cl-t">看面相</span><span class="cl-d">7月7日</span></div>
+      <div class="cl-item"><span class="cl-t">语音输入语音</span><span class="cl-d">7月6日</span></div>
+      <div class="cl-item"><span class="cl-t">中老年健康养护</span><span class="cl-d">7月6日</span></div>
+    </div>
+
+    <div class="ver-text">版本号：v1.0.0</div>
+  </div>
+
+  <!-- 虎力值气泡 -->
+  <div class="power-bubble" id="powerBubble">🐯 虎力值 +<span id="bubblePts"></span></div>
+
+  <!-- ========== SUB-SCREEN: 体型数据页 ========== -->
+  <div class="sub-screen" id="s-bodydata">
+    <!-- 顶部导航 -->
+    <div class="sub-nav">
+      <div class="back-btn" onclick="exitBodyData()">‹</div>
+      <div class="sn-title">体型数据</div>
+      <div class="sn-right"></div>
+    </div>
+
+    <!-- Tab 栏 -->
+    <div class="bd-tabs">
+      <div class="bd-tab on">体型数据</div>
+      <div class="bd-tab">身体体征</div>
+      <div class="bd-tab">睡眠数据</div>
+      <div class="bd-tab">就医信息</div>
+    </div>
+
+    <!-- Banner -->
+    <div class="bd-banner">
+      <div class="bd-banner-inner">
+        <div class="bb-title">第三届全球互联网AI峰会</div>
+        <div class="bb-sub">未来已来 只因AI</div>
+      </div>
+    </div>
+
+    <!-- 体型数据 -->
+    <div class="bd-section">
+      <div class="bd-section-head">
+        <span class="bsh-t">体型数据</span>
+        <span class="bsh-link" onclick="showToast('跳转 BMI 参考来源')">BMI参考来源 ›</span>
+      </div>
+
+      <!-- 三列：体重 / 身高 / BMI -->
+      <div class="bd-input-row">
+        <div class="bd-input-card" id="cardWeight">
+          <div class="bic-label">体重 Kg</div>
+          <div class="bic-val empty" id="valWeight">--</div>
+          <div class="bic-add" onclick="openFloatInput('weight')">＋</div>
+        </div>
+        <div class="bd-input-card" id="cardHeight">
+          <div class="bic-label">身高 cm</div>
+          <div class="bic-val empty" id="valHeight">--</div>
+          <div class="bic-add" onclick="openFloatInput('height')">＋</div>
+        </div>
+        <div class="bd-input-card" id="cardBMI">
+          <div class="bic-label">BMI</div>
+          <div class="bic-val empty" id="valBMI">--</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 身体体征 -->
+    <div class="bd-section">
+      <div class="bd-section-head">
+        <span class="bsh-t">身体体征</span>
+      </div>
+      <div class="bd-sign-grid">
+        <div class="bd-sign-card">
+          <div class="bsc-name">血压</div>
+          <div class="bsc-hint">--</div>
+          <div class="bsc-unit">-- mmHg</div>
+          <div class="bsc-add">＋</div>
+        </div>
+        <div class="bd-sign-card">
+          <div class="bsc-name">心率</div>
+          <div class="bsc-hint">--</div>
+          <div class="bsc-unit">-- 次/分</div>
+          <div class="bsc-add">＋</div>
+        </div>
+        <div class="bd-sign-card">
+          <div class="bsc-name">呼吸</div>
+          <div class="bsc-hint">--</div>
+          <div class="bsc-unit">-- 次/分</div>
+          <div class="bsc-add">＋</div>
+        </div>
+        <div class="bd-sign-card">
+          <div class="bsc-name">体温</div>
+          <div class="bsc-hint">--</div>
+          <div class="bsc-unit">-- ℃</div>
+          <div class="bsc-add">＋</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- 浮动输入弹窗 -->
+  <div class="float-input-overlay" id="floatOverlay" onclick="if(event.target===this)closeFloatInput()">
+    <div class="float-input-panel">
+      <div class="fip-title" id="fipTitle">输入体重</div>
+      <div class="fip-field">
+        <input class="fip-input" id="fipInput" type="number" placeholder="0" inputmode="decimal">
+        <div class="fip-unit" id="fipUnit">Kg</div>
+      </div>
+      <button class="fip-btn" onclick="confirmFloatInput()">确定</button>
+      <button class="fip-cancel" onclick="closeFloatInput()">取消</button>
+    </div>
+  </div>
+
+  <!-- ========== SUB-SCREEN: 创建任务页 ========== -->
+  <div class="sub-screen" id="s-createplan">
+    <!-- 顶部导航 -->
+    <div class="cp-header">
+      <div class="cp-header cph-title">创建任务</div>
+      <div class="cp-header cph-actions">
+        <span>···</span><span>◯</span>
+      </div>
+    </div>
+
+    <div class="cp-form" style="padding-bottom:90px;">
+      <!-- 健康任务名称 -->
+      <div class="cp-field">
+        <div class="cp-label"><span class="req">*</span>健康任务名称</div>
+        <div class="cp-text-wrap">
+          <input type="text" id="planName" placeholder="请输入健康任务名称" maxlength="10"
+            oninput="document.getElementById('nameCnt').textContent=this.value.length+'/10'">
+          <span class="cp-counter" id="nameCnt">0/10</span>
+        </div>
+      </div>
+
+      <!-- 健康任务描述 -->
+      <div class="cp-field">
+        <div class="cp-label"><span class="req">*</span>健康任务描述</div>
+        <div class="cp-text-wrap">
+          <textarea id="planDesc" placeholder="请输入健康任务描述" rows="4" maxlength="200"
+            oninput="document.getElementById('descCnt').textContent=this.value.length+'/200'"></textarea>
+          <span class="cp-counter" id="descCnt">0/200</span>
+        </div>
+      </div>
+
+      <!-- 我的提醒 -->
+      <div class="cp-reminder">
+        <div class="cr-head">我的提醒</div>
+        <div class="cr-desc">用户授权后通过手机日历提醒完成任务</div>
+        <div class="cp-add-reminder" onclick="showToast('添加提醒（原型）')">
+          ＋ 添加提醒
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部创建按钮 -->
+    <div class="cp-footer">
+      <button class="cp-create-btn" id="createPlanBtn" onclick="doCreatePlan()">创建</button>
+    </div>
+  </div>
+
+  <!-- ========== SUB-SCREEN: 健康档案初始化(Onboarding Flow) ========== -->
+  <div class="sub-screen" id="s-onboarding">
+    <div class="ob-nav">
+      <div style="width:32px"></div>
+      <div class="obn-title">健康档案初始化</div>
+      <div class="obn-close" onclick="exitOnboarding()">✕</div>
+    </div>
+
+    <!-- 步骤指示器 -->
+    <div class="step-ind" id="stepInd">
+      <div class="step-dot active" id="sd0"></div><div class="step-line" id="sl0"></div>
+      <div class="step-dot" id="sd1"></div><div class="step-line" id="sl1"></div>
+      <div class="step-dot" id="sd2"></div><div class="step-line" id="sl2"></div>
+      <div class="step-dot" id="sd3"></div><div class="step-line" id="sl3"></div>
+      <div class="step-dot" id="sd4"></div>
+    </div>
+
+    <!-- Step 1: 性别 -->
+    <div class="ob-step active" id="obs0">
+      <div class="os-head">
+        <div class="osh-q">你的性别是？</div>
+        <div class="osh-sub">这将帮助我们更准确地评估您的健康状况</div>
+      </div>
+      <div class="gender-cards">
+        <div class="gender-card" id="gcMale" onclick="selectGender('male')">
+          <div class="gc-icon">👨</div><div class="gc-label">男</div>
+        </div>
+        <div class="gender-card" id="gcFemale" onclick="selectGender('female')">
+          <div class="gc-icon">👩</div><div class="gc-label">女</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: 出生日期 -->
+    <div class="ob-step" id="obs1">
+      <div class="os-head">
+        <div class="osh-q">你的出生日期是？</div>
+        <div class="osh-sub">年龄与基础代谢水平、身体活动水平息息相关</div>
+      </div>
+      <div class="wheel-row">
+        <div class="wheel-col" id="wheelYear"></div>
+        <div class="wheel-col" id="wheelMonth"></div>
+        <div class="wheel-col" id="wheelDay"></div>
+      </div>
+    </div>
+
+    <!-- Step 3: 身高 -->
+    <div class="ob-step" id="obs2">
+      <div class="os-head">
+        <div class="osh-q">你的身高是？</div>
+        <div class="osh-sub">身高数据用于计算 BMI 等健康指标</div>
+      </div>
+      <div class="slider-section">
+        <div class="slider-label"><span>140cm</span><b id="valH">170<span style="font-size:14px;font-weight:400;color:var(--t2)"> cm</span></b><span>200cm</span></div>
+        <div class="slider-wrap">
+          <div class="slider-track"><div class="slider-fill" id="fillH" style="width:50%"></div></div>
+          <input type="range" min="140" max="200" value="170" id="inputH" oninput="onHeightInput(this.value)">
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: 体重 + BMI -->
+    <div class="ob-step" id="obs3">
+      <div class="os-head">
+        <div class="osh-q">你的体重是？</div>
+        <div class="osh-sub">精准体重数据将用于计算你的BMI</div>
+      </div>
+      <div class="slider-section">
+        <div class="slider-label"><span>35kg</span><b id="valW">65.0<span style="font-size:14px;font-weight:400;color:var(--t2)"> kg</span></b><span>120kg</span></div>
+        <div class="slider-wrap">
+          <div class="slider-track"><div class="slider-fill" id="fillW" style="width:27.3%"></div></div>
+          <input type="range" min="35" max="120" value="65" step="0.1" id="inputW" oninput="onWeightInput(this.value)">
+        </div>
+      </div>
+      <div class="bmi-result" id="bmiResult">
+        <div class="br-val" id="bmiVal">22.5</div>
+        <div class="br-status" id="bmiStatus">正常</div>
+        <div class="br-desc" id="bmiDesc">您的体重在正常范围内，继续保持良好的生活习惯。</div>
+      </div>
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="ob-footer">
+      <button class="ob-btn primary" id="obNextBtn" onclick="onbNext()">下一步</button>
+    </div>
+  </div>
+
+  <!-- ========== SUB-SCREEN: 打卡记录页 ========== -->
+  <div class="sub-screen" id="s-checkin">
+    <div class="ck-nav">
+      <div style="width:32px"></div>
+      <div class="ckn-title">记录</div>
+      <div style="display:flex;gap:16px;">
+        <span class="ckn-icon">···</span><span class="ckn-icon">◯</span>
+      </div>
+    </div>
+
+    <div class="ck-body">
+      <!-- 计划信息卡片 -->
+      <div class="ck-plan-card">
+        <div class="ckpc-check">✓</div>
+        <div class="ckpc-info">
+          <div class="ckpc-name">122</div>
+          <div class="ckpc-sub">本月第 1 次记录</div>
+        </div>
+      </div>
+
+      <!-- 今日感受（可选） -->
+      <div class="ck-field">
+        <div class="ck-label">今日感受（可选）</div>
+        <textarea class="ck-textarea" id="ckFeeling" placeholder="记录点感受吧～"
+          maxlength="200" oninput="document.getElementById('ckCnt').textContent=this.value.length+'/200'"></textarea>
+        <div class="ck-counter" id="ckCnt">0/200</div>
+      </div>
+
+      <!-- 添加图片 -->
+      <div class="ck-field">
+        <div class="ck-label">添加图片（可选，最多三张）</div>
+        <div class="ck-img-area" id="ckImgArea">
+          <div class="ck-img-add" onclick="addCheckinImg()">＋</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部确认栏 -->
+    <div class="ck-footer">
+      <div class="ck-footer-hint">每天坚持，健康会回报你</div>
+      <button class="ck-confirm-btn" onclick="confirmCheckinRecord()">确认记录</button>
+    </div>
+  </div>
+
+  <!-- ========== SUB-SCREEN: 等级报告页 ========== -->
+  <div class="sub-screen" id="s-levelreport">
+    <div class="lr-nav">
+      <div class="lrn-back" onclick="exitLevelReport()">‹</div>
+      <div class="lrn-title">等级报告</div>
+      <span style="font-size:18px;color:var(--t3)">···</span>
+    </div>
+
+    <div class="lr-body">
+      <div class="lr-hero">
+        <div class="lr-user"><div class="lu-avatar">🐯</div>泰小虎会员</div>
+        <div class="lr-title">泰小虎等级报告</div>
+      </div>
+
+      <div class="lr-info-card">
+        <div class="ric-head">等级信息</div>
+        <div class="ric-grid">
+          <div class="ric-item"><div class="ri-label">注册天数</div><div class="ri-val" id="lrRegDays">42</div></div>
+          <div class="ric-item"><div class="ri-label">连续登录/天</div><div class="ri-val" id="lrStreak">7</div></div>
+          <div class="ric-item ric-highlight"><div class="ri-label">虎力值等级</div><div class="ri-val" id="lrLvDisplay">Lv.1</div></div>
+          <div class="ric-item"><div class="ri-label">虎力值加速</div><div class="ri-val" id="lrSpeed">1.0</div><div class="ri-sub">倍</div></div>
+          <div class="ric-item"><div class="ri-label">好友排名</div><div class="ri-val" id="lrRankPos">186</div></div>
+        </div>
+      </div>
+
+      <div class="lr-rank-section">
+        <div class="lrs-head">等级排名</div>
+        <div class="rank-grid">
+          <div class="rank-item">
+            <div class="rank-avatar ra2">👤</div><div class="rank-badge">2</div>
+            <div class="rank-name">石头哥</div><div class="rank-lv">Lv.132</div><div class="rank-speed">1.0倍加速中</div>
+          </div>
+          <div class="rank-item">
+            <div class="rank-avatar ra1">🏆</div><div class="rank-badge">1</div>
+            <div class="rank-name">IT信息部-罗...</div><div class="rank-lv">Lv.139</div><div class="rank-speed">1.0倍加速中</div>
+          </div>
+          <div class="rank-item">
+            <div class="rank-avatar ra3">😎</div><div class="rank-badge">3</div>
+            <div class="rank-name">罗文康</div><div class="rank-lv">Lv.122</div><div class="rank-speed">1.0倍加速中</div>
+          </div>
+        </div>
+        <div class="my-rank-row">
+          <div class="mrr-no">04</div><div class="mrr-x">✕</div>
+          <div class="mrr-info"><div class="mrr-name">IT信息部-陈智</div><div class="mrr-speed">1.0倍加速中</div></div>
+          <div class="mrr-lv">Lv.119</div>
+        </div>
+        <div class="my-rank-row">
+          <div class="mrr-no" style="color:var(--t3);font-weight:400;">未上榜</div><div class="mrr-x">✕</div>
+          <div class="mrr-info"><div class="mrr-name">我<span style="background:var(--pgreen-bg);color:var(--pgreen);padding:1px 6px;border-radius:4px;font-size:11px;margin-left:4px;">我</span></div><div class="mrr-speed">1.0倍加速中</div></div>
+          <div class="mrr-lv" id="lrMyLvRow">Lv.1</div><div class="mrr-go">去加速 ›</div>
+        </div>
+      </div>
+
+      <div class="blindbox-card" onclick="showToast('等级加速盲盒（原型）')">
+        <div class="bbc-left"><div class="bbc-icon">🎁</div><div><div class="bbc-tit">等级加速盲盒</div><div class="bbc-sub">等你来抽</div></div></div>
+        <div class="bbc-btn">去试试</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div class="modal" id="modal">
+    <div class="box">
+      <div class="micon">🎉</div>
+      <div class="mt">打卡成功！</div>
+      <div class="md" id="modalDesc">第 13 / 30 天 · 再坚持 17 天，全额返还 ¥199 + 300 元券到账</div>
+      <div class="mbtn" onclick="closeModal()">好的</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- 全局顶部导航切换屏幕 ----
+function switchScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  // 更新顶部 tab 样式（我的已不在tab中）
+  const map = {'s-profile':'profile','s-home':'home','s-service':'service'};
+  document.querySelectorAll('.gnav .gtab').forEach(t=>{
+    t.classList.toggle('on', t.dataset.g===map[id]);
+  });
+  document.getElementById(id).scrollTop=0;
+  // 进入我的页时刷新等级显示
+  if(id==='s-mine') updateMyLevel();
+}
+
+// ---- ☰ 进入我的页面 ----
+function goMine(){ switchScreen('s-mine'); }
+
+// ---- 跳转任务入口 -> 健康档案·健康任务Tab ----
+function goTask(from){
+  switchScreen('s-profile'); switchPTab('task');
+  // 自动切回「本人」确保能看到任务
+  if(currentMember!=='self') switchMember('self');
+  showToast('已跳转到「健康任务」');
+}
+
+// ---- 健康档案内部 Tab 切换 ----
+function switchPTab(t){
+  document.querySelectorAll('#ptabs .ptab').forEach(el=>el.classList.remove('on'));
+  document.querySelector(`#ptabs .ptab[data-t="${t}"]`).classList.add('on');
+  document.getElementById('ptask').style.display = t==='task' ? 'block':'none';
+  document.getElementById('pother').style.display = t==='task' ? 'none':'block';
+}
+
+// ---- 人员切换 (核心逻辑：只有本人有任务) ----
+let currentMember = 'self';
+const memberNames = {self:'本人', mom:'妈妈', dad:'爸爸'};
+
+function switchMember(m){
+  currentMember=m;
+  // 更新样式
+  ['self','mom','dad'].forEach(k=>{
+    const el=document.getElementById('mav-'+k);
+    el.className='mav-item '+(k===m?'active':'inactive');
+  });
+  const isOwner=(m==='self');
+
+  // 控制可见性
+  document.getElementById('ownerContent').style.display=isOwner?'block':'none';
+  document.getElementById('nonOwnerHint').style.display=isOwner?'none':'block';
+  document.getElementById('curMemberName').textContent=memberNames[m];
+
+  showToast(isOwner?'已切换到「'+memberNames[m]+'」 — 可查看任务与打卡':'已切换到「'+memberNames[m]+'」— 仅展示健康档案');
+}
+
+// ---- 新手引导 折叠/展开 ----
+function toggleOB(){
+  const head=document.getElementById('obHead'), body=document.getElementById('obBody');
+  head.classList.toggle('open'); body.classList.toggle('open',head.classList.contains('open'));
+}
+
+// ---- 30天打卡网格 ----
+function buildGrid(){
+  const g=document.getElementById('grid30');
+  let html='';
+  for(let i=1;i<=30;i++){
+    let cls='cell';
+    if(i<=12)cls+=' done'; else if(i===13)cls+=' today';
+    html+=`<div class="${cls}" title="第${i}天"></div>`;
+  }
+  g.innerHTML=html;
+}
+buildGrid();
+
+// ---- 今日打卡 ----
+function checkIn(){
+  const cells=document.querySelectorAll('#grid30 .cell');
+  let todayIdx=-1;
+  cells.forEach((c,i)=>{if(c.classList.contains('today'))todayIdx=i;});
+  if(todayIdx>=0 && todayIdx<30){
+    cells[todayIdx].classList.remove('today'); cells[todayIdx].classList.add('done');
+    if(todayIdx+1<30) cells[todayIdx+1].classList.add('today');
+    const day=todayIdx+2;
+    document.getElementById('modalDesc').textContent=
+      `第 ${day}/30 天 · 再坚持 ${30-day} 天，全额返还 ¥199 + 300 元券到账`;
+    openModal();
+  }else{ showToast('本月已完成 🎉'); }
+}
+function openModal(){document.getElementById('modal').classList.add('show');}
+function closeModal(){document.getElementById('modal').classList.remove('show');}
+
+// ---- 服务页 Banner 指示点 ----
+function updateDots(){
+  const s=document.getElementById('slides'),
+    idx=Math.round(s.scrollLeft/s.clientWidth);
+  document.querySelectorAll('#dots i').forEach((d,i)=>d.classList.toggle('on',i===idx));
+}
+
+// ---- Toast ----
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),1600);
+}
+
+// ---- 新手引导任务：三态机 (0=pending / 1=completable可领取 / 2=claimed已领) ----
+let totalPower = 0; // 初始为0，完善档案未完成
+
+const taskJump = {
+  profile: {s:'onboarding', m:'前往完善健康档案'},
+  plan:    {s:'createplan', m:'前往创建计划'},
+  checkin: {s:'checkin',   m:'前往打卡记录'},
+  chat:    {s:'home',     m:'前往发起对话'},
+  shop:    {s:'service',  m:'前往健康好物'}
+};
+
+function doTask(btn, taskId){
+  const card = btn.closest('.ob-card');
+  const state = parseInt(card.dataset.done || '0', 10);
+  const pts = parseInt(card.dataset.pts, 10);
+
+  // 已领取 → 忽略
+  if(state === 2) return;
+
+  // 状态1：可领取 → 直接领虎力值
+  if(state === 1){
+    claimReward(card, pts);
+    return;
+  }
+
+  // 状态0：去完成 → 跳对应子页面
+  const j = taskJump[taskId];
+  switch(j.s){
+    case 'onboarding':
+      initOnboarding();
+      showSubScreen('s-onboarding');
+      break;
+    case 'checkin':
+      showSubScreen('s-checkin');
+      break;
+    case 'createplan':
+      showSubScreen('s-createplan');
+      break;
+    case 'profile':
+      switchScreen('s-profile'); switchPTab('task'); if(currentMember!=='self') switchMember('self');
+      showToast(j.m);
+      // 模拟完成
+      setTimeout(()=>completeTask(card, pts), 700);
+      break;
+    case 'home':
+      switchScreen('s-home'); showToast(j.m);
+      setTimeout(()=>completeTask(card, pts), 700);
+      break;
+    case 'service':
+      switchScreen('s-service'); showToast(j.m);
+      setTimeout(()=>completeTask(card, pts), 700);
+      break;
+  }
+}
+
+// ---- 完成任务（状态 0→1） ----
+function completeTask(card, pts){
+  card.dataset.done = '1';
+  card.classList.add('done');
+  card.querySelector('.st').textContent = '✓';
+  card.querySelector('.reward').innerHTML =
+    `<span class="rwd-txt">🎁 已完成，点击领取</span><button class="go-btn" style="background:var(--gold);color:#7a3b00;" onclick="doTask(this,'${card.dataset.task}')">领取虎力值</button>`;
+  updateOBProgress();
+  // 更新首页待办条角标
+  refreshTodoBadge();
+}
+
+// ---- 领取虎力值（状态 1→2）+ 气泡 ----
+function claimReward(card, pts){
+  card.dataset.done = '2';
+  // 按钮变为「已完成」灰色不可点
+  const btn = card.querySelector('.go-btn');
+  if(btn){
+    btn.textContent = '已完成';
+    btn.style.background = '#E8EAED';
+    btn.style.color = '#9AA0AA';
+    btn.style.pointerEvents = 'none';
+    btn.onclick = null;
+  }
+  card.querySelector('.rwd-txt').textContent = `✅ 已获得 虎力值+${pts}`;
+  totalPower += pts;
+  const tp = document.getElementById('totalPower');
+  if(tp) tp.textContent = totalPower;
+  showPowerBubble(pts);
+  updateMyLevel(); // 更新等级显示
+  updateOBProgress();
+  refreshTodoBadge();
+}
+
+// ---- 显示/隐藏 子页面 ----
+function showSubScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.sub-screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  // 隐藏顶部导航高亮（子页面有独立导航）
+  document.querySelectorAll('.gnav .gtab').forEach(t=>t.classList.remove('on'));
+}
+function hideAllSubScreens(){
+  document.querySelectorAll('.sub-screen').forEach(s=>s.classList.remove('active'));
+}
+
+// ==================== 体型数据页逻辑 ====================
+let bodyData = {weight:null, height:null};
+let currentFloatField = '';
+
+function exitBodyData(){
+  hideAllSubScreens();
+  switchScreen('s-profile'); switchPTab('task');
+  // 如果体重和身高都填了，标记任务可领取
+  if(bodyData.weight && bodyData.height){
+    const card = document.querySelector('[data-task="profile"]');
+    if(card && parseInt(card.dataset.done) === 0){
+      completeTask(card, 50);
+      showToast('体型数据已保存，返回领取虎力值！');
+    }
+  } else {
+    showToast('请至少填写体重和身高');
+  }
+}
+
+function openFloatInput(field){
+  currentFloatField = field;
+  const overlay = document.getElementById('floatOverlay');
+  const title = document.getElementById('fipTitle');
+  const input = document.getElementById('fipInput');
+  const unit = document.getElementById('fipUnit');
+
+  if(field === 'weight'){ title.textContent='输入体重'; unit.textContent='Kg'; input.placeholder='例：65'; }
+  else{ title.textContent='输入身高'; unit.textContent='cm'; input.placeholder='例：170'; }
+
+  input.value = '';
+  overlay.classList.add('show');
+  setTimeout(()=>input.focus(), 100);
+}
+
+function closeFloatInput(){
+  document.getElementById('floatOverlay').classList.remove('show');
+}
+
+function confirmFloatInput(){
+  const val = parseFloat(document.getElementById('fipInput').value);
+  if(isNaN(val) || val <= 0){ showToast('请输入有效数值'); return; }
+
+  if(currentFloatField === 'weight'){
+    bodyData.weight = val;
+    const el = document.getElementById('valWeight');
+    el.textContent = val; el.classList.remove('empty');
+    document.getElementById('cardWeight').querySelector('.bic-add').textContent=val+' Kg';
+  } else {
+    bodyData.height = val;
+    const el = document.getElementById('valHeight');
+    el.textContent = val; el.classList.remove('empty');
+    document.getElementById('cardHeight').querySelector('.bic-add').textContent=val+' cm';
+  }
+  // 自动计算 BMI
+  if(bodyData.weight && bodyData.height){
+    const h = bodyData.height / 100;
+    const bmi = (bodyData.weight / (h * h)).toFixed(1);
+    const el = document.getElementById('valBMI');
+    el.textContent = bmi; el.classList.remove('empty');
+  }
+
+  closeFloatInput();
+  showToast('已保存');
+}
+
+// ==================== 创建计划页逻辑 ====================
+function doCreatePlan(){
+  const name = document.getElementById('planName').value.trim();
+  const desc = document.getElementById('planDesc').value.trim();
+
+  if(!name){ showToast('请输入任务名称'); return; }
+  if(!desc){ showToast('请输入任务描述'); return; }
+
+  // 创建成功
+  hideAllSubScreens();
+  switchScreen('s-profile'); switchPTab('task');
+
+  const card = document.querySelector('[data-task="plan"]');
+  if(card && parseInt(card.dataset.done) === 0){
+    // 延迟一点让页面切换完
+    setTimeout(()=>{
+      completeTask(card, 30);
+      showToast('「'+name+'」创建成功，返回领取虎力值！');
+    }, 300);
+  }
+}
+
+function updateOBProgress(){
+  const cards=document.querySelectorAll('#obBody .ob-card');
+  let done=0; cards.forEach(c=>{ if(c.dataset.done==='1') done++; });
+  const prog=document.querySelector('.ob-prog');
+  if(prog) prog.innerHTML=`已完成 <b>${done}</b>/${cards.length}`;
+}
+
+// ---- 虎力值气泡 ----
+let bubbleTimer;
+function showPowerBubble(pts){
+  const t=document.getElementById('toast'); if(t) t.classList.remove('show'); // 避免重叠
+  const b=document.getElementById('powerBubble');
+  document.getElementById('bubblePts').textContent=pts;
+  b.classList.add('show');
+  clearTimeout(bubbleTimer);
+  bubbleTimer=setTimeout(()=>b.classList.remove('show'), 2000);
+}
+
+// ---- 刷新首页待办角标 ----
+function refreshTodoBadge(){
+  const cards = document.querySelectorAll('#obBody .ob-card');
+  let pending = 0;
+  cards.forEach(c => { if(parseInt(c.dataset.done) < 2) pending++; });
+  const badge = document.querySelector('.fn.task .badge');
+  if(badge) badge.textContent = pending > 0 ? pending : '';
+}
+
+// ==================== 等级系统逻辑 ====================
+// 等级阈值：每级所需虎力值（累计）
+const LEVEL_THRESHOLDS = [0, 50, 120, 210, 330, 480, 660, 880]; // Lv1~Lv8
+const LEVEL_NAMES = ['新手','初级','进阶','资深','精英','大师','宗师','泰斗'];
+
+function calcLevel(power){
+  let lv = 1;
+  for(let i=LEVEL_THRESHOLDS.length-1; i>=0; i--){
+    if(power >= LEVEL_THRESHOLDS[i]){ lv=i+1; break; }
+  }
+  return lv;
+}
+
+function updateMyLevel(){
+  const lv = calcLevel(totalPower);
+  // 文本
+  const lt = document.getElementById('myLevelText');
+  if(lt) lt.textContent = 'Lv.'+lv;
+  // 经验条：当前级内进度
+  const prevThreshold = LEVEL_THRESHOLDS[lv-1] || 0;
+  const nextThreshold = LEVEL_THRESHOLDS[lv] || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length-1];
+  const range = nextThreshold - prevThreshold;
+  const progress = range > 0 ? (totalPower - prevThreshold) / range : 0;
+  // 进度条
+  const fill = document.getElementById('levelProgressFill');
+  if(fill) fill.style.width = (progress * 100)+'%';
+  // 距下一级提示
+  const tip = document.getElementById('levelNextTip');
+  if(tip){
+    const remain = Math.max(0, nextThreshold - totalPower);
+    if(lv >= LEVEL_THRESHOLDS.length){
+      tip.textContent = '已达到最高等级！';
+    } else {
+      tip.textContent = `距下一级还有差 ${remain} 虎力值`;
+    }
+  }
+
+  // 同步等级报告页的显示
+  syncLevelReport(lv);
+}
+
+function syncLevelReport(lv){
+  const el = document.getElementById('lrLvDisplay');
+  if(el) el.textContent = 'Lv.'+lv;
+  const el2 = document.getElementById('lrMyLvRow');
+  if(el2) el2.textContent = 'Lv.'+lv;
+}
+
+// ---- 打开/关闭等级报告页 ----
+function openLevelReport(){
+  showSubScreen('s-levelreport');
+  updateMyLevel(); // 确保数据同步
+}
+function exitLevelReport(){
+  hideAllSubScreens();
+  switchScreen('s-mine');
+}
+
+// ==================== Onboarding Flow 逻辑 ====================
+let obData = {gender:null, year:2000, month:1, day:1, height:170, weight:65};
+let obStep = 0;
+const TOTAL_OB_STEPS = 4;
+
+function initOnboarding(){
+  obStep = 0;
+  obData = {gender:null, year:2000, month:1, day:1, height:170, weight:65};
+  renderOBSteps();
+  buildWheels();
+  updateOBBtn();
+}
+
+function renderOBSteps(){
+  // 切换步骤显示
+  for(let i=0; i<TOTAL_OB_STEPS; i++){
+    const el=document.getElementById('obs'+i);
+    if(el) el.classList.toggle('active', i===obStep);
+  }
+  // 更新指示器
+  for(let i=0; i<TOTAL_OB_STEPS; i++){
+    const d=document.getElementById('sd'+i);
+    if(d) d.className='step-dot'+(i<obStep?' done':(i===obStep?' active':''));
+  }
+  for(let i=0; i<TOTAL_OB_STEPS-1; i++){
+    const l=document.getElementById('sl'+i);
+    if(l) l.className='step-line'+(i<obStep?' done':'');
+  }
+  // 更新按钮文字
+  const btn=document.getElementById('obNextBtn');
+  if(btn) btn.textContent = obStep === TOTAL_OB_STEPS-1 ? '完成' : '下一步';
+}
+
+function updateOBBtn(){
+  const btn=document.getElementById('obNextBtn');
+  if(!btn)return;
+  let canGo=true;
+  if(obStep===0 && !obData.gender) canGo=false;
+  if(btn){
+    btn.classList.toggle('disabled', !canGo);
+    btn.onclick = canGo ? onbNext : null;
+  }
+}
+
+function selectGender(g){
+  obData.gender=g;
+  document.getElementById('gcMale').classList.toggle('selected', g==='male');
+  document.getElementById('gcFemale').classList.toggle('selected', g==='female');
+  updateOBBtn();
+}
+
+function onbNext(){
+  if(obStep < TOTAL_OB_STEPS-1){
+    obStep++;
+    renderOBSteps();
+    updateOBBtn();
+  } else {
+    // 完成所有步骤
+    exitOnboarding(true);
+  }
+}
+
+function exitOnboarding(completed){
+  hideAllSubScreens();
+  switchScreen('s-profile'); switchPTab('task');
+  if(completed){
+    const card = document.querySelector('[data-task="profile"]');
+    if(card && parseInt(card.dataset.done) === 0){
+      completeTask(card, 50);
+      showToast('健康档案已完善，返回领取虎力值！');
+    }
+  } else {
+    showToast('已返回任务页');
+  }
+}
+
+// 滚轮选择器
+function buildWheels(){
+  // 年
+  const yEl=document.getElementById('wheelYear'); yEl.innerHTML='';
+  const cy=new Date().getFullYear();
+  for(let y=cy; y>=1940; y--){
+    const d=document.createElement('div'); d.className='wheel-item'+(y===obData.year?' sel':'');
+    d.textContent=y+'年'; d.dataset.v=y;
+    d.onclick=function(){selectWheelItem(yEl,y,'year');};
+    yEl.appendChild(d);
+  }
+  // 月
+  const mEl=document.getElementById('wheelMonth'); mEl.innerHTML='';
+  for(let m=1;m<=12;m++){
+    const d=document.createElement('div'); d.className='wheel-item'+(m===obData.month?' sel':'');
+    d.textContent=m+'月'; d.dataset.v=m;
+    d.onclick=function(){selectWheelItem(mEl,m,'month');};
+    mEl.appendChild(d);
+  }
+  // 日
+  buildDayWheel();
+}
+
+function buildDayWheel(){
+  const dEl=document.getElementById('day'); // fix id
+  const dayEl=document.getElementById('wheelDay'); dayEl.innerHTML='';
+  const daysInMonth=new Date(obData.year, obData.month, 0).getDate();
+  for(let d=1;d<=daysInMonth;d++){
+    const dd=document.createElement('div'); dd.className='wheel-item'+(d===obData.day?' sel':'');
+    dd.textContent=d+'日'; dd.dataset.v=d;
+    dd.onclick=function(){selectWheelItem(dayEl,d,'day');};
+    dayEl.appendChild(dd);
+  }
+}
+
+function selectWheelItem(el, val, field){
+  el.querySelectorAll('.wheel-item').forEach(i=>i.classList.remove('sel'));
+  el.querySelector('[data-v="'+val+'"]').classList.add('sel');
+  obData[field]=val;
+  if(field==='year'||field==='month') buildDayWheel();
+}
+
+function onHeightInput(v){
+  obData.height=parseInt(v);
+  document.getElementById('valH').innerHTML=v+'<span style="font-size:14px;font-weight:400;color:var(--t2)"> cm</span>';
+  document.getElementById('fillH').style.width=((v-140)/60*100)+'%';
+  updateBMI();
+}
+function onWeightInput(v){
+  obData.weight=parseFloat(v);
+  document.getElementById('valW').innerHTML=parseFloat(v).toFixed(1)+'<span style="font-size:14px;font-weight:400;color:var(--t2)"> kg</span>';
+  document.getElementById('fillW').style.width=((v-35)/85*100)+'%';
+  updateBMI();
+}
+
+function updateBMI(){
+  if(!obData.height||!obData.weight) return;
+  const h=obData.height/100;
+  const bmi=(obData.weight/(h*h)).toFixed(1);
+  document.getElementById('bmiVal').textContent=bmi;
+  let status='', desc='';
+  if(bmi<18.5){status='偏瘦'; desc='您的体重偏轻，建议适当增加营养摄入。';}
+  else if(bmi<24){status='正常'; desc='您的体重在正常范围内，继续保持良好的生活习惯。';}
+  else if(bmi<28){status='偏胖'; desc='您的体重略偏重，建议适当控制饮食并加强运动。';}
+  else{status='肥胖'; desc='您的体重超标，建议制定科学的减重计划。';}
+  document.getElementById('bmiStatus').textContent=status;
+  document.getElementById('bmiDesc').textContent=desc;
+}
+
+// ==================== 打卡记录页逻辑 ====================
+let ckImgCount = 0;
+
+function addCheckinImg(){
+  if(ckImgCount >= 3){ showToast('最多添加3张图片'); return; }
+  ckImgCount++;
+  const area=document.getElementById('ckImgArea');
+  const thumb=document.createElement('div');
+  thumb.className='ck-img-thumb';
+  thumb.innerHTML='<span>📷</span><span class="ck-del" onclick="delCheckinImg(this)">✕</span>';
+  // 插入到添加按钮之前
+  const addBtn=area.querySelector('.ck-img-add');
+  area.insertBefore(thumb, addBtn);
+  if(ckImgCount >= 3) addBtn.style.display='none';
+}
+
+function delCheckinImg(el){
+  el.parentElement.remove();
+  ckImgCount--;
+  const addBtn=document.querySelector('#ckImgArea .ck-img-add');
+  if(addBtn) addBtn.style.display='';
+}
+
+function confirmCheckinRecord(){
+  // 记录完成
+  hideAllSubScreens();
+  switchScreen('s-profile'); switchPTab('task');
+
+  const card = document.querySelector('[data-task="checkin"]');
+  if(card && parseInt(card.dataset.done) === 0){
+    setTimeout(()=>{
+      completeTask(card, 20);
+      showToast('打卡记录成功，返回领取虎力值！');
+    }, 300);
+  }
+}
+
+// ---- 页面加载初始化：填充等级星级 ----
+updateMyLevel();
+</script>
+</body>
+</html>
