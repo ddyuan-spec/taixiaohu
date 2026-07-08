@@ -223,8 +223,6 @@
   .level-card .lc-left{display:flex;align-items:center;gap:10px;}
   .level-card .lc-label{font-size:15px;font-weight:700;color:var(--t1);}
   .level-card .lc-lv{font-size:22px;font-weight:800;color:var(--t1);}
-  .level-card .lc-rank{background:#FFF8E6;border-radius:20px;padding:4px 12px;
-    font-size:13px;font-weight:700;color:#B8860B;}
   .level-progress-bar{height:6px;background:#F0F1F3;border-radius:3px;overflow:hidden;
     margin-bottom:8px;}
   .level-progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#FFD93D,#FFB020);
@@ -601,47 +599,29 @@
   .ric-item .ri-sub{font-size:11px;color:var(--t3);margin-top:2px;}
   .ric-highlight .ri-val{font-size:32px;color:var(--t1);}
 
-  /* 排名区 */
-  .lr-rank-section{background:var(--card);border-radius:16px;padding:18px 16px;margin-bottom:18px;
-    box-shadow:0 2px 8px rgba(0,0,0,.03);}
-  .lrs-head{font-size:16px;font-weight:800;color:var(--t1);margin-bottom:14px;}
-  .rank-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
-  .rank-item{text-align:center;padding:12px 6px 10px;background:#FAFBFC;border-radius:12px;
-    position:relative;}
-  .rank-avatar{width:48px;height:48px;border-radius:50%;margin:0 auto 8px;display:flex;
-    align-items:center;justify-content:center;font-size:24px;position:relative;
-    background:linear-gradient(135deg,#FFE4B5,#FFDAB9);}
-  .rank-avatar.ra1{background:linear-gradient(135deg,#FFE135,#FFB800);}
-  .rank-avatar.ra2{background:linear-gradient(135deg,#C0C0C9,#A0A0AA);}
-  .rank-avatar.ra3{background:linear-gradient(135deg,#CD7F32,#B8860B);}
-  .rank-badge{position:absolute;top:-2px;right:-2px;width:18px;height:18px;border-radius:50%;
-    background:var(--tg);color:#fff;font-size:10px;font-weight:700;display:flex;
-    align-items:center;justify-content:center;border:2px solid #fff;}
-  .rank-name{font-size:12px;font-weight:600;color:var(--t1);margin-bottom:3px;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px;}
-  .rank-lv{font-size:15px;font-weight:800;color:var(--t1);}
-  .rank-speed{font-size:10px;color:var(--t3);margin-top:2px;}
-
-  /* 我的排名行 */
-  .my-rank-row{display:flex;align-items:center;padding:12px 0 4px;border-top:1px solid var(--line);
-    margin-top:4px;}
-  .mrr-no{width:28px;font-size:13px;color:var(--t3);text-align:center;}
-  .mrr-x{font-size:18px;color:var(--t3);text-align:center;width:36px;}
-  .mrr-info{flex:1;display:flex;align-items:center;gap:8px;}
-  .mrr-name{font-size:13px;font-weight:600;color:var(--pgreen);} /* 高亮"我" */
-  .mrr-speed{font-size:11px;color:var(--t3);}
-  .mrr-lv{font-size:17px;font-weight:800;color:var(--t1);}
-  .mrr-go{font-size:13px;color:var(--tg);font-weight:600;cursor:pointer;}
-
-  /* 盲盒入口 */
-  .blindbox-card{background:var(--card);border-radius:14px;padding:14px 16px;display:flex;
-    align-items:center;justify-content:space-between;cursor:pointer;}
-  .bbc-left{display:flex;align-items:center;gap:12px;}
-  .bbc-icon{font-size:36px;}
-  .bbc-tit{font-size:15px;font-weight:700;color:var(--t1);}
-  .bbc-sub{font-size:12px;color:var(--t3);margin-top:2px;}
-  .bbc-btn{border:1px solid var(--line);border-radius:16px;padding:5px 14px;
-    font-size:13px;color:var(--t2);font-weight:600;}
+  /* 全国超越百分比卡片 */
+  .lr-percent-card{background:var(--card);border-radius:16px;padding:20px 16px 22px;margin-bottom:18px;
+    box-shadow:0 2px 8px rgba(0,0,0,.03);text-align:center;}
+  .lpc-head{font-size:14px;color:var(--t2);margin-bottom:4px;}
+  .lpc-ring{width:128px;height:128px;border-radius:50%;margin:12px auto 6px;
+    background:conic-gradient(var(--tg) 0%, #EEF1F4 0);
+    display:flex;align-items:center;justify-content:center;transition:background .5s;}
+  .lpc-ring-inner{width:98px;height:98px;border-radius:50%;background:#fff;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    box-shadow:inset 0 1px 4px rgba(0,0,0,.05);}
+  .lpc-pct{font-size:34px;font-weight:800;color:var(--tg);line-height:1;}
+  .lpc-unit{font-size:16px;font-weight:700;margin-left:1px;}
+  .lpc-cap{font-size:12px;color:var(--t3);margin-top:4px;}
+  .lpc-sub{font-size:12px;color:var(--t3);margin-top:8px;}
+  .lpc-ladder{margin-top:20px;text-align:left;}
+  .ladder-head{font-size:13px;color:var(--t2);margin-bottom:10px;font-weight:600;}
+  .ladder-track{position:relative;height:8px;border-radius:4px;
+    background:linear-gradient(90deg,#C8E6C9,#A5D6A7,#FFD54F,#FFB300,#FB8C00,#F4511E);}
+  .ladder-marker{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;
+    background:#fff;border:3px solid var(--tg);transform:translateY(-50%);
+    box-shadow:0 1px 4px rgba(0,0,0,.2);transition:left .5s;}
+  .ladder-labels{display:flex;justify-content:space-between;margin-top:8px;
+    font-size:11px;color:var(--t3);}
 </style>
 </head>
 <body>
@@ -913,7 +893,6 @@
           <span class="lc-label">我的等级</span>
           <span class="lc-lv" id="myLevelText">Lv.1</span>
         </div>
-        <span class="lc-rank" id="myRankNum">好友排名 186</span>
       </div>
       <div class="level-progress-bar"><div class="level-progress-fill" id="levelProgressFill"></div></div>
       <div class="level-tip-row">
@@ -1259,41 +1238,26 @@
           <div class="ric-item"><div class="ri-label">连续登录/天</div><div class="ri-val" id="lrStreak">7</div></div>
           <div class="ric-item ric-highlight"><div class="ri-label">虎力值等级</div><div class="ri-val" id="lrLvDisplay">Lv.1</div></div>
           <div class="ric-item"><div class="ri-label">虎力值加速</div><div class="ri-val" id="lrSpeed">1.0</div><div class="ri-sub">倍</div></div>
-          <div class="ric-item"><div class="ri-label">好友排名</div><div class="ri-val" id="lrRankPos">186</div></div>
         </div>
       </div>
 
-      <div class="lr-rank-section">
-        <div class="lrs-head">等级排名</div>
-        <div class="rank-grid">
-          <div class="rank-item">
-            <div class="rank-avatar ra2">👤</div><div class="rank-badge">2</div>
-            <div class="rank-name">石头哥</div><div class="rank-lv">Lv.132</div><div class="rank-speed">1.0倍加速中</div>
-          </div>
-          <div class="rank-item">
-            <div class="rank-avatar ra1">🏆</div><div class="rank-badge">1</div>
-            <div class="rank-name">IT信息部-罗...</div><div class="rank-lv">Lv.139</div><div class="rank-speed">1.0倍加速中</div>
-          </div>
-          <div class="rank-item">
-            <div class="rank-avatar ra3">😎</div><div class="rank-badge">3</div>
-            <div class="rank-name">罗文康</div><div class="rank-lv">Lv.122</div><div class="rank-speed">1.0倍加速中</div>
+      <!-- 全国超越百分比 -->
+      <div class="lr-percent-card">
+        <div class="lpc-head">您的小虎值已超过全国</div>
+        <div class="lpc-ring" id="lrRing">
+          <div class="lpc-ring-inner">
+            <div class="lpc-pct" id="lrPercent">0<span class="lpc-unit">%</span></div>
+            <div class="lpc-cap">的用户</div>
           </div>
         </div>
-        <div class="my-rank-row">
-          <div class="mrr-no">04</div><div class="mrr-x">✕</div>
-          <div class="mrr-info"><div class="mrr-name">IT信息部-陈智</div><div class="mrr-speed">1.0倍加速中</div></div>
-          <div class="mrr-lv">Lv.119</div>
+        <div class="lpc-sub">继续攒虎力值，超越更多人 🐯</div>
+        <div class="lpc-ladder">
+          <div class="ladder-head">等级梯队</div>
+          <div class="ladder-track">
+            <div class="ladder-marker" id="lrLadderMark"></div>
+          </div>
+          <div class="ladder-labels"><span>Lv.1</span><span>Lv.4</span><span>Lv.8</span></div>
         </div>
-        <div class="my-rank-row">
-          <div class="mrr-no" style="color:var(--t3);font-weight:400;">未上榜</div><div class="mrr-x">✕</div>
-          <div class="mrr-info"><div class="mrr-name">我<span style="background:var(--pgreen-bg);color:var(--pgreen);padding:1px 6px;border-radius:4px;font-size:11px;margin-left:4px;">我</span></div><div class="mrr-speed">1.0倍加速中</div></div>
-          <div class="mrr-lv" id="lrMyLvRow">Lv.1</div><div class="mrr-go">去加速 ›</div>
-        </div>
-      </div>
-
-      <div class="blindbox-card" onclick="showToast('等级加速盲盒（原型）')">
-        <div class="bbc-left"><div class="bbc-icon">🎁</div><div><div class="bbc-tit">等级加速盲盒</div><div class="bbc-sub">等你来抽</div></div></div>
-        <div class="bbc-btn">去试试</div>
       </div>
     </div>
   </div>
@@ -1667,6 +1631,19 @@ function updateMyLevel(){
     }
   }
 
+  // 全国超越百分比（超过全国 x% 用户）
+  const pct = Math.min(99, Math.round(100 * (1 - Math.exp(-(totalPower + 20) / 280))));
+  const pel = document.getElementById('lrPercent');
+  if(pel) pel.innerHTML = pct + '<span class="lpc-unit">%</span>';
+  const ring = document.getElementById('lrRing');
+  if(ring) ring.style.background = `conic-gradient(var(--tg) ${pct}%, #EEF1F4 0)`;
+  const mark = document.getElementById('lrLadderMark');
+  if(mark){
+    const maxLv = LEVEL_THRESHOLDS.length;
+    const pos = maxLv > 1 ? ((lv - 1) / (maxLv - 1)) * 100 : 0;
+    mark.style.left = `calc(${pos}% - 7px)`;
+  }
+
   // 同步等级报告页的显示
   syncLevelReport(lv);
 }
@@ -1674,8 +1651,6 @@ function updateMyLevel(){
 function syncLevelReport(lv){
   const el = document.getElementById('lrLvDisplay');
   if(el) el.textContent = 'Lv.'+lv;
-  const el2 = document.getElementById('lrMyLvRow');
-  if(el2) el2.textContent = 'Lv.'+lv;
 }
 
 // ---- 打开/关闭等级报告页 ----
