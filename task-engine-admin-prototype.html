@@ -114,6 +114,19 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
   padding-right:28px;}
 .form-hint{font-size:11px;color:#aaa;margin-top:3px;}
 
+/* 图标选择器 */
+.icon-field{display:flex;align-items:center;gap:14px;}
+.icon-preview{width:48px;height:48px;border-radius:10px;background:#f5f5f7;display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden;border:1px solid #eee;flex:none;}
+.icon-preview img{width:100%;height:100%;object-fit:cover;display:block;}
+.icon-picker{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.icon-opt{width:34px;height:34px;border-radius:8px;border:1px solid #e3e3e8;background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0;}
+.icon-opt:hover{border-color:#5b4cbd;}
+.icon-opt.sel{border-color:#5b4cbd;background:#f0eaff;box-shadow:0 0 0 2px rgba(91,76,219,.15);}
+.icon-upload{border:1px dashed #c9bff0;background:#faf8ff;color:#7a6fd0;border-radius:8px;height:34px;padding:0 10px;display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-size:12px;transition:background .15s;}
+.icon-upload:hover{background:#f0ebff;}
+.icon-upload input{display:none;}
+.custom-path-wrap{display:none;}
+
 /* 弹窗底部 */
 .modal-foot{padding:16px 24px;border-top:1px solid #f0f0f0;display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:#fff;}
 
@@ -284,8 +297,27 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
             <div class="form-hint">英文标识，不可重复，用于前端 data-task 匹配</div>
           </div>
           <div class="form-col">
-            <label class="form-label">图标 Emoji<span class="req">*</span></label>
-            <input class="fi" id="fIcon" placeholder="📝 或选择常用" required maxlength="4" />
+            <label class="form-label">图标<span class="req">*</span></label>
+            <input type="hidden" id="fIcon" value="" />
+            <div class="icon-field">
+              <div class="icon-preview" id="iconPreview">📝</div>
+              <div class="icon-picker">
+                <button type="button" class="icon-opt sel" onclick="pickIcon(this,'📝')">📝</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'📋')">📋</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'✅')">✅</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'💬')">💬</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'🛒')">🛒</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'🏃')">🏃</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'🥗')">🥗</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'💊')">💊</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'📊')">📊</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'🎯')">🎯</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'⭐')">⭐</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'🔔')">🔔</button>
+                <label class="icon-upload">🔼 上传图<input type="file" accept="image/*" onchange="uploadIcon(this)"></label>
+              </div>
+            </div>
+            <div class="form-hint">点击选择常用图标，或上传小尺寸图标（建议 48×48 以内）</div>
           </div>
         </div>
         <div class="form-row">
@@ -308,7 +340,7 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
         <div class="form-row">
           <div class="form-col">
             <label class="form-label">跳转页面类型<span class="req">*</span></label>
-            <select class="fi" id="fJumpType" required>
+            <select class="fi" id="fJumpType" required onchange="onJumpTypeChange()">
               <option value="">请选择</option>
               <option value="onboarding">onboarding — 健康档案初始化引导</option>
               <option value="createplan">createplan — 创建计划页</option>
@@ -323,6 +355,15 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
             <label class="form-label">跳转提示语<span class="req">*</span></label>
             <input class="fi" id="fJumpMsg" placeholder="如：前往填写体型数据" required />
             <div class="form-hint">跳转时显示的 toast 提示文字</div>
+          </div>
+        </div>
+
+        <!-- 自定义路径（仅跳转类型=自定义路径时显示） -->
+        <div class="form-row custom-path-wrap" id="customPathWrap">
+          <div class="form-col" style="flex:2;">
+            <label class="form-label">自定义路径<span class="req">*</span></label>
+            <input class="fi" id="fCustomPath" placeholder="如：/pages/activity/summer 或 https://m.taixiaohu.com/act" />
+            <div class="form-hint">选择「自定义路径」时必填；客户端跳转时优先使用此路径 / URL</div>
           </div>
         </div>
 
@@ -472,6 +513,46 @@ const JUMP_TYPE_LABEL = {
 };
 const OP_LABEL = {'==':'等于','!=':'不等于','>=':'≥ 大于等于','<=':'≤ 小于等于','includes':'包含','exists':'非空存在'};
 
+// ==================== 图标 / 自定义路径 ====================
+function iconCell(val){
+  if(val && val.startsWith('data:')){
+    return `<img src="${val}" style="width:22px;height:22px;border-radius:5px;object-fit:cover;display:block;margin:0 auto;" alt="icon">`;
+  }
+  return val || '—';
+}
+function renderIconPreview(val){
+  const pv = document.getElementById('iconPreview');
+  if(val && val.startsWith('data:')){
+    pv.innerHTML = '<img src="'+val+'" alt="icon">';
+  }else{
+    pv.textContent = val || '📝';
+  }
+}
+function pickIcon(btn, val){
+  document.querySelectorAll('.icon-opt').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  document.getElementById('fIcon').value = val;
+  renderIconPreview(val);
+}
+function uploadIcon(input){
+  const f = input.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const url = e.target.result;
+    document.querySelectorAll('.icon-opt').forEach(b=>b.classList.remove('sel'));
+    document.getElementById('fIcon').value = url;
+    renderIconPreview(url);
+  };
+  reader.readAsDataURL(f);
+}
+function onJumpTypeChange(){
+  const t = document.getElementById('fJumpType').value;
+  const show = (t==='custom');
+  document.getElementById('customPathWrap').style.display = show ? 'flex' : 'none';
+  if(!show) document.getElementById('fCustomPath').value = '';
+}
+
 // ==================== 渲染表格 ====================
 function renderTable(data){
   const tbody = document.getElementById('taskTbody');
@@ -485,7 +566,7 @@ function renderTable(data){
     html += `<tr>
       <td>${i+1}</td>
       <td><code style="background:#f5f0ff;color:#5b4cbd;padding:1px 6px;border-radius:3px;font-size:12px;">${t.id}</code></td>
-      <td class="td-icon">${t.icon}</td>
+      <td class="td-icon">${iconCell(t.icon)}</td>
       <td><b>${t.title}</b></td>
       <td style="color:#777;">${t.desc}</td>
       <td><span class="ev-badge">${eng.eventKey||'-'}</span></td>
@@ -603,22 +684,34 @@ function closeModal(){ document.getElementById('modalOverlay').classList.remove(
 function openModal(){ document.getElementById('modalOverlay').classList.add('show'); }
 
 function clearForm(){
-  ['fTaskId','fIcon','fTitle','fDesc','fWhy','fJumpMsg','fSortOrder'].forEach(id=>{
+  ['fTaskId','fTitle','fDesc','fWhy','fJumpMsg','fSortOrder','fCustomPath'].forEach(id=>{
     document.getElementById(id).value='';
   });
+  document.getElementById('fIcon').value='';
   document.getElementById('fJumpType').value='';
   document.getElementById('fStatus').value='on';
+  document.querySelectorAll('.icon-opt').forEach(b=>b.classList.remove('sel'));
+  const first=document.querySelector('.icon-opt'); if(first) first.classList.add('sel');
+  renderIconPreview('📝');
+  onJumpTypeChange();
 }
 function fillForm(t){
   document.getElementById('fTaskId').value=t.id;
-  document.getElementById('fIcon').value=t.icon;
+  document.getElementById('fIcon').value=t.icon||'';
+  // 图标高亮 / 预览
+  document.querySelectorAll('.icon-opt').forEach(b=>b.classList.remove('sel'));
+  const match=[...document.querySelectorAll('.icon-opt')].find(b=>b.textContent.trim()===t.icon);
+  if(match) match.classList.add('sel');
+  renderIconPreview(t.icon);
   document.getElementById('fTitle').value=t.title;
   document.getElementById('fDesc').value=t.desc;
   document.getElementById('fWhy').value=t.why;
   document.getElementById('fJumpType').value=t.jumpType;
   document.getElementById('fJumpMsg').value=t.jumpMsg;
+  document.getElementById('fCustomPath').value=t.customPath||'';
   document.getElementById('fStatus').value=t.status;
   document.getElementById('fSortOrder').value=t.sortOrder||'';
+  onJumpTypeChange();
 }
 
 // ==================== 保存 / 删除 ====================
@@ -630,6 +723,7 @@ function saveTask(){
   const why=document.getElementById('fWhy').value.trim();
   const jumpType=document.getElementById('fJumpType').value;
   const jumpMsg=document.getElementById('fJumpMsg').value.trim();
+  const customPath=(jumpType==='custom')?document.getElementById('fCustomPath').value.trim():'';
   const eventKey=document.getElementById('fEventKey').value.trim();
   const status=document.getElementById('fStatus').value;
   const sortOrder=parseInt(document.getElementById('fSortOrder').value,10)||null;
@@ -647,13 +741,14 @@ function saveTask(){
 
   // 必填校验
   if(!id||!icon||!title||!desc||!why||!jumpType||!jumpMsg||!eventKey){ showToast('⚠️ 请填写所有必填项（含事件 Key）');return; }
+  if(jumpType==='custom' && !customPath){ showToast('⚠️ 自定义路径为必填');return; }
   if(!completeRules.length){ showToast('⚠️ 请至少配置一条「已完成」条件');return; }
   if(partialEnabled && !partialRules.length){ showToast('⚠️ 已开启部分完成，请配置其条件');return; }
   // ID 重复校验（排除自身）
   if(editingId!==id && TASKS_DATA.some(t=>t.id===id)){ showToast('⚠️ 该任务 ID 已存在');return; }
 
   const engine={judgeType:'event',eventKey,completeRules,partialEnabled,partialRules,refill,reward};
-  const row={id,icon,title,desc,why,jumpType,jumpMsg,status,sortOrder,engine};
+  const row={id,icon,title,desc,why,jumpType,jumpMsg,customPath,status,sortOrder,engine};
   if(editingId){
     const idx=TASKS_DATA.findIndex(t=>t.id===editingId);
     if(idx>-1)TASKS_DATA[idx]=row;
