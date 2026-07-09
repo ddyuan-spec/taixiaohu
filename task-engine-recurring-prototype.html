@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎后台 · 任务引擎配置（含周期重复任务）</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif;
+  background:#f0f2f5;color:#333;font-size:14px;min-height:100vh;}
+
+/* ========== 顶部导航栏 ========== */
+.topbar{height:52px;background:#5b4cdb;display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;position:fixed;top:0;left:0;right:0;z-index:999;color:#fff;}
+.tb-left{display:flex;align-items:center;gap:16px;}
+.tb-logo{font-size:17px;font-weight:700;letter-spacing:.5px;}
+.tb-logo::before{content:'🐯 ';font-size:19px;}
+.breadcrumb{font-size:13px;opacity:.8;}
+.breadcrumb span{margin:0 4px;}
+.tb-right{display:flex;align-items:center;gap:16px;font-size:18px;}
+
+/* ========== 左侧菜单 ========== */
+.sidebar{position:fixed;top:52px;left:0;bottom:0;width:180px;background:#fff;border-right:1px solid #e8e8e8;
+  overflow-y:auto;z-index:998;padding-bottom:20px;}
+.sb-group{padding:12px 0 4px;}
+.sb-group-title{padding:10px 16px 4px;font-size:13px;color:#999;font-weight:600;
+  display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;}
+.sb-group-title .arrow{font-size:11px;transition:transform .2s;margin-left:auto;}
+.sb-item{padding:9px 16px 9px 34px;font-size:13px;color:#555;cursor:pointer;transition:background .15s;
+  display:block;text-decoration:none;line-height:1.4;}
+.sb-item:hover,.sb-item.active{background:#f0eaff;color:#5b4cbd;font-weight:600;}
+.sb-divider{height:1px;background:#f0f0f0;margin:6px 12px;}
+
+/* ========== 主内容区 ========== */
+.main{margin-left:180px;margin-top:52px;padding:24px 28px;min-height:calc(100vh - 52px);}
+
+/* 面包屑 + 标题 */
+.page-header{margin-bottom:20px;}
+.ph-title{font-size:22px;font-weight:700;color:#222;margin-bottom:6px;}
+.ph-sub{font-size:13px;color:#999;}
+
+/* 搜索栏 */
+.search-bar{background:#fff;border-radius:8px;padding:16px 20px;margin-bottom:16px;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);display:flex;align-items:center;flex-wrap:wrap;gap:12px;}
+.sbl label{font-size:13px;color:#666;white-space:nowrap;}
+.sbi{border:1px solid #dcdfe6;border-radius:4px;padding:7px 10px;font-size:13px;width:200px;
+  outline:none;transition:border-color .2s;}
+.sbi:focus{border-color:#5b4cbd;box-shadow:0 0 0 2px rgba(91,76,219,.1);}
+.sbs select{border:1px solid #dcdfe6;border-radius:4px;padding:7px 10px;font-size:13px;width:140px;outline:none;}
+.btn{border:none;border-radius:4px;padding:7px 18px;font-size:13px;cursor:pointer;font-weight:600;transition:opacity .15s;}
+.btn:hover{opacity:.85;}
+.btn-primary{background:#5b4cbd;color:#fff;}
+.btn-success{background:#07c160;color:#fff;}
+.btn-default{background:#fff;border:1px solid #dcdfe6;color:#555;}
+.btn-danger{color:#ee4d38;background:none;border:1px solid transparent;font-size:13px;cursor:pointer;}
+.btn-danger:hover{color:#c0392b;text-decoration:underline;}
+.btn-sm{padding:4px 12px;font-size:12px;}
+
+/* 表格 */
+.table-wrap{background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.04);overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+thead th{background:#fafafa;padding:12px 14px;font-size:13px;font-weight:600;color:#666;
+  text-align:left;border-bottom:1px solid #ebeef5;white-space:nowrap;}
+tbody td{padding:11px 14px;font-size:13px;border-bottom:1px solid #f5f5f5;color:#444;vertical-align:middle;}
+tbody tr:hover{background:#fafcff;}
+.td-icon{font-size:20px;text-align:center;width:50px;}
+.td-status{font-size:12px;}
+.status-on{color:#07c160;font-weight:600;}
+.status-off{color:#999;}
+.td-actions{white-space:nowrap;}
+.ev-badge{background:#eef9f1;color:#07a050;padding:2px 8px;border-radius:4px;font-size:12px;font-family:monospace;white-space:nowrap;}
+
+/* 分页 */
+.pagination{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:16px 20px;
+  border-top:1px solid #f0f0f0;font-size:13px;color:#666;}
+.pg-btn{min-width:32px;height:32px;border:1px solid #dcdfe6;border-radius:4px;background:#fff;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:all .15s;}
+.pg-btn:hover:not(.disabled):not(.active){border-color:#5b4cbd;color:#5b4cbd;}
+.pg-btn.active{background:#5b4cbd;color:#fff;border-color:#5b4cbd;}
+.pg-btn.disabled{color:#ccc;cursor:not-allowed;background:#fafafa;}
+.pg-info{margin-right:auto;font-size:13px;}
+.pg-jump input{width:48px;border:1px solid #dcdfe6;border-radius:4px;padding:4px 6px;font-size:13px;text-align:center;outline:none;}
+.pg-jump button{border:1px solid #dcdfe6;border-radius:4px;padding:4px 10px;background:#fff;cursor:pointer;font-size:13px;}
+
+/* 弹窗遮罩 */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);
+  z-index:1100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;
+  transition:opacity .25s;}
+.modal-overlay.show{opacity:1;pointer-events:auto;}
+.modal-box{background:#fff;border-radius:12px;width:760px;max-width:94vw;max-height:88vh;overflow-y:auto;
+  box-shadow:0 8px 30px rgba(0,0,0,.15);transform:scale(.95) translateY(10px);
+  transition:transform .25s;}
+.modal-overlay.show .modal-box{transform:scale(1) translateY(0);}
+
+/* 弹窗头部 */
+.modal-head{padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;position:sticky;top:0;background:#fff;z-index:2;}
+.modal-head h3{font-size:17px;font-weight:700;color:#222;}
+.modal-close{width:32px;height:32px;border-radius:50%;border:none;background:#f5f5f5;font-size:18px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;color:#999;transition:all .15s;}
+.modal-close:hover{background:#eee;color:#555;}
+
+/* 弹窗表单 */
+.form-body{padding:20px 24px;}
+.form-section-title{font-size:14px;font-weight:700;color:#5b4cbd;margin:18px 0 12px;padding-left:9px;border-left:3px solid #5b4cbd;}
+.form-row{display:flex;gap:16px;margin-bottom:14px;}
+.form-col{flex:1;}
+.form-label{font-size:13px;font-weight:600;color:#555;margin-bottom:6px;display:block;}
+.form-label .req{color:#ee4d38;margin-left:2px;}
+.fi{width:100%;border:1px solid #dcdfe6;border-radius:6px;padding:8px 10px;font-size:13px;outline:none;
+  transition:border-color .2s;}
+.fi:focus{border-color:#5b4cbd;box-shadow:0 0 0 2px rgba(91,76,219,.1);}
+textarea.fi{resize:vertical;min-height:60px;}
+select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E") no-repeat right 10px center/10px;
+  padding-right:28px;}
+.form-hint{font-size:11px;color:#aaa;margin-top:3px;}
+
+/* 图标选择器 */
+.icon-field{display:flex;align-items:center;gap:14px;}
+.icon-preview{width:48px;height:48px;border-radius:10px;background:#f5f5f7;display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden;border:1px solid #eee;flex:none;}
+.icon-preview img{width:100%;height:100%;object-fit:cover;display:block;}
+.icon-picker{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.icon-opt{width:34px;height:34px;border-radius:8px;border:1px solid #e3e3e8;background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0;}
+.icon-opt:hover{border-color:#5b4cbd;}
+.icon-opt.sel{border-color:#5b4cbd;background:#f0eaff;box-shadow:0 0 0 2px rgba(91,76,219,.15);}
+.icon-upload{border:1px dashed #c9bff0;background:#faf8ff;color:#7a6fd0;border-radius:8px;height:34px;padding:0 10px;display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-size:12px;transition:background .15s;}
+.icon-upload:hover{background:#f0ebff;}
+.icon-upload input{display:none;}
+.custom-path-wrap{display:none;}
+
+/* 弹窗底部 */
+.modal-foot{padding:16px 24px;border-top:1px solid #f0f0f0;display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:#fff;}
+
+/* Toast */
+.toast{position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:#333;color:#fff;padding:10px 24px;border-radius:8px;font-size:13px;z-index:1200;
+  opacity:0;pointer-events:none;transition:all .3s;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ========== 任务引擎配置区 ========== */
+.engine-section{margin:6px 0 4px;background:linear-gradient(135deg,#faf8ff,#f3f0ff);border:1px solid #e6e0fb;border-radius:10px;padding:16px 18px;}
+.engine-head{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.eh-icon{font-size:18px;}
+.eh-title{font-size:15px;font-weight:700;color:#4a3bb0;}
+.eh-tag{margin-left:auto;font-size:11px;color:#7a6fd0;background:#ece7ff;padding:2px 10px;border-radius:12px;}
+.engine-card{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.03);}
+.cond-group{border:1px solid #eee;border-radius:8px;padding:12px 14px;margin-bottom:12px;background:#fcfcfe;}
+.cond-group.partial{background:#fffaf3;border-color:#f3e6d2;}
+.cg-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.cond-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;color:#fff;white-space:nowrap;}
+.cond-badge.done{background:#07c160;}
+.cond-badge.partial{background:#e6a23c;}
+.cg-tip{font-size:11px;color:#999;flex:1;min-width:160px;}
+.cond-rows{display:flex;flex-direction:column;gap:8px;}
+.cond-row{display:flex;align-items:center;gap:8px;}
+.cond-row .cond-attr{flex:1.2;min-width:0;}
+.cond-row .cond-op{flex:1;min-width:0;appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E") no-repeat right 8px center/10px;}
+.cond-row .cond-val{flex:1.2;min-width:0;}
+.cond-del{flex:none;width:30px;height:30px;border:1px solid #eee;border-radius:6px;background:#fff;color:#bbb;cursor:pointer;font-size:14px;transition:all .15s;}
+.cond-del:hover{color:#ee4d38;border-color:#ee4d38;}
+.rule-add{border:1px dashed #c9bff0;background:#faf8ff;color:#7a6fd0;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;margin-top:8px;}
+.rule-add:hover{background:#f0ebff;}
+.refill-box{margin:4px 0 14px;padding:10px 12px;background:#f0f8ff;border:1px solid #d6ebff;border-radius:8px;}
+.refill-box label{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;color:#4a6b8a;}
+.reward-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;border-top:1px dashed #eee;padding-top:14px;}
+.rg-item{background:#fafafa;border-radius:8px;padding:10px 12px;}
+.rg-item .form-label{margin-bottom:6px;}
+.rg-badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;color:#fff;margin-bottom:8px;}
+.rg-badge.done{background:#07c160;}
+.rg-badge.partial{background:#e6a23c;}
+.rg-badge.none{background:#909399;}
+
+/* ========== 任务类型徽章 ========== */
+.tt-badge{display:inline-block;font-size:11px;padding:2px 9px;border-radius:12px;font-weight:600;white-space:nowrap;}
+.tt-badge.once{background:#eef2ff;color:#4a5bd0;}
+.tt-badge.recur{background:#fff1e8;color:#d9741b;}
+.period-chip{display:inline-block;font-size:11px;padding:1px 7px;border-radius:10px;background:#fef0e6;color:#c9601a;margin-left:5px;}
+
+/* ========== 周期配置区 ========== */
+.period-section{margin:6px 0 4px;background:linear-gradient(135deg,#fff8f1,#fff2e6);border:1px solid #fadfc4;border-radius:10px;padding:16px 18px;display:none;}
+.period-section.show{display:block;}
+.period-head{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.ph2-icon{font-size:18px;}
+.ph2-title{font-size:15px;font-weight:700;color:#c26512;}
+.ph2-tag{margin-left:auto;font-size:11px;color:#c9781f;background:#ffe8d2;padding:2px 10px;border-radius:12px;}
+.period-card{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.03);}
+
+/* 等级奖励规则表 */
+.lv-table{width:100%;border-collapse:collapse;margin-top:6px;}
+.lv-table th{background:#fff6ee;color:#a85712;font-size:12px;font-weight:700;padding:8px 8px;text-align:left;border:1px solid #f4e0cd;white-space:nowrap;}
+.lv-table td{padding:6px 6px;border:1px solid #f4e0cd;vertical-align:middle;}
+.lv-table .fi{padding:6px 8px;}
+.lv-num{width:70px;}
+.lv-del{width:30px;height:30px;border:1px solid #eee;border-radius:6px;background:#fff;color:#bbb;cursor:pointer;font-size:14px;}
+.lv-del:hover{color:#ee4d38;border-color:#ee4d38;}
+.lv-add{border:1px dashed #f0c79a;background:#fff8f1;color:#c9781f;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;margin-top:10px;}
+.lv-add:hover{background:#ffefe0;}
+.reset-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.reset-row .fi{width:auto;min-width:110px;}
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<div class="topbar">
+  <div class="tb-left">
+    <div class="tb-logo">泰小虎后台</div>
+    <div class="breadcrumb">App管理 <span>/</span> 任务引擎配置（含周期重复任务）</div>
+  </div>
+  <div class="tb-right">⬇ ⚙ 👤</div>
+</div>
+
+<!-- 左侧菜单 -->
+<div class="sidebar" id="sidebar">
+  <div class="sb-group">
+    <div class="sb-group-title"><span class="arrow">▸</span> 💰 财务管理</div>
+    <a class="sb-item">对账单</a>
+    <a class="sb-item">业绩报表</a>
+  </div>
+  <div class="sb-group">
+    <div class="sb-group-title"><span class="arrow">▸</span> 📦 订单管理</div>
+    <a class="sb-item">收发货水</a>
+    <a class="sb-item">提现工单</a>
+    <a class="sb-item">储值流水</a>
+    <a class="sb-item">储值配置</a>
+  </div>
+  <div class="sb-group">
+    <div class="sb-group-title"><span class="arrow">▾</span> ⚙️ 系统配置</div>
+    <a class="sb-item">平台客服</a>
+    <a class="sb-item">运营模板</a>
+    <a class="sb-item">平台公告</a>
+    <a class="sb-item">素材管理</a>
+    <a class="sb-item">权限管理</a>
+    <a class="sb-item">通用设置</a>
+  </div>
+  <div class="sb-group">
+    <div class="sb-group-title"><span class="arrow">▾</span> 📱 App管理</div>
+    <a class="sb-item">档案管理</a>
+    <a class="sb-item">AI反馈管理</a>
+    <div class="sb-divider"></div>
+    <a class="sb-item active">任务引擎配置</a>
+    <a class="sb-item">知识库管理</a>
+    <a class="sb-item">等级配置</a>
+    <a class="sb-item">内容管理</a>
+  </div>
+</div>
+
+<!-- 主内容 -->
+<div class="main">
+
+<div class="page-header">
+  <div class="ph-title">任务引擎配置 <span style="font-size:13px;font-weight:600;color:#d9741b;background:#fff1e8;padding:3px 10px;border-radius:12px;vertical-align:middle;margin-left:8px;">含周期重复任务</span></div>
+  <div class="ph-sub">统一管理任务完成判定 · 埋点事件实时驱动三态 · 支持「一次性任务」与「周期重复任务（每日/每周/每月，按虎力值等级发放奖励）」</div>
+</div>
+
+<!-- 搜索栏 -->
+<div class="search-bar">
+  <div><label>任务名称</label></div>
+  <input class="sbi" id="searchKey" placeholder="请输入任务名称/ID/事件" />
+  <div><label>状态</label></div>
+  <select class="sbs" id="searchStatus">
+    <option value="">全部</option>
+    <option value="on">启用</option>
+    <option value="off">停用</option>
+  </select>
+  <button class="btn btn-primary" onclick="doSearch()">搜索</button>
+  <button class="btn btn-default" onclick="resetSearch()">重置</button>
+  <button class="btn btn-success" onclick="openAddModal()">+ 新增任务</button>
+</div>
+
+<!-- 表格 -->
+<div class="table-wrap">
+<table id="taskTable">
+<thead>
+<tr>
+  <th style="width:46px;">序号</th>
+  <th style="width:74px;">任务 ID</th>
+  <th style="width:46px;">图标</th>
+  <th style="min-width:104px;">任务标题</th>
+  <th style="width:108px;">任务类型</th>
+  <th style="width:116px;">判定事件</th>
+  <th style="width:96px;">奖励虎力值</th>
+  <th style="width:52px;">状态</th>
+  <th style="width:54px;">排序</th>
+  <th style="width:100px;text-align:center;">操作</th>
+</tr>
+</thead>
+<tbody id="taskTbody">
+<!-- JS 渲染 -->
+</tbody>
+</table>
+</div>
+
+<!-- 分页 -->
+<div class="pagination">
+  <span class="pg-info">共 <b id="totalCount">5</b> 条 &nbsp; <select onchange="changePageSize(this.value)" style="border:1px solid #dcdfe6;border-radius:4px;padding:3px 6px;font-size:13px;">
+    <option value="10">10条/页</option>
+    <option value="20">20条/页</option>
+    <option value="50">50条/页</option>
+  </select></span>
+  <span class="pg-btn disabled">‹</span>
+  <span class="pg-btn active">1</span>
+  <span class="pg-btn disabled">›</span>
+  <span class="pg-jump">前往
+    <input type="text" id="jumpPage" value="1" /> 页
+    <button onclick="goJump()">GO</button>
+  </span>
+</div>
+
+</div><!-- /main -->
+
+<!-- 新增/编辑弹窗 -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modalTitle">新增任务</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <form id="taskForm" onsubmit="return false;">
+      <div class="form-body">
+        <div class="form-section-title">基础信息</div>
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label">任务 ID<span class="req">*</span></label>
+            <input class="fi" id="fTaskId" placeholder="唯一标识，如 profile、plan、checkin" required />
+            <div class="form-hint">英文标识，不可重复，用于前端 data-task 匹配</div>
+          </div>
+          <div class="form-col">
+            <label class="form-label">图标<span class="req">*</span></label>
+            <input type="hidden" id="fIcon" value="" />
+            <div class="icon-field">
+              <div class="icon-preview" id="iconPreview">📝</div>
+              <div class="icon-picker">
+                <button type="button" class="icon-opt sel" onclick="pickIcon(this,'📝')">📝</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'📋')">📋</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'✅')">✅</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'💬')">💬</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'🛒')">🛒</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'🏃')">🏃</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'🥗')">🥗</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'💊')">💊</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'📊')">📊</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'🎯')">🎯</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'⭐')">⭐</button>
+                <button type="button" class="icon-opt" onclick="pickIcon(this,'🔔')">🔔</button>
+                <label class="icon-upload">🔼 上传图<input type="file" accept="image/*" onchange="uploadIcon(this)"></label>
+              </div>
+            </div>
+            <div class="form-hint">点击选择常用图标，或上传小尺寸图标（建议 48×48 以内）</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label">任务类型<span class="req">*</span></label>
+            <select class="fi" id="fTaskType" required onchange="onTaskTypeChange()">
+              <option value="one_time">一次性任务（完成即结束，不重置）</option>
+              <option value="recurring">周期重复任务（按周期重置，可重复领奖）</option>
+            </select>
+            <div class="form-hint">周期重复任务需配置周期单位、重置时间与「虎力值等级奖励」</div>
+          </div>
+          <div class="form-col"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label">任务标题<span class="req">*</span></label>
+            <input class="fi" id="fTitle" placeholder="如：完善健康档案" required />
+          </div>
+          <div class="form-col">
+            <label class="form-label">任务描述（副标题）<span class="req">*</span></label>
+            <input class="fi" id="fDesc" placeholder="如：填写体型数据" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-col" style="flex:2;">
+            <label class="form-label">执行理由（提示文案）<span class="req">*</span></label>
+            <textarea class="fi" id="fWhy" placeholder="如：💡 档案越完整，推荐越准" required rows=2></textarea>
+            <div class="form-hint">显示在卡片底部，告诉用户为什么要完成这个任务</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label">跳转页面类型<span class="req">*</span></label>
+            <select class="fi" id="fJumpType" required onchange="onJumpTypeChange()">
+              <option value="">请选择</option>
+              <option value="onboarding">onboarding — 健康档案初始化引导</option>
+              <option value="createplan">createplan — 创建计划页</option>
+              <option value="checkin">checkin — 打卡记录页</option>
+              <option value="home">home — 首页 AI 会话</option>
+              <option value="service">service — 服务页（健康好物）</option>
+              <option value="profile">profile — 健康档案页</option>
+              <option value="custom">custom — 自定义路径</option>
+            </select>
+          </div>
+          <div class="form-col">
+            <label class="form-label">跳转提示语<span class="req">*</span></label>
+            <input class="fi" id="fJumpMsg" placeholder="如：前往填写体型数据" required />
+            <div class="form-hint">跳转时显示的 toast 提示文字</div>
+          </div>
+        </div>
+
+        <!-- 自定义路径（仅跳转类型=自定义路径时显示） -->
+        <div class="form-row custom-path-wrap" id="customPathWrap">
+          <div class="form-col" style="flex:2;">
+            <label class="form-label">自定义路径<span class="req">*</span></label>
+            <input class="fi" id="fCustomPath" placeholder="如：/pages/activity/summer 或 https://m.taixiaohu.com/act" />
+            <div class="form-hint">选择「自定义路径」时必填；客户端跳转时优先使用此路径 / URL</div>
+          </div>
+        </div>
+
+        <!-- ============ 周期配置区（仅周期重复任务显示） ============ -->
+        <div class="period-section" id="periodSection">
+          <div class="period-head">
+            <span class="ph2-icon">🔁</span>
+            <span class="ph2-title">周期重复配置</span>
+            <span class="ph2-tag">按周期重置 · 按虎力值等级发奖</span>
+          </div>
+          <div class="period-card">
+            <div class="form-row">
+              <div class="form-col">
+                <label class="form-label">周期单位<span class="req">*</span></label>
+                <select class="fi" id="fPeriodUnit" onchange="renderResetTime()">
+                  <option value="daily">每日</option>
+                  <option value="weekly">每周</option>
+                  <option value="monthly">每月</option>
+                </select>
+                <div class="form-hint">任务完成态在每个周期结束后重置为「去完成」</div>
+              </div>
+              <div class="form-col">
+                <label class="form-label">重置时间<span class="req">*</span></label>
+                <div class="reset-row" id="resetTimeWrap"><!-- JS 渲染 --></div>
+                <div class="form-hint">到达该时间点，本周期未达上限的任务重置为「去完成」</div>
+              </div>
+            </div>
+
+            <label class="form-label" style="margin-top:6px;">虎力值等级奖励<span class="req">*</span></label>
+            <div class="form-hint" style="margin-bottom:8px;">按用户当前虎力值等级发放不同奖励；同一等级累计发放达「累计上限」后，任务在该等级下置为「已完成」，直至升级到下一等级区间解锁新奖励。</div>
+            <table class="lv-table" id="lvTable">
+              <thead>
+                <tr>
+                  <th style="width:150px;">关联等级区间</th>
+                  <th class="lv-num">单次奖励(虎力值)</th>
+                  <th class="lv-num">该等级累计上限</th>
+                  <th style="width:36px;"></th>
+                </tr>
+              </thead>
+              <tbody id="lvTbody"><!-- JS 渲染 --></tbody>
+            </table>
+            <button type="button" class="lv-add" onclick="addLevelRow()">+ 添加等级区间</button>
+          </div>
+        </div>
+
+        <!-- ============ 任务引擎配置区 ============ -->
+        <div class="engine-section">
+          <div class="engine-head">
+            <span class="eh-icon">⚙️</span>
+            <span class="eh-title">任务引擎配置</span>
+            <span class="eh-tag">实时事件驱动 · 三态判定</span>
+          </div>
+          <div class="engine-card">
+            <div class="form-row">
+              <div class="form-col">
+                <label class="form-label">判定类型</label>
+                <input class="fi" id="fJudgeType" value="埋点事件" disabled style="background:#f5f5f5;color:#999;" />
+                <div class="form-hint">统一基于埋点事件判定，不可更改</div>
+              </div>
+              <div class="form-col">
+                <label class="form-label">事件 Key<span class="req">*</span></label>
+                <input class="fi" id="fEventKey" placeholder="如：profile_submit" />
+                <div class="form-hint">客户端/服务端上报的事件名</div>
+              </div>
+            </div>
+
+            <!-- 完成条件组 -->
+            <div class="cond-group">
+              <div class="cg-head">
+                <span class="cond-badge done">已完成</span>
+                <span class="cg-tip">以下属性条件全部满足（AND）即判定为「已完成」</span>
+              </div>
+              <div class="cond-rows" id="completeRows"></div>
+              <button type="button" class="rule-add" onclick="addCondRow('completeRows')">+ 添加条件</button>
+            </div>
+
+            <!-- 部分完成条件组 -->
+            <div class="cond-group partial">
+              <div class="cg-head">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                  <input type="checkbox" id="fPartialEnabled" onchange="togglePartial(this)" />
+                  <span class="cond-badge partial">部分完成</span>
+                </label>
+                <span class="cg-tip">可选：满足以下条件判定为「部分完成」（如跳过但填了部分数据）</span>
+              </div>
+              <div class="cond-rows" id="partialRows" style="display:none;"></div>
+              <button type="button" class="rule-add" id="partialAddBtn" onclick="addCondRow('partialRows')" style="display:none;">+ 添加条件</button>
+            </div>
+
+            <!-- 续填策略 -->
+            <div class="refill-box">
+              <label>
+                <input type="checkbox" id="fRefill" />
+                开启续填策略（跳过但填了部分数据时，下次引导带入「已填值 + 默认值」）
+              </label>
+            </div>
+
+            <!-- 奖励分配（一次性任务用三态固定奖励；周期任务改用上方「虎力值等级奖励」） -->
+            <div class="reward-grid" id="rewardGrid">
+              <div class="rg-item">
+                <span class="rg-badge done">已完成</span>
+                <label class="form-label">虎力值<span class="req">*</span></label>
+                <input class="fi" id="fRewardDone" type="number" min="0" placeholder="如：50" />
+              </div>
+              <div class="rg-item">
+                <span class="rg-badge partial">部分完成</span>
+                <label class="form-label">虎力值</label>
+                <input class="fi" id="fRewardPartial" type="number" min="0" placeholder="如：0" value="0" />
+              </div>
+              <div class="rg-item">
+                <span class="rg-badge none">未完成</span>
+                <label class="form-label">虎力值</label>
+                <input class="fi" id="fRewardNone" type="number" min="0" placeholder="如：0" value="0" />
+              </div>
+            </div>
+            <div id="recurRewardNote" style="display:none;font-size:12px;color:#c9781f;background:#fff6ee;border:1px dashed #f0c79a;border-radius:8px;padding:10px 12px;">
+              🔁 周期重复任务的奖励由上方「虎力值等级奖励」表决定（按用户当前等级发放），本处三态固定奖励对周期任务不生效。
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section-title">状态与排序</div>
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label">状态<span class="req">*</span></label>
+            <select class="fi" id="fStatus" required>
+              <option value="on">启用</option>
+              <option value="off">停用</option>
+            </select>
+          </div>
+          <div class="form-col">
+            <label class="form-label">排序序号</label>
+            <input class="fi" id="fSortOrder" type="number" min="0" placeholder="数字越小越靠前，默认 99" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-default" onclick="closeModal()">取消</button>
+        <button class="btn btn-success" onclick="saveTask()">保存</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ==================== 数据源 ====================
+const TASKS_DATA = [
+  {id:'profile', icon:'📝', title:'完善健康档案', desc:'填写体型数据',
+   why:'💡 档案越完整，推荐越准', jumpType:'onboarding', jumpMsg:'前往填写体型数据',
+   taskType:'one_time', period:null, levelRewards:[],
+   status:'on', sortOrder:1,
+   engine:{judgeType:'event', eventKey:'profile_submit',
+     completeRules:[{attr:'completion_rate',op:'>=',val:'100'}],
+     partialEnabled:true,
+     partialRules:[{attr:'is_onboarding_end',op:'==',val:'true'},{attr:'archive_result',op:'==',val:'partial'}],
+     refill:true, reward:{done:50,partial:0,none:0}}},
+  {id:'plan', icon:'📋', title:'创建打卡计划', desc:'手动创建计划',
+   why:'💡 开启 30 天返现', jumpType:'createplan', jumpMsg:'前往创建计划',
+   taskType:'one_time', period:null, levelRewards:[],
+   status:'on', sortOrder:2,
+   engine:{judgeType:'event', eventKey:'plan_create',
+     completeRules:[{attr:'status',op:'==',val:'success'}],
+     partialEnabled:false, partialRules:[], refill:false, reward:{done:30,partial:0,none:0}}},
+  {id:'checkin', icon:'✅', title:'完成首次打卡', desc:'坚持第 1 天',
+   why:'💡 返现倒计时启动', jumpType:'checkin', jumpMsg:'前往今日打卡',
+   taskType:'one_time', period:null, levelRewards:[],
+   status:'on', sortOrder:3,
+   engine:{judgeType:'event', eventKey:'checkin_record',
+     completeRules:[{attr:'user_checkin_count',op:'>=',val:'1'}],
+     partialEnabled:false, partialRules:[], refill:false, reward:{done:20,partial:0,none:0}}},
+  {id:'chat', icon:'💬', title:'发起首轮对话', desc:'问问 AI 健康建议',
+   why:'💡 解锁智能导购', jumpType:'home', jumpMsg:'前往发起对话',
+   taskType:'one_time', period:null, levelRewards:[],
+   status:'on', sortOrder:4,
+   engine:{judgeType:'event', eventKey:'dialogue_send',
+     completeRules:[{attr:'is_first_message',op:'==',val:'true'}],
+     partialEnabled:false, partialRules:[], refill:false, reward:{done:15,partial:0,none:0}}},
+  {id:'shop', icon:'🛒', title:'浏览健康好物（每日）', desc:'每日逛好物领虎力值',
+   why:'💡 每天来逛，按等级领虎力值', jumpType:'service', jumpMsg:'前往健康好物',
+   taskType:'recurring',
+   period:{unit:'daily', weekday:'1', monthDay:'1', time:'00:00'},
+   levelRewards:[
+     {lvFrom:'1', lvTo:'3', reward:'5', cap:'50'},
+     {lvFrom:'4', lvTo:'6', reward:'8', cap:'120'},
+     {lvFrom:'7', lvTo:'8', reward:'10', cap:'200'}
+   ],
+   status:'on', sortOrder:5,
+   engine:{judgeType:'event', eventKey:'recommend_view',
+     completeRules:[{attr:'recommend_source',op:'==',val:'service'}],
+     partialEnabled:false, partialRules:[], refill:false, reward:{done:0,partial:0,none:0}}}
+];
+
+let tasks = JSON.parse(JSON.stringify(TASKS_DATA));
+let editingId = null;
+
+// 跳转类型映射表（表格内显示中文）
+const JUMP_TYPE_LABEL = {
+  onboarding:'健康档案初始化', createplan:'创建计划页', checkin:'打卡记录页',
+  home:'首页 AI 会话', service:'服务页（好物）', profile:'健康档案页', custom:'自定义'
+};
+const OP_LABEL = {'==':'等于','!=':'不等于','>=':'≥ 大于等于','<=':'≤ 小于等于','includes':'包含','exists':'非空存在'};
+const TASK_TYPE_LABEL = {one_time:'一次性任务', recurring:'周期重复任务'};
+const PERIOD_LABEL = {daily:'每日', weekly:'每周', monthly:'每月'};
+const WEEKDAY_LABEL = {'1':'周一','2':'周二','3':'周三','4':'周四','5':'周五','6':'周六','7':'周日'};
+
+// ==================== 图标 / 自定义路径 ====================
+function iconCell(val){
+  if(val && val.startsWith('data:')){
+    return `<img src="${val}" style="width:22px;height:22px;border-radius:5px;object-fit:cover;display:block;margin:0 auto;" alt="icon">`;
+  }
+  return val || '—';
+}
+function renderIconPreview(val){
+  const pv = document.getElementById('iconPreview');
+  if(val && val.startsWith('data:')){
+    pv.innerHTML = '<img src="'+val+'" alt="icon">';
+  }else{
+    pv.textContent = val || '📝';
+  }
+}
+function pickIcon(btn, val){
+  document.querySelectorAll('.icon-opt').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  document.getElementById('fIcon').value = val;
+  renderIconPreview(val);
+}
+function uploadIcon(input){
+  const f = input.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const url = e.target.result;
+    document.querySelectorAll('.icon-opt').forEach(b=>b.classList.remove('sel'));
+    document.getElementById('fIcon').value = url;
+    renderIconPreview(url);
+  };
+  reader.readAsDataURL(f);
+}
+function onJumpTypeChange(){
+  const t = document.getElementById('fJumpType').value;
+  const show = (t==='custom');
+  document.getElementById('customPathWrap').style.display = show ? 'flex' : 'none';
+  if(!show) document.getElementById('fCustomPath').value = '';
+}
+
+// ==================== 任务类型 / 周期 / 等级奖励 ====================
+function taskTypeCell(t){
+  if(t.taskType==='recurring'){
+    const u=(t.period&&t.period.unit)||'daily';
+    return `<span class="tt-badge recur">周期重复</span><span class="period-chip">${PERIOD_LABEL[u]||'每日'}</span>`;
+  }
+  return `<span class="tt-badge once">一次性</span>`;
+}
+function rewardCell(t){
+  if(t.taskType==='recurring'){
+    const lrs=t.levelRewards||[];
+    if(!lrs.length) return '<span style="color:#bbb;">—</span>';
+    const min=Math.min(...lrs.map(x=>+x.reward||0));
+    const max=Math.max(...lrs.map(x=>+x.reward||0));
+    const txt = min===max ? `${max}` : `${min}~${max}`;
+    return `<b style="color:#FFA500;">${txt}</b><div style="color:#c9781f;font-size:11px;">按等级(${lrs.length}档)</div>`;
+  }
+  return `<b style="color:#FFA500;">${t.engine&&t.engine.reward?t.engine.reward.done:0}</b>`;
+}
+
+function onTaskTypeChange(){
+  const isRecur = document.getElementById('fTaskType').value==='recurring';
+  document.getElementById('periodSection').classList.toggle('show', isRecur);
+  document.getElementById('rewardGrid').style.display = isRecur ? 'none' : 'grid';
+  document.getElementById('recurRewardNote').style.display = isRecur ? 'block' : 'none';
+  if(isRecur){
+    if(!document.getElementById('lvTbody').children.length){
+      fillLevelRows([{lvFrom:'1',lvTo:'3',reward:'5',cap:'50'}]);
+    }
+    renderResetTime();
+  }
+}
+
+// 重置时间控件（随周期单位切换）
+function renderResetTime(preset){
+  const unit=document.getElementById('fPeriodUnit').value;
+  const wrap=document.getElementById('resetTimeWrap');
+  const p = preset || (window.__resetPreset||{});
+  const time = p.time || '00:00';
+  let html='';
+  if(unit==='weekly'){
+    let opts=Object.keys(WEEKDAY_LABEL).map(k=>`<option value="${k}" ${String(p.weekday)===k?'selected':''}>${WEEKDAY_LABEL[k]}</option>`).join('');
+    html=`每<select class="fi" id="fResetWeekday">${opts}</select><input type="time" class="fi" id="fResetTime" value="${time}">`;
+  }else if(unit==='monthly'){
+    let opts='';
+    for(let d=1;d<=28;d++){opts+=`<option value="${d}" ${String(p.monthDay)===String(d)?'selected':''}>${d}日</option>`;}
+    html=`每月<select class="fi" id="fResetMonthDay">${opts}</select><input type="time" class="fi" id="fResetTime" value="${time}">`;
+  }else{
+    html=`每日<input type="time" class="fi" id="fResetTime" value="${time}">`;
+  }
+  wrap.innerHTML=html;
+  window.__resetPreset=null;
+}
+
+// 等级奖励行
+function levelRowHTML(r){
+  r=r||{lvFrom:'',lvTo:'',reward:'',cap:''};
+  return `<tr>
+    <td><div style="display:flex;align-items:center;gap:4px;">Lv<input class="fi lv-num lvFrom" type="number" min="1" max="8" style="width:52px;" value="${r.lvFrom||''}"> - Lv<input class="fi lv-num lvTo" type="number" min="1" max="8" style="width:52px;" value="${r.lvTo||''}"></div></td>
+    <td><input class="fi lvReward" type="number" min="0" placeholder="如 5" value="${r.reward||''}"></td>
+    <td><input class="fi lvCap" type="number" min="0" placeholder="如 50" value="${r.cap||''}"></td>
+    <td style="text-align:center;"><button type="button" class="lv-del" onclick="removeLevelRow(this)">✕</button></td>
+  </tr>`;
+}
+function addLevelRow(r){
+  document.getElementById('lvTbody').insertAdjacentHTML('beforeend', levelRowHTML(r));
+}
+function removeLevelRow(btn){
+  const rows=document.querySelectorAll('#lvTbody tr');
+  if(rows.length<=1){ showToast('至少保留一个等级区间'); return; }
+  btn.closest('tr').remove();
+}
+function fillLevelRows(list){
+  const tb=document.getElementById('lvTbody'); tb.innerHTML='';
+  (list||[]).forEach(r=>addLevelRow(r));
+  if(!tb.children.length) addLevelRow();
+}
+function readLevelRows(){
+  return [...document.querySelectorAll('#lvTbody tr')].map(tr=>({
+    lvFrom:tr.querySelector('.lvFrom').value.trim(),
+    lvTo:tr.querySelector('.lvTo').value.trim(),
+    reward:tr.querySelector('.lvReward').value.trim(),
+    cap:tr.querySelector('.lvCap').value.trim()
+  })).filter(r=>r.lvFrom&&r.lvTo&&r.reward!=='');
+}
+function readPeriod(){
+  const unit=document.getElementById('fPeriodUnit').value;
+  const time=(document.getElementById('fResetTime')||{}).value||'00:00';
+  const p={unit,time,weekday:'1',monthDay:'1'};
+  if(unit==='weekly') p.weekday=(document.getElementById('fResetWeekday')||{}).value||'1';
+  if(unit==='monthly') p.monthDay=(document.getElementById('fResetMonthDay')||{}).value||'1';
+  return p;
+}
+
+// ==================== 渲染表格 ====================
+function renderTable(data){
+  const tbody = document.getElementById('taskTbody');
+  if(!data || !data.length){
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:40px;color:#bbb;">暂无数据</td></tr>';
+    return;
+  }
+  let html = '';
+  data.forEach((t,i)=>{
+    const eng = t.engine||{};
+    html += `<tr>
+      <td>${i+1}</td>
+      <td><code style="background:#f5f0ff;color:#5b4cbd;padding:1px 6px;border-radius:3px;font-size:12px;">${t.id}</code></td>
+      <td class="td-icon">${iconCell(t.icon)}</td>
+      <td><b>${t.title}</b><div style="color:#999;font-size:12px;font-weight:400;">${t.desc||''}</div></td>
+      <td>${taskTypeCell(t)}</td>
+      <td><span class="ev-badge">${eng.eventKey||'-'}</span></td>
+      <td>${rewardCell(t)}</td>
+      <td class="td-status"><span class="${t.status==='on'?'status-on':'status-off'}">${t.status==='on'?'启用':'停用'}</span></td>
+      <td>${t.sortOrder||'-'}</td>
+      <td class="td-actions">
+        <button class="btn btn-sm" style="color:#5b4cbd;" onclick="openEditModal('${t.id}')">编辑</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteTask('${t.id}')">删除</button>
+      </td>
+    </tr>`;
+  });
+  tbody.innerHTML = html;
+  document.getElementById('totalCount').textContent = data.length;
+}
+
+// ==================== 搜索 ====================
+function doSearch(){
+  const key = document.getElementById('searchKey').value.trim().toLowerCase();
+  const st = document.getElementById('searchStatus').value;
+  let filtered = TASKS_DATA.filter(t => {
+    const ek = (t.engine&&t.engine.eventKey||'').toLowerCase();
+    const matchKey = !key || t.id.includes(key)||t.title.includes(key)||t.desc.includes(key)||ek.includes(key);
+    const matchSt = !st || t.status === st;
+    return matchKey && matchSt;
+  });
+  renderTable(filtered);
+}
+function resetSearch(){
+  document.getElementById('searchKey').value='';
+  document.getElementById('searchStatus').value='';
+  renderTable(TASKS_DATA);
+}
+
+// ==================== 条件行动态增删 ====================
+function condRowHTML(attr, op, val){
+  const ops = ['==','!=','>=','<=','includes','exists'];
+  let opts = ops.map(o=>`<option value="${o}" ${o===op?'selected':''}>${OP_LABEL[o]}</option>`).join('');
+  return `<div class="cond-row">
+    <input class="fi cond-attr" placeholder="属性名，如 status" value="${attr||''}" />
+    <select class="fi cond-op">${opts}</select>
+    <input class="fi cond-val" placeholder="值，如 completed / [gender]" value="${val||''}" />
+    <button type="button" class="cond-del" onclick="removeCondRow(this)">✕</button>
+  </div>`;
+}
+function addCondRow(containerId, attr='', op='==', val=''){
+  document.getElementById(containerId).insertAdjacentHTML('beforeend', condRowHTML(attr, op, val));
+}
+function removeCondRow(btn){
+  const rows = btn.closest('.cond-rows').querySelectorAll('.cond-row');
+  if(rows.length<=1){ showToast('至少保留一条条件'); return; }
+  btn.closest('.cond-row').remove();
+}
+function togglePartial(chk){
+  const show = chk.checked;
+  document.getElementById('partialRows').style.display = show ? 'flex' : 'none';
+  document.getElementById('partialAddBtn').style.display = show ? 'inline-block' : 'none';
+  if(show && document.getElementById('partialRows').querySelectorAll('.cond-row').length===0){
+    addCondRow('partialRows');
+  }
+}
+function readCondRows(containerId){
+  const rows=[...document.querySelectorAll('#'+containerId+' .cond-row')];
+  return rows.map(r=>({
+    attr:r.querySelector('.cond-attr').value.trim(),
+    op:r.querySelector('.cond-op').value,
+    val:r.querySelector('.cond-val').value.trim()
+  })).filter(r=>r.attr);
+}
+function clearEngine(){
+  document.getElementById('fEventKey').value='';
+  document.getElementById('fPartialEnabled').checked=false;
+  document.getElementById('fRefill').checked=false;
+  document.getElementById('fRewardDone').value='';
+  document.getElementById('fRewardPartial').value=0;
+  document.getElementById('fRewardNone').value=0;
+  const cr=document.getElementById('completeRows'); cr.innerHTML=condRowHTML();
+  const pr=document.getElementById('partialRows'); pr.innerHTML='';
+  togglePartial(document.getElementById('fPartialEnabled'));
+}
+function fillEngine(eng){
+  if(!eng) eng={judgeType:'event',eventKey:'',completeRules:[],partialEnabled:false,partialRules:[],refill:false,reward:{done:0,partial:0,none:0}};
+  document.getElementById('fEventKey').value=eng.eventKey||'';
+  document.getElementById('fPartialEnabled').checked=!!eng.partialEnabled;
+  document.getElementById('fRefill').checked=!!eng.refill;
+  document.getElementById('fRewardDone').value=eng.reward?(eng.reward.done||0):0;
+  document.getElementById('fRewardPartial').value=eng.reward?(eng.reward.partial||0):0;
+  document.getElementById('fRewardNone').value=eng.reward?(eng.reward.none||0):0;
+  const cr=document.getElementById('completeRows'); cr.innerHTML='';
+  (eng.completeRules||[]).forEach(r=>addCondRow('completeRows',r.attr,r.op,r.val));
+  if(!(eng.completeRules||[]).length) addCondRow('completeRows');
+  const pr=document.getElementById('partialRows'); pr.innerHTML='';
+  (eng.partialRules||[]).forEach(r=>addCondRow('partialRows',r.attr,r.op,r.val));
+  togglePartial(document.getElementById('fPartialEnabled'));
+}
+
+// ==================== 弹窗操作 ====================
+function openAddModal(){
+  editingId=null;
+  document.getElementById('modalTitle').textContent='新增任务';
+  clearForm();
+  clearEngine();
+  openModal();
+}
+function openEditModal(id){
+  editingId=id;
+  const t = TASKS_DATA.find(x=>x.id===id);
+  if(!t)return;
+  document.getElementById('modalTitle').textContent='编辑任务';
+  fillForm(t);
+  fillEngine(t.engine);
+  openModal();
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); }
+function openModal(){ document.getElementById('modalOverlay').classList.add('show'); }
+
+function clearForm(){
+  ['fTaskId','fTitle','fDesc','fWhy','fJumpMsg','fSortOrder','fCustomPath'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+  document.getElementById('fIcon').value='';
+  document.getElementById('fJumpType').value='';
+  document.getElementById('fStatus').value='on';
+  document.querySelectorAll('.icon-opt').forEach(b=>b.classList.remove('sel'));
+  const first=document.querySelector('.icon-opt'); if(first) first.classList.add('sel');
+  renderIconPreview('📝');
+  onJumpTypeChange();
+  // 任务类型 / 周期 / 等级奖励
+  document.getElementById('fTaskType').value='one_time';
+  document.getElementById('fPeriodUnit').value='daily';
+  window.__resetPreset={unit:'daily',time:'00:00'};
+  fillLevelRows([{lvFrom:'1',lvTo:'3',reward:'5',cap:'50'}]);
+  onTaskTypeChange();
+}
+function fillForm(t){
+  document.getElementById('fTaskId').value=t.id;
+  document.getElementById('fIcon').value=t.icon||'';
+  // 图标高亮 / 预览
+  document.querySelectorAll('.icon-opt').forEach(b=>b.classList.remove('sel'));
+  const match=[...document.querySelectorAll('.icon-opt')].find(b=>b.textContent.trim()===t.icon);
+  if(match) match.classList.add('sel');
+  renderIconPreview(t.icon);
+  document.getElementById('fTitle').value=t.title;
+  document.getElementById('fDesc').value=t.desc;
+  document.getElementById('fWhy').value=t.why;
+  document.getElementById('fJumpType').value=t.jumpType;
+  document.getElementById('fJumpMsg').value=t.jumpMsg;
+  document.getElementById('fCustomPath').value=t.customPath||'';
+  document.getElementById('fStatus').value=t.status;
+  document.getElementById('fSortOrder').value=t.sortOrder||'';
+  onJumpTypeChange();
+  // 任务类型 / 周期 / 等级奖励
+  document.getElementById('fTaskType').value=t.taskType||'one_time';
+  const per=t.period||{unit:'daily',time:'00:00'};
+  document.getElementById('fPeriodUnit').value=per.unit||'daily';
+  window.__resetPreset=per;
+  fillLevelRows((t.levelRewards&&t.levelRewards.length)?t.levelRewards:[{lvFrom:'1',lvTo:'3',reward:'5',cap:'50'}]);
+  onTaskTypeChange();
+}
+
+// ==================== 保存 / 删除 ====================
+function saveTask(){
+  const id=document.getElementById('fTaskId').value.trim();
+  const icon=document.getElementById('fIcon').value.trim();
+  const title=document.getElementById('fTitle').value.trim();
+  const desc=document.getElementById('fDesc').value.trim();
+  const why=document.getElementById('fWhy').value.trim();
+  const jumpType=document.getElementById('fJumpType').value;
+  const jumpMsg=document.getElementById('fJumpMsg').value.trim();
+  const customPath=(jumpType==='custom')?document.getElementById('fCustomPath').value.trim():'';
+  const eventKey=document.getElementById('fEventKey').value.trim();
+  const status=document.getElementById('fStatus').value;
+  const sortOrder=parseInt(document.getElementById('fSortOrder').value,10)||null;
+  const taskType=document.getElementById('fTaskType').value;
+  const isRecur=(taskType==='recurring');
+  const period=isRecur?readPeriod():null;
+  const levelRewards=isRecur?readLevelRows():[];
+
+  // 引擎：条件读取
+  const completeRules=readCondRows('completeRows');
+  const partialEnabled=document.getElementById('fPartialEnabled').checked;
+  const partialRules=partialEnabled?readCondRows('partialRows'):[];
+  const refill=document.getElementById('fRefill').checked;
+  const reward={
+    done:parseInt(document.getElementById('fRewardDone').value,10)||0,
+    partial:parseInt(document.getElementById('fRewardPartial').value,10)||0,
+    none:parseInt(document.getElementById('fRewardNone').value,10)||0
+  };
+
+  // 必填校验
+  if(!id||!icon||!title||!desc||!why||!jumpType||!jumpMsg||!eventKey){ showToast('⚠️ 请填写所有必填项（含事件 Key）');return; }
+  if(jumpType==='custom' && !customPath){ showToast('⚠️ 自定义路径为必填');return; }
+  if(!completeRules.length){ showToast('⚠️ 请至少配置一条「已完成」条件');return; }
+  if(partialEnabled && !partialRules.length){ showToast('⚠️ 已开启部分完成，请配置其条件');return; }
+  if(isRecur && !levelRewards.length){ showToast('⚠️ 周期重复任务请至少配置一个「虎力值等级奖励」区间');return; }
+  // ID 重复校验（排除自身）
+  if(editingId!==id && TASKS_DATA.some(t=>t.id===id)){ showToast('⚠️ 该任务 ID 已存在');return; }
+
+  const engine={judgeType:'event',eventKey,completeRules,partialEnabled,partialRules,refill,reward};
+  const row={id,icon,title,desc,why,jumpType,jumpMsg,customPath,taskType,period,levelRewards,status,sortOrder,engine};
+  if(editingId){
+    const idx=TASKS_DATA.findIndex(t=>t.id===editingId);
+    if(idx>-1)TASKS_DATA[idx]=row;
+    showToast('✅ 已保存');
+  }else{
+    TASKS_DATA.push(row);
+    showToast('✅ 已新增');
+  }
+  closeModal();
+  doSearch();
+}
+
+function deleteTask(id){
+  if(confirm('确认删除任务「'+id+'」？此操作不可撤销。')){
+    const idx=TASKS_DATA.findIndex(t=>t.id===id);
+    if(idx>-1){ TASKS_DATA.splice(idx,1); doSearch(); showToast('🗑️ 已删除'); }
+  }
+}
+
+// ==================== 分页（模拟） ====================
+function changePageSize(v){showToast(`切换为 ${v} 条/页（原型）`);}
+function goJump(){
+  const p=parseInt(document.getElementById('jumpPage').value,10);
+  if(p&&p>=1)showToast(`跳转到第 ${p} 页（原型）`);
+}
+
+// ==================== Toast ====================
+let toastTimer;
+function showToast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+// ==================== 初始化 ====================
+renderTable(TASKS_DATA);
+</script>
+</body>
+</html>
