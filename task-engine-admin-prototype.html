@@ -221,7 +221,7 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
 
 <div class="page-header">
   <div class="ph-title">任务引擎配置</div>
-  <div class="ph-sub">统一管理任务的完成判定条件 · 基于埋点事件实时驱动三态（未完成 / 部分完成 / 已完成）</div>
+  <div class="ph-sub">统一管理任务的完成判定条件 · 基于埋点事件实时驱动三态（未完成 / 部分完成 / 已完成）；仅「部分完成」「已完成」可配置虎力值，「未完成」固定为 0</div>
 </div>
 
 <!-- 搜索栏 -->
@@ -246,7 +246,6 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
 <tr>
   <th style="width:46px;">序号</th>
   <th style="width:80px;">任务 ID</th>
-  <th style="width:50px;">图标</th>
   <th style="min-width:110px;">任务标题</th>
   <th style="min-width:120px;">任务描述</th>
   <th style="width:120px;">判定事件</th>
@@ -292,36 +291,6 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
         <div class="form-section-title">基础信息</div>
         <div class="form-row">
           <div class="form-col">
-            <label class="form-label">任务 ID<span class="req">*</span></label>
-            <input class="fi" id="fTaskId" placeholder="唯一标识，如 profile、plan、checkin" required />
-            <div class="form-hint">英文标识，不可重复，用于前端 data-task 匹配</div>
-          </div>
-          <div class="form-col">
-            <label class="form-label">图标<span class="req">*</span></label>
-            <input type="hidden" id="fIcon" value="" />
-            <div class="icon-field">
-              <div class="icon-preview" id="iconPreview">📝</div>
-              <div class="icon-picker">
-                <button type="button" class="icon-opt sel" onclick="pickIcon(this,'📝')">📝</button>
-                <button type="button" class="icon-opt" onclick="pickIcon(this,'📋')">📋</button>
-                <button type="button" class="icon-opt" onclick="pickIcon(this,'✅')">✅</button>
-                <button type="button" class="icon-opt" onclick="pickIcon(this,'💬')">💬</button>
-                <button type="button" class="icon-opt" onclick="pickIcon(this,'🛒')">🛒</button>
-                <button type="button" class="icon-opt" onclick="pickIcon(this,'🏃')">🏃</button>
-                <button type="button" class="icon-opt" onclick="pickIcon(this,'🥗')">🥗</button>
-                <button type="button" class="icon-opt" onclick="pickIcon(this,'💊')">💊</button>
-                <button type="button" class="icon-opt" onclick="pickIcon(this,'📊')">📊</button>
-                <button type="button" class="icon-opt" onclick="pickIcon(this,'🎯')">🎯</button>
-                <button type="button" class="icon-opt" onclick="pickIcon(this,'⭐')">⭐</button>
-                <button type="button" class="icon-opt" onclick="pickIcon(this,'🔔')">🔔</button>
-                <label class="icon-upload">🔼 上传图<input type="file" accept="image/*" onchange="uploadIcon(this)"></label>
-              </div>
-            </div>
-            <div class="form-hint">点击选择常用图标，或上传小尺寸图标（建议 48×48 以内）</div>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-col">
             <label class="form-label">任务标题<span class="req">*</span></label>
             <input class="fi" id="fTitle" placeholder="如：完善健康档案" required />
           </div>
@@ -339,17 +308,9 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
         </div>
         <div class="form-row">
           <div class="form-col">
-            <label class="form-label">跳转页面类型<span class="req">*</span></label>
-            <select class="fi" id="fJumpType" required onchange="onJumpTypeChange()">
-              <option value="">请选择</option>
-              <option value="onboarding">onboarding — 健康档案初始化引导</option>
-              <option value="createplan">createplan — 创建计划页</option>
-              <option value="checkin">checkin — 打卡记录页</option>
-              <option value="home">home — 首页 AI 会话</option>
-              <option value="service">service — 服务页（健康好物）</option>
-              <option value="profile">profile — 健康档案页</option>
-              <option value="custom">custom — 自定义路径</option>
-            </select>
+            <label class="form-label">跳转路径 / 页面标识<span class="req">*</span></label>
+            <input class="fi" id="fJumpPath" placeholder="自定义填写，如 /pages/health-task 或 health_task_page" required />
+            <div class="form-hint">客户端跳转目标，自由填写页面路径或标识，无选项约束</div>
           </div>
           <div class="form-col">
             <label class="form-label">跳转提示语<span class="req">*</span></label>
@@ -358,14 +319,6 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
           </div>
         </div>
 
-        <!-- 自定义路径（仅跳转类型=自定义路径时显示） -->
-        <div class="form-row custom-path-wrap" id="customPathWrap">
-          <div class="form-col" style="flex:2;">
-            <label class="form-label">自定义路径<span class="req">*</span></label>
-            <input class="fi" id="fCustomPath" placeholder="如：/pages/activity/summer 或 https://m.taixiaohu.com/act" />
-            <div class="form-hint">选择「自定义路径」时必填；客户端跳转时优先使用此路径 / URL</div>
-          </div>
-        </div>
 
         <!-- ============ 任务引擎配置区 ============ -->
         <div class="engine-section">
@@ -431,11 +384,6 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
                 <label class="form-label">虎力值</label>
                 <input class="fi" id="fRewardPartial" type="number" min="0" placeholder="如：0" value="0" />
               </div>
-              <div class="rg-item">
-                <span class="rg-badge none">未完成</span>
-                <label class="form-label">虎力值</label>
-                <input class="fi" id="fRewardNone" type="number" min="0" placeholder="如：0" value="0" />
-              </div>
             </div>
           </div>
         </div>
@@ -469,42 +417,48 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
 <script>
 // ==================== 数据源 ====================
 const TASKS_DATA = [
-  {id:'profile', icon:'📝', title:'完善健康档案', desc:'填写体型数据',
-   why:'💡 档案越完整，推荐越准', jumpType:'onboarding', jumpMsg:'前往填写体型数据',
+  {id:'profile', title:'完善健康档案', desc:'填写体型数据',
+   why:'💡 档案越完整，推荐越准', jumpPath:'onboarding', jumpMsg:'前往填写体型数据',
    status:'on', sortOrder:1,
    engine:{judgeType:'event', eventKey:'profile_submit',
      completeRules:[{attr:'status',op:'==',val:'completed'}],
      partialEnabled:true,
      partialRules:[{attr:'status',op:'==',val:'skipped'},{attr:'filled',op:'exists',val:''}],
-     refill:true, reward:{done:50,partial:0,none:0}}},
-  {id:'plan', icon:'📋', title:'创建打卡计划', desc:'手动创建计划',
-   why:'💡 开启 30 天返现', jumpType:'createplan', jumpMsg:'前往创建计划',
+     refill:true, reward:{done:50,partial:0}}},
+  {id:'plan', title:'创建打卡计划', desc:'手动创建计划',
+   why:'💡 开启 30 天返现', jumpPath:'createplan', jumpMsg:'前往创建计划',
    status:'on', sortOrder:2,
    engine:{judgeType:'event', eventKey:'plan_create',
      completeRules:[{attr:'status',op:'==',val:'success'}],
-     partialEnabled:false, partialRules:[], refill:false, reward:{done:30,partial:0,none:0}}},
-  {id:'checkin', icon:'✅', title:'完成首次打卡', desc:'坚持第 1 天',
-   why:'💡 返现倒计时启动', jumpType:'checkin', jumpMsg:'前往今日打卡',
+     partialEnabled:false, partialRules:[], refill:false, reward:{done:30,partial:0}}},
+  {id:'checkin', title:'完成首次打卡', desc:'坚持第 1 天',
+   why:'💡 返现倒计时启动', jumpPath:'checkin', jumpMsg:'前往今日打卡',
    status:'on', sortOrder:3,
    engine:{judgeType:'event', eventKey:'checkin_record',
      completeRules:[{attr:'count',op:'>=',val:'1'}],
-     partialEnabled:false, partialRules:[], refill:false, reward:{done:20,partial:0,none:0}}},
-  {id:'chat', icon:'💬', title:'发起首轮对话', desc:'问问 AI 健康建议',
-   why:'💡 解锁智能导购', jumpType:'home', jumpMsg:'前往发起对话',
+     partialEnabled:false, partialRules:[], refill:false, reward:{done:20,partial:0}}},
+  {id:'chat', title:'发起首轮对话', desc:'问问 AI 健康建议',
+   why:'💡 解锁智能导购', jumpPath:'home', jumpMsg:'前往发起对话',
    status:'on', sortOrder:4,
    engine:{judgeType:'event', eventKey:'dialogue_send',
      completeRules:[{attr:'count',op:'>=',val:'1'}],
-     partialEnabled:false, partialRules:[], refill:false, reward:{done:15,partial:0,none:0}}},
-  {id:'shop', icon:'🛒', title:'浏览健康好物', desc:'逛逛推荐商品',
-   why:'💡 攒券后直接抵扣', jumpType:'service', jumpMsg:'前往健康好物',
+     partialEnabled:false, partialRules:[], refill:false, reward:{done:15,partial:0}}},
+  {id:'shop', title:'浏览健康好物', desc:'逛逛推荐商品',
+   why:'💡 攒券后直接抵扣', jumpPath:'service', jumpMsg:'前往健康好物',
    status:'on', sortOrder:5,
    engine:{judgeType:'event', eventKey:'recommend_view',
      completeRules:[{attr:'page',op:'==',val:'shop'}],
-     partialEnabled:false, partialRules:[], refill:false, reward:{done:10,partial:0,none:0}}}
+     partialEnabled:false, partialRules:[], refill:false, reward:{done:10,partial:0}}}
 ];
 
 let tasks = JSON.parse(JSON.stringify(TASKS_DATA));
 let editingId = null;
+
+// 任务 ID 自动生成（后台无需填写）
+function genTaskId(title){
+  const base = (title||'').trim().toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  return (base || 'task') + '_' + Date.now().toString(36).slice(-4);
+}
 
 // 跳转类型映射表（表格内显示中文）
 const JUMP_TYPE_LABEL = {
@@ -513,51 +467,12 @@ const JUMP_TYPE_LABEL = {
 };
 const OP_LABEL = {'==':'等于','!=':'不等于','>=':'≥ 大于等于','<=':'≤ 小于等于','includes':'包含','exists':'非空存在'};
 
-// ==================== 图标 / 自定义路径 ====================
-function iconCell(val){
-  if(val && val.startsWith('data:')){
-    return `<img src="${val}" style="width:22px;height:22px;border-radius:5px;object-fit:cover;display:block;margin:0 auto;" alt="icon">`;
-  }
-  return val || '—';
-}
-function renderIconPreview(val){
-  const pv = document.getElementById('iconPreview');
-  if(val && val.startsWith('data:')){
-    pv.innerHTML = '<img src="'+val+'" alt="icon">';
-  }else{
-    pv.textContent = val || '📝';
-  }
-}
-function pickIcon(btn, val){
-  document.querySelectorAll('.icon-opt').forEach(b=>b.classList.remove('sel'));
-  btn.classList.add('sel');
-  document.getElementById('fIcon').value = val;
-  renderIconPreview(val);
-}
-function uploadIcon(input){
-  const f = input.files[0];
-  if(!f) return;
-  const reader = new FileReader();
-  reader.onload = e=>{
-    const url = e.target.result;
-    document.querySelectorAll('.icon-opt').forEach(b=>b.classList.remove('sel'));
-    document.getElementById('fIcon').value = url;
-    renderIconPreview(url);
-  };
-  reader.readAsDataURL(f);
-}
-function onJumpTypeChange(){
-  const t = document.getElementById('fJumpType').value;
-  const show = (t==='custom');
-  document.getElementById('customPathWrap').style.display = show ? 'flex' : 'none';
-  if(!show) document.getElementById('fCustomPath').value = '';
-}
-
+// （图标配置与自定义路径选择已移除：任务图标不再配置，跳转改为自由填写）
 // ==================== 渲染表格 ====================
 function renderTable(data){
   const tbody = document.getElementById('taskTbody');
   if(!data || !data.length){
-    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:40px;color:#bbb;">暂无数据</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:#bbb;">暂无数据</td></tr>';
     return;
   }
   let html = '';
@@ -566,7 +481,6 @@ function renderTable(data){
     html += `<tr>
       <td>${i+1}</td>
       <td><code style="background:#f5f0ff;color:#5b4cbd;padding:1px 6px;border-radius:3px;font-size:12px;">${t.id}</code></td>
-      <td class="td-icon">${iconCell(t.icon)}</td>
       <td><b>${t.title}</b></td>
       <td style="color:#777;">${t.desc}</td>
       <td><span class="ev-badge">${eng.eventKey||'-'}</span></td>
@@ -642,19 +556,17 @@ function clearEngine(){
   document.getElementById('fRefill').checked=false;
   document.getElementById('fRewardDone').value='';
   document.getElementById('fRewardPartial').value=0;
-  document.getElementById('fRewardNone').value=0;
   const cr=document.getElementById('completeRows'); cr.innerHTML=condRowHTML();
   const pr=document.getElementById('partialRows'); pr.innerHTML='';
   togglePartial(document.getElementById('fPartialEnabled'));
 }
 function fillEngine(eng){
-  if(!eng) eng={judgeType:'event',eventKey:'',completeRules:[],partialEnabled:false,partialRules:[],refill:false,reward:{done:0,partial:0,none:0}};
+  if(!eng) eng={judgeType:'event',eventKey:'',completeRules:[],partialEnabled:false,partialRules:[],refill:false,reward:{done:0,partial:0}};
   document.getElementById('fEventKey').value=eng.eventKey||'';
   document.getElementById('fPartialEnabled').checked=!!eng.partialEnabled;
   document.getElementById('fRefill').checked=!!eng.refill;
   document.getElementById('fRewardDone').value=eng.reward?(eng.reward.done||0):0;
   document.getElementById('fRewardPartial').value=eng.reward?(eng.reward.partial||0):0;
-  document.getElementById('fRewardNone').value=eng.reward?(eng.reward.none||0):0;
   const cr=document.getElementById('completeRows'); cr.innerHTML='';
   (eng.completeRules||[]).forEach(r=>addCondRow('completeRows',r.attr,r.op,r.val));
   if(!(eng.completeRules||[]).length) addCondRow('completeRows');
@@ -684,46 +596,30 @@ function closeModal(){ document.getElementById('modalOverlay').classList.remove(
 function openModal(){ document.getElementById('modalOverlay').classList.add('show'); }
 
 function clearForm(){
-  ['fTaskId','fTitle','fDesc','fWhy','fJumpMsg','fSortOrder','fCustomPath'].forEach(id=>{
+  ['fTitle','fDesc','fWhy','fJumpMsg','fJumpPath','fSortOrder'].forEach(id=>{
     document.getElementById(id).value='';
   });
-  document.getElementById('fIcon').value='';
-  document.getElementById('fJumpType').value='';
   document.getElementById('fStatus').value='on';
-  document.querySelectorAll('.icon-opt').forEach(b=>b.classList.remove('sel'));
-  const first=document.querySelector('.icon-opt'); if(first) first.classList.add('sel');
-  renderIconPreview('📝');
-  onJumpTypeChange();
 }
 function fillForm(t){
-  document.getElementById('fTaskId').value=t.id;
-  document.getElementById('fIcon').value=t.icon||'';
-  // 图标高亮 / 预览
-  document.querySelectorAll('.icon-opt').forEach(b=>b.classList.remove('sel'));
-  const match=[...document.querySelectorAll('.icon-opt')].find(b=>b.textContent.trim()===t.icon);
-  if(match) match.classList.add('sel');
-  renderIconPreview(t.icon);
   document.getElementById('fTitle').value=t.title;
   document.getElementById('fDesc').value=t.desc;
   document.getElementById('fWhy').value=t.why;
-  document.getElementById('fJumpType').value=t.jumpType;
+  document.getElementById('fJumpPath').value=t.jumpPath||'';
   document.getElementById('fJumpMsg').value=t.jumpMsg;
-  document.getElementById('fCustomPath').value=t.customPath||'';
   document.getElementById('fStatus').value=t.status;
   document.getElementById('fSortOrder').value=t.sortOrder||'';
-  onJumpTypeChange();
 }
 
 // ==================== 保存 / 删除 ====================
 function saveTask(){
-  const id=document.getElementById('fTaskId').value.trim();
-  const icon=document.getElementById('fIcon').value.trim();
   const title=document.getElementById('fTitle').value.trim();
+  // 任务 ID 自动生成（无需填写）
+  const id = editingId ? editingId : genTaskId(title);
   const desc=document.getElementById('fDesc').value.trim();
   const why=document.getElementById('fWhy').value.trim();
-  const jumpType=document.getElementById('fJumpType').value;
+  const jumpPath=document.getElementById('fJumpPath').value.trim();
   const jumpMsg=document.getElementById('fJumpMsg').value.trim();
-  const customPath=(jumpType==='custom')?document.getElementById('fCustomPath').value.trim():'';
   const eventKey=document.getElementById('fEventKey').value.trim();
   const status=document.getElementById('fStatus').value;
   const sortOrder=parseInt(document.getElementById('fSortOrder').value,10)||null;
@@ -735,20 +631,18 @@ function saveTask(){
   const refill=document.getElementById('fRefill').checked;
   const reward={
     done:parseInt(document.getElementById('fRewardDone').value,10)||0,
-    partial:parseInt(document.getElementById('fRewardPartial').value,10)||0,
-    none:parseInt(document.getElementById('fRewardNone').value,10)||0
+    partial:parseInt(document.getElementById('fRewardPartial').value,10)||0
   };
 
   // 必填校验
-  if(!id||!icon||!title||!desc||!why||!jumpType||!jumpMsg||!eventKey){ showToast('⚠️ 请填写所有必填项（含事件 Key）');return; }
-  if(jumpType==='custom' && !customPath){ showToast('⚠️ 自定义路径为必填');return; }
+  if(!title||!desc||!why||!jumpPath||!jumpMsg||!eventKey){ showToast('⚠️ 请填写所有必填项（含事件 Key）');return; }
   if(!completeRules.length){ showToast('⚠️ 请至少配置一条「已完成」条件');return; }
   if(partialEnabled && !partialRules.length){ showToast('⚠️ 已开启部分完成，请配置其条件');return; }
   // ID 重复校验（排除自身）
   if(editingId!==id && TASKS_DATA.some(t=>t.id===id)){ showToast('⚠️ 该任务 ID 已存在');return; }
 
   const engine={judgeType:'event',eventKey,completeRules,partialEnabled,partialRules,refill,reward};
-  const row={id,icon,title,desc,why,jumpType,jumpMsg,customPath,status,sortOrder,engine};
+  const row={id,title,desc,why,jumpPath,jumpMsg,status,sortOrder,engine};
   if(editingId){
     const idx=TASKS_DATA.findIndex(t=>t.id===editingId);
     if(idx>-1)TASKS_DATA[idx]=row;
