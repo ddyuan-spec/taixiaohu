@@ -622,6 +622,22 @@
     box-shadow:0 1px 4px rgba(0,0,0,.2);transition:left .5s;}
   .ladder-labels{display:flex;justify-content:space-between;margin-top:8px;
     font-size:11px;color:var(--t3);}
+
+  /* 健康任务二级页 */
+  .task-power{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#FFE9C7,#FFD28A);margin:12px;border-radius:14px;padding:16px;}
+  .task-power .tp-left{display:flex;align-items:center;gap:10px;}
+  .task-power .tp-icon{font-size:34px;}
+  .task-power .tp-num{font-size:24px;font-weight:800;color:#7A4B12;}
+  .task-power .tp-label{font-size:12px;color:#9A6B2F;}
+  .task-power .tp-right{flex:1;margin-left:14px;}
+  .task-power .tp-bar{height:8px;background:#fff6e0;border-radius:6px;overflow:hidden;}
+  .task-power .tp-bar i{display:block;height:100%;background:#FF9F1C;}
+  .task-power .tp-tip{font-size:11px;color:#9A6B2F;margin-top:6px;}
+  .task-list{padding:0 12px;}
+  .task-plan{margin:12px;background:var(--card);border-radius:14px;padding:14px;}
+  .task-plan .tp-h{font-weight:700;font-size:15px;margin-bottom:6px;}
+  .task-plan .ptag{font-size:11px;background:#E8F8EE;color:#1a9e5a;padding:1px 8px;border-radius:10px;margin-left:6px;}
+  .task-plan .tp-info{font-size:13px;color:var(--t3);margin-bottom:10px;}
 </style>
 </head>
 <body>
@@ -652,9 +668,8 @@
       </div>
     </div>
 
-    <!-- 今日待办条 -->
-    <div class="todo" onclick="goTask('今日待办')">
-      <div class="ic">🎯</div>
+    <!-- 今日待办条（健康任务入口） -->
+    <div class="todo" onclick="openTaskPage()">
       <div class="body">
         <div class="l1">减肥打卡 第 12 / 30 天</div>
         <div class="l2">坚持满 30 天全额返还 ¥199，再领 300 元券 💰</div>
@@ -668,20 +683,6 @@
       <div class="qcard"><div class="qic">💼</div><div class="qt">职场亚健康调理</div><div class="qd">久坐·肩颈·疲劳</div></div>
       <div class="qcard"><div class="qic">🌸</div><div class="qt">女性内服养护</div><div class="qd">气色·内分泌</div></div>
       <div class="qcard"><div class="qic">🌿</div><div class="qt">肠道与代谢管理</div><div class="qd">益生·轻体</div></div>
-    </div>
-
-    <!-- 功能图标行：任务置顶 + 横滑 -->
-    <div class="fnrow">
-      <div class="fn task" onclick="goTask('任务图标')">
-        <div class="fic">📋<span class="badge">2</span></div><div class="fl">任务</div>
-      </div>
-      <div class="fn"><div class="fic">🔍</div><div class="fl">看皮肤</div></div>
-      <div class="fn"><div class="fic">👤</div><div class="fl">看面相</div></div>
-      <div class="fn"><div class="fic">🧬</div><div class="fl">体质检测</div></div>
-      <div class="fn"><div class="fic">💬</div><div class="fl">健康问答</div></div>
-      <div class="fn"><div class="fic">🍎</div><div class="fl">饮食记录</div></div>
-      <div class="fn"><div class="fic">🏃</div><div class="fl">运动</div></div>
-      <div class="fn"><div class="fic">😴</div><div class="fl">睡眠</div></div>
     </div>
 
     <div style="height:76px"></div><!-- input bar spacer -->
@@ -717,113 +718,10 @@
 
     <!-- Tab 行 -->
     <div class="ptabs" id="ptabs">
-      <div class="ptab on" data-t="task" onclick="switchPTab('task')">健康任务<span class="dot"></span></div>
-      <div class="ptab" data-t="body" onclick="switchPTab('body')">体型数据</div>
+      <div class="ptab on" data-t="body" onclick="switchPTab('body')">体型数据</div>
       <div class="ptab" data-t="sign" onclick="switchPTab('sign')">身体体征</div>
       <div class="ptab" data-t="sleep" onclick="switchPTab('sleep')">睡眠数据</div>
       <div class="ptab" data-t="med" onclick="switchPTab('med')">就医记录</div>
-    </div>
-
-    <!-- 健康任务 Tab 内容 -->
-    <div id="ptask" class="ptab-body">
-      <div class="appbanner">🎉 <b>泰小虎 APP 上线啦！</b> 完成打卡任务领 300 元券</div>
-
-      <!-- 仅本人可见：新手引导 + 打卡计划 -->
-      <div id="ownerContent">
-
-        <!-- 新手引导（默认折叠） -->
-        <div class="panel">
-          <div class="ob-head" id="obHead" onclick="toggleOB()">
-            <div class="oic">🧭</div>
-            <div class="ot">
-              <div class="t1">新手引导任务</div>
-              <div class="t2">完成任务，开启你的健康计划</div>
-            </div>
-            <span class="ob-prog">已完成 <b>0</b>/5</span>
-            <span class="chev">›</span>
-          </div>
-          <div class="ob-body" id="obBody">
-            <div class="ob-grid">
-              <div class="ob-card" data-task="profile" data-pts="50" data-done="0">
-                <span class="st">○</span>
-                <div class="ocic">📝</div>
-                <div class="oct">完善健康档案</div>
-                <div class="ocd">填写体型数据</div>
-                <div class="why">💡 档案越完整，推荐越准</div>
-                <div class="reward"><span class="rwd-txt">🎁 完成 +50 虎力值</span><button class="go-btn" onclick="doTask(this,'profile')">去完成</button></div>
-              </div>
-              <div class="ob-card" data-task="plan" data-pts="30" data-done="0">
-                <span class="st">○</span>
-                <div class="ocic">📋</div>
-                <div class="oct">创建我的计划</div>
-                <div class="ocd">选目标+打卡项</div>
-                <div class="why">💡 开启 30 天返现</div>
-                <div class="reward"><span class="rwd-txt">🎁 完成 +30 虎力值</span><button class="go-btn" onclick="doTask(this,'plan')">去完成</button></div>
-              </div>
-              <div class="ob-card" data-task="checkin" data-pts="20" data-done="0">
-                <span class="st">○</span>
-                <div class="ocic">✅</div>
-                <div class="oct">完成首次打卡</div>
-                <div class="ocd">坚持第 1 天</div>
-                <div class="why">💡 返现倒计时启动</div>
-                <div class="reward"><span class="rwd-txt">🎁 完成 +20 虎力值</span><button class="go-btn" onclick="doTask(this,'checkin')">去完成</button></div>
-              </div>
-              <div class="ob-card" data-task="chat" data-pts="15" data-done="0">
-                <span class="st">○</span>
-                <div class="ocic">💬</div>
-                <div class="oct">发起首轮对话</div>
-                <div class="ocd">问问 AI 健康建议</div>
-                <div class="why">💡 解锁智能导购</div>
-                <div class="reward"><span class="rwd-txt">🎁 完成 +15 虎力值</span><button class="go-btn" onclick="doTask(this,'chat')">去完成</button></div>
-              </div>
-              <div class="ob-card" data-task="shop" data-pts="10" data-done="0">
-                <span class="st">○</span>
-                <div class="ocic">🛒</div>
-                <div class="oct">浏览健康好物</div>
-                <div class="ocd">逛逛推荐商品</div>
-                <div class="why">💡 攒券后直接抵扣</div>
-                <div class="reward"><span class="rwd-txt">🎁 完成 +10 虎力值</span><button class="go-btn" onclick="doTask(this,'shop')">去完成</button></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 我的打卡计划 -->
-        <div class="sec-title">✅ 我的打卡计划</div>
-        <div class="plan">
-          <div class="ph">
-            <div class="pn">减肥打卡计划</div>
-            <div class="ptag">返现中 · ¥199</div>
-          </div>
-          <div class="pinfo">
-            <span>已坚持 <b>12</b> / 30 天</span>
-            <span>连续 <b>12</b> 天</span>
-          </div>
-          <div class="grid30" id="grid30"></div>
-          <div class="pbtns">
-            <div class="btn primary" onclick="checkIn()">今日打卡</div>
-            <div class="btn ghost" onclick="showToast('查看返现规则')">返现规则</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 切换到非本人时显示的占位 -->
-      <div id="nonOwnerHint" style="display:none">
-        <div class="not-owner-hint">
-          <div class="ni-icon">👤</div>
-          当前为 <b id="curMemberName">妈妈</b> 的健康档案<br>
-          新手引导、打卡计划仅<b>本人账号</b>可用<br><br>
-          <small style="color:var(--t3)">切换回「本人」可查看任务与打卡进度</small>
-        </div>
-      </div>
-
-      <!-- 手动任务（所有人可见） -->
-      <div class="sec-title">📋 我的任务（手动添加）</div>
-      <div class="mtask">
-        <div class="mh">减肥任务</div>
-        <div class="mr">0 / 1 人 参与 · 目标：30 天瘦 5 斤</div>
-        <div class="mbtn">+ 添加任务</div>
-      </div>
     </div>
 
     <!-- 其他 Tab 占位 -->
@@ -1304,23 +1202,22 @@ function switchScreen(id){
   if(id==='s-mine') updateMyLevel();
 }
 
+// ---- 健康任务二级页（虎力值 + 用户任务） ----
+function openTaskPage(){ showSubScreen('s-task'); }
+function closeTaskPage(){ hideAllSubScreens(); switchScreen('s-home'); }
+
 // ---- ☰ 进入我的页面 ----
 function goMine(){ switchScreen('s-mine'); }
 
-// ---- 跳转任务入口 -> 健康档案·健康任务Tab ----
-function goTask(from){
-  switchScreen('s-profile'); switchPTab('task');
-  // 自动切回「本人」确保能看到任务
-  if(currentMember!=='self') switchMember('self');
-  showToast('已跳转到「健康任务」');
-}
+// ---- 跳转（原型占位） ----
+function goTask(from){ showToast('已跳转到「'+from+'」'); }
 
 // ---- 健康档案内部 Tab 切换 ----
 function switchPTab(t){
   document.querySelectorAll('#ptabs .ptab').forEach(el=>el.classList.remove('on'));
-  document.querySelector(`#ptabs .ptab[data-t="${t}"]`).classList.add('on');
-  document.getElementById('ptask').style.display = t==='task' ? 'block':'none';
-  document.getElementById('pother').style.display = t==='task' ? 'none':'block';
+  const el=document.querySelector(`#ptabs .ptab[data-t="${t}"]`); if(el) el.classList.add('on');
+  const pt=document.getElementById('ptask'); if(pt) pt.style.display = t==='task' ? 'block':'none';
+  const po=document.getElementById('pother'); if(po) po.style.display = t==='task' ? 'none':'block';
 }
 
 // ---- 人员切换 (核心逻辑：只有本人有任务) ----
@@ -1329,18 +1226,14 @@ const memberNames = {self:'本人', mom:'妈妈', dad:'爸爸'};
 
 function switchMember(m){
   currentMember=m;
-  // 更新样式
   ['self','mom','dad'].forEach(k=>{
     const el=document.getElementById('mav-'+k);
-    el.className='mav-item '+(k===m?'active':'inactive');
+    if(el) el.className='mav-item '+(k===m?'active':'inactive');
   });
   const isOwner=(m==='self');
-
-  // 控制可见性
-  document.getElementById('ownerContent').style.display=isOwner?'block':'none';
-  document.getElementById('nonOwnerHint').style.display=isOwner?'none':'block';
-  document.getElementById('curMemberName').textContent=memberNames[m];
-
+  const oc=document.getElementById('ownerContent'); if(oc) oc.style.display=isOwner?'block':'none';
+  const nh=document.getElementById('nonOwnerHint'); if(nh) nh.style.display=isOwner?'none':'block';
+  const cn=document.getElementById('curMemberName'); if(cn) cn.textContent=memberNames[m];
   showToast(isOwner?'已切换到「'+memberNames[m]+'」 — 可查看任务与打卡':'已切换到「'+memberNames[m]+'」— 仅展示健康档案');
 }
 
@@ -1864,5 +1757,78 @@ function confirmCheckinRecord(){
 // ---- 页面加载初始化：填充等级星级 ----
 updateMyLevel();
 </script>
+
+  <!-- ========== SUB-SCREEN: 健康任务（二级页） ========== -->
+  <div class="sub-screen" id="s-task">
+    <div class="sub-nav">
+      <div class="back-btn" onclick="closeTaskPage()">‹</div>
+      <div class="sn-title">健康任务</div>
+      <div class="sn-right"></div>
+    </div>
+
+    <!-- 虎力值 -->
+    <div class="task-power">
+      <div class="tp-left">
+        <div class="tp-icon">🐯</div>
+        <div>
+          <div class="tp-num" id="taskPowerNum">1280</div>
+          <div class="tp-label">虎力值</div>
+        </div>
+      </div>
+      <div class="tp-right">
+        <div class="tp-bar"><i style="width:60%"></i></div>
+        <div class="tp-tip">距下一级还有 50 虎力值</div>
+      </div>
+    </div>
+
+    <!-- 用户任务 -->
+    <div class="sec-header"><span class="sh-t">用户任务</span></div>
+    <div class="task-list">
+      <div class="ob-card" data-task="profile" data-pts="50" data-done="0">
+        <span class="st">○</span>
+        <div class="oct">完善健康档案</div>
+        <div class="ocd">填写体型数据</div>
+        <div class="why">💡 档案越完整，推荐越准</div>
+        <div class="reward"><span class="rwd-txt">🎁 完成 +50 虎力值</span><button class="go-btn" onclick="doTask(this,'profile')">去完成</button></div>
+      </div>
+      <div class="ob-card" data-task="plan" data-pts="30" data-done="0">
+        <span class="st">○</span>
+        <div class="oct">创建我的计划</div>
+        <div class="ocd">选目标+打卡项</div>
+        <div class="why">💡 开启 30 天返现</div>
+        <div class="reward"><span class="rwd-txt">🎁 完成 +30 虎力值</span><button class="go-btn" onclick="doTask(this,'plan')">去完成</button></div>
+      </div>
+      <div class="ob-card" data-task="checkin" data-pts="20" data-done="0">
+        <span class="st">○</span>
+        <div class="oct">完成首次打卡</div>
+        <div class="ocd">坚持第 1 天</div>
+        <div class="why">💡 返现倒计时启动</div>
+        <div class="reward"><span class="rwd-txt">🎁 完成 +20 虎力值</span><button class="go-btn" onclick="doTask(this,'checkin')">去完成</button></div>
+      </div>
+      <div class="ob-card" data-task="chat" data-pts="15" data-done="0">
+        <span class="st">○</span>
+        <div class="oct">发起首轮对话</div>
+        <div class="ocd">问问 AI 健康建议</div>
+        <div class="why">💡 解锁智能导购</div>
+        <div class="reward"><span class="rwd-txt">🎁 完成 +15 虎力值</span><button class="go-btn" onclick="doTask(this,'chat')">去完成</button></div>
+      </div>
+      <div class="ob-card" data-task="shop" data-pts="10" data-done="0">
+        <span class="st">○</span>
+        <div class="oct">浏览健康好物</div>
+        <div class="ocd">逛逛推荐商品</div>
+        <div class="why">💡 攒券后直接抵扣</div>
+        <div class="reward"><span class="rwd-txt">🎁 完成 +10 虎力值</span><button class="go-btn" onclick="doTask(this,'shop')">去完成</button></div>
+      </div>
+    </div>
+
+    <!-- 我的减肥打卡 -->
+    <div class="sec-header"><span class="sh-t">我的减肥打卡</span></div>
+    <div class="task-plan">
+      <div class="tp-h">减肥打卡计划 <span class="ptag">返现中 · ¥199</span></div>
+      <div class="tp-info">已坚持 <b>12</b> / 30 天 · 连续 <b>12</b> 天</div>
+      <div class="grid30" id="grid30"></div>
+      <div class="btn primary" onclick="checkIn()">今日打卡</div>
+    </div>
+  </div>
 </body>
 </html>
