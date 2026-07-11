@@ -63,12 +63,10 @@ thead th{background:#fafafa;padding:12px 14px;font-size:13px;font-weight:600;col
   text-align:left;border-bottom:1px solid #ebeef5;white-space:nowrap;}
 tbody td{padding:11px 14px;font-size:13px;border-bottom:1px solid #f5f5f5;color:#444;vertical-align:middle;}
 tbody tr:hover{background:#fafcff;}
-.td-icon{font-size:20px;text-align:center;width:50px;}
 .td-status{font-size:12px;}
 .status-on{color:#07c160;font-weight:600;}
 .status-off{color:#999;}
 .td-actions{white-space:nowrap;}
-.ev-badge{background:#eef9f1;color:#07a050;padding:2px 8px;border-radius:4px;font-size:12px;font-family:monospace;white-space:nowrap;}
 
 /* 分页 */
 .pagination{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:16px 20px;
@@ -114,19 +112,6 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
   padding-right:28px;}
 .form-hint{font-size:11px;color:#aaa;margin-top:3px;}
 
-/* 图标选择器 */
-.icon-field{display:flex;align-items:center;gap:14px;}
-.icon-preview{width:48px;height:48px;border-radius:10px;background:#f5f5f7;display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden;border:1px solid #eee;flex:none;}
-.icon-preview img{width:100%;height:100%;object-fit:cover;display:block;}
-.icon-picker{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
-.icon-opt{width:34px;height:34px;border-radius:8px;border:1px solid #e3e3e8;background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0;}
-.icon-opt:hover{border-color:#5b4cbd;}
-.icon-opt.sel{border-color:#5b4cbd;background:#f0eaff;box-shadow:0 0 0 2px rgba(91,76,219,.15);}
-.icon-upload{border:1px dashed #c9bff0;background:#faf8ff;color:#7a6fd0;border-radius:8px;height:34px;padding:0 10px;display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-size:12px;transition:background .15s;}
-.icon-upload:hover{background:#f0ebff;}
-.icon-upload input{display:none;}
-.custom-path-wrap{display:none;}
-
 /* 弹窗底部 */
 .modal-foot{padding:16px 24px;border-top:1px solid #f0f0f0;display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:#fff;}
 
@@ -136,38 +121,30 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
   opacity:0;pointer-events:none;transition:all .3s;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ========== 任务引擎配置区 ========== */
-.engine-section{margin:6px 0 4px;background:linear-gradient(135deg,#faf8ff,#f3f0ff);border:1px solid #e6e0fb;border-radius:10px;padding:16px 18px;}
+/* ========== 任务引擎 / 发放奖励：后端简表样式 ========== */
+.engine-section{margin:6px 0 4px;background:#fafbfc;border:1px solid #e8e8e8;border-radius:8px;padding:16px 18px;}
 .engine-head{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
 .eh-icon{font-size:18px;}
-.eh-title{font-size:15px;font-weight:700;color:#4a3bb0;}
-.eh-tag{margin-left:auto;font-size:11px;color:#7a6fd0;background:#ece7ff;padding:2px 10px;border-radius:12px;}
-.engine-card{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.03);}
-.cond-group{border:1px solid #eee;border-radius:8px;padding:12px 14px;margin-bottom:12px;background:#fcfcfe;}
-.cond-group.partial{background:#fffaf3;border-color:#f3e6d2;}
-.cg-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
-.cond-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;color:#fff;white-space:nowrap;}
-.cond-badge.done{background:#07c160;}
-.cond-badge.partial{background:#e6a23c;}
-.cg-tip{font-size:11px;color:#999;flex:1;min-width:160px;}
-.cond-rows{display:flex;flex-direction:column;gap:8px;}
-.cond-row{display:flex;align-items:center;gap:8px;}
-.cond-row .cond-attr{flex:1.2;min-width:0;}
-.cond-row .cond-op{flex:1;min-width:0;appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E") no-repeat right 8px center/10px;}
-.cond-row .cond-val{flex:1.2;min-width:0;}
-.cond-del{flex:none;width:30px;height:30px;border:1px solid #eee;border-radius:6px;background:#fff;color:#bbb;cursor:pointer;font-size:14px;transition:all .15s;}
-.cond-del:hover{color:#ee4d38;border-color:#ee4d38;}
-.rule-add{border:1px dashed #c9bff0;background:#faf8ff;color:#7a6fd0;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;margin-top:8px;}
-.rule-add:hover{background:#f0ebff;}
-.refill-box{margin:4px 0 14px;padding:10px 12px;background:#f0f8ff;border:1px solid #d6ebff;border-radius:8px;}
-.refill-box label{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;color:#4a6b8a;}
-.reward-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;border-top:1px dashed #eee;padding-top:14px;}
-.rg-item{background:#fafafa;border-radius:8px;padding:10px 12px;}
-.rg-item .form-label{margin-bottom:6px;}
-.rg-badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;color:#fff;margin-bottom:8px;}
-.rg-badge.done{background:#07c160;}
-.rg-badge.partial{background:#e6a23c;}
-.rg-badge.none{background:#909399;}
+.eh-title{font-size:15px;font-weight:700;color:#333;}
+.eh-tag{margin-left:auto;font-size:11px;color:#888;background:#f0f0f0;padding:2px 10px;border-radius:12px;}
+
+/* 后端风格简表（类 JSON 配置表） */
+.be-table{width:100%;border-collapse:collapse;font-size:13px;background:#fff;margin-bottom:4px;}
+.be-table th{background:#f5f6f8;color:#666;font-weight:600;text-align:left;padding:9px 12px;border:1px solid #e6e6e6;white-space:nowrap;}
+.be-table td{padding:8px 12px;border:1px solid #e6e6e6;color:#444;vertical-align:middle;}
+.be-table tr:hover td{background:#fcfcfe;}
+.be-attr{font-family:'SFMono-Regular',Consolas,'Courier New',monospace;color:#5b4cbd;font-weight:600;white-space:nowrap;}
+.be-table select.fi,.be-table input.fi{width:100%;padding:6px 8px;font-size:13px;border:1px solid #dcdfe6;border-radius:5px;outline:none;box-sizing:border-box;font-family:inherit;}
+.be-table select.fi:focus,.be-table input.fi:focus{border-color:#5b4cbd;box-shadow:0 0 0 2px rgba(91,76,219,.1);}
+.be-table input.fi:disabled{background:#f5f5f5;color:#999;}
+.be-state{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;color:#fff;white-space:nowrap;}
+.be-state.done{background:#07c160;}
+.be-state.partial{background:#e6a23c;}
+.be-subhead{font-size:12px;color:#999;margin:14px 0 6px;font-weight:600;}
+.refill-box{margin:14px 0 4px;padding:10px 12px;background:#fafafa;border:1px solid #eee;border-radius:8px;}
+.refill-box label{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;color:#555;}
+.rw-input{width:180px!important;font-family:'SFMono-Regular',Consolas,'Courier New',monospace;}
+.code-field{font-family:'SFMono-Regular',Consolas,'Courier New',monospace;color:#5b4cbd;background:#f5f0ff;}
 </style>
 </head>
 <body>
@@ -221,13 +198,13 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
 
 <div class="page-header">
   <div class="ph-title">任务引擎配置</div>
-  <div class="ph-sub">统一管理任务的完成判定条件 · 基于埋点事件实时驱动三态（未完成 / 部分完成 / 已完成）；仅「部分完成」「已完成」可配置虎力值，「未完成」固定为 0</div>
+  <div class="ph-sub">统一管理任务的完成判定条件 · 基于「任务判定」驱动两态（已完成 / 部分完成）；不同状态发放对应虎力值；任务 Code 为唯一业务码，提交成功后由系统自动生成</div>
 </div>
 
 <!-- 搜索栏 -->
 <div class="search-bar">
   <div><label>任务名称</label></div>
-  <input class="sbi" id="searchKey" placeholder="请输入任务名称/ID/事件" />
+  <input class="sbi" id="searchKey" placeholder="请输入任务名称 / 任务 Code" />
   <div><label>状态</label></div>
   <select class="sbs" id="searchStatus">
     <option value="">全部</option>
@@ -245,10 +222,8 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
 <thead>
 <tr>
   <th style="width:46px;">序号</th>
-  <th style="width:80px;">任务 ID</th>
-  <th style="min-width:110px;">任务标题</th>
-  <th style="min-width:120px;">任务描述</th>
-  <th style="width:120px;">判定事件</th>
+  <th style="min-width:130px;">任务标题</th>
+  <th style="min-width:130px;">任务描述</th>
   <th style="width:90px;">完成虎力值</th>
   <th style="width:56px;">状态</th>
   <th style="width:54px;">排序</th>
@@ -319,73 +294,73 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
           </div>
         </div>
 
-
         <!-- ============ 任务引擎配置区 ============ -->
         <div class="engine-section">
           <div class="engine-head">
             <span class="eh-icon">⚙️</span>
             <span class="eh-title">任务引擎配置</span>
-            <span class="eh-tag">实时事件驱动 · 三态判定</span>
+            <span class="eh-tag">任务判定 · 条件写死不可增删</span>
           </div>
-          <div class="engine-card">
-            <div class="form-row">
-              <div class="form-col">
-                <label class="form-label">判定类型</label>
-                <input class="fi" id="fJudgeType" value="埋点事件" disabled style="background:#f5f5f5;color:#999;" />
-                <div class="form-hint">统一基于埋点事件判定，不可更改</div>
-              </div>
-              <div class="form-col">
-                <label class="form-label">事件 Key<span class="req">*</span></label>
-                <input class="fi" id="fEventKey" placeholder="如：profile_submit" />
-                <div class="form-hint">客户端/服务端上报的事件名</div>
-              </div>
-            </div>
 
-            <!-- 完成条件组 -->
-            <div class="cond-group">
-              <div class="cg-head">
-                <span class="cond-badge done">已完成</span>
-                <span class="cg-tip">以下属性条件全部满足（AND）即判定为「已完成」</span>
-              </div>
-              <div class="cond-rows" id="completeRows"></div>
-              <button type="button" class="rule-add" onclick="addCondRow('completeRows')">+ 添加条件</button>
+          <div class="form-row">
+            <div class="form-col">
+              <label class="form-label">判定类型</label>
+              <input class="fi" id="fJudgeType" value="任务判定" disabled style="background:#f5f5f5;color:#999;" />
+              <div class="form-hint">统一基于「任务判定」逻辑，不可更改</div>
             </div>
-
-            <!-- 部分完成条件组 -->
-            <div class="cond-group partial">
-              <div class="cg-head">
-                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-                  <input type="checkbox" id="fPartialEnabled" onchange="togglePartial(this)" />
-                  <span class="cond-badge partial">部分完成</span>
-                </label>
-                <span class="cg-tip">可选：满足以下条件判定为「部分完成」（如跳过但填了部分数据）</span>
-              </div>
-              <div class="cond-rows" id="partialRows" style="display:none;"></div>
-              <button type="button" class="rule-add" id="partialAddBtn" onclick="addCondRow('partialRows')" style="display:none;">+ 添加条件</button>
-            </div>
-
-            <!-- 续填策略 -->
-            <div class="refill-box">
-              <label>
-                <input type="checkbox" id="fRefill" />
-                开启续填策略（跳过但填了部分数据时，下次引导带入「已填值 + 默认值」）
-              </label>
-            </div>
-
-            <!-- 奖励分配 -->
-            <div class="reward-grid">
-              <div class="rg-item">
-                <span class="rg-badge done">已完成</span>
-                <label class="form-label">虎力值<span class="req">*</span></label>
-                <input class="fi" id="fRewardDone" type="number" min="0" placeholder="如：50" />
-              </div>
-              <div class="rg-item">
-                <span class="rg-badge partial">部分完成</span>
-                <label class="form-label">虎力值</label>
-                <input class="fi" id="fRewardPartial" type="number" min="0" placeholder="如：0" value="0" />
-              </div>
+            <div class="form-col">
+              <label class="form-label">任务 Code（唯一业务码）</label>
+              <input class="fi code-field" id="fCode" placeholder="提交成功后自动生成" disabled />
+              <div class="form-hint">系统自动生成，全局唯一，用于任务逻辑关联</div>
             </div>
           </div>
+
+          <div class="be-subhead">完成条件（属性写死 · 仅可改关系符与值，不可增删条件）</div>
+          <table class="be-table" id="engineTable">
+            <thead>
+              <tr>
+                <th style="width:92px;">状态</th>
+                <th style="width:130px;">判定属性</th>
+                <th style="width:120px;">关系</th>
+                <th>值</th>
+              </tr>
+            </thead>
+            <tbody id="engineTbody"><!-- JS 渲染 --></tbody>
+          </table>
+
+          <div class="refill-box">
+            <label>
+              <input type="checkbox" id="fRefill" />
+              开启续填策略（跳过但填了部分数据时，下次引导带入「已填值 + 默认值」）
+            </label>
+          </div>
+        </div>
+
+        <!-- ============ 发放奖励配置区（与引擎分离） ============ -->
+        <div class="engine-section" style="background:#fbfcfe;">
+          <div class="engine-head">
+            <span class="eh-icon">🎁</span>
+            <span class="eh-title">发放奖励配置</span>
+            <span class="eh-tag">按状态发放虎力值</span>
+          </div>
+          <table class="be-table" id="rewardTable">
+            <thead>
+              <tr>
+                <th style="width:130px;">状态</th>
+                <th>发放虎力值</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="be-state done">已完成</span></td>
+                <td><input class="fi rw-input" id="fRewardDone" type="number" min="0" placeholder="如：50" /></td>
+              </tr>
+              <tr>
+                <td><span class="be-state partial">部分完成</span></td>
+                <td><input class="fi rw-input" id="fRewardPartial" type="number" min="0" placeholder="如：0" value="0" /></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         <div class="form-section-title">状态与排序</div>
@@ -416,39 +391,48 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
 
 <script>
 // ==================== 数据源 ====================
+// 每个任务的「判定属性」写死（attrName 中文名 + 后端 attr），仅关系符(op)与值(val)可改
 const TASKS_DATA = [
-  {id:'profile', title:'完善健康档案', desc:'填写体型数据',
+  {id:'profile', code:'TXH-A001', title:'完善健康档案', desc:'填写体型数据',
    why:'💡 档案越完整，推荐越准', jumpPath:'onboarding', jumpMsg:'前往填写体型数据',
    status:'on', sortOrder:1,
-   engine:{judgeType:'event', eventKey:'profile_submit',
-     completeRules:[{attr:'status',op:'==',val:'completed'}],
+   engine:{judgeType:'task',
+     completeRules:[{attrName:'状态', attr:'status', op:'==', val:'completed'}],
      partialEnabled:true,
-     partialRules:[{attr:'status',op:'==',val:'skipped'},{attr:'filled',op:'exists',val:''}],
-     refill:true, reward:{done:50,partial:0}}},
-  {id:'plan', title:'创建打卡计划', desc:'手动创建计划',
+     partialRules:[
+       {attrName:'状态', attr:'status', op:'==', val:'skipped'},
+       {attrName:'已填字段', attr:'filled', op:'exists', val:''}
+     ],
+     refill:true},
+   reward:{done:50,partial:0}},
+  {id:'plan', code:'TXH-A002', title:'创建打卡计划', desc:'手动创建计划',
    why:'💡 开启 30 天返现', jumpPath:'createplan', jumpMsg:'前往创建计划',
    status:'on', sortOrder:2,
-   engine:{judgeType:'event', eventKey:'plan_create',
-     completeRules:[{attr:'status',op:'==',val:'success'}],
-     partialEnabled:false, partialRules:[], refill:false, reward:{done:30,partial:0}}},
-  {id:'checkin', title:'完成首次打卡', desc:'坚持第 1 天',
+   engine:{judgeType:'task',
+     completeRules:[{attrName:'计划状态', attr:'status', op:'==', val:'success'}],
+     partialEnabled:false, partialRules:[], refill:false},
+   reward:{done:30,partial:0}},
+  {id:'checkin', code:'TXH-A003', title:'完成首次打卡', desc:'坚持第 1 天',
    why:'💡 返现倒计时启动', jumpPath:'checkin', jumpMsg:'前往今日打卡',
    status:'on', sortOrder:3,
-   engine:{judgeType:'event', eventKey:'checkin_record',
-     completeRules:[{attr:'count',op:'>=',val:'1'}],
-     partialEnabled:false, partialRules:[], refill:false, reward:{done:20,partial:0}}},
-  {id:'chat', title:'发起首轮对话', desc:'问问 AI 健康建议',
+   engine:{judgeType:'task',
+     completeRules:[{attrName:'打卡次数', attr:'count', op:'>=', val:'1'}],
+     partialEnabled:false, partialRules:[], refill:false},
+   reward:{done:20,partial:0}},
+  {id:'chat', code:'TXH-A004', title:'发起首轮对话', desc:'问问 AI 健康建议',
    why:'💡 解锁智能导购', jumpPath:'home', jumpMsg:'前往发起对话',
    status:'on', sortOrder:4,
-   engine:{judgeType:'event', eventKey:'dialogue_send',
-     completeRules:[{attr:'count',op:'>=',val:'1'}],
-     partialEnabled:false, partialRules:[], refill:false, reward:{done:15,partial:0}}},
-  {id:'shop', title:'浏览健康好物', desc:'逛逛推荐商品',
+   engine:{judgeType:'task',
+     completeRules:[{attrName:'对话次数', attr:'count', op:'>=', val:'1'}],
+     partialEnabled:false, partialRules:[], refill:false},
+   reward:{done:15,partial:0}},
+  {id:'shop', code:'TXH-A005', title:'浏览健康好物', desc:'逛逛推荐商品',
    why:'💡 攒券后直接抵扣', jumpPath:'service', jumpMsg:'前往健康好物',
    status:'on', sortOrder:5,
-   engine:{judgeType:'event', eventKey:'recommend_view',
-     completeRules:[{attr:'page',op:'==',val:'shop'}],
-     partialEnabled:false, partialRules:[], refill:false, reward:{done:10,partial:0}}}
+   engine:{judgeType:'task',
+     completeRules:[{attrName:'页面', attr:'page', op:'==', val:'shop'}],
+     partialEnabled:false, partialRules:[], refill:false},
+   reward:{done:10,partial:0}}
 ];
 
 let tasks = JSON.parse(JSON.stringify(TASKS_DATA));
@@ -460,31 +444,29 @@ function genTaskId(title){
   return (base || 'task') + '_' + Date.now().toString(36).slice(-4);
 }
 
-// 跳转类型映射表（表格内显示中文）
-const JUMP_TYPE_LABEL = {
-  onboarding:'健康档案初始化', createplan:'创建计划页', checkin:'打卡记录页',
-  home:'首页 AI 会话', service:'服务页（好物）', profile:'健康档案页', custom:'自定义'
-};
+// 任务 Code：提交成功后系统自动生成，全局唯一（TXH- + 6位base36）
+function genTaskCode(){
+  return 'TXH-' + Date.now().toString(36).slice(-6).toUpperCase();
+}
+
 const OP_LABEL = {'==':'等于','!=':'不等于','>=':'≥ 大于等于','<=':'≤ 小于等于','includes':'包含','exists':'非空存在'};
 
-// （图标配置与自定义路径选择已移除：任务图标不再配置，跳转改为自由填写）
 // ==================== 渲染表格 ====================
 function renderTable(data){
   const tbody = document.getElementById('taskTbody');
   if(!data || !data.length){
-    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:#bbb;">暂无数据</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:#bbb;">暂无数据</td></tr>';
     return;
   }
   let html = '';
   data.forEach((t,i)=>{
     const eng = t.engine||{};
+    const r = eng.reward||{};
     html += `<tr>
       <td>${i+1}</td>
-      <td><code style="background:#f5f0ff;color:#5b4cbd;padding:1px 6px;border-radius:3px;font-size:12px;">${t.id}</code></td>
       <td><b>${t.title}</b></td>
       <td style="color:#777;">${t.desc}</td>
-      <td><span class="ev-badge">${eng.eventKey||'-'}</span></td>
-      <td><b style="color:#FFA500;">${eng.reward?eng.reward.done:0}</b></td>
+      <td><b style="color:#FFA500;">${r.done||0}</b></td>
       <td class="td-status"><span class="${t.status==='on'?'status-on':'status-off'}">${t.status==='on'?'启用':'停用'}</span></td>
       <td>${t.sortOrder||'-'}</td>
       <td class="td-actions">
@@ -502,8 +484,7 @@ function doSearch(){
   const key = document.getElementById('searchKey').value.trim().toLowerCase();
   const st = document.getElementById('searchStatus').value;
   let filtered = TASKS_DATA.filter(t => {
-    const ek = (t.engine&&t.engine.eventKey||'').toLowerCase();
-    const matchKey = !key || t.id.includes(key)||t.title.includes(key)||t.desc.includes(key)||ek.includes(key);
+    const matchKey = !key || t.id.includes(key)||t.title.includes(key)||t.desc.includes(key)||(t.code||'').toLowerCase().includes(key);
     const matchSt = !st || t.status === st;
     return matchKey && matchSt;
   });
@@ -515,64 +496,62 @@ function resetSearch(){
   renderTable(TASKS_DATA);
 }
 
-// ==================== 条件行动态增删 ====================
-function condRowHTML(attr, op, val){
+// ==================== 引擎条件表渲染 ====================
+// 属性(attrName)写死显示为文本，关系符(op)与值(val)可编辑；不可增删条件
+function engineRowHTML(state, stateLabel, r){
   const ops = ['==','!=','>=','<=','includes','exists'];
-  let opts = ops.map(o=>`<option value="${o}" ${o===op?'selected':''}>${OP_LABEL[o]}</option>`).join('');
-  return `<div class="cond-row">
-    <input class="fi cond-attr" placeholder="属性名，如 status" value="${attr||''}" />
-    <select class="fi cond-op">${opts}</select>
-    <input class="fi cond-val" placeholder="值，如 completed / [gender]" value="${val||''}" />
-    <button type="button" class="cond-del" onclick="removeCondRow(this)">✕</button>
-  </div>`;
+  let opts = ops.map(o=>`<option value="${o}" ${o===r.op?'selected':''}>${OP_LABEL[o]}</option>`).join('');
+  const isExists = r.op==='exists';
+  return `<tr data-state="${state}" data-attr="${r.attr}" data-attrname="${r.attrName||r.attr}">
+    <td><span class="be-state ${state}">${stateLabel}</span></td>
+    <td class="be-attr">${r.attrName||r.attr}</td>
+    <td><select class="fi cond-op" onchange="onOpChange(this)">${opts}</select></td>
+    <td><input class="fi cond-val" data-op="${r.op}" value="${r.val||''}" ${isExists?'disabled':''} placeholder="值，如 completed" /></td>
+  </tr>`;
 }
-function addCondRow(containerId, attr='', op='==', val=''){
-  document.getElementById(containerId).insertAdjacentHTML('beforeend', condRowHTML(attr, op, val));
-}
-function removeCondRow(btn){
-  const rows = btn.closest('.cond-rows').querySelectorAll('.cond-row');
-  if(rows.length<=1){ showToast('至少保留一条条件'); return; }
-  btn.closest('.cond-row').remove();
-}
-function togglePartial(chk){
-  const show = chk.checked;
-  document.getElementById('partialRows').style.display = show ? 'flex' : 'none';
-  document.getElementById('partialAddBtn').style.display = show ? 'inline-block' : 'none';
-  if(show && document.getElementById('partialRows').querySelectorAll('.cond-row').length===0){
-    addCondRow('partialRows');
+function renderEngineRows(eng){
+  const tbody = document.getElementById('engineTbody');
+  let html = '';
+  (eng.completeRules||[]).forEach(r=>{ html += engineRowHTML('done','已完成',r); });
+  if(eng.partialEnabled){
+    (eng.partialRules||[]).forEach(r=>{ html += engineRowHTML('partial','部分完成',r); });
   }
+  tbody.innerHTML = html;
 }
-function readCondRows(containerId){
-  const rows=[...document.querySelectorAll('#'+containerId+' .cond-row')];
-  return rows.map(r=>({
-    attr:r.querySelector('.cond-attr').value.trim(),
-    op:r.querySelector('.cond-op').value,
-    val:r.querySelector('.cond-val').value.trim()
-  })).filter(r=>r.attr);
+function onOpChange(sel){
+  const inp = sel.closest('tr').querySelector('.cond-val');
+  inp.dataset.op = sel.value;
+  if(sel.value==='exists'){ inp.value=''; inp.disabled=true; }
+  else { inp.disabled=false; }
+}
+function readEngineRows(){
+  const rows = [...document.querySelectorAll('#engineTbody tr')];
+  const done=[], partial=[];
+  rows.forEach(tr=>{
+    const state = tr.dataset.state;
+    const rule = {
+      attr: tr.dataset.attr,
+      attrName: tr.dataset.attrname,
+      op: tr.querySelector('.cond-op').value,
+      val: tr.querySelector('.cond-val').value.trim()
+    };
+    if(state==='done') done.push(rule); else partial.push(rule);
+  });
+  return { done, partial };
 }
 function clearEngine(){
-  document.getElementById('fEventKey').value='';
-  document.getElementById('fPartialEnabled').checked=false;
   document.getElementById('fRefill').checked=false;
   document.getElementById('fRewardDone').value='';
   document.getElementById('fRewardPartial').value=0;
-  const cr=document.getElementById('completeRows'); cr.innerHTML=condRowHTML();
-  const pr=document.getElementById('partialRows'); pr.innerHTML='';
-  togglePartial(document.getElementById('fPartialEnabled'));
+  // 新增任务：采用默认写死条件（属性不可编辑）
+  renderEngineRows({completeRules:[{attrName:'业务状态',attr:'status',op:'==',val:'success'}],partialEnabled:false,partialRules:[]});
 }
 function fillEngine(eng){
-  if(!eng) eng={judgeType:'event',eventKey:'',completeRules:[],partialEnabled:false,partialRules:[],refill:false,reward:{done:0,partial:0}};
-  document.getElementById('fEventKey').value=eng.eventKey||'';
-  document.getElementById('fPartialEnabled').checked=!!eng.partialEnabled;
+  if(!eng) eng={judgeType:'task',completeRules:[],partialEnabled:false,partialRules:[],refill:false,reward:{done:0,partial:0}};
   document.getElementById('fRefill').checked=!!eng.refill;
   document.getElementById('fRewardDone').value=eng.reward?(eng.reward.done||0):0;
   document.getElementById('fRewardPartial').value=eng.reward?(eng.reward.partial||0):0;
-  const cr=document.getElementById('completeRows'); cr.innerHTML='';
-  (eng.completeRules||[]).forEach(r=>addCondRow('completeRows',r.attr,r.op,r.val));
-  if(!(eng.completeRules||[]).length) addCondRow('completeRows');
-  const pr=document.getElementById('partialRows'); pr.innerHTML='';
-  (eng.partialRules||[]).forEach(r=>addCondRow('partialRows',r.attr,r.op,r.val));
-  togglePartial(document.getElementById('fPartialEnabled'));
+  renderEngineRows(eng);
 }
 
 // ==================== 弹窗操作 ====================
@@ -596,10 +575,11 @@ function closeModal(){ document.getElementById('modalOverlay').classList.remove(
 function openModal(){ document.getElementById('modalOverlay').classList.add('show'); }
 
 function clearForm(){
-  ['fTitle','fDesc','fWhy','fJumpMsg','fJumpPath','fSortOrder'].forEach(id=>{
+  ['fTitle','fDesc','fWhy','fJumpMsg','fJumpPath','fSortOrder','fCode'].forEach(id=>{
     document.getElementById(id).value='';
   });
   document.getElementById('fStatus').value='on';
+  document.getElementById('fCode').placeholder='提交成功后自动生成';
 }
 function fillForm(t){
   document.getElementById('fTitle').value=t.title;
@@ -609,6 +589,7 @@ function fillForm(t){
   document.getElementById('fJumpMsg').value=t.jumpMsg;
   document.getElementById('fStatus').value=t.status;
   document.getElementById('fSortOrder').value=t.sortOrder||'';
+  document.getElementById('fCode').value=t.code||'';
 }
 
 // ==================== 保存 / 删除 ====================
@@ -620,14 +601,12 @@ function saveTask(){
   const why=document.getElementById('fWhy').value.trim();
   const jumpPath=document.getElementById('fJumpPath').value.trim();
   const jumpMsg=document.getElementById('fJumpMsg').value.trim();
-  const eventKey=document.getElementById('fEventKey').value.trim();
   const status=document.getElementById('fStatus').value;
   const sortOrder=parseInt(document.getElementById('fSortOrder').value,10)||null;
 
-  // 引擎：条件读取
-  const completeRules=readCondRows('completeRows');
-  const partialEnabled=document.getElementById('fPartialEnabled').checked;
-  const partialRules=partialEnabled?readCondRows('partialRows'):[];
+  // 引擎：读取（属性写死，仅 op/val 可改）
+  const er=readEngineRows();
+  const partialEnabled=er.partial.length>0;
   const refill=document.getElementById('fRefill').checked;
   const reward={
     done:parseInt(document.getElementById('fRewardDone').value,10)||0,
@@ -635,21 +614,23 @@ function saveTask(){
   };
 
   // 必填校验
-  if(!title||!desc||!why||!jumpPath||!jumpMsg||!eventKey){ showToast('⚠️ 请填写所有必填项（含事件 Key）');return; }
-  if(!completeRules.length){ showToast('⚠️ 请至少配置一条「已完成」条件');return; }
-  if(partialEnabled && !partialRules.length){ showToast('⚠️ 已开启部分完成，请配置其条件');return; }
+  if(!title||!desc||!why||!jumpPath||!jumpMsg){ showToast('⚠️ 请填写所有必填项');return; }
+  if(!er.done.length){ showToast('⚠️ 至少需一条「已完成」条件');return; }
   // ID 重复校验（排除自身）
   if(editingId!==id && TASKS_DATA.some(t=>t.id===id)){ showToast('⚠️ 该任务 ID 已存在');return; }
 
-  const engine={judgeType:'event',eventKey,completeRules,partialEnabled,partialRules,refill,reward};
-  const row={id,title,desc,why,jumpPath,jumpMsg,status,sortOrder,engine};
+  // 任务 Code：编辑时沿用原值，新增时提交成功后自动生成
+  const code = editingId ? (TASKS_DATA.find(t=>t.id===editingId).code||'') : genTaskCode();
+
+  const engine={judgeType:'task',completeRules:er.done,partialEnabled,partialRules:er.partial,refill};
+  const row={id,code,title,desc,why,jumpPath,jumpMsg,status,sortOrder,engine,reward};
   if(editingId){
     const idx=TASKS_DATA.findIndex(t=>t.id===editingId);
     if(idx>-1)TASKS_DATA[idx]=row;
     showToast('✅ 已保存');
   }else{
     TASKS_DATA.push(row);
-    showToast('✅ 已新增');
+    showToast('✅ 已新增，任务 Code：'+code);
   }
   closeModal();
   doSearch();
