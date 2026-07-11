@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>泰小虎 · 任务完成条件后台配置 PRD（含周期重复任务）</title>
+<title>泰小虎 · 任务完成条件后台配置 PRD</title>
 <style>
   :root{
     --green:#07C160; --green-d:#06A050;
@@ -61,23 +61,27 @@
   .tag-new{background:#EAF0FF;color:#2b5fd0;font-size:11px;padding:1px 7px;border-radius:10px;margin-left:6px;}
   .tag-old{background:#E8F8EE;color:var(--green-d);font-size:11px;padding:1px 7px;border-radius:10px;margin-left:6px;}
   .warn{color:#C7254E;font-weight:700;}
-  .tt{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600;}
-  .tt.once{background:#EEF0F3;color:#646A73;}
-  .tt.recur{background:#EAF0FF;color:#2b5fd0;}
-  .lvtbl th,.lvtbl td{text-align:center;}
-  .lvtbl th{background:#EAF0FF;color:#2b5fd0;}
-  .hl{background:#FFF8E6;}
+  /* 任务类型标签 */
+  .tt{display:inline-block;padding:3px 11px;border-radius:12px;font-size:12.5px;font-weight:700;white-space:nowrap;}
+  .tt.once{background:#E8F8EE;color:#06A050;border:1px solid #B7E8C8;}
+  .tt.recur{background:#EDEAFB;color:#5B4CDB;border:1px solid #C9C1F2;}
+  /* 虎力值等级奖励表 */
+  table.lvtbl{margin:12px 0;font-size:14px;}
+  table.lvtbl th{background:#5B4CDB;color:#fff;border-color:#4a3cbd;}
+  table.lvtbl td{background:#FBFAFF;}
+  table.lvtbl tr:nth-child(even) td{background:#F3F0FD;}
+  table.lvtbl th,table.lvtbl td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top;}
 </style>
 </head>
 <body>
 <div class="hero">
   <h1>泰小虎 · 任务完成条件后台配置 PRD<span style="font-size:15px;background:rgba(255,255,255,.22);border-radius:8px;padding:2px 10px;margin-left:10px;vertical-align:middle;">含周期重复任务</span></h1>
-  <div class="meta">文档版本 v2.2 ｜ 2026-07-08 ｜ 在 v2.1 基础上：新增「任务类型（一次性 / 周期重复）」+「周期任务·虎力值等级奖励模型」；完善健康档案收敛为单事件 profile_submit；浏览健康好物改为每日任务</div>
+  <div class="meta">文档版本 v2.3 ｜ 2026-07-11 ｜ 在基础版 v2.2 上同步：任务由研发创建（后台去新增 / 删除）、★任务 Code 自动生成（着重标注）、任务判定 + 判定属性写死 + 发放奖励与引擎分离；并含「任务类型 / 周期配置 / 虎力值等级奖励」专属章节（每个任务含「数据设置」与「埋点信息」，已对齐《泰小虎埋点表 v2.3》现版）</div>
   <div>
     <span class="tag">一次性 / 周期重复</span>
     <span class="tag">等级差异化奖励</span>
-    <span class="tag">单事件收敛判定</span>
-    <span class="tag">显式三态</span>
+    <span class="tag">任务判定 · 属性写死</span>
+    <span class="tag">两态判定</span>
     <span class="tag">对齐 v2.3 现版</span>
   </div>
 </div>
@@ -96,43 +100,73 @@
       <li>情形 3：用户中途跳过但填了部分必填步骤 → <span class="pill part">部分完成</span>，但需保留已填数据并在后续引导中带入默认值补全</li>
     </ul>
     <p><b>问题：</b>这些完成逻辑散落在客户端代码中，运营无法自助配置，且不同任务判定标准差异大，缺少统一抽象。</p>
-    <p><b>目标：</b>在后台管理（任务配置模块）提供一套<strong>通用、可配置</strong>的"完成条件"定义能力，让运营无需改代码即可定义/调整任务的完成判定、状态流转与奖励发放。本 PRD 同时约定：每个任务的判定必须落地为埋点事件（见各任务的「埋点信息」章节，格式对齐《泰小虎埋点表 v2.3》现版）。</p>
+    <p><b>目标：</b>在后台管理（任务配置模块）提供一套<strong>通用、可配置</strong>的"完成条件"配置能力，供运营<strong>配置 / 编辑已有任务</strong>的完成判定、状态流转与奖励发放。<b style="color:#d4380d;">⚠️ 任务不由运营手动新增——任务均由研发通过代码 / 部署创建，后台运营仅可对已有任务进行配置与编辑，不可新建、不可删除。</b>本 PRD 同时约定：每个任务的判定必须落地为埋点事件（见各任务的「埋点信息」章节，格式对齐《泰小虎埋点表 v2.3》现版）。</p>
   </div>
 
   <h3>1.2 任务数据结构（基础字段）</h3>
   <div class="card">
-    <p>后台为每个任务维护以下基础信息，编辑弹窗按此字段收集：</p>
+    <p>后台为每个任务维护以下基础信息，<b>编辑弹窗按此字段收集（仅编辑已有任务，不支持新建 / 删除）</b>：</p>
     <table>
       <tr><th>字段</th><th>说明</th><th>控件</th><th>必填</th></tr>
-      <tr><td>任务 ID</td><td>英文唯一标识，用于前端 <code>data-task</code> 匹配</td><td>文本</td><td>是</td></tr>
-      <tr><td>图标</td><td>小尺寸图标：提供常用图标选择，或上传 48×48 以内图片</td><td>图标选择器 + 上传</td><td>是</td></tr>
+      <tr><td>任务 ID</td><td>系统<b>自动生成</b>，运营无需填写；由任务标题派生（小写英文 + 下划线）+ 时间戳后缀，保证唯一</td><td>系统生成（只读）</td><td>否（自动）</td></tr>
+      <tr style="background:#fff7e6;"><td><b style="color:#d4380d;">★ 任务 Code（唯一业务码）</b></td><td>任务的<b>唯一业务标识</b>，全局唯一、用于任务逻辑关联与跨系统数据关联；<b style="color:#d4380d;">由研发创建任务时（提交成功后）由系统自动生成</b>（格式 <code>TXH-</code> + 6 位唯一串，如 <code>TXH-A001</code>），运营<b>不可手动填写 / 修改</b>。⚠️ 此为关键字段，务必随任务一同落库</td><td>系统生成（只读）</td><td>是（系统）</td></tr>
       <tr><td>任务标题</td><td>如"完善健康档案"</td><td>文本</td><td>是</td></tr>
-      <tr class="hl"><td><b>任务类型</b> <span class="tag-new">v2.2 新增</span></td><td><b>一次性任务（one_time）</b>：完成一次即永久结束；<b>周期重复任务（recurring）</b>：按周期重置、可重复领奖。选周期重复时展开「周期配置区」（见 1.4）</td><td>下拉</td><td>是</td></tr>
       <tr><td>任务描述（副标题）</td><td>如"填写性别/生日/身高体重等基础档案"</td><td>文本</td><td>是</td></tr>
       <tr><td>执行理由（提示文案）</td><td>卡片底部小贴士，如"💡 档案越完整，推荐越准"</td><td>多行文本</td><td>是</td></tr>
-      <tr><td>跳转页面类型</td><td>onboarding / createplan / checkin / home / service / profile / <b>custom（自定义路径）</b></td><td>下拉</td><td>是</td></tr>
-      <tr><td>自定义路径</td><td>仅当跳转类型 = custom 时显示并必填，客户端跳转至该路径 / URL</td><td>文本</td><td>条件必填</td></tr>
+      <tr><td><b>任务类型</b></td><td><b>一次性任务（one_time）</b>：完成一次即永久结束；<b>周期重复任务（recurring）</b>：按周期重置、可重复领奖。选周期重复时展开「周期配置区」（见 1.4）</td><td>下拉</td><td>是</td></tr>
+      <tr><td>跳转页面类型</td><td>跳转目标路由 / 路径，由运营<b>在编辑已有任务时自定义填写</b>（自由文本），如 <code>/pages/health-task</code> 或 <code>health_task_page</code></td><td>文本（自由输入）</td><td>是</td></tr>
       <tr><td>跳转提示语</td><td>跳转时 toast 提示文字</td><td>文本</td><td>是</td></tr>
+      <tr><td>周期单位<span style="color:#888;">（仅周期重复）</span></td><td>每日 daily / 每周 weekly / 每月 monthly</td><td>下拉</td><td>条件必填</td></tr>
+      <tr><td>重置时间<span style="color:#888;">（仅周期重复）</span></td><td>每日：<code>HH:MM</code>；每周：<code>周几 + HH:MM</code>；每月：<code>几号 + HH:MM</code>。到点将该任务从"已完成"重置为"未完成"</td><td>时间/组合选择</td><td>条件必填</td></tr>
+      <tr><td>虎力值等级奖励<span style="color:#888;">（仅周期重复）</span></td><td>若干「等级区间 → 单次奖励 + 周期累计上限」规则行（见 1.4），按用户当前虎力值等级差异化发放</td><td>等级奖励表</td><td>条件必填</td></tr>
       <tr><td>状态</td><td>启用 / 停用</td><td>下拉</td><td>是</td></tr>
-      <tr><td>排序序号</td><td>数字越小越靠前，默认 99</td><td>数字</td><td>否</td></tr>
-      <tr><td>任务引擎配置</td><td>完成判定（事件 Key + 条件组 + 奖励），见 1.5–1.6</td><td>独立配置区</td><td>是</td></tr>
+      <tr><td>排序序号</td><td>数字越小越靠前，默认 99（仅正整数）</td><td>数字</td><td>否</td></tr>
+      <tr><td>任务引擎配置</td><td>完成判定：<b>判定类型固定为「任务判定」</b>（取消事件 Key）；各状态（已完成 / 部分完成）的<b>判定属性写死</b>，以中文名显示、不可编辑，用户<b>仅可改关系符与值、不可增删条件</b>；<b>发放奖励（虎力值）与引擎分离</b>为独立配置表（一次性任务固定「已完成 / 部分完成」两行；周期重复任务改用「虎力值等级奖励表」，见 1.4）。详见 1.5–1.6</td><td>独立配置区</td><td>是</td></tr>
     </table>
   </div>
 
-  <h3>1.3 任务类型（一次性 / 周期重复）<span class="tag-new">v2.2 新增</span></h3>
+  <h3>1.2.1 表单字段约束说明（输入类型 / 字数 / 空格处理 / 后端字段）</h3>
   <div class="card">
-    <p>v2.2 起，每个任务必须指定「任务类型」，两类任务的<b>生命周期</b>与<b>奖励模型</b>完全不同：</p>
+    <p>以下为后台「任务配置（编辑已有任务）」所有输入控件逐字段的约束说明（含输入类型 / 是否必填 / 字数长度 / 空格处理 / 特殊限制 / 后端字段），已与产品确认，供研发 / 测试对齐。<b style="color:#d4380d;">注：任务由研发创建，后台不支持运营手动新增 / 删除，以下字段均为「编辑已有任务」视角。</b></p>
+    <table>
+      <tr><th>字段</th><th>输入类型</th><th>必填</th><th>字数 / 长度限制</th><th>空格处理</th><th>特殊限制</th><th>后端字段</th></tr>
+      <tr><td>任务 ID</td><td>系统生成（只读）</td><td>否（自动）</td><td>≤ 64 字符</td><td>不含空格</td><td>由标题派生（小写英文 + 下划线）+ 时间戳后缀，正则 <code>^[a-z0-9_]+$</code>，全局唯一</td><td><code>id</code> VARCHAR(64) PK</td></tr>
+      <tr style="background:#fff7e6;"><td><b style="color:#d4380d;">★ 任务 Code（唯一业务码）</b></td><td>系统生成（只读）</td><td>是（系统）</td><td>≤ 64 字符</td><td>不含空格</td><td><b style="color:#d4380d;">研发创建任务时（提交成功后）自动生成</b>（<code>TXH-</code> + 6 位唯一串，如 <code>TXH-A001</code>）；全局唯一、用于任务逻辑关联；运营<b>不可手动填写 / 修改</b>；⚠️ 务必随任务一同落库</td><td><code>code</code> VARCHAR(64) UNIQUE</td></tr>
+      <tr><td>任务标题</td><td>单行文本</td><td>是</td><td>≤ 50 字符</td><td>首尾 trim（删除前后空格）；中间连续空格压缩为 1 个</td><td>禁止纯空格、禁止 emoji（提交前校验，含 emoji 拦截并提示）</td><td><code>title</code> VARCHAR(100) NOT NULL</td></tr>
+      <tr><td>任务描述</td><td>单行文本</td><td>是</td><td>≤ 100 字符</td><td>首尾 trim（删除前后空格）</td><td>禁止纯空格、禁止 emoji</td><td><code>desc</code> VARCHAR(200)</td></tr>
+      <tr><td>执行理由</td><td>多行文本</td><td>是</td><td>≤ 200 字符</td><td>首尾 trim（删除前后空格）；保留行内换行</td><td>卡片底部小贴士文案；禁止纯空格、禁止 emoji</td><td><code>why</code> VARCHAR(400)</td></tr>
+      <tr><td>跳转页面类型（路由）</td><td>单行文本（自由输入）</td><td>是</td><td>≤ 200 字符</td><td>首尾 trim（删除前后空格）；不允许纯空格</td><td>允许外链 <code>http(s)://</code> 与站内路由；外链以 <code>http://</code>/<code>https://</code> 开头，站内路由以 <code>/</code> 开头；合法字符含 <code>a-z 0-9 / _ - ? = &amp; . : # %</code> 等 URL 字符</td><td><code>jump_path</code> VARCHAR(255)</td></tr>
+      <tr><td>跳转提示语</td><td>单行文本</td><td>是</td><td>≤ 30 字符</td><td>首尾 trim</td><td>点击跳转时 toast 文案</td><td><code>jump_msg</code> VARCHAR(64)</td></tr>
+      <tr><td>状态</td><td>下拉（启用 / 停用）</td><td>是</td><td>枚举 2 值</td><td>—</td><td>仅取枚举</td><td><code>status</code> TINYINT / ENUM</td></tr>
+      <tr><td>排序序号</td><td>数字</td><td>否（默认 99）</td><td>正整数 1–9999</td><td>—</td><td>仅允许正整数（≥1）；填入 0 / 负数 / 小数 / 非数字一律<b>拒绝保存</b>并提示“排序号须为正整数”</td><td><code>sort_order</code> INT DEFAULT 99</td></tr>
+      <tr><td>判定类型</td><td>文本（禁用固定）</td><td>是</td><td>固定 "任务判定"</td><td>—</td><td>灰显不可改（取消原事件 Key 录入）</td><td><code>judge_type</code> VARCHAR(32)</td></tr>
+      <tr><td>判定属性（写死）</td><td>文本（只读）</td><td>是</td><td>≤ 64 字符</td><td>—</td><td>由任务类型写死，以<b>中文名</b>显示（如「状态」「打卡次数」），<b>不可编辑</b>；用户仅可改关系符与值</td><td><code>cond_attr</code> VARCHAR(64)</td></tr>
+      <tr><td>属性条件组</td><td>固定行（属性名写死 / 运算符 / 值）</td><td>是（≥1 行）</td><td>每组值 ≤ 100 字符</td><td>值 trim</td><td><b>属性名写死不可编辑、不可增删条件行</b>；用户仅可改「关系符」与「值」；运算符取固定集合（等于/不等于/≥/≤/包含/非空存在）；多行 AND</td><td><code>cond_groups</code> JSON</td></tr>
+      <tr><td>状态映射</td><td>映射表</td><td>是</td><td>—</td><td>—</td><td>条件组 → <b>已完成 / 部分完成</b>（两态，无「未完成」配置项）</td><td><code>state_map</code> JSON</td></tr>
+      <tr><td>续填策略</td><td>开关</td><td>否</td><td>布尔</td><td>—</td><td>开启后下发默认值来源</td><td><code>continue_fill</code> BOOLEAN</td></tr>
+      <tr><td>奖励分配（一次性任务）</td><td>数字输入（部分完成 / 已完成）</td><td>是（两态）</td><td>整数 0–100000</td><td>—</td><td>「未完成」固定 0 不可配置；仅部分完成 / 已完成可填非负整数；当前任务体系单任务奖励实际区间 10–50（最高「完善健康档案」50），100000 为兼容扩展的输入上限</td><td><code>reward</code> JSON <code>{done, partial}</code></td></tr>
+      <tr><td>任务类型</td><td>下拉（一次性 / 周期重复）</td><td>是</td><td>枚举 2 值</td><td>—</td><td>仅取枚举；选择周期重复后展开周期配置区、隐藏两态固定奖励</td><td><code>task_type</code> VARCHAR(16)</td></tr>
+      <tr><td>周期单位</td><td>下拉（每日 / 每周 / 每月）</td><td>条件必填</td><td>枚举 3 值</td><td>—</td><td>仅周期重复任务必填</td><td><code>period_unit</code> VARCHAR(16)</td></tr>
+      <tr><td>重置时间</td><td>时间 / 组合（周几 + 时间 / 几号 + 时间）</td><td>条件必填</td><td>字符串</td><td>trim</td><td>仅周期重复任务必填；格式 <code>HH:MM</code> / <code>周几+HH:MM</code> / <code>几号+HH:MM</code></td><td><code>reset_at</code> VARCHAR(32)</td></tr>
+      <tr><td>虎力值等级奖励</td><td>规则行表（等级区间起止 + 单次奖励 + 周期累计上限）</td><td>条件必填</td><td>≥ 1 行</td><td>值 trim</td><td>仅周期重复任务必填；区间不重叠、建议覆盖全等级段；等级区间起止 1–8、单次奖励 0–100000、累计上限 0–100000</td><td><code>level_rewards</code> JSON</td></tr>
+    </table>
+  </div>
+
+
+  <h3>1.3 任务类型（一次性 / 周期重复）</h3>
+  <div class="card">
+    <p>每个任务必须指定「任务类型」，两类任务的<b>生命周期</b>与<b>奖励模型</b>完全不同：</p>
     <table>
       <tr><th>维度</th><th><span class="tt once">一次性任务 one_time</span></th><th><span class="tt recur">周期重复任务 recurring</span></th></tr>
       <tr><td>完成后</td><td>永久"已完成"，不再重置</td><td>到达周期重置点后回到"未完成"，可再次完成、再次领奖</td></tr>
-      <tr><td>奖励模型</td><td>三态固定奖励（完成 +N，部分/未完成 +0）</td><td><b>按虎力值等级差异化发放</b>（见 1.4），三态固定奖励不生效</td></tr>
+      <tr><td>奖励模型</td><td>两态固定奖励（完成 +N，部分完成 +0；「未完成」固定 0 不可配置）</td><td><b>按虎力值等级差异化发放</b>（见 1.4），两态固定奖励不生效</td></tr>
       <tr><td>周期配置</td><td>无</td><td>必填：周期单位（每日/每周/每月）+ 可配置重置时间</td></tr>
       <tr><td>典型任务</td><td>完善健康档案、创建打卡计划、完成首次打卡、发起首轮对话</td><td>浏览健康好物（每日）、每日打卡（每日）</td></tr>
     </table>
-    <div class="note"><b>字段差异：</b>选择「周期重复」后，编辑弹窗展开「周期配置区」（周期单位 + 重置时间 + 虎力值等级奖励表），并隐藏三态固定奖励输入框；选择「一次性」则相反。后台按任务类型动态渲染表单，避免无关字段干扰运营。</div>
+    <div class="note"><b>字段差异：</b>选择「周期重复」后，编辑弹窗展开「周期配置区」（周期单位 + 重置时间 + 虎力值等级奖励表），并隐藏两态固定奖励输入框；选择「一次性」则相反。后台按任务类型动态渲染表单，避免无关字段干扰运营。</div>
   </div>
 
-  <h3>1.4 周期配置与虎力值等级奖励模型 <span class="tag-new">v2.2 新增</span></h3>
+  <h3>1.4 周期配置与虎力值等级奖励模型</h3>
   <div class="card">
     <h4>1.4.1 周期配置区</h4>
     <table>
@@ -160,17 +194,16 @@
     </table>
     <div class="note"><b>配置校验：</b>周期重复任务必须至少配置 1 条等级奖励规则；等级区间之间不应重叠，且建议覆盖全部等级段（未覆盖的等级默认不发奖）。等级奖励规则的判定依赖服务端读取用户当前等级，<b>不新增埋点事件</b>——周期任务的完成信号仍复用各任务原有埋点事件（见 PART 2）。</div>
   </div>
-
-  <h3>1.5 任务三态模型</h3>
+  <h3>1.5 任务两态模型（已完成 / 部分完成）</h3>
   <div class="card">
-    <p>采用<b>显式三态</b>模型，而非简单的是/否：</p>
+    <p>采用<b>显式两态</b>模型（已完成 / 部分完成），而非简单的是/否：</p>
     <table>
       <tr><th>状态</th><th>含义</th><th>是否发虎力值</th><th>客户端展示</th></tr>
-      <tr><td><span class="pill todo">未完成</span></td><td>未触发任何完成/部分条件</td><td>否</td><td>"去完成"按钮（橙）</td></tr>
+
       <tr><td><span class="pill part">部分完成</span></td><td>命中"部分完成"条件组（如跳过但填了部分必填步）</td><td>否（仅完成发）</td><td>进度 + "继续完善"按钮（绿）</td></tr>
       <tr><td><span class="pill done">已完成</span></td><td>命中"已完成"条件组（如建档完整度达 100%）</td><td>是（发全额）</td><td>"领取虎力值"（金）→ "已完成"灰</td></tr>
     </table>
-    <div class="note">状态流转：<b>未完成 → 部分完成 → 已完成</b> 单向升级；一次性任务一旦"已完成"且领取后不可逆。<b>周期重复任务</b>例外：到达周期重置点后由"已完成"重置回"未完成"，进入下一轮（见 1.4）。优先级解析：<code>已完成 &gt; 部分完成 &gt; 未完成</code>。</div>
+    <div class="note">状态流转：<b>未完成 → 部分完成 → 已完成</b> 单向升级；一旦"已完成"且领取后不可逆。优先级解析：<code>已完成 &gt; 部分完成 &gt; 未完成</code>。注意：<b>「未完成」固定 0 虎力值且不可在后台配置</b>，仅「部分完成」「已完成」两态可配置虎力值。</div>
   </div>
 
   <h3>1.6 任务引擎配置模型</h3>
@@ -178,28 +211,28 @@
     <p>每个任务的"完成条件"由以下 6 个部分构成：</p>
     <table>
       <tr><th>序号</th><th>配置项</th><th>说明</th><th>控件</th></tr>
-      <tr><td>①</td><td>判定类型</td><td>当前统一为"埋点事件"（灰显固定，预留扩展）</td><td>文本/禁用</td></tr>
-      <tr><td>②</td><td>事件 Key</td><td>监听的埋点事件名，如 <code>profile_submit</code></td><td>下拉 + 可输入</td></tr>
-      <tr><td>③</td><td>属性条件组</td><td>对事件属性做键值对判断，多行 AND 组合</td><td>动态增删行</td></tr>
-      <tr><td>④</td><td>状态映射</td><td>将命中的条件组映射到 未完成 / 部分完成 / 已完成</td><td>映射表</td></tr>
+      <tr><td>①</td><td>判定类型</td><td>当前统一为"任务判定"（灰显固定，不可改）</td><td>文本/禁用</td></tr>
+      <tr><td>②</td><td>判定属性（写死）</td><td>各状态判定属性写死，以中文名显示、不可编辑；用户仅可改关系符与值、不可增删条件</td><td>文本/只读</td></tr>
+      <tr><td>③</td><td>属性条件组</td><td>属性写死、不可增删；仅关系符与值可改，多行 AND 组合</td><td>固定行</td></tr>
+      <tr><td>④</td><td>状态映射</td><td>将命中的条件组映射到 已完成 / 部分完成（两态）</td><td>映射表</td></tr>
       <tr><td>⑤</td><td>续填策略</td><td>开关 + 默认值来源（用于部分完成态的补全）</td><td>开关</td></tr>
-      <tr><td>⑥</td><td>奖励分配</td><td><b>一次性任务</b>：各态对应固定虎力值（部分完成通常为 0）；<b>周期重复任务</b>：改用「虎力值等级奖励表」（见 1.4），固定奖励不生效</td><td>数字输入 / 等级奖励表</td></tr>
+      <tr><td>⑥</td><td>奖励分配</td><td>仅「部分完成」「已完成」两态可配置虎力值；「未完成」固定为 0 且不可配置</td><td>数字输入（部分完成 / 已完成）</td></tr>
     </table>
-    <div class="note"><b>设计取舍：</b>判定数据源统一为"埋点事件"，"字段填充型"任务的子状态编码在事件属性里（如 <code>archive_result</code>），无需单独一类，模型保持干净。任务类型（一次性/周期重复）只影响生命周期与奖励发放方式，不改变判定引擎本身。</div>
+    <div class="note"><b>设计取舍：</b>底层判定仍依赖埋点上报属性（如 <code>archive_result</code>），但<b>对运营屏蔽事件 Key</b>，改由任务类型写死「判定属性」并以中文名呈现；属性不可编辑、不可增删条件，用户仅调关系符与值，模型更可控。</div>
   </div>
 
   <h3>1.7 属性条件组 · 配置规范</h3>
   <div class="card">
-    <p>采用 <b>键值对下拉</b> 方式（运营友好，无需写代码）。每组条件由若干行组成，行内为：</p>
+    <p>判定属性由任务类型<b>写死</b>（以中文名显示、不可编辑），用户<b>仅可改关系符与值、不可增删条件</b>。每组条件由若干行组成，行内为：</p>
     <p style="text-align:center;font-size:15px;letter-spacing:1px;"><code>[属性名]</code> &nbsp;<code>[运算符]</code>&nbsp; <code>[值]</code> &nbsp;（同一组内多行 = AND）</p>
     <table>
       <tr><th>元素</th><th>可选值</th><th>示例</th></tr>
-      <tr><td>属性名</td><td>该事件上报的属性字段</td><td><code>complete_source</code> / <code>archive_result</code> / <code>user_checkin_count</code> / <code>recommend_source</code></td></tr>
+      <tr><td>属性名（写死）</td><td>由任务类型写死的判定属性（如「状态」「打卡次数」「页面」），不可编辑</td><td><code>status</code> / <code>count</code> / <code>page</code>（中文名呈现）</td></tr>
       <tr><td>运算符</td><td>等于 / 不等于 / 大于等于 / 小于等于 / 包含 / 非空存在</td><td><code>==</code> / <code>&gt;=</code> / <code>非空</code></td></tr>
       <tr><td>值</td><td>字符串 / 数字 / 枚举</td><td><code>first_onboarding</code> / <code>1</code> / <code>service</code></td></tr>
     </table>
     <ul class="tight">
-      <li><b>条件组 A → 已完成</b>：如 <code>completion_rate &gt;= 100</code>（即档案完整度达标）</li>
+      <li><b>条件组 A → 已完成</b>：如 <code>complete_source 非空</code>（即 <code>profile_complete</code> 触发）</li>
       <li><b>条件组 B → 部分完成</b>：如 <code>is_onboarding_end == true</code> AND <code>archive_result == partial</code></li>
       <li>均不命中 → 保持未完成</li>
     </ul>
@@ -212,7 +245,6 @@
       <li>客户端 / 服务端上报埋点事件，必须携带 <code>user_id</code> 及判定所需属性（如 <code>complete_source</code>、<code>archive_result</code>、<code>user_checkin_count</code>）。</li>
       <li>后端事件流实时消费，取出该用户所有处于"未完成 / 部分完成"状态的任务配置。</li>
       <li>对每个任务，依次用其"属性条件组"匹配当前事件：命中"已完成"组 → 置已完成并发奖；命中"部分完成"组 → 置部分完成（不发奖）；均不中 → 保持原态。</li>
-      <li><b>奖励发放</b>：一次性任务发放对应态固定虎力值；<b>周期重复任务</b>读取用户当前虎力值等级，命中等级奖励表对应区间，按单次奖励发放，并累加"当前周期已发放"；若达该区间周期累计上限，则置"已完成"停发。</li>
       <li>状态变更写回"用户任务进度表"，推送客户端刷新任务卡。</li>
       <li>已完成态幂等：同一事件重复上报不重复发奖；部分完成可再次上报升级到已完成。</li>
       <li><b>周期重置（仅周期重复任务）</b>：后台定时任务在配置的重置点，把该任务已完成的用户进度重置为"未完成"、清零"当前周期已发放"，用户进入新周期可再次完成领奖。</li>
@@ -221,16 +253,16 @@
 
   <h3>1.9 客户端协同</h3>
   <div class="card">
-    <h4>7.1 三态展示</h4>
+    <h4>7.1 两态展示</h4>
     <ul class="tight">
-      <li><span class="pill todo">未完成</span>：卡片显示"去完成"按钮（橙），点击跳对应页面。</li>
+
       <li><span class="pill part">部分完成</span>：卡片显示进度 + "继续完善"按钮（绿），点击进入<strong>带默认值</strong>的引导流。</li>
       <li><span class="pill done">已完成</span>（未领）：显示"领取虎力值"（金）→ 点击弹气泡、按钮变"已完成"灰不可点。</li>
     </ul>
     <h4>7.2 续填机制（以完善健康档案为例）</h4>
     <p>续填本质是客户端行为，后台仅下发<strong>开关 + 默认值配置</strong>。用户处于"部分完成"后再次进入建档引导：</p>
     <p><code>preFill = 用户已填字段（profile_fields） ∪ 默认值补全项</code></p>
-    <p>客户端读取任务配置，进入引导流时预填已填字段、其余用默认值；补完点完成 → 档案完整度达 100% → 再次上报 <code>profile_submit</code>（<code>completion_rate&gt;=100</code>、<code>is_onboarding_end=true</code>、<code>archive_result=completed</code>）→ 任务升级为已完成、发奖。<b>本期完善健康档案收敛为单事件 <code>profile_submit</code></b>，不再依赖 <code>profile_complete</code> / <code>profile_update</code> 组合判定（见 2.1）。</p>
+    <p>客户端读取任务配置，进入引导流时预填已填字段、其余用默认值；补完点完成 → 档案完整度达 100% → 上报 <code>profile_complete</code>（complete_source=update_fill）→ 任务升级为已完成、发奖。补填动作本身亦由 <code>profile_update</code>（update_source=memory_fill）记录。</p>
   </div>
 
   <h3>1.10 埋点规范约束</h3>
@@ -239,7 +271,7 @@
       <li>事件必须携带 <code>user_id</code>，否则无法关联用户任务进度。</li>
       <li>事件属性需包含判定所需字段（<code>complete_source</code> / <code>archive_result</code> / <code>user_checkin_count</code> / <code>recommend_source</code> 等），缺失属性按"不命中"处理。</li>
       <li>实时上报（非批量延迟），保证判定时效。</li>
-      <li>事件定义须登记于《泰小虎埋点表 v2.3》现版；已有事件直接复用，缺口事件（如 <code>plan_create</code>、<code>checkin_record</code>）须先补齐方可驱动引擎。周期任务的等级奖励由服务端读取用户当前等级实现，<b>不新增埋点事件</b>。</li>
+      <li>事件定义须登记于《泰小虎埋点表 v2.3》现版；已有事件直接复用，缺口事件/属性（如 <code>plan_create</code>、<code>checkin_record</code>、<code>profile_submit.is_onboarding_end/archive_result</code>、<code>recommend_source</code> 补 <code>service</code>）须先补齐方可驱动经验。</li>
     </ul>
   </div>
 
@@ -252,65 +284,67 @@
       <tr><td>条件组为空</td><td>该任务不可经事件完成（需人工 / 灰度兜底）</td></tr>
       <tr><td>多条件组同时命中</td><td>按优先级 已完成 &gt; 部分完成 解析</td></tr>
       <tr><td>部分完成 → 再次上报</td><td>允许升级到已完成并发奖</td></tr>
-      <tr class="hl"><td>周期任务当前周期已达等级累计上限</td><td>置"已完成"停发，直至下一周期重置或用户升级到更高奖励区间</td></tr>
-      <tr class="hl"><td>周期任务重置点后重复上报</td><td>新周期内首次命中按新周期计数发奖，与上一周期互不影响</td></tr>
-      <tr class="hl"><td>用户等级未覆盖任何奖励区间</td><td>默认不发奖（视为无匹配规则），不阻断状态流转</td></tr>
-      <tr class="hl"><td>周期任务未配置任何等级奖励规则</td><td>配置校验拦截，无法保存（周期任务必填至少 1 条规则）</td></tr>
     </table>
   </div>
 
   <!-- ==================== 第二部分：任务说明 ==================== -->
   <h2><span class="sec-num">PART 2</span> 任务说明（逐任务：数据设置 + 埋点信息）</h2>
-  <p>以下每个任务均包含两部分：<b>2.x.1 数据设置</b>（后台字段 + 任务类型 + 引擎判定配置；周期任务附周期配置与等级奖励）与 <b>2.x.2 埋点信息</b>（对齐《泰小虎埋点表 v2.3》现版）。标注 <span class="tag-new">需新增</span> 者为 v2.3 现版缺失、需新建的事件；标注 <span class="tag-old">复用</span> 者为 v2.3 已有事件，直接复用其定义。事件编号列统一留空，由研发上线前统一分配。</p>
+  <p>以下每个任务均包含两部分：<b>2.x.1 数据设置</b>（后台字段 + 引擎判定配置）与 <b>2.x.2 埋点信息</b>（对齐《泰小虎埋点表 v2.3》现版）。标注 <span class="tag-new">需补充</span> 者为现有事件需新增的属性；标注 <span class="tag-new">需新增</span> 者为 v2.3 现版缺失、需新建的事件；标注 <span class="tag-old">复用</span> 者为 v2.3 已有事件，直接复用其定义。（周期重复任务另含「周期配置区」与「虎力值等级奖励表」）</p>
 
   <!-- ---------- 任务 1：完善健康档案 ---------- -->
-  <h3>2.1 完善健康档案（一次性 · 三态 + 续填，单事件收敛）</h3>
+  <h3>2.1 完善健康档案（两态 + 续填，完整样例）</h3>
 
   <h4>2.1.1 数据设置</h4>
   <div class="card">
     <dl class="kv">
-      <dt>任务 ID</dt><dd><code>profile</code></dd>
-      <dt>任务类型</dt><dd><span class="tt once">一次性任务 one_time</span>（建档完成即永久结束）</dd>
-      <dt>图标</dt><dd>📝（或上传小图）</dd>
       <dt>任务标题</dt><dd>完善健康档案</dd>
       <dt>任务描述</dt><dd>填写性别/生日/身高体重/BMI/睡眠等基础档案（体检报告选填）</dd>
       <dt>执行理由</dt><dd>💡 档案越完整，推荐越准</dd>
-      <dt>跳转页面类型</dt><dd><code>onboarding</code>（首次建档/新手引导页）</dd>
+      <dt>跳转页面类型</dt><dd><code>/pages/onboarding</code>（首次建档/新手引导页，后台自定义填写路由）</dd>
       <dt>跳转提示语</dt><dd>前往填写健康档案</dd>
       <dt>状态 / 排序</dt><dd>启用 / 1</dd>
     </dl>
-    <div class="note"><b>v2.2 变更（单事件收敛）：</b>本任务判定<b>只依赖单一事件 <code>profile_submit</code></b>，不再依赖 <code>profile_complete</code> / <code>profile_update</code> 组合。三态由 <code>profile_submit</code> 的属性直接区分，降低多事件不一致风险与联调成本。</div>
     <h4 style="margin-top:14px;">引擎判定配置</h4>
     <table>
       <tr><th>配置项</th><th>值</th></tr>
-      <tr><td>判定类型</td><td>埋点事件（单事件）</td></tr>
-      <tr><td>事件 Key</td><td><code>profile_submit</code>（<span class="tag-old">复用</span> v2.3 编号 10）</td></tr>
-      <tr><td>已完成条件组</td><td><code>completion_rate &gt;= 100</code>（档案完整度达 100%，报告非必填不计入）</td></tr>
+      <tr><td>主完成信号</td><td><code>profile_complete</code>（档案完整度首次达 100% 触发）</td></tr>
+      <tr><td>辅助信号</td><td><code>profile_submit</code>（每步上报；引导结束带结果）</td></tr>
+      <tr><td>已完成条件组</td><td><code>profile_complete</code> 触发（complete_source ∈ first_onboarding / update_fill）</td></tr>
       <tr><td>部分完成条件组</td><td><code>is_onboarding_end == true</code> AND <code>archive_result == partial</code>（必填步骤填了一部分，报告可空）</td></tr>
       <tr><td>未完成条件组</td><td><code>is_onboarding_end == true</code> AND <code>archive_result == skipped</code>（零/极少数据跳过）</td></tr>
-      <tr><td>续填策略</td><td>开启；部分完成后，AI 引导补填仍复用 <code>profile_submit</code> 上报，达 <code>completion_rate&gt;=100</code> 即升级为已完成（不再单独用 profile_update）</td></tr>
-      <tr><td>奖励分配</td><td>完成 +50，部分完成 / 未完成 +0</td></tr>
+      <tr><td>续填策略</td><td>开启；部分完成后复用 <code>profile_update</code>（update_source=memory_fill，AI 引导补填）补充字段，最终达成 <code>profile_complete</code> 升级为已完成</td></tr>
+      <tr><td>奖励分配</td><td>完成 +50，部分完成 +0（「未完成」固定 0 不可配置）</td></tr>
     </table>
     <table style="margin-top:14px;">
       <tr><th>情形</th><th>上报事件</th><th>判定结果</th></tr>
-      <tr><td>1 走完（前面必填步填了，报告可选）</td><td><code>profile_submit.completion_rate&gt;=100</code></td><td><span class="pill done">已完成</span> +50</td></tr>
-      <tr><td>2 跳过零数据</td><td><code>profile_submit.is_onboarding_end=true & archive_result=skipped</code></td><td><span class="pill todo">未完成</span></td></tr>
-      <tr><td>3 跳过但填了部分必填步</td><td><code>profile_submit.is_onboarding_end=true & archive_result=partial</code></td><td><span class="pill part">部分完成</span>（可续填）</td></tr>
+      <tr><td>1 走完（前面必填步填了，报告可选）</td><td><code>profile_complete</code> 触发</td><td><span class="pill done">已完成</span> +50</td></tr>
+      <tr><td>2 跳过零数据</td><td><code>profile_submit.archive_result=skipped</code></td><td><span class="pill todo">未完成</span></td></tr>
+      <tr><td>3 跳过但填了部分必填步</td><td><code>profile_submit.archive_result=partial</code></td><td><span class="pill part">部分完成</span>（可续填）</td></tr>
     </table>
   </div>
 
   <h4>2.1.2 埋点信息（对齐 v2.3 现版）</h4>
   <div class="card">
-    <p>依赖事件：仅 <code>profile_submit</code>（v2.3 编号 10，<span class="tag-old">复用</span>，6 步：gender / birthdate / height / weight_bmi / sleep / report_upload 末步非必填）。三态判定所需的 <code>completion_rate</code> / <code>is_onboarding_end</code> / <code>archive_result</code> 属性均在该事件上上报（字段层已确认补齐，直接复用）。</p>
+    <p>依赖事件：<code>profile_submit</code>（v2.3 编号 10，<span class="tag-old">复用</span>，6 步：gender / birthdate / height / weight_bmi / sleep / report_upload 末步非必填）、<code>profile_complete</code>（编号 21，<span class="tag-old">复用</span>，建档完整度首次达 100% 触发，任务"已完成"主信号）、<code>profile_update</code>（编号 11，<span class="tag-old">复用</span>，部分完成后续填）。其中 <code>profile_submit</code> 需补充 <code>is_onboarding_end</code> / <code>archive_result</code> 两个判定属性（<span class="tag-new">需补充</span>）。</p>
     <div class="tbl-scroll">
     <table class="v23">
       <tr><th>事件编号</th><th>项目（必填）</th><th>平台（必填）</th><th>模块（必填）</th><th>事件英文名（必填）</th><th>事件显示名（必填）</th><th>事件类型（必填）</th><th>属性英文变量名</th><th>属性显示名</th><th>数据类型</th><th>属性说明</th><th>触发时机（必填）</th><th>创建人</th><th>创建时间</th><th>备注</th></tr>
-      <tr><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>step_index</td><td>步骤序号</td><td>NUMBER</td><td>步骤序号（1-6）</td><td>仅首次建档：用户完成 6 步引导的某一步并提交</td><td></td><td></td><td>复用 v2.3</td></tr>
-      <tr><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>step_name</td><td>步骤名称</td><td>STRING</td><td>gender / birthdate / height / weight_bmi / sleep / report_upload（report_upload 为非必填末步）</td><td>同上</td><td></td><td></td><td>复用 v2.3</td></tr>
-      <tr><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>profile_fields</td><td>档案字段列表</td><td>STRING</td><td>本步骤已填字段名列表（分号分隔；只传字段名）</td><td>同上</td><td></td><td></td><td>复用 v2.3</td></tr>
-      <tr class="hl"><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>completion_rate</td><td>完成度</td><td>NUMBER</td><td>档案整体完成度（百分比）；≥100 判定已完成</td><td>同上</td><td></td><td></td><td>复用 v2.3；已完成主判据</td></tr>
-      <tr class="hl"><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>is_onboarding_end</td><td>是否引导结束</td><td>BOOLEAN</td><td>引导结束时置 true，每步提交时为 false/空</td><td>引导结束（完成或跳过）时随最后一次 profile_submit 上报</td><td></td><td></td><td>复用 v2.3；三态判定</td></tr>
-      <tr class="hl"><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>archive_result</td><td>建档结果</td><td>STRING</td><td>completed / partial / skipped（引导结束时的建档结果）</td><td>同上</td><td></td><td></td><td>复用 v2.3；partial→部分完成；skipped→未完成</td></tr>
+      <tr><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>step_index</td><td>步骤序号</td><td>NUMBER</td><td>步骤序号（1-6）</td><td>仅首次建档：用户完成 6 步引导的某一步并提交</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
+      <tr><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>step_name</td><td>步骤名称</td><td>STRING</td><td>gender / birthdate / height / weight_bmi / sleep / report_upload（report_upload 为非必填末步）</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
+      <tr><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>profile_fields</td><td>档案字段列表</td><td>STRING</td><td>本步骤已填字段名列表（分号分隔；只传字段名）</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
+      <tr><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>completion_rate</td><td>完成度</td><td>NUMBER</td><td>档案整体完成度（百分比）</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
+      <tr><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>is_onboarding_end</td><td>是否引导结束</td><td>BOOLEAN</td><td>引导结束时置 true，每步提交时为 false/空</td><td>引导结束（完成或跳过）时随最后一次 profile_submit 上报</td><td>（待补）</td><td>（待补）</td><td><span class="tag-new">需补充</span> 判定属性</td></tr>
+      <tr><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>archive_result</td><td>建档结果</td><td>STRING</td><td>completed / partial / skipped（引导结束时的建档结果）</td><td>同上</td><td>（待补）</td><td>（待补）</td><td><span class="tag-new">需补充</span> partial→部分完成；skipped→未完成</td></tr>
+      <tr><td>21</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_complete</td><td>完整建档完成</td><td>接口返回结果</td><td>complete_source</td><td>完成来源</td><td>STRING</td><td>first_onboarding（首次 6 步建档）/ update_fill（后续补填达到完整）</td><td>用户档案完整度首次达到 100% 时触发</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3；任务"已完成"主信号</td></tr>
+      <tr><td>21</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_complete</td><td>完整建档完成</td><td>接口返回结果</td><td>guide_duration</td><td>引导总耗时</td><td>NUMBER</td><td>125000</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
+      <tr><td>21</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_complete</td><td>完整建档完成</td><td>接口返回结果</td><td>completion_rate</td><td>完成度</td><td>NUMBER</td><td>100</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
+      <tr><td>21</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_complete</td><td>完整建档完成</td><td>接口返回结果</td><td>field_count</td><td>已填字段总数</td><td>NUMBER</td><td>23</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
+      <tr><td>21</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_complete</td><td>完整建档完成</td><td>接口返回结果</td><td>has_report</td><td>是否上传报告</td><td>BOOLEAN</td><td>true / false</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3；报告非必填，不计入建档完成</td></tr>
+      <tr><td>11</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_update</td><td>更新健康档案（编辑/补填）</td><td>提交</td><td>edit_section</td><td>编辑区域</td><td>STRING</td><td>basic_info / body_data / sleep / disease / medication / report / allergy / other</td><td>用户非首次编辑/补填健康档案时提交</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3；部分完成后续填</td></tr>
+      <tr><td>11</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_update</td><td>更新健康档案（编辑/补填）</td><td>提交</td><td>edited_fields</td><td>编辑字段列表</td><td>STRING</td><td>height;weight</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
+      <tr><td>11</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_update</td><td>更新健康档案（编辑/补填）</td><td>提交</td><td>update_source</td><td>更新来源</td><td>STRING</td><td>memory_fill / manual_edit</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3；memory_fill=AI 引导补填</td></tr>
+      <tr><td>11</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_update</td><td>更新健康档案（编辑/补填）</td><td>提交</td><td>new_field_count</td><td>新增字段数</td><td>NUMBER</td><td>2</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
+      <tr><td>11</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_update</td><td>更新健康档案（编辑/补填）</td><td>提交</td><td>field_count_after</td><td>更新后已填字段数</td><td>NUMBER</td><td>18</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
     </table>
     </div>
   </div>
@@ -320,25 +354,22 @@
   <h4>2.2.1 数据设置</h4>
   <div class="card">
     <dl class="kv">
-      <dt>任务 ID</dt><dd><code>plan</code></dd>
-      <dt>任务类型</dt><dd><span class="tt once">一次性任务 one_time</span></dd>
-      <dt>图标</dt><dd>📋</dd>
       <dt>任务标题</dt><dd>创建打卡计划</dd>
       <dt>任务描述</dt><dd>手动创建计划</dd>
       <dt>执行理由</dt><dd>💡 开启 30 天返现</dd>
-      <dt>跳转页面类型</dt><dd><code>createplan</code>（创建计划页）</dd>
+      <dt>跳转页面类型</dt><dd><code>/pages/createplan</code>（创建计划页，后台自定义填写路由）</dd>
       <dt>跳转提示语</dt><dd>前往创建计划</dd>
       <dt>状态 / 排序</dt><dd>启用 / 2</dd>
     </dl>
     <h4 style="margin-top:14px;">引擎判定配置</h4>
     <table>
       <tr><th>配置项</th><th>值</th></tr>
-      <tr><td>判定类型</td><td>埋点事件</td></tr>
-      <tr><td>事件 Key</td><td><code>plan_create</code>（<span class="tag-new">需新增</span>）</td></tr>
+      <tr><td>判定类型</td><td>任务判定（灰显固定，不可改）</td></tr>
+
       <tr><td>已完成条件组</td><td><code>status == success</code></td></tr>
       <tr><td>部分完成条件组</td><td>无（仅两态）</td></tr>
       <tr><td>续填策略</td><td>关闭</td></tr>
-      <tr><td>奖励分配</td><td>完成 +30，其余 +0</td></tr>
+      <tr><td>奖励分配</td><td>完成 +30，部分完成 +0（「未完成」固定 0 不可配置）</td></tr>
     </table>
   </div>
   <h4>2.2.2 埋点信息（对齐 v2.3 现版）</h4>
@@ -347,10 +378,10 @@
     <div class="tbl-scroll">
     <table class="v23">
       <tr><th>事件编号</th><th>项目（必填）</th><th>平台（必填）</th><th>模块（必填）</th><th>事件英文名（必填）</th><th>事件显示名（必填）</th><th>事件类型（必填）</th><th>属性英文变量名</th><th>属性显示名</th><th>数据类型</th><th>属性说明</th><th>触发时机（必填）</th><th>创建人</th><th>创建时间</th><th>备注</th></tr>
-      <tr><td></td><td>泰小虎</td><td>Android/iOS</td><td>plan</td><td>plan_create</td><td>创建打卡计划</td><td>创建</td><td>status</td><td>创建结果</td><td>STRING</td><td>success / fail</td><td>用户在创建计划页点击"创建"并完成</td><td></td><td></td><td><span class="tag-new">需新增事件</span></td></tr>
-      <tr><td></td><td>泰小虎</td><td>Android/iOS</td><td>plan</td><td>plan_create</td><td>创建打卡计划</td><td>创建</td><td>plan_id</td><td>计划 ID</td><td>STRING</td><td>plan_20260701_001</td><td>同上</td><td></td><td></td><td><span class="tag-new">需新增事件</span></td></tr>
-      <tr><td></td><td>泰小虎</td><td>Android/iOS</td><td>plan</td><td>plan_create</td><td>创建打卡计划</td><td>创建</td><td>plan_type</td><td>计划类型</td><td>STRING</td><td>weight_loss / sleep / exercise</td><td>同上</td><td></td><td></td><td><span class="tag-new">需新增事件</span></td></tr>
-      <tr><td></td><td>泰小虎</td><td>Android/iOS</td><td>plan</td><td>plan_create</td><td>创建打卡计划</td><td>创建</td><td>source</td><td>创建来源</td><td>STRING</td><td>onboarding / manual</td><td>同上</td><td></td><td></td><td><span class="tag-new">需新增事件</span></td></tr>
+      <tr><td>（待分配）</td><td>泰小虎</td><td>Android/iOS</td><td>plan</td><td>plan_create</td><td>创建打卡计划</td><td>创建</td><td>status</td><td>创建结果</td><td>STRING</td><td>success / fail</td><td>用户在创建计划页点击"创建"并完成</td><td>（待补）</td><td>（待补）</td><td><span class="tag-new">需新增事件</span></td></tr>
+      <tr><td>（待分配）</td><td>泰小虎</td><td>Android/iOS</td><td>plan</td><td>plan_create</td><td>创建打卡计划</td><td>创建</td><td>plan_id</td><td>计划 ID</td><td>STRING</td><td>plan_20260701_001</td><td>同上</td><td>（待补）</td><td>（待补）</td><td><span class="tag-new">需新增事件</span></td></tr>
+      <tr><td>（待分配）</td><td>泰小虎</td><td>Android/iOS</td><td>plan</td><td>plan_create</td><td>创建打卡计划</td><td>创建</td><td>plan_type</td><td>计划类型</td><td>STRING</td><td>weight_loss / sleep / exercise</td><td>同上</td><td>（待补）</td><td>（待补）</td><td><span class="tag-new">需新增事件</span></td></tr>
+      <tr><td>（待分配）</td><td>泰小虎</td><td>Android/iOS</td><td>plan</td><td>plan_create</td><td>创建打卡计划</td><td>创建</td><td>source</td><td>创建来源</td><td>STRING</td><td>onboarding / manual</td><td>同上</td><td>（待补）</td><td>（待补）</td><td><span class="tag-new">需新增事件</span></td></tr>
     </table>
     </div>
   </div>
@@ -360,25 +391,22 @@
   <h4>2.3.1 数据设置</h4>
   <div class="card">
     <dl class="kv">
-      <dt>任务 ID</dt><dd><code>checkin</code></dd>
-      <dt>任务类型</dt><dd><span class="tt once">一次性任务 one_time</span>（"完成首次打卡"仅需一次；每日打卡为独立的周期任务）</dd>
-      <dt>图标</dt><dd>✅</dd>
       <dt>任务标题</dt><dd>完成首次打卡</dd>
       <dt>任务描述</dt><dd>坚持第 1 天</dd>
       <dt>执行理由</dt><dd>💡 返现倒计时启动</dd>
-      <dt>跳转页面类型</dt><dd><code>checkin</code>（打卡记录页）</dd>
+      <dt>跳转页面类型</dt><dd><code>/pages/checkin</code>（打卡记录页，后台自定义填写路由）</dd>
       <dt>跳转提示语</dt><dd>前往今日打卡</dd>
       <dt>状态 / 排序</dt><dd>启用 / 3</dd>
     </dl>
     <h4 style="margin-top:14px;">引擎判定配置</h4>
     <table>
       <tr><th>配置项</th><th>值</th></tr>
-      <tr><td>判定类型</td><td>埋点事件</td></tr>
-      <tr><td>事件 Key</td><td><code>checkin_record</code>（<span class="tag-new">需新增</span>）</td></tr>
+      <tr><td>判定类型</td><td>任务判定（灰显固定，不可改）</td></tr>
+
       <tr><td>已完成条件组</td><td><code>user_checkin_count &gt;= 1</code>（该用户累计打卡次数 ≥ 1 即首次打卡完成）</td></tr>
       <tr><td>部分完成条件组</td><td>无（仅两态）</td></tr>
       <tr><td>续填策略</td><td>关闭</td></tr>
-      <tr><td>奖励分配</td><td>完成 +20，其余 +0</td></tr>
+      <tr><td>奖励分配</td><td>完成 +20，部分完成 +0（「未完成」固定 0 不可配置）</td></tr>
     </table>
   </div>
   <h4>2.3.2 埋点信息（对齐 v2.3 现版）</h4>
@@ -387,10 +415,10 @@
     <div class="tbl-scroll">
     <table class="v23">
       <tr><th>事件编号</th><th>项目（必填）</th><th>平台（必填）</th><th>模块（必填）</th><th>事件英文名（必填）</th><th>事件显示名（必填）</th><th>事件类型（必填）</th><th>属性英文变量名</th><th>属性显示名</th><th>数据类型</th><th>属性说明</th><th>触发时机（必填）</th><th>创建人</th><th>创建时间</th><th>备注</th></tr>
-      <tr><td></td><td>泰小虎</td><td>Android/iOS</td><td>checkin</td><td>checkin_record</td><td>每日打卡</td><td>打卡</td><td>checkin_id</td><td>打卡记录 ID</td><td>STRING</td><td>ck_20260701_a1</td><td>用户在打卡页点击"完成今日打卡"</td><td></td><td></td><td><span class="tag-new">需新增事件</span></td></tr>
-      <tr><td></td><td>泰小虎</td><td>Android/iOS</td><td>checkin</td><td>checkin_record</td><td>每日打卡</td><td>打卡</td><td>checkin_date</td><td>打卡日期</td><td>STRING</td><td>2026-07-01</td><td>同上</td><td></td><td></td><td><span class="tag-new">需新增事件</span></td></tr>
-      <tr><td></td><td>泰小虎</td><td>Android/iOS</td><td>checkin</td><td>checkin_record</td><td>每日打卡</td><td>打卡</td><td>streak_day</td><td>连续打卡天数（含今日）</td><td>NUMBER</td><td>1</td><td>同上</td><td></td><td></td><td><span class="tag-new">需新增事件</span></td></tr>
-      <tr><td></td><td>泰小虎</td><td>Android/iOS</td><td>checkin</td><td>checkin_record</td><td>每日打卡</td><td>打卡</td><td>user_checkin_count</td><td>该用户累计打卡次数（事件上报时附带）</td><td>NUMBER</td><td>1</td><td>同上</td><td></td><td></td><td><span class="tag-new">需新增事件</span> 引擎条件取 ≥1</td></tr>
+      <tr><td>（待分配）</td><td>泰小虎</td><td>Android/iOS</td><td>checkin</td><td>checkin_record</td><td>每日打卡</td><td>打卡</td><td>checkin_id</td><td>打卡记录 ID</td><td>STRING</td><td>ck_20260701_a1</td><td>用户在打卡页点击"完成今日打卡"</td><td>（待补）</td><td>（待补）</td><td><span class="tag-new">需新增事件</span></td></tr>
+      <tr><td>（待分配）</td><td>泰小虎</td><td>Android/iOS</td><td>checkin</td><td>checkin_record</td><td>每日打卡</td><td>打卡</td><td>checkin_date</td><td>打卡日期</td><td>STRING</td><td>2026-07-01</td><td>同上</td><td>（待补）</td><td>（待补）</td><td><span class="tag-new">需新增事件</span></td></tr>
+      <tr><td>（待分配）</td><td>泰小虎</td><td>Android/iOS</td><td>checkin</td><td>checkin_record</td><td>每日打卡</td><td>打卡</td><td>streak_day</td><td>连续打卡天数（含今日）</td><td>NUMBER</td><td>1</td><td>同上</td><td>（待补）</td><td>（待补）</td><td><span class="tag-new">需新增事件</span></td></tr>
+      <tr><td>（待分配）</td><td>泰小虎</td><td>Android/iOS</td><td>checkin</td><td>checkin_record</td><td>每日打卡</td><td>打卡</td><td>user_checkin_count</td><td>该用户累计打卡次数（事件上报时附带）</td><td>NUMBER</td><td>1</td><td>同上</td><td>（待补）</td><td>（待补）</td><td><span class="tag-new">需新增事件</span> 引擎条件取 ≥1</td></tr>
     </table>
     </div>
   </div>
@@ -400,25 +428,22 @@
   <h4>2.4.1 数据设置</h4>
   <div class="card">
     <dl class="kv">
-      <dt>任务 ID</dt><dd><code>chat</code></dd>
-      <dt>任务类型</dt><dd><span class="tt once">一次性任务 one_time</span></dd>
-      <dt>图标</dt><dd>💬</dd>
       <dt>任务标题</dt><dd>发起首轮对话</dd>
       <dt>任务描述</dt><dd>问问 AI 健康建议</dd>
       <dt>执行理由</dt><dd>💡 解锁智能导购</dd>
-      <dt>跳转页面类型</dt><dd><code>home</code>（首页 AI 会话）</dd>
+      <dt>跳转页面类型</dt><dd><code>/pages/home</code>（首页 AI 会话，后台自定义填写路由）</dd>
       <dt>跳转提示语</dt><dd>前往发起对话</dd>
       <dt>状态 / 排序</dt><dd>启用 / 4</dd>
     </dl>
     <h4 style="margin-top:14px;">引擎判定配置</h4>
     <table>
       <tr><th>配置项</th><th>值</th></tr>
-      <tr><td>判定类型</td><td>埋点事件</td></tr>
-      <tr><td>事件 Key</td><td><code>dialogue_send</code>（<span class="tag-old">复用</span> v2.3 编号 13）</td></tr>
+      <tr><td>判定类型</td><td>任务判定（灰显固定，不可改）</td></tr>
+
       <tr><td>已完成条件组</td><td>该用户 <code>dialogue_send</code> 事件累计次数 ≥ 1</td></tr>
       <tr><td>部分完成条件组</td><td>无（仅两态）</td></tr>
       <tr><td>续填策略</td><td>关闭</td></tr>
-      <tr><td>奖励分配</td><td>完成 +15，其余 +0</td></tr>
+      <tr><td>奖励分配</td><td>完成 +15，部分完成 +0（「未完成」固定 0 不可配置）</td></tr>
     </table>
   </div>
   <h4>2.4.2 埋点信息（对齐 v2.3 现版）</h4>
@@ -427,29 +452,28 @@
     <div class="tbl-scroll">
     <table class="v23">
       <tr><th>事件编号</th><th>项目（必填）</th><th>平台（必填）</th><th>模块（必填）</th><th>事件英文名（必填）</th><th>事件显示名（必填）</th><th>事件类型（必填）</th><th>属性英文变量名</th><th>属性显示名</th><th>数据类型</th><th>属性说明</th><th>触发时机（必填）</th><th>创建人</th><th>创建时间</th><th>备注</th></tr>
-      <tr><td>13</td><td>泰小虎</td><td>Android/iOS</td><td>dialogue</td><td>dialogue_send</td><td>发起AI对话</td><td>发送</td><td>dialogue_id</td><td>对话 ID</td><td>STRING</td><td>对话 ID，唯一标识一次会话</td><td>用户在对话页发送一条消息</td><td></td><td></td><td>复用 v2.3</td></tr>
-      <tr><td>13</td><td>泰小虎</td><td>Android/iOS</td><td>dialogue</td><td>dialogue_send</td><td>发起AI对话</td><td>发送</td><td>message_id</td><td>消息 ID</td><td>STRING</td><td>用户消息 ID，用于与 Coze 单条消息日志关联</td><td>同上</td><td></td><td></td><td>复用 v2.3（新增必填）</td></tr>
-      <tr><td>13</td><td>泰小虎</td><td>Android/iOS</td><td>dialogue</td><td>dialogue_send</td><td>发起AI对话</td><td>发送</td><td>message_type</td><td>消息类型</td><td>STRING</td><td>text / image / voice</td><td>同上</td><td></td><td></td><td>复用 v2.3</td></tr>
-      <tr><td>13</td><td>泰小虎</td><td>Android/iOS</td><td>dialogue</td><td>dialogue_send</td><td>发起AI对话</td><td>发送</td><td>is_first_message</td><td>是否首条消息</td><td>BOOLEAN</td><td>是否本次对话的首条消息</td><td>同上</td><td></td><td></td><td>复用 v2.3</td></tr>
-      <tr><td>13</td><td>泰小虎</td><td>Android/iOS</td><td>dialogue</td><td>dialogue_send</td><td>发起AI对话</td><td>发送</td><td>help_type</td><td>帮助类型</td><td>STRING</td><td>health_qa / product_recommend / symptom_check / report_analysis</td><td>同上</td><td></td><td></td><td>复用 v2.3</td></tr>
-      <tr><td>13</td><td>泰小虎</td><td>Android/iOS</td><td>dialogue</td><td>dialogue_send</td><td>发起AI对话</td><td>发送</td><td>quick_question_id</td><td>快捷问题 ID</td><td>STRING</td><td>若本次对话由开屏问题触发，传问题 ID；手动输入为空</td><td>同上</td><td></td><td></td><td>复用 v2.3</td></tr>
-      <tr><td>13</td><td>泰小虎</td><td>Android/iOS</td><td>dialogue</td><td>dialogue_send</td><td>发起AI对话</td><td>发送</td><td>trigger_type</td><td>触发类型</td><td>STRING</td><td>manual_input / quick_question / scan_result / voice_input</td><td>同上</td><td></td><td></td><td>复用 v2.3（已含 scan_result/voice_input）</td></tr>
+      <tr><td>13</td><td>泰小虎</td><td>Android/iOS</td><td>dialogue</td><td>dialogue_send</td><td>发起AI对话</td><td>发送</td><td>dialogue_id</td><td>对话 ID</td><td>STRING</td><td>对话 ID，唯一标识一次会话</td><td>用户在对话页发送一条消息</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
+      <tr><td>13</td><td>泰小虎</td><td>Android/iOS</td><td>dialogue</td><td>dialogue_send</td><td>发起AI对话</td><td>发送</td><td>message_id</td><td>消息 ID</td><td>STRING</td><td>用户消息 ID，用于与 Coze 单条消息日志关联</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3（新增必填）</td></tr>
+      <tr><td>13</td><td>泰小虎</td><td>Android/iOS</td><td>dialogue</td><td>dialogue_send</td><td>发起AI对话</td><td>发送</td><td>message_type</td><td>消息类型</td><td>STRING</td><td>text / image / voice</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
+      <tr><td>13</td><td>泰小虎</td><td>Android/iOS</td><td>dialogue</td><td>dialogue_send</td><td>发起AI对话</td><td>发送</td><td>is_first_message</td><td>是否首条消息</td><td>BOOLEAN</td><td>是否本次对话的首条消息</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
+      <tr><td>13</td><td>泰小虎</td><td>Android/iOS</td><td>dialogue</td><td>dialogue_send</td><td>发起AI对话</td><td>发送</td><td>help_type</td><td>帮助类型</td><td>STRING</td><td>health_qa / product_recommend / symptom_check / report_analysis</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
+      <tr><td>13</td><td>泰小虎</td><td>Android/iOS</td><td>dialogue</td><td>dialogue_send</td><td>发起AI对话</td><td>发送</td><td>quick_question_id</td><td>快捷问题 ID</td><td>STRING</td><td>若本次对话由开屏问题触发，传问题 ID；手动输入为空</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
+      <tr><td>13</td><td>泰小虎</td><td>Android/iOS</td><td>dialogue</td><td>dialogue_send</td><td>发起AI对话</td><td>发送</td><td>trigger_type</td><td>触发类型</td><td>STRING</td><td>manual_input / quick_question / scan_result / voice_input</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3（已含 scan_result/voice_input）</td></tr>
     </table>
     </div>
   </div>
 
   <!-- ---------- 任务 5：浏览健康好物（每日周期任务） ---------- -->
-  <h3>2.5 浏览健康好物（周期重复 · 每日任务 + 等级奖励）<span class="tag-new">v2.2 改造</span></h3>
+  <h3>2.5 浏览健康好物（周期重复 · 每日任务 + 等级奖励）</h3>
+
   <h4>2.5.1 数据设置</h4>
   <div class="card">
     <dl class="kv">
-      <dt>任务 ID</dt><dd><code>shop</code></dd>
-      <dt>任务类型</dt><dd><span class="tt recur">周期重复任务 recurring</span>（每日重置，可每日完成领奖）</dd>
-      <dt>图标</dt><dd>🛒</dd>
       <dt>任务标题</dt><dd>浏览健康好物</dd>
       <dt>任务描述</dt><dd>每天逛逛推荐商品</dd>
       <dt>执行理由</dt><dd>💡 每日浏览攒虎力值，等级越高奖励越多</dd>
-      <dt>跳转页面类型</dt><dd><code>service</code>（服务Tab·健康好物）</dd>
+      <dt>任务类型</dt><dd><span class="tt recur">周期重复任务 recurring</span>（每日重置，可每日完成领奖）</dd>
+      <dt>跳转页面类型</dt><dd><code>/pages/service</code>（服务Tab·健康好物，后台自定义填写路由）</dd>
       <dt>跳转提示语</dt><dd>前往健康好物</dd>
       <dt>状态 / 排序</dt><dd>启用 / 5</dd>
     </dl>
@@ -462,11 +486,11 @@
     <h4 style="margin-top:14px;">引擎判定配置</h4>
     <table>
       <tr><th>配置项</th><th>值</th></tr>
-      <tr><td>判定类型</td><td>埋点事件</td></tr>
-      <tr><td>事件 Key</td><td><code>recommend_view</code>（<span class="tag-old">复用</span> v2.3 编号 15）</td></tr>
-      <tr><td>已完成条件组</td><td><code>recommend_source == service</code>（来自服务Tab-健康好物的推荐曝光）</td></tr>
+      <tr><td>判定类型</td><td>任务判定（灰显固定，不可改）</td></tr>
+      <tr><td>已完成条件组</td><td><code>recommend_source == service</code>（来自服务Tab-健康好物的推荐曝光，各状态判定属性写死、仅关系符与值可改）</td></tr>
       <tr><td>部分完成条件组</td><td>无（仅两态）</td></tr>
-      <tr><td>奖励模型</td><td><b>虎力值等级奖励（周期任务，见下表）</b>；三态固定奖励不生效</td></tr>
+      <tr><td>续填策略</td><td>关闭</td></tr>
+      <tr><td>奖励模型</td><td><b>虎力值等级奖励（周期任务，见下表）</b>；两态固定奖励不生效</td></tr>
     </table>
     <h4 style="margin-top:14px;">虎力值等级奖励表（每日）</h4>
     <table class="lvtbl">
@@ -477,6 +501,7 @@
     </table>
     <div class="note">发奖逻辑：每次命中 <code>recommend_view.recommend_source=service</code> 时，服务端读取用户当前等级 → 命中区间 → 发放单次奖励并累加当日已发；达当日上限则置"已完成"停发，次日重置后重新计数。用户当日升级到更高区间时，按新区间的单次奖励与上限继续计。</div>
   </div>
+
   <h4>2.5.2 埋点信息（对齐 v2.3 现版）</h4>
   <div class="card">
     <p>依赖事件：<code>recommend_view</code>（v2.3 编号 15，<span class="tag-old">复用</span>，显示名"推荐结果曝光"）。<code>recommend_source</code> 枚举已确认包含 <code>service</code>（服务Tab-健康好物），直接复用；等级奖励由服务端读取用户当前等级实现，<b>不新增埋点</b>。</p>
@@ -492,28 +517,29 @@
     </div>
   </div>
 
-  <!-- ==================== 附录 ==================== -->
+ ==================== -->
   <h2><span class="sec-num">PART 3</span> 附录：埋点缺口与待确认</h2>
   <div class="card">
     <h4>埋点缺口（需先补齐方可驱动任务）</h4>
-    <p style="color:var(--muted);font-size:13px;">说明：<code>profile_submit</code> 三态属性与 <code>recommend_source=service</code> 枚举已在字段层确认补齐，故从本表移除；周期任务的虎力值等级奖励为服务端配置能力，不涉及新增埋点。仅保留两个尚需新增的事件：</p>
     <table>
       <tr><th>事件 / 属性</th><th>状态</th><th>影响任务</th></tr>
+      <tr><td><code>profile_submit.is_onboarding_end</code> / <code>archive_result</code></td><td><span class="pill new">需补充属性</span></td><td>完善健康档案（两态 + 续填）</td></tr>
       <tr><td><code>plan_create</code></td><td><span class="pill new">需新增事件</span></td><td>创建打卡计划</td></tr>
       <tr><td><code>checkin_record</code></td><td><span class="pill new">需新增事件</span></td><td>完成首次打卡</td></tr>
+      <tr><td><code>recommend_source</code> 枚举补充 <code>service</code></td><td><span class="pill new">需补充枚举</span></td><td>浏览健康好物</td></tr>
     </table>
     <h4 style="margin-top:16px;">待确认 / 后续迭代</h4>
     <ul class="tight">
-      <li>多事件组合（OR / 事件序列）是否纳入后续迭代？本期按单事件 + 属性条件覆盖（完善健康档案已收敛为单事件 <code>profile_submit</code>）。</li>
-      <li>奖励是否支持多奖品（券 + 虎力值组合）？本期仅虎力值（周期任务按等级差异化发放）。</li>
-      <li>周期任务是否需支持"每周 / 每月"以外更灵活的自定义周期（如每 N 天）？本期支持每日 / 每周 / 每月三档。</li>
-      <li>等级奖励区间是否需要支持"跨等级同奖励"或"随等级线性递增"的批量配置？本期按区间逐行配置。</li>
-      <li>新增事件（<code>plan_create</code> / <code>checkin_record</code>）编号由研发上线前统一分配，本文档事件编号列留空。</li>
+      <li><code>archive_result</code> 与 <code>profile_complete</code> 的边界：建议 archive_result=completed 时服务端同步触发 profile_complete，避免两信号不一致。</li>
+      <li>是否需要"运营手动标记完成"（后台强制置已完成）？</li>
+      <li>多事件组合（OR / 事件序列）是否纳入本期？暂按单事件 + 属性条件覆盖。</li>
+      <li>奖励是否支持多奖品（券 + 虎力值组合）？本期仅虎力值。</li>
+      <li>每日任务的周期重置逻辑是否复用本模型（加"重置周期"字段）？</li>
+      <li>新增事件编号上线前由研发统一分配（本文档标注"待分配"）。</li>
     </ul>
-    <div class="note" style="margin-top:12px;">已按本轮评审关闭的项：① 字段层已处理的埋点缺口（profile 三态属性、recommend service 枚举）从附录移除；② <b>不做"运营手动标记完成"功能</b>——后续如需修正异常数据由研发直接处理，不做后台功能。</div>
   </div>
 
-  <footer>泰小虎 · 任务完成条件后台配置 PRD v2.2（含周期重复任务）｜ 新增任务类型 + 周期等级奖励模型、完善健康档案单事件收敛、浏览健康好物改每日任务 ｜ 产品与研发对齐后进入开发评审</footer>
+  <footer>泰小虎 · 任务完成条件后台配置 PRD v2.3（含周期重复任务）｜ 基础功能说明 + 任务分章 + 周期等级奖励模型（埋点已对齐 v2.3 现版）｜ 产品与研发对齐后进入开发评审</footer>
 </div>
 </body>
 </html>
