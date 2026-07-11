@@ -90,20 +90,20 @@
       <li>情形 3：用户中途跳过但填了部分必填步骤 → <span class="pill part">部分完成</span>，但需保留已填数据并在后续引导中带入默认值补全</li>
     </ul>
     <p><b>问题：</b>这些完成逻辑散落在客户端代码中，运营无法自助配置，且不同任务判定标准差异大，缺少统一抽象。</p>
-    <p><b>目标：</b>在后台管理（任务配置模块）提供一套<strong>通用、可配置</strong>的"完成条件"定义能力，让运营无需改代码即可定义/调整任务的完成判定、状态流转与奖励发放。本 PRD 同时约定：每个任务的判定必须落地为埋点事件（见各任务的「埋点信息」章节，格式对齐《泰小虎埋点表 v2.3》现版）。</p>
+    <p><b>目标：</b>在后台管理（任务配置模块）提供一套<strong>通用、可配置</strong>的"完成条件"配置能力，供运营<strong>配置 / 编辑已有任务</strong>的完成判定、状态流转与奖励发放。<b style="color:#d4380d;">⚠️ 任务不由运营手动新增——任务均由研发通过代码 / 部署创建，后台运营仅可对已有任务进行配置与编辑，不可新建、不可删除。</b>本 PRD 同时约定：每个任务的判定必须落地为埋点事件（见各任务的「埋点信息」章节，格式对齐《泰小虎埋点表 v2.3》现版）。</p>
   </div>
 
   <h3>1.2 任务数据结构（基础字段）</h3>
   <div class="card">
-    <p>后台为每个任务维护以下基础信息，编辑弹窗按此字段收集：</p>
+    <p>后台为每个任务维护以下基础信息，<b>编辑弹窗按此字段收集（仅编辑已有任务，不支持新建 / 删除）</b>：</p>
     <table>
       <tr><th>字段</th><th>说明</th><th>控件</th><th>必填</th></tr>
       <tr><td>任务 ID</td><td>系统<b>自动生成</b>，运营无需填写；由任务标题派生（小写英文 + 下划线）+ 时间戳后缀，保证唯一</td><td>系统生成（只读）</td><td>否（自动）</td></tr>
-      <tr style="background:#fff7e6;"><td><b style="color:#d4380d;">★ 任务 Code（唯一业务码）</b></td><td>任务的<b>唯一业务标识</b>，全局唯一、用于任务逻辑关联与跨系统数据关联；<b style="color:#d4380d;">新建提交成功后由系统<b>自动生成</b></b>（格式 <code>TXH-</code> + 6 位唯一串，如 <code>TXH-A001</code>），运营<b>不可手动填写 / 修改</b>。⚠️ 此为关键字段，务必随任务一同落库</td><td>系统生成（只读）</td><td>是（系统）</td></tr>
+      <tr style="background:#fff7e6;"><td><b style="color:#d4380d;">★ 任务 Code（唯一业务码）</b></td><td>任务的<b>唯一业务标识</b>，全局唯一、用于任务逻辑关联与跨系统数据关联；<b style="color:#d4380d;">由研发创建任务时（提交成功后）由系统自动生成</b>（格式 <code>TXH-</code> + 6 位唯一串，如 <code>TXH-A001</code>），运营<b>不可手动填写 / 修改</b>。⚠️ 此为关键字段，务必随任务一同落库</td><td>系统生成（只读）</td><td>是（系统）</td></tr>
       <tr><td>任务标题</td><td>如"完善健康档案"</td><td>文本</td><td>是</td></tr>
       <tr><td>任务描述（副标题）</td><td>如"填写性别/生日/身高体重等基础档案"</td><td>文本</td><td>是</td></tr>
       <tr><td>执行理由（提示文案）</td><td>卡片底部小贴士，如"💡 档案越完整，推荐越准"</td><td>多行文本</td><td>是</td></tr>
-      <tr><td>跳转页面类型</td><td>跳转目标路由 / 路径，由运营<b>自定义填写</b>（自由文本），如 <code>/pages/health-task</code> 或 <code>health_task_page</code></td><td>文本（自由输入）</td><td>是</td></tr>
+      <tr><td>跳转页面类型</td><td>跳转目标路由 / 路径，由运营<b>在编辑已有任务时自定义填写</b>（自由文本），如 <code>/pages/health-task</code> 或 <code>health_task_page</code></td><td>文本（自由输入）</td><td>是</td></tr>
       <tr><td>跳转提示语</td><td>跳转时 toast 提示文字</td><td>文本</td><td>是</td></tr>
       <tr><td>状态</td><td>启用 / 停用</td><td>下拉</td><td>是</td></tr>
       <tr><td>排序序号</td><td>数字越小越靠前，默认 99（仅正整数）</td><td>数字</td><td>否</td></tr>
@@ -113,11 +113,11 @@
 
   <h3>1.2.1 表单字段约束说明（输入类型 / 字数 / 空格处理 / 后端字段）</h3>
   <div class="card">
-    <p>以下为后台「任务编辑」所有输入控件逐字段的约束说明（含输入类型 / 是否必填 / 字数长度 / 空格处理 / 特殊限制 / 后端字段），已与产品确认，供研发 / 测试对齐。</p>
+    <p>以下为后台「任务配置（编辑已有任务）」所有输入控件逐字段的约束说明（含输入类型 / 是否必填 / 字数长度 / 空格处理 / 特殊限制 / 后端字段），已与产品确认，供研发 / 测试对齐。<b style="color:#d4380d;">注：任务由研发创建，后台不支持运营手动新增 / 删除，以下字段均为「编辑已有任务」视角。</b></p>
     <table>
       <tr><th>字段</th><th>输入类型</th><th>必填</th><th>字数 / 长度限制</th><th>空格处理</th><th>特殊限制</th><th>后端字段</th></tr>
       <tr><td>任务 ID</td><td>系统生成（只读）</td><td>否（自动）</td><td>≤ 64 字符</td><td>不含空格</td><td>由标题派生（小写英文 + 下划线）+ 时间戳后缀，正则 <code>^[a-z0-9_]+$</code>，全局唯一</td><td><code>id</code> VARCHAR(64) PK</td></tr>
-      <tr style="background:#fff7e6;"><td><b style="color:#d4380d;">★ 任务 Code（唯一业务码）</b></td><td>系统生成（只读）</td><td>是（系统）</td><td>≤ 64 字符</td><td>不含空格</td><td><b style="color:#d4380d;">新建提交成功后自动生成</b>（<code>TXH-</code> + 6 位唯一串，如 <code>TXH-A001</code>）；全局唯一、用于任务逻辑关联；运营<b>不可手动填写 / 修改</b>；⚠️ 务必随任务一同落库</td><td><code>code</code> VARCHAR(64) UNIQUE</td></tr>
+      <tr style="background:#fff7e6;"><td><b style="color:#d4380d;">★ 任务 Code（唯一业务码）</b></td><td>系统生成（只读）</td><td>是（系统）</td><td>≤ 64 字符</td><td>不含空格</td><td><b style="color:#d4380d;">研发创建任务时（提交成功后）自动生成</b>（<code>TXH-</code> + 6 位唯一串，如 <code>TXH-A001</code>）；全局唯一、用于任务逻辑关联；运营<b>不可手动填写 / 修改</b>；⚠️ 务必随任务一同落库</td><td><code>code</code> VARCHAR(64) UNIQUE</td></tr>
       <tr><td>任务标题</td><td>单行文本</td><td>是</td><td>≤ 50 字符</td><td>首尾 trim（删除前后空格）；中间连续空格压缩为 1 个</td><td>禁止纯空格、禁止 emoji（提交前校验，含 emoji 拦截并提示）</td><td><code>title</code> VARCHAR(100) NOT NULL</td></tr>
       <tr><td>任务描述</td><td>单行文本</td><td>是</td><td>≤ 100 字符</td><td>首尾 trim（删除前后空格）</td><td>禁止纯空格、禁止 emoji</td><td><code>desc</code> VARCHAR(200)</td></tr>
       <tr><td>执行理由</td><td>多行文本</td><td>是</td><td>≤ 200 字符</td><td>首尾 trim（删除前后空格）；保留行内换行</td><td>卡片底部小贴士文案；禁止纯空格、禁止 emoji</td><td><code>why</code> VARCHAR(400)</td></tr>
