@@ -198,7 +198,7 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
 
 <div class="page-header">
   <div class="ph-title">任务引擎配置</div>
-  <div class="ph-sub">统一管理任务的完成判定条件 · 基于「任务判定」驱动两态（已完成 / 部分完成）；不同状态发放对应虎力值；任务 Code 为唯一业务码，提交成功后由系统自动生成</div>
+  <div class="ph-sub">统一管理任务的完成判定条件 · 基于「任务判定」驱动两态（已完成 / 部分完成）；不同状态发放对应虎力值；任务 Code 为唯一业务码，由研发创建任务时自动生成。<b style="color:#d4380d;">⚠️ 任务由研发创建，运营不可手动新增，后台仅支持配置 / 编辑已有任务</b></div>
 </div>
 
 <!-- 搜索栏 -->
@@ -213,7 +213,6 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
   </select>
   <button class="btn btn-primary" onclick="doSearch()">搜索</button>
   <button class="btn btn-default" onclick="resetSearch()">重置</button>
-  <button class="btn btn-success" onclick="openAddModal()">+ 新增任务</button>
 </div>
 
 <!-- 表格 -->
@@ -258,7 +257,7 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-box">
     <div class="modal-head">
-      <h3 id="modalTitle">新增任务</h3>
+      <h3 id="modalTitle">编辑任务</h3>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <form id="taskForm" onsubmit="return false;">
@@ -438,17 +437,6 @@ const TASKS_DATA = [
 let tasks = JSON.parse(JSON.stringify(TASKS_DATA));
 let editingId = null;
 
-// 任务 ID 自动生成（后台无需填写）
-function genTaskId(title){
-  const base = (title||'').trim().toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
-  return (base || 'task') + '_' + Date.now().toString(36).slice(-4);
-}
-
-// 任务 Code：提交成功后系统自动生成，全局唯一（TXH- + 6位base36）
-function genTaskCode(){
-  return 'TXH-' + Date.now().toString(36).slice(-6).toUpperCase();
-}
-
 const OP_LABEL = {'==':'等于','!=':'不等于','>=':'≥ 大于等于','<=':'≤ 小于等于','includes':'包含','exists':'非空存在'};
 
 // ==================== 渲染表格 ====================
@@ -471,7 +459,6 @@ function renderTable(data){
       <td>${t.sortOrder||'-'}</td>
       <td class="td-actions">
         <button class="btn btn-sm" style="color:#5b4cbd;" onclick="openEditModal('${t.id}')">编辑</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteTask('${t.id}')">删除</button>
       </td>
     </tr>`;
   });
@@ -539,13 +526,6 @@ function readEngineRows(){
   });
   return { done, partial };
 }
-function clearEngine(){
-  document.getElementById('fRefill').checked=false;
-  document.getElementById('fRewardDone').value='';
-  document.getElementById('fRewardPartial').value=0;
-  // 新增任务：采用默认写死条件（属性不可编辑）
-  renderEngineRows({completeRules:[{attrName:'业务状态',attr:'status',op:'==',val:'success'}],partialEnabled:false,partialRules:[]});
-}
 function fillEngine(eng){
   if(!eng) eng={judgeType:'task',completeRules:[],partialEnabled:false,partialRules:[],refill:false,reward:{done:0,partial:0}};
   document.getElementById('fRefill').checked=!!eng.refill;
@@ -555,13 +535,6 @@ function fillEngine(eng){
 }
 
 // ==================== 弹窗操作 ====================
-function openAddModal(){
-  editingId=null;
-  document.getElementById('modalTitle').textContent='新增任务';
-  clearForm();
-  clearEngine();
-  openModal();
-}
 function openEditModal(id){
   editingId=id;
   const t = TASKS_DATA.find(x=>x.id===id);
@@ -574,13 +547,6 @@ function openEditModal(id){
 function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); }
 function openModal(){ document.getElementById('modalOverlay').classList.add('show'); }
 
-function clearForm(){
-  ['fTitle','fDesc','fWhy','fJumpMsg','fJumpPath','fSortOrder','fCode'].forEach(id=>{
-    document.getElementById(id).value='';
-  });
-  document.getElementById('fStatus').value='on';
-  document.getElementById('fCode').placeholder='提交成功后自动生成';
-}
 function fillForm(t){
   document.getElementById('fTitle').value=t.title;
   document.getElementById('fDesc').value=t.desc;
@@ -596,7 +562,7 @@ function fillForm(t){
 function saveTask(){
   const title=document.getElementById('fTitle').value.trim();
   // 任务 ID 自动生成（无需填写）
-  const id = editingId ? editingId : genTaskId(title);
+  const id = editingId;
   const desc=document.getElementById('fDesc').value.trim();
   const why=document.getElementById('fWhy').value.trim();
   const jumpPath=document.getElementById('fJumpPath').value.trim();
@@ -617,31 +583,20 @@ function saveTask(){
   if(!title||!desc||!why||!jumpPath||!jumpMsg){ showToast('⚠️ 请填写所有必填项');return; }
   if(!er.done.length){ showToast('⚠️ 至少需一条「已完成」条件');return; }
   // ID 重复校验（排除自身）
-  if(editingId!==id && TASKS_DATA.some(t=>t.id===id)){ showToast('⚠️ 该任务 ID 已存在');return; }
 
-  // 任务 Code：编辑时沿用原值，新增时提交成功后自动生成
-  const code = editingId ? (TASKS_DATA.find(t=>t.id===editingId).code||'') : genTaskCode();
+
+  // 任务 Code：沿用研发创建时生成的原值（不可改）
+  const code = TASKS_DATA.find(t=>t.id===editingId).code||'';
 
   const engine={judgeType:'task',completeRules:er.done,partialEnabled,partialRules:er.partial,refill};
   const row={id,code,title,desc,why,jumpPath,jumpMsg,status,sortOrder,engine,reward};
-  if(editingId){
-    const idx=TASKS_DATA.findIndex(t=>t.id===editingId);
-    if(idx>-1)TASKS_DATA[idx]=row;
-    showToast('✅ 已保存');
-  }else{
-    TASKS_DATA.push(row);
-    showToast('✅ 已新增，任务 Code：'+code);
-  }
+  const idx=TASKS_DATA.findIndex(t=>t.id===editingId);
+  if(idx>-1)TASKS_DATA[idx]=row;
+  showToast('✅ 已保存');
   closeModal();
   doSearch();
 }
 
-function deleteTask(id){
-  if(confirm('确认删除任务「'+id+'」？此操作不可撤销。')){
-    const idx=TASKS_DATA.findIndex(t=>t.id===id);
-    if(idx>-1){ TASKS_DATA.splice(idx,1); doSearch(); showToast('🗑️ 已删除'); }
-  }
-}
 
 // ==================== 分页（模拟） ====================
 function changePageSize(v){showToast(`切换为 ${v} 条/页（原型）`);}
