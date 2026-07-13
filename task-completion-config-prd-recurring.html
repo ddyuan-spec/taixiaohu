@@ -218,7 +218,7 @@
       <tr><td>⑤</td><td>续填策略</td><td>开关 + 默认值来源（用于部分完成态的补全）</td><td>开关</td></tr>
       <tr><td>⑥</td><td>奖励分配</td><td>仅「部分完成」「已完成」两态可配置虎力值；「未完成」固定为 0 且不可配置</td><td>数字输入（部分完成 / 已完成）</td></tr>
     </table>
-    <div class="note"><b>设计取舍：</b>底层判定仍依赖埋点上报属性（如 <code>archive_result</code>），但<b>对运营屏蔽事件 Key</b>，改由任务类型写死「判定属性」并以中文名呈现；属性不可编辑、不可增删条件，用户仅调关系符与值，模型更可控。</div>
+    <div class="note"><b>设计取舍：</b>底层判定仍依赖埋点上报属性（如 <code>complete_source</code>），但<b>对运营屏蔽事件 Key</b>，改由任务类型写死「判定属性」并以中文名呈现；属性不可编辑、不可增删条件，用户仅调关系符与值，模型更可控。</div>
   </div>
 
   <h3>1.7 属性条件组 · 配置规范</h3>
@@ -230,12 +230,12 @@
       <tr><th>元素</th><th>可选值</th><th>示例</th></tr>
       <tr><td>属性条件组-属性名（写死）</td><td>由任务类型写死的判定属性（如「状态」「打卡次数」「页面」），不可编辑</td><td><code>status</code> / <code>count</code> / <code>page</code>（中文名呈现）</td></tr>
       <tr><td>属性条件组-运算符</td><td>等于 / 不等于 / 大于等于 / 小于等于 / 包含 / 非空存在</td><td><code>==</code> / <code>&gt;=</code> / <code>非空</code></td></tr>
-      <tr><td>属性条件组-值</td><td>字符串 / 数字 / 枚举</td><td><code>first_onboarding</code> / <code>1</code> / <code>service</code></td></tr>
+      <tr><td>属性条件组-值</td><td>字符串 / 数字 / 枚举</td><td><code>first_onboarding</code> / <code>1</code> / <code>profile_complete</code></td></tr>
     </table>
     <ul class="tight">
       <li><b>条件组 A → 已完成</b>：如 <code>complete_source 非空</code>（即 <code>profile_complete</code> 触发）</li>
-      <li><b>条件组 B → 部分完成</b>：如 <code>is_onboarding_end == true</code> AND <code>archive_result == partial</code></li>
-      <li>均不命中 → 保持未完成</li>
+      <li><b>条件组 B → 部分完成</b>：<span class="warn">待定 · 需研发确认</span>（原 PRD 依赖 profile_submit.archive_result / is_onboarding_end，该属性在真实埋点表 v2.3 中不存在，须重新定义可采集信号）</li>
+      <li>均不命中 → 保持原态（两态模型：仅“已完成”发奖，无独立“未完成”态）</li>
     </ul>
   </div>
 
@@ -243,7 +243,7 @@
   <div class="card">
     <p>采用 <b>实时事件驱动</b>：埋点上报即刻判定，用户领奖无延迟。流程如下：</p>
     <ol class="steps">
-      <li>客户端 / 服务端上报埋点事件，必须携带 <code>user_id</code> 及判定所需属性（如 <code>complete_source</code>、<code>archive_result</code>、<code>user_checkin_count</code>）。</li>
+      <li>客户端 / 服务端上报埋点事件，必须携带 <code>user_id</code> 及判定所需属性（如 <code>complete_source</code>、<code>completion_rate</code>、<code>user_checkin_count</code>）。</li>
       <li>后端事件流实时消费，取出该用户所有处于"未完成 / 部分完成"状态的任务配置。</li>
       <li>对每个任务，依次用其"属性条件组"匹配当前事件：命中"已完成"组 → 置已完成并发奖；命中"部分完成"组 → 置部分完成（不发奖）；均不中 → 保持原态。</li>
       <li>状态变更写回"用户任务进度表"，推送客户端刷新任务卡。</li>
@@ -270,9 +270,9 @@
   <div class="card">
     <ul class="tight">
       <li>事件必须携带 <code>user_id</code>，否则无法关联用户任务进度。</li>
-      <li>事件属性需包含判定所需字段（<code>complete_source</code> / <code>archive_result</code> / <code>user_checkin_count</code> / <code>recommend_source</code> 等），缺失属性按"不命中"处理。</li>
+      <li>事件属性需包含判定所需字段（<code>complete_source</code> / <code>completion_rate</code> / <code>user_checkin_count</code> / <code>recommend_source</code> 等），缺失属性按"不命中"处理。</li>
       <li>实时上报（非批量延迟），保证判定时效。</li>
-      <li>事件定义须登记于《泰小虎埋点表 v2.3》现版；已有事件直接复用，缺口事件/属性（如 <code>plan_create</code>、<code>checkin_record</code>、<code>profile_submit.is_onboarding_end/archive_result</code>、<code>recommend_source</code> 补 <code>service</code>）须先补齐方可驱动经验。</li>
+      <li>事件定义须登记于《泰小虎埋点表 v2.3》现版；已有事件直接复用，缺口事件/属性（如 <code>plan_create</code>、<code>checkin_record</code> 两事件需新增；<code>recommend_source</code> 需补充 <code>service</code> 枚举）。注：<code>profile_submit.is_onboarding_end</code> / <code>archive_result</code> 非真实埋点属性（v2.3 无此规划），非缺口，原 PRD 误引，已移除。</li>
     </ul>
   </div>
 
@@ -311,22 +311,21 @@
       <tr><td>主完成信号</td><td><code>profile_complete</code>（档案完整度首次达 100% 触发）</td></tr>
       <tr><td>辅助信号</td><td><code>profile_submit</code>（每步上报；引导结束带结果）</td></tr>
       <tr><td>已完成条件组</td><td><code>profile_complete</code> 触发（complete_source ∈ first_onboarding / update_fill）</td></tr>
-      <tr><td>部分完成条件组</td><td><code>is_onboarding_end == true</code> AND <code>archive_result == partial</code>（必填步骤填了一部分，报告可空）</td></tr>
-      <tr><td>未完成条件组</td><td><code>is_onboarding_end == true</code> AND <code>archive_result == skipped</code>（零/极少数据跳过）</td></tr>
+      <tr><td>部分完成条件组</td><td><span class="warn">待定 · 需研发确认</span>（原依赖 profile_submit.archive_result / is_onboarding_end，真实埋点表 v2.3 无此属性，须重新定义可采集信号）</td></tr>
       <tr><td>续填策略</td><td>开启；部分完成后复用 <code>profile_update</code>（update_source=memory_fill，AI 引导补填）补充字段，最终达成 <code>profile_complete</code> 升级为已完成</td></tr>
-      <tr><td>奖励分配</td><td>完成 +50，部分完成 +0（「未完成」固定 0 不可配置）</td></tr>
+      <tr><td>奖励分配</td><td>完成 +50，部分完成 +0（两态模型：仅“已完成”发奖）</td></tr>
     </table>
     <table style="margin-top:14px;">
       <tr><th>情形</th><th>上报事件</th><th>判定结果</th></tr>
       <tr><td>1 走完（前面必填步填了，报告可选）</td><td><code>profile_complete</code> 触发</td><td><span class="pill done">已完成</span> +50</td></tr>
-      <tr><td>2 跳过零数据</td><td><code>profile_submit.archive_result=skipped</code></td><td><span class="pill todo">未完成</span></td></tr>
-      <tr><td>3 跳过但填了部分必填步</td><td><code>profile_submit.archive_result=partial</code></td><td><span class="pill part">部分完成</span>（可续填）</td></tr>
+      <tr><td>2 跳过（零/极少数据）</td><td><span class="warn">待定·需研发确认</span>（原 archive_result=skipped 在真实埋点不存在）</td><td><span class="pill part">部分完成</span>（未达已完成）</td></tr>
+      <tr><td>3 跳过但填了部分必填步</td><td><span class="warn">待定·需研发确认</span>（原 archive_result=partial 在真实埋点不存在）</td><td><span class="pill part">部分完成</span>（可续填）</td></tr>
     </table>
   </div>
 
   <h4>2.1.2 埋点信息（对齐 v2.3 现版）</h4>
   <div class="card">
-    <p>依赖事件：<code>profile_submit</code>（v2.3 编号 10，<span class="tag-old">复用</span>，6 步：gender / birthdate / height / weight_bmi / sleep / report_upload 末步非必填）、<code>profile_complete</code>（编号 21，<span class="tag-old">复用</span>，建档完整度首次达 100% 触发，任务"已完成"主信号）、<code>profile_update</code>（编号 11，<span class="tag-old">复用</span>，部分完成后续填）。其中 <code>profile_submit</code> 需补充 <code>is_onboarding_end</code> / <code>archive_result</code> 两个判定属性（<span class="tag-new">需补充</span>）。</p>
+    <p>依赖事件：<code>profile_submit</code>（v2.3 编号 10，<span class="tag-old">复用</span>，6 步：gender / birthdate / height / weight_bmi / sleep / report_upload 末步非必填）、<code>profile_complete</code>（编号 21，<span class="tag-old">复用</span>，建档完整度首次达 100% 触发，任务"已完成"主信号）、<code>profile_update</code>（编号 11，<span class="tag-old">复用</span>，部分完成后续填）。其中 <code>profile_submit</code> 真实属性为 <code>step_index</code> / <code>step_name</code> / <code>profile_fields</code> / <code>completion_rate</code>（以埋点表 v2.3 为准）；“部分完成”判定信号<span class="tag-new">待定·需研发确认</span>（原 archive_result / is_onboarding_end 非真实埋点属性，已移除）。</p>
     <div class="tbl-scroll">
     <table class="v23">
       <tr><th>事件编号</th><th>项目（必填）</th><th>平台（必填）</th><th>模块（必填）</th><th>事件英文名（必填）</th><th>事件显示名（必填）</th><th>事件类型（必填）</th><th>属性英文变量名</th><th>属性显示名</th><th>数据类型</th><th>属性说明</th><th>触发时机（必填）</th><th>创建人</th><th>创建时间</th><th>备注</th></tr>
@@ -334,8 +333,6 @@
       <tr><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>step_name</td><td>步骤名称</td><td>STRING</td><td>gender / birthdate / height / weight_bmi / sleep / report_upload（report_upload 为非必填末步）</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
       <tr><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>profile_fields</td><td>档案字段列表</td><td>STRING</td><td>本步骤已填字段名列表（分号分隔；只传字段名）</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
       <tr><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>completion_rate</td><td>完成度</td><td>NUMBER</td><td>档案整体完成度（百分比）</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
-      <tr><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>is_onboarding_end</td><td>是否引导结束</td><td>BOOLEAN</td><td>引导结束时置 true，每步提交时为 false/空</td><td>引导结束（完成或跳过）时随最后一次 profile_submit 上报</td><td>（待补）</td><td>（待补）</td><td><span class="tag-new">需补充</span> 判定属性</td></tr>
-      <tr><td>10</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_submit</td><td>提交健康档案（首次建档）</td><td>提交</td><td>archive_result</td><td>建档结果</td><td>STRING</td><td>completed / partial / skipped（引导结束时的建档结果）</td><td>同上</td><td>（待补）</td><td>（待补）</td><td><span class="tag-new">需补充</span> partial→部分完成；skipped→未完成</td></tr>
       <tr><td>21</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_complete</td><td>完整建档完成</td><td>接口返回结果</td><td>complete_source</td><td>完成来源</td><td>STRING</td><td>first_onboarding（首次 6 步建档）/ update_fill（后续补填达到完整）</td><td>用户档案完整度首次达到 100% 时触发</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3；任务"已完成"主信号</td></tr>
       <tr><td>21</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_complete</td><td>完整建档完成</td><td>接口返回结果</td><td>guide_duration</td><td>引导总耗时</td><td>NUMBER</td><td>125000</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
       <tr><td>21</td><td>泰小虎</td><td>Android/iOS</td><td>profile</td><td>profile_complete</td><td>完整建档完成</td><td>接口返回结果</td><td>completion_rate</td><td>完成度</td><td>NUMBER</td><td>100</td><td>同上</td><td>（待补）</td><td>（待补）</td><td>复用 v2.3</td></tr>
@@ -505,12 +502,12 @@
 
   <h4>2.5.2 埋点信息（对齐 v2.3 现版）</h4>
   <div class="card">
-    <p>依赖事件：<code>recommend_view</code>（v2.3 编号 15，<span class="tag-old">复用</span>，显示名"推荐结果曝光"）。<code>recommend_source</code> 枚举已确认包含 <code>service</code>（服务Tab-健康好物），直接复用；等级奖励由服务端读取用户当前等级实现，<b>不新增埋点</b>。</p>
+    <p>依赖事件：<code>recommend_view</code>（v2.3 编号 15，<span class="tag-old">复用</span>，显示名"推荐结果曝光"）。<code>recommend_source</code> 枚举需补充 <code>service</code>（服务Tab-健康好物），补充后方可驱动本任务；等级奖励由服务端读取用户当前等级实现，<b>不新增埋点</b>。</p>
     <div class="tbl-scroll">
     <table class="v23">
       <tr><th>事件编号</th><th>项目（必填）</th><th>平台（必填）</th><th>模块（必填）</th><th>事件英文名（必填）</th><th>事件显示名（必填）</th><th>事件类型（必填）</th><th>属性英文变量名</th><th>属性显示名</th><th>数据类型</th><th>属性说明</th><th>触发时机（必填）</th><th>创建人</th><th>创建时间</th><th>备注</th></tr>
       <tr><td>15</td><td>泰小虎</td><td>Android/iOS</td><td>recommend</td><td>recommend_view</td><td>推荐结果曝光</td><td>曝光</td><td>message_id</td><td>推荐批次 ID</td><td>STRING</td><td>推荐批次 ID</td><td>AI 推荐结果展示给用户</td><td></td><td></td><td>复用 v2.3</td></tr>
-      <tr><td>15</td><td>泰小虎</td><td>Android/iOS</td><td>recommend</td><td>recommend_view</td><td>推荐结果曝光</td><td>曝光</td><td>recommend_source</td><td>推荐来源</td><td>STRING</td><td>dialogue / home / profile_complete / service（服务Tab-健康好物）</td><td>同上</td><td></td><td></td><td>复用 v2.3；引擎取 service</td></tr>
+      <tr><td>15</td><td>泰小虎</td><td>Android/iOS</td><td>recommend</td><td>recommend_view</td><td>推荐结果曝光</td><td>曝光</td><td>recommend_source</td><td>推荐来源</td><td>STRING</td><td>dialogue / home / profile_complete / <span class="warn">service（需补充）</span></td><td>同上</td><td></td><td></td><td>复用 v2.3；引擎取 service</td></tr>
       <tr><td>15</td><td>泰小虎</td><td>Android/iOS</td><td>recommend</td><td>recommend_view</td><td>推荐结果曝光</td><td>曝光</td><td>dialogue_id</td><td>对话 ID</td><td>STRING</td><td>来源对话 ID；recommend_source=dialogue 时必填</td><td>同上</td><td></td><td></td><td>复用 v2.3</td></tr>
       <tr><td>15</td><td>泰小虎</td><td>Android/iOS</td><td>recommend</td><td>recommend_view</td><td>推荐结果曝光</td><td>曝光</td><td>recommend_count</td><td>推荐产品数</td><td>NUMBER</td><td>3</td><td>同上</td><td></td><td></td><td>复用 v2.3</td></tr>
       <tr><td>15</td><td>泰小虎</td><td>Android/iOS</td><td>recommend</td><td>recommend_view</td><td>推荐结果曝光</td><td>曝光</td><td>product_ids</td><td>产品 ID 列表</td><td>STRING</td><td>推荐产品 ID 列表（分号分隔）</td><td>同上</td><td></td><td></td><td>复用 v2.3</td></tr>
@@ -524,14 +521,14 @@
     <h4>埋点缺口（需先补齐方可驱动任务）</h4>
     <table>
       <tr><th>事件 / 属性</th><th>状态</th><th>影响任务</th></tr>
-      <tr><td><code>profile_submit.is_onboarding_end</code> / <code>archive_result</code></td><td><span class="pill new">需补充属性</span></td><td>完善健康档案（两态 + 续填）</td></tr>
+      <tr><td>完善健康档案「部分完成」判定信号</td><td><span class="pill new">待确认</span></td><td>完善健康档案（两态 + 续填）</td></tr>
       <tr><td><code>plan_create</code></td><td><span class="pill new">需新增事件</span></td><td>创建打卡计划</td></tr>
       <tr><td><code>checkin_record</code></td><td><span class="pill new">需新增事件</span></td><td>完成首次打卡</td></tr>
       <tr><td><code>recommend_source</code> 枚举补充 <code>service</code></td><td><span class="pill new">需补充枚举</span></td><td>浏览健康好物</td></tr>
     </table>
     <h4 style="margin-top:16px;">待确认 / 后续迭代</h4>
     <ul class="tight">
-      <li><code>archive_result</code> 与 <code>profile_complete</code> 的边界：建议 archive_result=completed 时服务端同步触发 profile_complete，避免两信号不一致。</li>
+      <li>完善健康档案「部分完成」的可采集信号尚未定义（原 PRD 误引 profile_submit.archive_result / is_onboarding_end，真实埋点表 v2.3 无此属性），需研发确认后用真实字段替换「待定」占位。</li>
       <li>是否需要"运营手动标记完成"（后台强制置已完成）？</li>
       <li>多事件组合（OR / 事件序列）是否纳入本期？暂按单事件 + 属性条件覆盖。</li>
       <li>奖励是否支持多奖品（券 + 虎力值组合）？本期仅虎力值。</li>
