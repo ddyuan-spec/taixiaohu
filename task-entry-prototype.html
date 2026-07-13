@@ -45,6 +45,8 @@
   .screen{position:absolute;top:89px;left:0;right:0;bottom:0;overflow-y:auto;overflow-x:hidden;
     -webkit-overflow-scrolling:touch;display:none;background:var(--bg);}
   .screen.active{display:block;}
+  /* 任务页作为独立页面：覆盖全局导航，从状态栏下方开始 */
+  #s-task.screen{top:44px;z-index:85;}
 
   /* ==================== SCREEN 1: 首页(泰小虎/AI会话) ==================== */
 
@@ -642,8 +644,8 @@
   .task-power .tp-bar{height:8px;background:#fff6e0;border-radius:6px;overflow:hidden;}
   .task-power .tp-bar i{display:block;height:100%;background:#FF9F1C;}
   .task-power .tp-tip{font-size:11px;color:#9A6B2F;margin-top:6px;}
-  .task-list{padding:0 12px;}
-  .task-list .ob-card{width:100%;max-width:100%;box-sizing:border-box;margin-bottom:12px;}
+  .task-list{padding:0;overflow-x:hidden;width:100%;box-sizing:border-box;}
+  .task-list .ob-card{width:calc(100% - 24px);max-width:100%;box-sizing:border-box;margin:0 12px 12px;}
   .task-list .ob-card .reward{display:flex;align-items:center;gap:10px;}
   .task-list .ob-card .rwd-txt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .task-list .ob-card .go-btn,
@@ -1220,9 +1222,12 @@
 // ---- 全局顶部导航切换屏幕 ----
 function switchScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.sub-screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  // 更新顶部 tab 样式（我的已不在tab中）
+  // 更新顶部 tab 样式（我的已不在tab中；任务页隐藏全局导航）
   const map = {'s-profile':'profile','s-home':'home','s-service':'service'};
+  const gnav = document.getElementById('globalNav');
+  if(gnav) gnav.style.display = (id === 's-task') ? 'none' : '';
   document.querySelectorAll('.gnav .gtab').forEach(t=>{
     t.classList.toggle('on', t.dataset.g===map[id]);
   });
@@ -1231,9 +1236,9 @@ function switchScreen(id){
   if(id==='s-mine') updateMyLevel();
 }
 
-// ---- 健康任务二级页（虎力值 + 用户任务） ----
-function openTaskPage(){ showSubScreen('s-task','home'); }
-function closeTaskPage(){ hideAllSubScreens(); switchScreen('s-home'); }
+// ---- 健康任务页（独立页面） ----
+function openTaskPage(){ switchScreen('s-task'); }
+function closeTaskPage(){ switchScreen('s-home'); }
 
 // ---- ☰ 进入我的页面 ----
 function goMine(){ switchScreen('s-mine'); }
@@ -1369,14 +1374,14 @@ function doTask(btn, taskId){
       switchScreen('s-home'); showToast(j.m);
       setTimeout(()=>{
         completeTask(card, pts);
-        if(window.fromTaskList) setTimeout(()=>showSubScreen('s-task','home'), 400);
+        if(window.fromTaskList) switchScreen('s-task');
       }, 700);
       break;
     case 'service':
       switchScreen('s-service'); showToast(j.m);
       setTimeout(()=>{
         completeTask(card, pts);
-        if(window.fromTaskList) setTimeout(()=>showSubScreen('s-task','home'), 400);
+        if(window.fromTaskList) switchScreen('s-task');
       }, 700);
       break;
   }
@@ -1434,8 +1439,15 @@ function updateTaskPowerUI(){
 
 // ---- 显示/隐藏 子页面 ----
 function showSubScreen(id, navTab){
+  const currentScreen = document.querySelector('.screen.active');
+  const isTaskContext = currentScreen && currentScreen.id === 's-task';
+  // 子页面顶部偏移：从任务页进入时全局导航已隐藏，子页面从状态栏下方开始
+  const subTop = isTaskContext ? '44px' : '89px';
+  document.querySelectorAll('.sub-screen').forEach(s=>{
+    s.classList.remove('active');
+    s.style.top = subTop;
+  });
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.sub-screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   // 顶部导航高亮（子页面有独立导航，可选指定高亮tab）
   document.querySelectorAll('.gnav .gtab').forEach(t=>t.classList.toggle('on', navTab && t.dataset.g===navTab));
@@ -1519,7 +1531,7 @@ function doCreatePlan(){
 
   const card = document.querySelector('[data-task="plan"]');
   if(window.fromTaskList){
-    showSubScreen('s-task','home');
+    switchScreen('s-task');
     if(card && parseInt(card.dataset.done) === 0){
       setTimeout(()=>{
         completeTask(card, 30);
@@ -1697,15 +1709,15 @@ function onbNext(){
 }
 
 function exitOnboarding(completed){
-  if(completed && window.fromTaskList){
-    const card = document.querySelector('[data-task="profile"]');
-    if(card && parseInt(card.dataset.done) === 0){
-      completeTask(card, 50);
-      showToast('健康档案已完善，返回领取虎力值！');
+    if(completed && window.fromTaskList){
+      const card = document.querySelector('[data-task="profile"]');
+      if(card && parseInt(card.dataset.done) === 0){
+        completeTask(card, 50);
+        showToast('健康档案已完善，返回领取虎力值！');
+      }
+      switchScreen('s-task');
+      return;
     }
-    showSubScreen('s-task','home');
-    return;
-  }
   hideAllSubScreens();
   switchScreen('s-profile'); switchPTab('task');
   if(completed){
@@ -1814,7 +1826,7 @@ function delCheckinImg(el){
 function confirmCheckinRecord(){
   const card = document.querySelector('[data-task="checkin"]');
   if(window.fromTaskList){
-    showSubScreen('s-task','home');
+    switchScreen('s-task');
     if(card && parseInt(card.dataset.done) === 0){
       setTimeout(()=>{
         completeTask(card, 20);
@@ -1838,8 +1850,8 @@ updateMyLevel();
 updateTaskPowerUI();
 </script>
 
-  <!-- ========== SUB-SCREEN: 健康任务（二级页） ========== -->
-  <div class="sub-screen" id="s-task">
+  <!-- ========== SCREEN: 健康任务页（独立页面） ========== -->
+  <div class="screen" id="s-task">
     <div class="sub-nav">
       <div class="back-btn" onclick="closeTaskPage()">‹</div>
       <div class="sn-title">健康任务</div>
