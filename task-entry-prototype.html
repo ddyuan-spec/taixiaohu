@@ -641,9 +641,6 @@
   .task-power .tp-num{font-size:24px;font-weight:800;color:#7A4B12;}
   .task-power .tp-label{font-size:12px;color:#9A6B2F;}
   .task-power .tp-right{flex:1;margin-left:14px;}
-  .task-power .tp-bar{height:8px;background:#fff6e0;border-radius:6px;overflow:hidden;}
-  .task-power .tp-bar i{display:block;height:100%;background:#FF9F1C;}
-  .task-power .tp-tip{font-size:11px;color:#9A6B2F;margin-top:6px;}
   .task-list{padding:0 12px;overflow-x:hidden;width:100%;box-sizing:border-box;}
   .task-list .ob-card{width:100%;max-width:100%;box-sizing:border-box;margin:0 0 12px;}
   .task-list .ob-card .reward{display:flex;align-items:center;gap:10px;}
@@ -832,9 +829,7 @@
           <span class="lc-lv" id="myLevelText">Lv.1</span>
         </div>
       </div>
-      <div class="level-progress-bar"><div class="level-progress-fill" id="levelProgressFill"></div></div>
       <div class="level-tip-row">
-        <span id="levelNextTip">距下一级还有 50 虎力值</span>
         <span class="lt-upgrade" onclick="goTask('去升级')">去升级 ›</span>
       </div>
     </div>
@@ -1326,7 +1321,7 @@ function showToast(msg){
 }
 
 // ---- 新手引导任务：三态机 (0=pending / 1=completable可领取 / 2=claimed已领) ----
-let totalPower = 1280;
+let totalPower = 0;
 
 const taskJump = {
   profile: {s:'onboarding', m:'前往完善健康档案'},
@@ -1422,19 +1417,7 @@ function claimReward(card, pts){
 // ---- 同步任务页虎力值显示 ----
 function updateTaskPowerUI(){
   const num = document.getElementById('taskPowerNum');
-  const bar = document.getElementById('taskPowerBar');
-  const tip = document.getElementById('taskPowerTip');
   if(num) num.textContent = totalPower;
-  const lv = calcLevel(totalPower);
-  const prev = LEVEL_THRESHOLDS[lv-1] || 0;
-  const next = LEVEL_THRESHOLDS[lv] || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length-1];
-  const range = next - prev;
-  const pct = range > 0 ? ((totalPower - prev) / range) * 100 : 100;
-  if(bar) bar.style.width = Math.max(0, Math.min(100, pct)) + '%';
-  if(tip){
-    const remain = Math.max(0, next - totalPower);
-    tip.textContent = lv >= LEVEL_THRESHOLDS.length ? '已达到最高等级' : `距下一级还有 ${remain} 虎力值`;
-  }
 }
 
 // ---- 显示/隐藏 子页面 ----
@@ -1595,24 +1578,6 @@ function updateMyLevel(){
   // 文本
   const lt = document.getElementById('myLevelText');
   if(lt) lt.textContent = 'Lv.'+lv;
-  // 经验条：当前级内进度
-  const prevThreshold = LEVEL_THRESHOLDS[lv-1] || 0;
-  const nextThreshold = LEVEL_THRESHOLDS[lv] || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length-1];
-  const range = nextThreshold - prevThreshold;
-  const progress = range > 0 ? (totalPower - prevThreshold) / range : 0;
-  // 进度条
-  const fill = document.getElementById('levelProgressFill');
-  if(fill) fill.style.width = (progress * 100)+'%';
-  // 距下一级提示
-  const tip = document.getElementById('levelNextTip');
-  if(tip){
-    const remain = Math.max(0, nextThreshold - totalPower);
-    if(lv >= LEVEL_THRESHOLDS.length){
-      tip.textContent = '已达到最高等级！';
-    } else {
-      tip.textContent = `距下一级还有差 ${remain} 虎力值`;
-    }
-  }
 
   // 全国超越百分比（超过全国 x% 用户）
   const pct = Math.min(99, Math.round(100 * (1 - Math.exp(-(totalPower + 20) / 280))));
@@ -1863,13 +1828,9 @@ updateTaskPowerUI();
       <div class="tp-left">
         <div class="tp-icon">🐯</div>
         <div>
-          <div class="tp-num" id="taskPowerNum">1280</div>
+          <div class="tp-num" id="taskPowerNum">0</div>
           <div class="tp-label">虎力值</div>
         </div>
-      </div>
-      <div class="tp-right">
-        <div class="tp-bar"><i id="taskPowerBar" style="width:60%"></i></div>
-        <div class="tp-tip" id="taskPowerTip">距下一级还有 50 虎力值</div>
       </div>
     </div>
 
