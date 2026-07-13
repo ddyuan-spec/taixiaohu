@@ -21,6 +21,9 @@
   }
   .phone{width:390px;height:844px;background:var(--bg);position:relative;overflow:hidden;
     box-shadow:0 12px 50px rgba(0,0,0,.18);border-radius:0;}
+  @media (max-width:400px){
+    .phone{width:100vw;height:100vh;max-width:390px;min-height:100vh;border-radius:0;}
+  }
 
   /* ===== 全局状态栏 ===== */
   .statusbar{height:44px;background:var(--card);display:flex;align-items:center;
@@ -68,13 +71,16 @@
   .todo .bar>i{display:block;height:100%;background:linear-gradient(90deg,#FFB020,#FF6B2C);width:40%;}
   .todo .arrow{color:#C8923F;font-size:18px;flex:0 0 auto;}
 
-  /* 快捷入口卡 */
-  .quick{display:flex;gap:10px;margin:0 12px 4px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
-  .quick::-webkit-scrollbar{display:none;}
-  .qcard{flex:0 0 140px;background:var(--card);border-radius:14px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
-  .qcard .qic{font-size:24px;}
-  .qcard .qt{font-size:14px;font-weight:700;margin-top:8px;}
-  .qcard .qd{font-size:11px;color:var(--t3);margin-top:4px;line-height:1.4;}
+  /* 快捷入口卡 - 改为问题行样式（与截图一致） */
+  .quick{display:flex;flex-direction:column;gap:10px;margin:0 12px 4px;padding-bottom:4px;}
+  .qcard{background:var(--card);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,.04);cursor:pointer;position:relative;}
+  .qcard .qic{width:36px;height:36px;border-radius:50%;background:#E8F8EE;color:#1DBF75;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex:0 0 auto;}
+  .qcard .qbody{flex:1;min-width:0;}
+  .qcard .qt{font-size:15px;font-weight:700;color:var(--t1);}
+  .qcard .qd{font-size:12px;color:var(--t3);margin-top:2px;line-height:1.4;}
+  .qcard::after{content:'›';font-size:18px;color:var(--t3);flex:0 0 auto;}
+  .qcard.task-hint .qic{background:var(--tg-light);color:var(--tg);}
+  .qcard.task-hint .qt{color:var(--tg-dark);}
 
   /* 功能图标行 - 任务置顶+横滑 */
   .fnrow{display:flex;gap:6px;margin:14px 12px;overflow-x:auto;padding:6px 2px 10px;
@@ -634,6 +640,11 @@
   .task-power .tp-bar i{display:block;height:100%;background:#FF9F1C;}
   .task-power .tp-tip{font-size:11px;color:#9A6B2F;margin-top:6px;}
   .task-list{padding:0 12px;}
+  .task-list .ob-card{width:100%;box-sizing:border-box;margin-bottom:12px;}
+  .task-list .ob-card .reward{display:flex;align-items:center;gap:10px;}
+  .task-list .ob-card .rwd-txt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .task-list .ob-card .go-btn,
+  .task-list .ob-card .claim-btn{flex:0 0 auto;}
   .task-plan{margin:12px;background:var(--card);border-radius:14px;padding:14px;}
   .task-plan .tp-h{font-weight:700;font-size:15px;margin-bottom:6px;}
   .task-plan .ptag{font-size:11px;background:#E8F8EE;color:#1a9e5a;padding:1px 8px;border-radius:10px;margin-left:6px;}
@@ -678,11 +689,29 @@
       <div class="arrow">›</div>
     </div>
 
-    <!-- 快捷入口 -->
+    <!-- 快捷入口：三个问题行 -->
     <div class="quick">
-      <div class="qcard"><div class="qic">💼</div><div class="qt">职场亚健康调理</div><div class="qd">久坐·肩颈·疲劳</div></div>
-      <div class="qcard"><div class="qic">🌸</div><div class="qt">女性内服养护</div><div class="qd">气色·内分泌</div></div>
-      <div class="qcard"><div class="qic">🌿</div><div class="qt">肠道与代谢管理</div><div class="qd">益生·轻体</div></div>
+      <div class="qcard task-hint" onclick="openTaskPage()">
+        <div class="qic">?</div>
+        <div class="qbody">
+          <div class="qt">您有未完成的任务请前往完成</div>
+          <div class="qd">点击跳转任务列表 ›</div>
+        </div>
+      </div>
+      <div class="qcard" onclick="showToast('女性内服养护')">
+        <div class="qic">?</div>
+        <div class="qbody">
+          <div class="qt">女性内服养护</div>
+          <div class="qd">气色·内分泌</div>
+        </div>
+      </div>
+      <div class="qcard" onclick="showToast('肠道与代谢管理')">
+        <div class="qic">?</div>
+        <div class="qbody">
+          <div class="qt">肠道与代谢管理</div>
+          <div class="qd">益生·轻体</div>
+        </div>
+      </div>
     </div>
 
     <div style="height:76px"></div><!-- input bar spacer -->
@@ -1203,7 +1232,7 @@ function switchScreen(id){
 }
 
 // ---- 健康任务二级页（虎力值 + 用户任务） ----
-function openTaskPage(){ showSubScreen('s-task'); }
+function openTaskPage(){ showSubScreen('s-task','home'); }
 function closeTaskPage(){ hideAllSubScreens(); switchScreen('s-home'); }
 
 // ---- ☰ 进入我的页面 ----
@@ -1290,7 +1319,7 @@ function showToast(msg){
 }
 
 // ---- 新手引导任务：三态机 (0=pending / 1=completable可领取 / 2=claimed已领) ----
-let totalPower = 0; // 初始为0，完善档案未完成
+let totalPower = 1280;
 
 const taskJump = {
   profile: {s:'onboarding', m:'前往完善健康档案'},
@@ -1304,6 +1333,8 @@ function doTask(btn, taskId){
   const card = btn.closest('.ob-card');
   const state = parseInt(card.dataset.done || '0', 10);
   const pts = parseInt(card.dataset.pts, 10);
+  // 标记是否从任务列表页进入，用于完成后正确返回
+  window.fromTaskList = !!card.closest('#s-task');
 
   // 已领取 → 忽略
   if(state === 2) return;
@@ -1330,16 +1361,21 @@ function doTask(btn, taskId){
     case 'profile':
       switchScreen('s-profile'); switchPTab('task'); if(currentMember!=='self') switchMember('self');
       showToast(j.m);
-      // 模拟完成
       setTimeout(()=>completeTask(card, pts), 700);
       break;
     case 'home':
       switchScreen('s-home'); showToast(j.m);
-      setTimeout(()=>completeTask(card, pts), 700);
+      setTimeout(()=>{
+        completeTask(card, pts);
+        if(window.fromTaskList) setTimeout(()=>showSubScreen('s-task','home'), 400);
+      }, 700);
       break;
     case 'service':
       switchScreen('s-service'); showToast(j.m);
-      setTimeout(()=>completeTask(card, pts), 700);
+      setTimeout(()=>{
+        completeTask(card, pts);
+        if(window.fromTaskList) setTimeout(()=>showSubScreen('s-task','home'), 400);
+      }, 700);
       break;
   }
 }
@@ -1369,21 +1405,38 @@ function claimReward(card, pts){
   }
   card.querySelector('.rwd-txt').textContent = `✅ 已获得 虎力值+${pts}`;
   totalPower += pts;
-  const tp = document.getElementById('totalPower');
-  if(tp) tp.textContent = totalPower;
   showPowerBubble(pts);
   updateMyLevel(); // 更新等级显示
+  updateTaskPowerUI();
   updateOBProgress();
   refreshTodoBadge();
 }
 
+// ---- 同步任务页虎力值显示 ----
+function updateTaskPowerUI(){
+  const num = document.getElementById('taskPowerNum');
+  const bar = document.getElementById('taskPowerBar');
+  const tip = document.getElementById('taskPowerTip');
+  if(num) num.textContent = totalPower;
+  const lv = calcLevel(totalPower);
+  const prev = LEVEL_THRESHOLDS[lv-1] || 0;
+  const next = LEVEL_THRESHOLDS[lv] || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length-1];
+  const range = next - prev;
+  const pct = range > 0 ? ((totalPower - prev) / range) * 100 : 100;
+  if(bar) bar.style.width = Math.max(0, Math.min(100, pct)) + '%';
+  if(tip){
+    const remain = Math.max(0, next - totalPower);
+    tip.textContent = lv >= LEVEL_THRESHOLDS.length ? '已达到最高等级' : `距下一级还有 ${remain} 虎力值`;
+  }
+}
+
 // ---- 显示/隐藏 子页面 ----
-function showSubScreen(id){
+function showSubScreen(id, navTab){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.sub-screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  // 隐藏顶部导航高亮（子页面有独立导航）
-  document.querySelectorAll('.gnav .gtab').forEach(t=>t.classList.remove('on'));
+  // 顶部导航高亮（子页面有独立导航，可选指定高亮tab）
+  document.querySelectorAll('.gnav .gtab').forEach(t=>t.classList.toggle('on', navTab && t.dataset.g===navTab));
 }
 function hideAllSubScreens(){
   document.querySelectorAll('.sub-screen').forEach(s=>s.classList.remove('active'));
@@ -1462,17 +1515,24 @@ function doCreatePlan(){
   if(!name){ showToast('请输入任务名称'); return; }
   if(!desc){ showToast('请输入任务描述'); return; }
 
-  // 创建成功
-  hideAllSubScreens();
-  switchScreen('s-profile'); switchPTab('task');
-
   const card = document.querySelector('[data-task="plan"]');
-  if(card && parseInt(card.dataset.done) === 0){
-    // 延迟一点让页面切换完
-    setTimeout(()=>{
-      completeTask(card, 30);
-      showToast('「'+name+'」创建成功，返回领取虎力值！');
-    }, 300);
+  if(window.fromTaskList){
+    showSubScreen('s-task','home');
+    if(card && parseInt(card.dataset.done) === 0){
+      setTimeout(()=>{
+        completeTask(card, 30);
+        showToast('「'+name+'」创建成功，返回领取虎力值！');
+      }, 300);
+    }
+  } else {
+    hideAllSubScreens();
+    switchScreen('s-profile'); switchPTab('task');
+    if(card && parseInt(card.dataset.done) === 0){
+      setTimeout(()=>{
+        completeTask(card, 30);
+        showToast('「'+name+'」创建成功，返回领取虎力值！');
+      }, 300);
+    }
   }
 }
 
@@ -1635,6 +1695,15 @@ function onbNext(){
 }
 
 function exitOnboarding(completed){
+  if(completed && window.fromTaskList){
+    const card = document.querySelector('[data-task="profile"]');
+    if(card && parseInt(card.dataset.done) === 0){
+      completeTask(card, 50);
+      showToast('健康档案已完善，返回领取虎力值！');
+    }
+    showSubScreen('s-task','home');
+    return;
+  }
   hideAllSubScreens();
   switchScreen('s-profile'); switchPTab('task');
   if(completed){
@@ -1741,21 +1810,30 @@ function delCheckinImg(el){
 }
 
 function confirmCheckinRecord(){
-  // 记录完成
-  hideAllSubScreens();
-  switchScreen('s-profile'); switchPTab('task');
-
   const card = document.querySelector('[data-task="checkin"]');
-  if(card && parseInt(card.dataset.done) === 0){
-    setTimeout(()=>{
-      completeTask(card, 20);
-      showToast('打卡记录成功，返回领取虎力值！');
-    }, 300);
+  if(window.fromTaskList){
+    showSubScreen('s-task','home');
+    if(card && parseInt(card.dataset.done) === 0){
+      setTimeout(()=>{
+        completeTask(card, 20);
+        showToast('打卡记录成功，返回领取虎力值！');
+      }, 300);
+    }
+  } else {
+    hideAllSubScreens();
+    switchScreen('s-profile'); switchPTab('task');
+    if(card && parseInt(card.dataset.done) === 0){
+      setTimeout(()=>{
+        completeTask(card, 20);
+        showToast('打卡记录成功，返回领取虎力值！');
+      }, 300);
+    }
   }
 }
 
 // ---- 页面加载初始化：填充等级星级 ----
 updateMyLevel();
+updateTaskPowerUI();
 </script>
 
   <!-- ========== SUB-SCREEN: 健康任务（二级页） ========== -->
@@ -1776,8 +1854,8 @@ updateMyLevel();
         </div>
       </div>
       <div class="tp-right">
-        <div class="tp-bar"><i style="width:60%"></i></div>
-        <div class="tp-tip">距下一级还有 50 虎力值</div>
+        <div class="tp-bar"><i id="taskPowerBar" style="width:60%"></i></div>
+        <div class="tp-tip" id="taskPowerTip">距下一级还有 50 虎力值</div>
       </div>
     </div>
 
@@ -1819,15 +1897,6 @@ updateMyLevel();
         <div class="why">💡 攒券后直接抵扣</div>
         <div class="reward"><span class="rwd-txt">🎁 完成 +10 虎力值</span><button class="go-btn" onclick="doTask(this,'shop')">去完成</button></div>
       </div>
-    </div>
-
-    <!-- 我的减肥打卡 -->
-    <div class="sec-header"><span class="sh-t">我的减肥打卡</span></div>
-    <div class="task-plan">
-      <div class="tp-h">减肥打卡计划 <span class="ptag">返现中 · ¥199</span></div>
-      <div class="tp-info">已坚持 <b>12</b> / 30 天 · 连续 <b>12</b> 天</div>
-      <div class="grid30" id="grid30"></div>
-      <div class="btn primary" onclick="checkIn()">今日打卡</div>
     </div>
   </div>
 </body>
