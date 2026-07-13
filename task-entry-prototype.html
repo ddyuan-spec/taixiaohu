@@ -207,6 +207,7 @@
   .btn{flex:1;text-align:center;padding:11px 0;border-radius:12px;font-size:14px;font-weight:700;}
   .btn.primary{background:var(--tg);color:#fff;}
   .btn.ghost{background:#F2F3F5;color:var(--t2);}
+  .btn.btn-default{background:#F2F3F5;color:var(--t2);}
 
   /* 手动任务(原有) */
   .mtask{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.03);}
@@ -616,6 +617,46 @@
   .task-power .tp-icon{font-size:34px;}
   .task-power .tp-num{font-size:24px;font-weight:800;color:#7A4B12;}
   .task-power .tp-label{font-size:12px;color:#9A6B2F;}
+  .task-power .tp-rec{background:rgba(255,255,255,.55);border:none;color:#7A4B12;font-size:12px;
+    font-weight:700;padding:6px 12px;border-radius:14px;cursor:pointer;white-space:nowrap;}
+  .task-power .tp-rec:active{transform:scale(.95);}
+  .ob-card .daily-tag{position:absolute;top:10px;right:34px;font-size:10px;font-weight:700;color:#fff;
+    background:var(--tg);border-radius:8px;padding:1px 6px;}
+  /* 虎力值变动记录弹窗 */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;
+    align-items:center;justify-content:center;padding:16px;}
+  .modal-overlay.show{display:flex;}
+  .pr-modal .modal-box{max-width:420px;width:340px;}
+  .modal-box{background:#fff;border-radius:18px;max-width:100%;max-height:80vh;
+    display:flex;flex-direction:column;overflow:hidden;box-shadow:0 12px 50px rgba(0,0,0,.18);}
+  .modal-head{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;
+    border-bottom:1px solid var(--line);}
+  .modal-head h3{font-size:16px;font-weight:800;margin:0;padding:0;border:none;color:var(--t1);}
+  .modal-close{background:none;border:none;font-size:20px;color:var(--t3);cursor:pointer;
+    width:32px;height:32px;display:flex;align-items:center;justify-content:center;}
+  .modal-body{padding:14px 18px;flex:1;overflow-y:auto;}
+  .modal-foot{padding:12px 18px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px;}
+  .pr-list{max-height:60vh;overflow-y:auto;}
+  .pr-empty{text-align:center;color:var(--t3);padding:40px 0;font-size:13px;}
+  .pr-row{display:flex;align-items:center;padding:12px 4px;border-bottom:1px solid var(--line);}
+  .pr-reason{flex:1;font-size:13px;color:var(--ink);}
+  .pr-time{font-size:11px;color:var(--t3);margin:0 12px;white-space:nowrap;}
+  .pr-val{font-size:14px;font-weight:800;white-space:nowrap;}
+  .pr-val.plus{color:var(--green);}
+  .pr-val.minus{color:#ee4d38;}
+  /* 分享页 */
+  .share-body{padding:16px;}
+  .share-poster{background:linear-gradient(135deg,#5B4CDB,#8a7fe0);border-radius:16px;color:#fff;
+    padding:24px 20px;margin-bottom:20px;position:relative;overflow:hidden;}
+  .share-poster .sp-t{font-size:18px;font-weight:800;margin-bottom:6px;}
+  .share-poster .sp-s{font-size:12px;opacity:.9;}
+  .share-poster .sp-tiger{position:absolute;right:-10px;bottom:-10px;font-size:90px;opacity:.25;}
+  .share-poster .sp-qr{position:absolute;right:16px;top:16px;width:54px;height:54px;background:#fff;border-radius:8px;}
+  .share-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .share-opt{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;border:none;background:none;}
+  .share-opt .so-ic{width:52px;height:52px;border-radius:50%;background:#F2F3F5;display:flex;align-items:center;justify-content:center;font-size:26px;}
+  .share-opt .so-t{font-size:12px;color:var(--t2);}
+  .share-tip{font-size:12px;color:var(--t3);text-align:center;margin-top:18px;line-height:1.6;}
   .task-power .tp-right{flex:1;margin-left:14px;}
   .task-list{padding:0 12px;overflow-x:hidden;width:100%;box-sizing:border-box;}
   .task-list .ob-card{width:100%;max-width:100%;box-sizing:border-box;margin:0 0 12px;}
@@ -1254,9 +1295,18 @@ function checkIn(){
     cells[todayIdx].classList.remove('today'); cells[todayIdx].classList.add('done');
     if(todayIdx+1<30) cells[todayIdx+1].classList.add('today');
     const day=todayIdx+2;
-    document.getElementById('modalDesc').textContent=
-      `第 ${day}/30 天 · 再坚持 ${30-day} 天，全额返还 ¥199 + 300 元券到账`;
-    openModal();
+    const card = document.querySelector('[data-task="checkin"]');
+    if(card && parseInt(card.dataset.done) === 0){
+      completeTask(card, 20);
+      showToast('首次打卡完成，虎力值已发放！');
+    }
+    if(window.fromTaskList){
+      switchScreen('s-task');
+    } else {
+      document.getElementById('modalDesc').textContent=
+        `第 ${day}/30 天 · 再坚持 ${30-day} 天，全额返还 ¥199 + 300 元券到账`;
+      openModal();
+    }
   }else{ showToast('本月已完成 🎉'); }
 }
 function openModal(){document.getElementById('modal').classList.add('show');}
@@ -1286,7 +1336,8 @@ const taskJump = {
   plan:    {s:'createplan', m:'前往创建计划'},
   checkin: {s:'checkin',   m:'前往打卡记录'},
   chat:    {s:'home',     m:'前往发起对话'},
-  shop:    {s:'service',  m:'前往健康好物'}
+  shop:    {s:'service',  m:'前往健康好物'},
+  share:   {s:'share',    m:'前往分享泰小虎'}
 };
 
 function doTask(btn, taskId){
@@ -1296,16 +1347,10 @@ function doTask(btn, taskId){
   // 标记是否从任务列表页进入，用于完成后正确返回
   window.fromTaskList = !!card.closest('#s-task');
 
-  // 已领取 → 忽略
+  // 已完成(已发放) → 忽略
   if(state === 2) return;
 
-  // 状态1：可领取 → 直接领虎力值
-  if(state === 1){
-    claimReward(card, pts);
-    return;
-  }
-
-  // 状态0：去完成 → 跳对应子页面
+  // 状态0：去完成 → 跳对应子页面（完成即直接发放虎力值，无"领取"中间态）
   const j = taskJump[taskId];
   switch(j.s){
     case 'onboarding':
@@ -1337,39 +1382,70 @@ function doTask(btn, taskId){
         if(window.fromTaskList) switchScreen('s-task');
       }, 700);
       break;
+    case 'share':
+      showSubScreen('s-share'); showToast(j.m);
+      break;
   }
 }
 
-// ---- 完成任务（状态 0→1） ----
+// ---- 完成任务（状态 0→2，直接发放虎力值，无"领取"中间态） ----
 function completeTask(card, pts){
-  card.dataset.done = '1';
+  if(parseInt(card.dataset.done || '0', 10) === 2) return;
+  card.dataset.done = '2';
   card.classList.add('done');
   card.querySelector('.st').textContent = '✓';
   card.querySelector('.reward').innerHTML =
-    `<span class="rwd-txt">🎁 已完成，点击领取</span><button class="claim-btn" onclick="doTask(this,'${card.dataset.task}')">领取虎力值</button>`;
-  updateOBProgress();
-  // 更新首页待办条角标
-  refreshTodoBadge();
-}
-
-// ---- 领取虎力值（状态 1→2）+ 气泡 ----
-function claimReward(card, pts){
-  card.dataset.done = '2';
-  // 按钮变为「已完成」灰色不可点
-  const btn = card.querySelector('.claim-btn');
-  if(btn){
-    btn.textContent = '已完成';
-    btn.classList.add('done');
-    btn.style.pointerEvents = 'none';
-    btn.onclick = null;
-  }
-  card.querySelector('.rwd-txt').textContent = `✅ 已获得 虎力值+${pts}`;
+    `<span class="rwd-txt">✅ 已获得 虎力值+${pts}</span>`;
   totalPower += pts;
   showPowerBubble(pts);
-  updateMyLevel(); // 更新等级显示
+  updateMyLevel();
   updateTaskPowerUI();
   updateOBProgress();
   refreshTodoBadge();
+  // 记录虎力值变动
+  addPowerRecord('完成任务·' + (card.querySelector('.oct') ? card.querySelector('.oct').textContent : ''), pts);
+}
+
+// ---- 虎力值变动记录 ----
+let powerRecords = []; // {reason, time, value}
+function addPowerRecord(reason, value){
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const t = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  powerRecords.unshift({reason, time:t, value});
+}
+function openPowerRecords(){
+  const box = document.getElementById('powerRecordList');
+  if(!powerRecords.length){
+    box.innerHTML = '<div class="pr-empty">暂无虎力值变动记录</div>';
+  } else {
+    box.innerHTML = powerRecords.map(r=>{
+      const plus = r.value >= 0;
+      return `<div class="pr-row">
+        <div class="pr-reason">${r.reason}</div>
+        <div class="pr-time">${r.time}</div>
+        <div class="pr-val ${plus?'plus':'minus'}">${plus?'+':''}${r.value}</div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('powerRecordModal').classList.add('show');
+}
+function closePowerRecords(){
+  document.getElementById('powerRecordModal').classList.remove('show');
+}
+
+// ---- 分享泰小虎（每日任务，调用分享接口即完成，不验证是否真的分享） ----
+function doShare(way){
+  const card = document.querySelector('[data-task="share"]');
+  if(card && parseInt(card.dataset.done) === 0){
+    completeTask(card, parseInt(card.dataset.pts, 10));
+  }
+  showToast('已通过「'+way+'」分享，虎力值已发放 +'+ (card?card.dataset.pts:'10'));
+  if(window.fromTaskList) switchScreen('s-task');
+}
+function closeShare(){
+  hideAllSubScreens();
+  if(window.fromTaskList) switchScreen('s-task'); else switchScreen('s-home');
 }
 
 // ---- 同步任务页虎力值显示 ----
@@ -1409,7 +1485,7 @@ function exitBodyData(){
     const card = document.querySelector('[data-task="profile"]');
     if(card && parseInt(card.dataset.done) === 0){
       completeTask(card, 50);
-      showToast('体型数据已保存，返回领取虎力值！');
+      showToast('体型数据已保存，虎力值已发放！');
     }
   } else {
     showToast('请至少填写体重和身高');
@@ -1476,7 +1552,7 @@ function doCreatePlan(){
     if(card && parseInt(card.dataset.done) === 0){
       setTimeout(()=>{
         completeTask(card, 30);
-        showToast('「'+name+'」创建成功，返回领取虎力值！');
+        showToast('「'+name+'」创建成功，虎力值已发放！');
       }, 300);
     }
   } else {
@@ -1485,7 +1561,7 @@ function doCreatePlan(){
     if(card && parseInt(card.dataset.done) === 0){
       setTimeout(()=>{
         completeTask(card, 30);
-        showToast('「'+name+'」创建成功，返回领取虎力值！');
+        showToast('「'+name+'」创建成功，虎力值已发放！');
       }, 300);
     }
   }
@@ -1493,7 +1569,7 @@ function doCreatePlan(){
 
 function updateOBProgress(){
   const cards=document.querySelectorAll('#obBody .ob-card');
-  let done=0; cards.forEach(c=>{ if(c.dataset.done==='1') done++; });
+  let done=0; cards.forEach(c=>{ if(c.dataset.done==='2') done++; });
   const prog=document.querySelector('.ob-prog');
   if(prog) prog.innerHTML=`已完成 <b>${done}</b>/${cards.length}`;
 }
@@ -1623,7 +1699,7 @@ function exitOnboarding(completed){
       const card = document.querySelector('[data-task="profile"]');
       if(card && parseInt(card.dataset.done) === 0){
         completeTask(card, 50);
-        showToast('健康档案已完善，返回领取虎力值！');
+        showToast('健康档案已完善，虎力值已发放！');
       }
       switchScreen('s-task');
       return;
@@ -1634,7 +1710,7 @@ function exitOnboarding(completed){
     const card = document.querySelector('[data-task="profile"]');
     if(card && parseInt(card.dataset.done) === 0){
       completeTask(card, 50);
-      showToast('健康档案已完善，返回领取虎力值！');
+      showToast('健康档案已完善，虎力值已发放！');
     }
   } else {
     showToast('已返回任务页');
@@ -1740,7 +1816,7 @@ function confirmCheckinRecord(){
     if(card && parseInt(card.dataset.done) === 0){
       setTimeout(()=>{
         completeTask(card, 20);
-        showToast('打卡记录成功，返回领取虎力值！');
+        showToast('打卡记录成功，虎力值已发放！');
       }, 300);
     }
   } else {
@@ -1749,7 +1825,7 @@ function confirmCheckinRecord(){
     if(card && parseInt(card.dataset.done) === 0){
       setTimeout(()=>{
         completeTask(card, 20);
-        showToast('打卡记录成功，返回领取虎力值！');
+        showToast('打卡记录成功，虎力值已发放！');
       }, 300);
     }
   }
@@ -1777,6 +1853,7 @@ updateTaskPowerUI();
           <div class="tp-label">虎力值</div>
         </div>
       </div>
+      <button class="tp-rec" onclick="openPowerRecords()">明细 ›</button>
     </div>
 
     <!-- 用户任务 -->
@@ -1812,12 +1889,62 @@ updateTaskPowerUI();
       </div>
       <div class="ob-card" data-task="shop" data-pts="10" data-done="0">
         <span class="st">○</span>
+        <span class="daily-tag">每日</span>
         <div class="oct">浏览健康好物</div>
         <div class="ocd">逛逛推荐商品</div>
         <div class="why">💡 攒券后直接抵扣</div>
         <div class="reward"><span class="rwd-txt">🎁 完成 +10 虎力值</span><button class="go-btn" onclick="doTask(this,'shop')">去完成</button></div>
       </div>
+      <div class="ob-card" data-task="share" data-pts="10" data-done="0">
+        <span class="st">○</span>
+        <span class="daily-tag">每日</span>
+        <div class="oct">分享泰小虎</div>
+        <div class="ocd">分享给好友得虎力值</div>
+        <div class="why">💡 分享越多奖励越多</div>
+        <div class="reward"><span class="rwd-txt">🎁 完成 +10 虎力值</span><button class="go-btn" onclick="doTask(this,'share')">去完成</button></div>
+      </div>
     </div>
   </div>
+
+  <!-- ========== SUB-SCREEN: 分享泰小虎 ========== -->
+  <div class="sub-screen" id="s-share">
+    <div class="sub-nav">
+      <div class="back-btn" onclick="closeShare()">‹</div>
+      <div class="sn-title">分享泰小虎</div>
+      <div class="sn-right"></div>
+    </div>
+    <div class="share-body">
+      <div class="share-poster">
+        <div class="sp-t">泰小虎 · 您的专属健康助手</div>
+        <div class="sp-s">分享给好友，一起科学管理健康 💪</div>
+        <div class="sp-qr"></div>
+        <div class="sp-tiger">🐯</div>
+      </div>
+      <div class="share-opts">
+        <button class="share-opt" onclick="doShare('微信好友')"><span class="so-ic">💬</span><span class="so-t">微信好友</span></button>
+        <button class="share-opt" onclick="doShare('朋友圈')"><span class="so-ic">🌈</span><span class="so-t">朋友圈</span></button>
+        <button class="share-opt" onclick="doShare('保存海报')"><span class="so-ic">🖼️</span><span class="so-t">保存海报</span></button>
+        <button class="share-opt" onclick="doShare('复制链接')"><span class="so-ic">🔗</span><span class="so-t">复制链接</span></button>
+      </div>
+      <div class="share-tip">点击任意一种分享方式即视为完成「分享泰小虎」任务，<br/>虎力值将在完成瞬间自动发放（每日限一次）。</div>
+    </div>
+  </div>
+
+  <!-- ========== 虎力值变动记录弹窗 ========== -->
+  <div class="modal-overlay pr-modal" id="powerRecordModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>虎力值变动记录</h3>
+        <button class="modal-close" onclick="closePowerRecords()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="pr-list" id="powerRecordList"></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-default" onclick="closePowerRecords()">关闭</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
