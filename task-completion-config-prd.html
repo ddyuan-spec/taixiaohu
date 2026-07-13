@@ -163,13 +163,14 @@
 
   <h3>1.5 属性条件组 · 配置规范</h3>
   <div class="card">
+    <p><b>属性条件组</b>由系统按任务类型预置，<b>运营不可删除、不可新增</b>；每组固定包含三个字段：属性名、运算符、值。下列分别说明各字段。</p>
     <p>采用 <b>键值对下拉</b> 方式（运营友好，无需写代码）。每组条件由若干行组成，行内为：</p>
     <p style="text-align:center;font-size:15px;letter-spacing:1px;"><code>[属性名]</code> &nbsp;<code>[运算符]</code>&nbsp; <code>[值]</code> &nbsp;（同一组内多行 = AND）</p>
     <table>
       <tr><th>元素</th><th>可选值</th><th>示例</th></tr>
-      <tr><td>属性名</td><td>该事件上报的属性字段</td><td><code>complete_source</code> / <code>archive_result</code> / <code>user_checkin_count</code> / <code>recommend_source</code></td></tr>
-      <tr><td>运算符</td><td>等于 / 不等于 / 大于等于 / 小于等于 / 包含 / 非空存在</td><td><code>==</code> / <code>&gt;=</code> / <code>非空</code></td></tr>
-      <tr><td>值</td><td>字符串 / 数字 / 枚举</td><td><code>first_onboarding</code> / <code>1</code> / <code>service</code></td></tr>
+      <tr><td>属性条件组-属性名</td><td>该事件上报的属性字段</td><td><code>complete_source</code> / <code>archive_result</code> / <code>user_checkin_count</code> / <code>recommend_source</code></td></tr>
+      <tr><td>属性条件组-运算符</td><td>等于 / 不等于 / 大于等于 / 小于等于 / 包含 / 非空存在</td><td><code>==</code> / <code>&gt;=</code> / <code>非空</code></td></tr>
+      <tr><td>属性条件组-值</td><td>字符串 / 数字 / 枚举</td><td><code>first_onboarding</code> / <code>1</code> / <code>service</code></td></tr>
     </table>
     <ul class="tight">
       <li><b>条件组 A → 已完成</b>：如 <code>complete_source 非空</code>（即 <code>profile_complete</code> 触发）</li>
