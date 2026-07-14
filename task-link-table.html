@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎 · 任务完成条件 — 后台字段总览表</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 28px 20px; background: #f5f6fa; color: #1f2330;
+         font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; }
+  .wrap { max-width: 1480px; margin: 0 auto; }
+  h1 { font-size: 20px; color: #5b4cdb; margin: 0 0 4px; }
+  .sub { color: #8a8fa3; font-size: 13px; margin-bottom: 16px; }
+  .note { background: #fff; border: 1px solid #e6e8f0; border-left: 4px solid #5b4cdb;
+          border-radius: 8px; padding: 12px 16px; font-size: 13px; line-height: 1.7;
+          color: #444; margin-bottom: 18px; }
+  .note b { color: #d4380d; }
+  .card { background: #fff; border: 1px solid #e6e8f0; border-radius: 12px; overflow: hidden; }
+  .tbl-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 1320px; }
+  th, td { padding: 10px 11px; text-align: left; vertical-align: top; border-bottom: 1px solid #eef0f5; }
+  thead th { background: #5b4cdb; color: #fff; font-weight: 600; white-space: nowrap; position: sticky; top: 0; }
+  tbody tr:hover { background: #faf9ff; }
+  .tt { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 12px; color: #fff; }
+  .tt.once { background: #8a7bef; }
+  .tt.recur { background: #2f9e6b; }
+  .gap { color: #d4380d; font-weight: 600; }
+  .ok  { color: #2f9e6b; font-weight: 600; }
+  .page-gap { color: #b06a00; }
+  .code { font-family: Consolas, "Courier New", monospace; color: #d4380d; font-weight: 600; }
+  .col-fixed { color: #8a8fa3; }
+  td small { color: #8a8fa3; display: block; margin-top: 2px; }
+  .legend { font-size: 12px; color: #8a8fa3; margin-top: 14px; line-height: 1.8; }
+  .legend .ok { color: #2f9e6b; } .legend .gap { color: #d4380d; } .legend .pg { color: #b06a00; }
+  .foot { font-size: 12px; color: #8a8fa3; margin-top: 10px; line-height: 1.8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>泰小虎 · 任务完成条件 — 后台字段总览表</h1>
+  <div class="sub">评审整改版 · 后台全部字段 · 完成判定用「后端事件中文名」（非埋点事件 Key）</div>
+
+  <div class="note">
+    本表为后台「任务配置（查看已有任务）」<b>全部字段</b>总览，是后台任务表（含「页面跳转」「后端事件」等列）的数据来源。
+    <b>完成判定一律用「后端事件中文名」，不再使用埋点事件 Key。</b>
+    各任务完成条件以「后端事件中文名 + 后端字段判定」表达：后端事件尚待研发新增的，标注「后端事件待新增」；跳转页尚未建设的，标注「待建」。
+  </div>
+
+  <div class="card">
+    <div class="tbl-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>★ 任务 Code<br><span style="font-weight:400;font-size:11px;">唯一业务码（系统生成）</span></th>
+          <th>任务标题</th>
+          <th>任务描述</th>
+          <th>执行理由<br><span style="font-weight:400;font-size:11px;">（提示文案）</span></th>
+          <th>任务类型</th>
+          <th>完成判定<br><span style="font-weight:400;font-size:11px;">后端事件中文名</span></th>
+          <th>完成条件<br><span style="font-weight:400;font-size:11px;">判定属性（写死）+ 值</span></th>
+          <th>页面跳转<br><span style="font-weight:400;font-size:11px;">中文名 / 路由</span></th>
+          <th>跳转提示语</th>
+          <th>虎力值奖励<br><span style="font-weight:400;font-size:11px;">已完成 / 部分完成</span></th>
+          <th>周期配置<br><span style="font-weight:400;font-size:11px;">仅周期重复</span></th>
+          <th>状态 / 排序</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 任务 1 -->
+        <tr>
+          <td class="code">TXH-A001</td>
+          <td>完善健康档案</td>
+          <td>填写性别/生日/身高体重/BMI/睡眠等基础档案（体检报告选填）</td>
+          <td>💡 档案越完整，推荐越准</td>
+          <td><span class="tt once">一次性</span></td>
+          <td><span class="ok">完整建档完成</span></td>
+          <td>性别、出生日期、身高、体重、睡眠 5 字段均非空（报告可选），建档完整度 = 100%</td>
+          <td>首次建档/新手引导页<br><small>/pages/onboarding</small></td>
+          <td>前往填写健康档案</td>
+          <td>已完成 +50<br>部分完成 +0</td>
+          <td class="col-fixed">—（一次性无）</td>
+          <td>启用 / 1</td>
+        </tr>
+        <!-- 任务 2 -->
+        <tr>
+          <td class="code">TXH-A002</td>
+          <td>创建打卡计划</td>
+          <td>手动创建计划</td>
+          <td>💡 开启 30 天返现</td>
+          <td><span class="tt once">一次性</span></td>
+          <td><span class="gap">创建打卡计划（后端事件待新增）</span></td>
+          <td>计划记录数 ≥ 1（该用户计划记录表存在 ≥1 条计划）</td>
+          <td class="page-gap">计划创建页（待建）<br><small>/pages/createplan</small></td>
+          <td>前往创建计划</td>
+          <td>已完成 +30<br>部分完成 +0</td>
+          <td class="col-fixed">—（一次性无）</td>
+          <td>启用 / 2</td>
+        </tr>
+        <!-- 任务 3 -->
+        <tr>
+          <td class="code">TXH-A003</td>
+          <td>完成首次打卡</td>
+          <td>坚持第 1 天</td>
+          <td>💡 返现倒计时启动</td>
+          <td><span class="tt once">一次性</span></td>
+          <td><span class="gap">每日打卡（后端事件待新增）</span></td>
+          <td>打卡记录数 ≥ 1（该用户打卡记录表存在 ≥1 条打卡记录）</td>
+          <td class="page-gap">打卡记录页（待建）<br><small>/pages/checkin</small></td>
+          <td>前往今日打卡</td>
+          <td>已完成 +20<br>部分完成 +0</td>
+          <td class="col-fixed">—（一次性无）</td>
+          <td>启用 / 3</td>
+        </tr>
+        <!-- 任务 4 -->
+        <tr>
+          <td class="code">TXH-A004</td>
+          <td>发起首轮对话</td>
+          <td>问问 AI 健康建议</td>
+          <td>💡 解锁智能导购</td>
+          <td><span class="tt once">一次性</span></td>
+          <td><span class="ok">发起AI对话</span></td>
+          <td>对话记录数 ≥ 1（该用户对话记录表存在 ≥1 条对话）</td>
+          <td>泰小虎首页/智能对话页<br><small>/pages/home</small></td>
+          <td>前往发起对话</td>
+          <td>已完成 +15<br>部分完成 +0</td>
+          <td class="col-fixed">—（一次性无）</td>
+          <td>启用 / 4</td>
+        </tr>
+        <!-- 任务 5 -->
+        <tr>
+          <td class="code">TXH-A005</td>
+          <td>浏览健康好物</td>
+          <td>每天逛逛推荐商品</td>
+          <td>💡 每日浏览攒虎力值，等级越高奖励越多</td>
+          <td><span class="tt recur">周期重复·每日</span></td>
+          <td><span class="ok">推荐结果曝光</span><br><small>来源 = 服务 Tab 健康好物</small></td>
+          <td>健康好物曝光数 ≥ 1（各判定属性写死，仅关系符与值可改）</td>
+          <td>服务Tab内容页<br><small>/pages/service</small></td>
+          <td>前往健康好物</td>
+          <td>等级奖励（虎力值）：<br>Lv1–Lv3 单次 5<br>Lv4–Lv6 单次 8<br>Lv7–Lv8 单次 10<br><small>当日完成「每日可完成次数」上限后停发，次日 00:00 重置</small></td>
+          <td>周期单位：每日<br>重置时间：00:00<br>每日可完成次数：1（正整数）<br>每日奖励：按虎力值等级（见左列）</td>
+          <td>启用 / 5</td>
+        </tr>
+        <!-- 任务 6 -->
+        <tr>
+          <td class="code">TXH-A006</td>
+          <td>分享泰小虎</td>
+          <td>每天分享给好友</td>
+          <td>💡 分享得虎力值</td>
+          <td><span class="tt recur">周期重复·每日</span></td>
+          <td><span class="gap">分享成功（后端事件待新增，全渠道：微信好友 / 朋友圈 / 保存海报 / 复制链接）</span></td>
+          <td>分享成功记录数 ≥ 1（调用任一分享接口即记一次，不验证是否真的分享成功）</td>
+          <td class="page-gap">泰小虎分享页（待建）<br><small>/pages/share</small></td>
+          <td>前往分享</td>
+          <td>每日固定 10<br><small>每次分享完成发放 10，当日「每日可完成次数」上限后停发，次日 00:00 重置</small></td>
+          <td>周期单位：每日<br>重置时间：00:00<br>每日可完成次数：1（正整数）<br>每日奖励：10</td>
+          <td>启用 / 6</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="legend">
+    图例：<span class="ok">绿色 = 后端事件已明确（有现成后端数据可判定）</span> ｜ <span class="gap">红色 = 后端事件待新增</span> ｜ <span class="pg">橙色 = 跳转页面待建</span>
+  </div>
+  <div class="foot">
+    通用固定项（所有任务一致，后台不可编辑）：判定类型 = <b>任务判定</b>（灰显固定，取消原埋点事件 Key 录入）；部分完成 = <b>无</b>（仅两态：已完成 / 部分完成）；续填策略 = 任务1「完善健康档案」开启，任务2–6 关闭；状态映射 = 条件组 → 已完成 / 部分完成（两态，无「未完成」配置项）。<br>
+    注：★ 任务 Code 由研发创建任务时系统自动生成（TXH- + 6 位唯一串），运营不可手动填写；上表 TXH-A001~A006 为示例占位。
+  </div>
+</div>
+</body>
+</html>
