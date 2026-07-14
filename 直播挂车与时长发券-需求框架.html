@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎 · 直播挂车与时长发券 — 需求框架 v0.1</title>
+<style>
+  :root{
+    --c:#7c5cff; --c-d:#534AB7; --c-l:#EEEDFE; --ink:#2a2f3a; --mut:#6b6f7a;
+    --teal:#0F6E56; --teal-l:#E1F5EE; --amber:#BA7517; --amber-l:#FAEEDA;
+    --pink:#993556; --pink-l:#FBEAF0; --blue:#185FA5; --blue-l:#E6F1FB;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:#faf9fd;line-height:1.65}
+  .banner{background:linear-gradient(135deg,#7c5cff,#534AB7);color:#fff;padding:28px 40px}
+  .banner h1{margin:0 0 6px;font-size:22px;font-weight:700}
+  .banner p{margin:0;opacity:.9;font-size:13px}
+  .wrap{max-width:980px;margin:0 auto;padding:24px 28px 60px}
+  .meta{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 4px}
+  .meta span{background:var(--c-l);color:var(--c-d);border:1px solid #d9d3f7;padding:4px 12px;border-radius:20px;font-size:12px}
+  h2{font-size:18px;margin:34px 0 12px;padding-left:12px;border-left:4px solid var(--c)}
+  h3{font-size:14px;margin:20px 0 8px;color:var(--c-d)}
+  p,li{font-size:13.5px;color:#3a3f4a}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12.5px;background:#fff}
+  th,td{border:1px solid #e5e2ef;padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--c-l);color:var(--c-d);font-weight:600;white-space:nowrap}
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:14px 0}
+  .card{border:1px solid #e5e2ef;border-radius:12px;padding:14px 16px;background:#fff}
+  .card.t{border-top:3px solid var(--teal);background:var(--teal-l)}
+  .card.a{border-top:3px solid var(--amber);background:var(--amber-l)}
+  .card.p{border-top:3px solid var(--pink);background:var(--pink-l)}
+  .card.b{border-top:3px solid var(--blue);background:var(--blue-l)}
+  .card.u{border-top:3px solid var(--c);background:var(--c-l)}
+  .card h4{margin:0 0 8px;font-size:14px}
+  .card ul{margin:0;padding-left:18px}
+  .card li{font-size:12.5px;margin:3px 0}
+  .note{background:#fff7e6;border:1px solid #ffe0a3;border-radius:10px;padding:12px 16px;font-size:13px;margin:12px 0}
+  .note b{color:#b35e00}
+  .rel{background:#EEEDFE;border:1px solid #c9bff5;border-radius:10px;padding:12px 16px;font-size:13px;margin:12px 0}
+  .rel b{color:var(--c-d)}
+  .open{background:#fdeef0;border:1px solid #f6c2cd;border-radius:10px;padding:12px 16px}
+  .open li{color:#7a2a3a}
+  .flow{background:#fff;border:1px solid #e5e2ef;border-radius:12px;padding:10px;margin:12px 0}
+  code{background:#f0edfb;padding:1px 6px;border-radius:5px;font-size:12px;color:var(--c-d)}
+  .tag{display:inline-block;background:var(--c);color:#fff;border-radius:5px;padding:1px 8px;font-size:11px;margin-right:4px}
+  .footer{text-align:center;color:var(--mut);font-size:12px;margin-top:40px}
+</style>
+</head>
+<body>
+<div class="banner">
+  <h1>泰小虎 · 直播挂车与时长发券</h1>
+  <p>需求框架 v0.1 · 2026-07-14 · 状态：框架对齐中（关键决策已确认，细节待填充）</p>
+</div>
+<div class="wrap">
+
+  <div class="meta">
+    <span>类型：新需求（独立分块）</span>
+    <span>关联需求：优惠券体系（调用其发券引擎）</span>
+    <span>接入：火山引擎企业直播</span>
+    <span>端：独立 H5 + 小程序 + App</span>
+  </div>
+
+  <h2>1. 背景与目标</h2>
+  <p>在数字人能力之前，先做<b>独立直播 H5 页面</b>，承载两件核心事：① <b>挂车</b>——把商品加入直播间；② <b>观看时长发券</b>——用户看够时长即发券，券用于<b>小程序 / App 购物</b>核销。直播底层是火山引擎企业直播能力，但商品卡与发券浮层由我们<b>自研 H5 渲染</b>，发券逻辑由<b>优惠券体系</b>（关联需求）提供。</p>
+
+  <h2>2. 已确认的关键决策</h2>
+  <table>
+    <tr><th style="width:150px">决策点</th><th>结论</th></tr>
+    <tr><td>直播接入形态</td><td>自研独立 H5 + 火山直播 SDK / 拉流，<b>自己渲染商品卡与发券浮层</b>（不走火山原生商品卡片）</td></tr>
+    <tr><td>挂车商品来源</td><td>商品来自「健康好物」库 → <b>H5 内自渲染商品卡</b> → 点击跳 H5 落地页 → 引导小程序 / App 下单</td></tr>
+    <tr><td>观看时长口径</td><td>火山<b>观播 SDK 观看时长 / 心跳回调</b>；需火山<b>自定义登录拿 UserId</b> 关联用户</td></tr>
+    <tr><td>发券逻辑归属</td><td>本需求<b>不发券、不建券</b>，只负责"时长采集 + 阈值判断 + 调优惠券体系发券 API"（见关联需求）。H5 内<b>不展示浮层</b>，静默发券</td></tr>
+    <tr><td>用户感知方式</td><td>用户登录 <b>App / 小程序</b>时，以弹窗 / 通知告知"获得 X 张优惠券"，点击引导至「我的优惠券」</td></tr>
+  </table>
+
+  <h2>3. 业务流程</h2>
+  <div class="flow">
+  <svg viewBox="0 0 680 250" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+    <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#6b6f7a" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+    <g><rect x="20" y="14" width="160" height="50" rx="9" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/><text x="100" y="33" text-anchor="middle" font-size="12.5" font-weight="600" fill="#3C3489">用户进直播 H5</text><text x="100" y="50" text-anchor="middle" font-size="10.5" fill="#534AB7">小程序/App/独立H5</text></g>
+    <line x1="180" y1="39" x2="218" y2="39" stroke="#6b6f7a" stroke-width="1.5" marker-end="url(#ar)"/>
+    <g><rect x="220" y="14" width="180" height="50" rx="9" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/><text x="310" y="33" text-anchor="middle" font-size="12.5" font-weight="600" fill="#0C447C">火山自定义登录</text><text x="310" y="50" text-anchor="middle" font-size="10.5" fill="#185FA5">拿到 UserId 关联用户</text></g>
+    <line x1="400" y1="39" x2="438" y2="39" stroke="#6b6f7a" stroke-width="1.5" marker-end="url(#ar)"/>
+    <g><rect x="440" y="14" width="220" height="50" rx="9" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/><text x="550" y="33" text-anchor="middle" font-size="12.5" font-weight="600" fill="#0C447C">火山观播 SDK 观看</text><text x="550" y="50" text-anchor="middle" font-size="10.5" fill="#185FA5">拉流 + SDK 心跳回调时长</text></g>
+
+    <line x1="550" y1="64" x2="550" y2="92" stroke="#6b6f7a" stroke-width="1.5" marker-end="url(#ar)"/>
+    <g><rect x="440" y="94" width="220" height="50" rx="9" fill="#FBEAF0" stroke="#993556" stroke-width="0.5"/><text x="550" y="113" text-anchor="middle" font-size="12.5" font-weight="600" fill="#72243E">① 挂车商品卡</text><text x="550" y="130" text-anchor="middle" font-size="10.5" fill="#993556">H5 自渲染 · 点击跳 H5 落地</text></g>
+    <g><rect x="200" y="94" width="220" height="50" rx="9" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/><text x="310" y="113" text-anchor="middle" font-size="12.5" font-weight="600" fill="#633806">② 时长累计</text><text x="310" y="130" text-anchor="middle" font-size="10.5" fill="#BA7517">SDK 心跳 → 达阈值</text></g>
+    <line x1="420" y1="119" x2="438" y2="119" stroke="#6b6f7a" stroke-width="1.5" marker-end="url(#ar)"/>
+    <g><rect x="440" y="154" width="220" height="50" rx="9" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/><text x="550" y="173" text-anchor="middle" font-size="12.5" font-weight="600" fill="#085041">调优惠券体系发券 API</text><text x="550" y="190" text-anchor="middle" font-size="10.5" fill="#0F6E56">关联需求（本需求不建券）</text></g>
+    <line x1="440" y1="174" x2="402" y2="174" stroke="#6b6f7a" stroke-width="1.5" marker-end="url(#ar)"/>
+    <g><rect x="200" y="154" width="200" height="50" rx="9" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/><text x="300" y="173" text-anchor="middle" font-size="12.5" font-weight="600" fill="#3C3489">③ 发券通知</text><text x="300" y="190" text-anchor="middle" font-size="10.5" fill="#534AB7">登录 App/小程序 弹窗</text></g>
+    <line x1="200" y1="179" x2="162" y2="179" stroke="#6b6f7a" stroke-width="1.5" marker-end="url(#ar)"/>
+    <g><rect x="20" y="154" width="140" height="50" rx="9" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/><text x="90" y="173" text-anchor="middle" font-size="12px" font-weight="600" fill="#085041">跨端核销</text><text x="90" y="190" text-anchor="middle" font-size="10" fill="#0F6E56">小程序/App</text></g>
+  </svg>
+  </div>
+
+  <h2>4. 需求模块划分（5 大模块）</h2>
+  <div class="cards">
+    <div class="card u"><h4>① 直播 H5 页（自研）</h4><ul>
+      <li>独立 H5 页面框架，嵌入火山直播流</li>
+      <li>整体布局（播放器 + 商品卡区 + 互动浮层）</li>
+    </ul></div>
+    <div class="card t"><h4>② 挂车模块</h4><ul>
+      <li>商品同步：健康好物 → 直播间商品卡</li>
+      <li>H5 自渲染商品卡（图 / 名 / 价 / 标签）</li>
+      <li>点击跳转：H5 落地页 → 引导小程序 / App 下单</li>
+    </ul></div>
+    <div class="card a"><h4>③ 观看时长采集</h4><ul>
+      <li>火山观播 SDK 集成（自定义登录 UserId）</li>
+      <li>观看时长 / 心跳回调采集</li>
+      <li>弱网 / 退出场景的兜底计时</li>
+    </ul></div>
+    <div class="card p"><h4>④ 时长发券触发</h4><ul>
+      <li>阈值 / 限领判定（规则由优惠券体系管理）</li>
+      <li>调用优惠券体系发券引擎 API</li>
+      <li>防重复发券（每人每场限领）</li>
+    </ul></div>
+    <div class="card b" style="grid-column:1 / span 2"><h4>⑤ 发券通知（静默后触达）</h4><ul>
+      <li><b>H5 内静默发券</b>：不弹任何浮层/弹窗，用户无感知</li>
+      <li>用户登录 App/小程序时，以<b>弹窗/通知</b>告知"获得 X 张优惠券"</li>
+      <li>点击通知/弹窗，引导至「我的优惠券」券包列表</li>
+      <li>消息中心持久化：券到账记录也可在消息中心查看</li>
+    </ul></div>
+  </div>
+
+  <h2>5. 核心数据模型（草案）</h2>
+  <table>
+    <tr><th>表</th><th>关键字段</th><th>说明</th></tr>
+    <tr><td>live_room</td><td>room_id, title, status, start_time, end_time, volcano_room_id</td><td>直播间基础信息，关联火山侧房间</td></tr>
+    <tr><td>watch_session</td><td>session_id, user_id, room_id, enter_time, exit_time, duration_sec</td><td>一次观看会话，时长发券的基本单元</td></tr>
+    <tr><td>watch_duration_record</td><td>record_id, session_id, user_id, room_id,累积时长, 心跳时间戳</td><td>SDK 心跳 / 兜底计时的明细，用于阈值判定</td></tr>
+    <tr><td>issue_trigger_log</td><td>log_id, user_id, room_id, trigger_type=live_duration, rule_id, trigger_time, coupon_result</td><td>发券触发日志，记"调了优惠券体系 API + 返回"，兜底与去重用</td></tr>
+  </table>
+  <div class="note"><b>说明：</b>券实例（CouponInstance）、券模板、底价等数据<b>不在本需求</b>，由优惠券体系（关联需求）持有。本需求只记录"触发"与"心跳"，不持有券本身。</div>
+
+  <h2>6. 发券触发设计（调优惠券体系 API）</h2>
+  <p><span class="tag">采集</span> 火山观播 SDK 心跳 / H5 兜底计时累计时长 → <span class="tag">判定</span> 达 IssueRule 阈值（规则由优惠券体系配置，本需求读取并比对）→ <span class="tag">去重</span> 按 user_id + room_id 校验本场是否已发到限领上限（参考 issue_trigger_log）→ <span class="tag">调用</span> 优惠券体系发券引擎 API（传入 user_id、rule_id 等）→ <span class="tag">静默</span> H5 内不展示任何浮层，只记录本次触发结果。</p>
+  <p>本需求<b>不实现</b>发券规则配置、底价校验、券实例生成、用户端通知——这些分别由优惠券体系或 App/小程序 客户端完成。本需求只是"触发方"：采集时长、判定阈值、调 API。</p>
+
+  <h2>7. 火山引擎接入要点</h2>
+  <ul>
+    <li><b>用到的能力</b>：① 直播流（自研 H5 通过火山直播 SDK / 拉流地址播放）；② 观播 SDK 的<b>自定义登录</b>（传入 UserId，用于跨端关联与发券归属）；③ 观播 SDK 的<b>观看时长 / 心跳回调</b>（作为发券触发依据）。</li>
+    <li><b>本期绕过的火山能力</b>：① 火山<b>原生商品卡片 API</b>（我们走 H5 自渲染挂车）；② 火山<b>原生卡券能力</b>（我们走自建优惠券体系）。</li>
+    <li><b>文档参考</b>：企业直播-商品脚本 / 观播 SDK 文档 <code>https://docs.volcengine.com/docs/3019/1521845?lang=zh</code>。</li>
+  </ul>
+
+  <h2>8. 关联需求</h2>
+  <div class="rel">
+    <p style="margin:0"><b>优惠券体系（独立需求）：</b>本需求的"时长发券"仅是触发与展示，真正的<b>发券引擎、券模板、发券规则（时长阈值 / 限领 / 有效期）、商品底价防击穿</b>全部在优惠券体系实现。本需求通过发券引擎统一 API 调用，两需求解耦，互不直接改对方数据。关联点仅为"接口调用 + UserId 对齐"。</p>
+  </div>
+
+  <h2>9. 待定 / 开放问题（需进一步确认）</h2>
+  <div class="open"><ul>
+    <li>直播"一场"如何界定（同一 liveId / room_id）？用户中途退出再进，时长<b>累计还是重置</b>。</li>
+    <li>App/小程序 的"获得优惠券"通知形态：全屏弹窗一次？消息中心小红点？还是 PUSH？</li>
+    <li>挂车商品卡点击后跳转的具体落地页形态，与小程序 / App 的引导链路细节。</li>
+    <li>弱网 / 火山回调丢失时，H5 兜底计时的精度与去重策略。</li>
+    <li>消息中心持久化：券到账记录是否需与系统消息统一存储。</li>
+  </ul></div>
+
+  <div class="footer">泰小虎 · 直播挂车与时长发券 — 需求框架 v0.1 · 本文件为独立需求分块，仅通过"关联需求"说明与优惠券体系的关系</div>
+</div>
+</body>
+</html>
