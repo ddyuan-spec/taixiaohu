@@ -47,6 +47,18 @@
   .screen.active{display:block;}
   /* 任务页作为独立页面：覆盖全局导航，从状态栏下方开始 */
   #s-task.screen{top:44px;z-index:85;}
+  /* 虎力值变动记录页（由弹窗改为整页） */
+  #s-powerrecord.screen{top:44px;z-index:86;}
+  .pr-page-list{padding:12px 0 30px;}
+  .pr-page-item{background:var(--card);margin:0 12px 10px;border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.03);}
+  .pr-page-info{flex:1;min-width:0;}
+  .pr-page-title{font-size:15px;font-weight:700;color:var(--t1);}
+  .pr-page-time{font-size:12px;color:var(--t3);margin-top:4px;}
+  .pr-page-val{font-size:18px;font-weight:800;white-space:nowrap;margin-left:12px;}
+  .pr-page-val.plus{color:var(--tg);}
+  .pr-page-val.minus{color:var(--red);}
+  .pr-page-empty{text-align:center;padding:100px 20px;color:var(--t3);font-size:14px;}
+  .pr-page-empty .pei{font-size:48px;margin-bottom:12px;}
 
   /* ==================== SCREEN 1: 首页(泰小虎/AI会话) ==================== */
 
@@ -1221,7 +1233,7 @@ function switchScreen(id){
   // 更新顶部 tab 样式（我的已不在tab中；任务页隐藏全局导航）
   const map = {'s-profile':'profile','s-home':'home','s-service':'service'};
   const gnav = document.getElementById('globalNav');
-  if(gnav) gnav.style.display = (id === 's-task') ? 'none' : '';
+  if(gnav) gnav.style.display = (id === 's-task' || id === 's-powerrecord') ? 'none' : '';
   document.querySelectorAll('.gnav .gtab').forEach(t=>{
     t.classList.toggle('on', t.dataset.g===map[id]);
   });
@@ -1417,21 +1429,25 @@ function addPowerRecord(reason, value){
 function openPowerRecords(){
   const box = document.getElementById('powerRecordList');
   if(!powerRecords.length){
-    box.innerHTML = '<div class="pr-empty">暂无虎力值变动记录</div>';
+    box.innerHTML = '<div class="pr-page-empty"><div class="pei">📋</div>暂无虎力值变动记录</div>';
   } else {
     box.innerHTML = powerRecords.map(r=>{
       const plus = r.value >= 0;
-      return `<div class="pr-row">
-        <div class="pr-reason">${r.reason}</div>
-        <div class="pr-time">${r.time}</div>
-        <div class="pr-val ${plus?'plus':'minus'}">${plus?'+':''}${r.value}</div>
+      return `<div class="pr-page-item">
+        <div class="pr-page-info">
+          <div class="pr-page-title">${r.reason}</div>
+          <div class="pr-page-time">${r.time}</div>
+        </div>
+        <div class="pr-page-val ${plus?'plus':'minus'}">${plus?'+':''}${r.value}</div>
       </div>`;
     }).join('');
   }
-  document.getElementById('powerRecordModal').classList.add('show');
+  const cur = document.querySelector('.screen.active');
+  window.fromTaskList = !!(cur && cur.id === 's-task');
+  switchScreen('s-powerrecord');
 }
 function closePowerRecords(){
-  document.getElementById('powerRecordModal').classList.remove('show');
+  if(window.fromTaskList) switchScreen('s-task'); else switchScreen('s-mine');
 }
 
 // ---- 分享泰小虎（每日任务，调用分享接口即完成，不验证是否真的分享） ----
@@ -1930,20 +1946,14 @@ updateTaskPowerUI();
     </div>
   </div>
 
-  <!-- ========== 虎力值变动记录弹窗 ========== -->
-  <div class="modal-overlay pr-modal" id="powerRecordModal">
-    <div class="modal-box">
-      <div class="modal-head">
-        <h3>虎力值变动记录</h3>
-        <button class="modal-close" onclick="closePowerRecords()">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="pr-list" id="powerRecordList"></div>
-      </div>
-      <div class="modal-foot">
-        <button class="btn btn-default" onclick="closePowerRecords()">关闭</button>
-      </div>
+  <!-- ========== 虎力值变动记录页 ========== -->
+  <div class="screen" id="s-powerrecord">
+    <div class="sub-nav">
+      <div class="back-btn" onclick="closePowerRecords()">‹</div>
+      <div class="sn-title">虎力值变动记录</div>
+      <div class="sn-right"></div>
     </div>
+    <div class="pr-page-list" id="powerRecordList"></div>
   </div>
 
 </body>
