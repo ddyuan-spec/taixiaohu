@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎直播管理后台 · APP直播 · 直播场次管理（A1）</title>
+<style>
+  /* ========== 基础变量（参照泰尔平台端后台） ========== */
+  :root{
+    --primary:#7B4DFF; --primary-light:#EDE7F6; --primary-hover:#6A3DE8;
+    --bg:#F5F6FA; --card-bg:#FFFFFF; --text:#1A1A2E; --text-secondary:#8B8FA3; --text-muted:#A0A4B8;
+    --border:#E8EAF0; --border-light:#F0F1F5;
+    --success:#52C41A; --danger:#FF4D4F; --warning:#FAAD14; --info:#1890FF;
+    --radius:8px; --radius-sm:4px;
+    --shadow:0 2px 8px rgba(0,0,0,0.06); --shadow-card:0 1px 2px rgba(0,0,0,0.03);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;min-height:100vh}
+
+  /* 顶部导航 */
+  .top-header{height:56px;background:var(--primary);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:fixed;top:0;left:0;right:0;z-index:100}
+  .top-header .logo{display:flex;align-items:center;gap:10px;color:#fff;font-size:16px;font-weight:600}
+  .top-header .logo-icon{width:32px;height:32px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .top-header .header-right{display:flex;align-items:center;gap:16px;color:rgba(255,255,255,0.85)}
+  .top-header .header-right .icon-btn{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(255,255,255,0.1);color:#fff;font-size:16px;border:none}
+  .top-header .header-right .icon-btn:hover{background:rgba(255,255,255,0.2)}
+  .top-header .avatar{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600}
+
+  /* 左侧边栏 */
+  .sidebar{width:200px;background:var(--card-bg);border-right:1px solid var(--border);position:fixed;top:56px;left:0;bottom:0;z-index:90;overflow-y:auto;padding:8px 0}
+  .sidebar-menu{list-style:none}
+  .sidebar-menu li{margin-bottom:2px}
+  .sidebar-menu li a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius);color:var(--text-secondary);text-decoration:none;font-size:13px;transition:all .2s;cursor:pointer}
+  .sidebar-menu li a:hover{background:var(--bg);color:var(--text)}
+  .sidebar-menu li a.active{background:var(--primary-light);color:var(--primary);font-weight:500}
+  .sidebar-menu li a .menu-icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .sidebar-divider{height:1px;background:var(--border-light);margin:8px 16px}
+  .sidebar-section-title{padding:8px 24px 4px;font-size:12px;color:var(--text-muted);font-weight:500}
+  .submenu{padding-left:20px;display:none}
+  .submenu.open{display:block}
+  .submenu li a{padding:8px 12px 8px 30px;font-size:12px;border-radius:6px;position:relative}
+  .submenu li a::before{content:"";position:absolute;left:18px;top:50%;transform:translateY(-50%);width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.5}
+  .has-submenu>a::after{content:"›";margin-left:auto;font-size:14px;transition:.2s}
+  .has-submenu.open>a::after{transform:rotate(90deg)}
+
+  /* 主内容区 */
+  .main-content{margin-left:200px;margin-top:56px;padding:20px 24px;min-height:calc(100vh - 56px)}
+  .breadcrumb{display:flex;align-items:center;gap:8px;margin-bottom:16px;font-size:13px;color:var(--text-secondary)}
+  .breadcrumb a{color:var(--text-secondary);text-decoration:none}
+  .breadcrumb a:hover{color:var(--primary)}
+  .breadcrumb .current{color:var(--text);font-weight:500}
+  .breadcrumb .sep{color:var(--text-muted)}
+  .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+  .page-header h1{font-size:20px;font-weight:600;color:var(--text)}
+  .page-header .ph-actions{display:flex;gap:10px}
+
+  /* 按钮 */
+  .btn{height:32px;padding:0 16px;border-radius:var(--radius-sm);font-size:13px;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:4px;transition:all .2s;justify-content:center;position:relative}
+  .btn:disabled{cursor:not-allowed;opacity:.7}
+  .btn-primary{background:var(--primary);color:#fff}
+  .btn-primary:hover:not(:disabled){background:var(--primary-hover)}
+  .btn-default{background:#fff;color:var(--text);border:1px solid var(--border)}
+  .btn-default:hover:not(:disabled){background:var(--bg)}
+  .btn-danger{background:#fff;color:var(--danger);border:1px solid #ffd6d7}
+  .btn-danger:hover:not(:disabled){background:#fff1f0}
+  .btn-link{background:transparent;color:var(--primary);padding:0 8px;height:28px}
+  .btn-link:hover{text-decoration:underline}
+  .btn-sm{height:28px;padding:0 12px;font-size:12px}
+  .btn .spin{width:12px;height:12px;border:2px solid currentColor;border-bottom-color:transparent;border-radius:50%;animation:spin 1s linear infinite;display:inline-block;vertical-align:middle;margin-right:2px}
+  @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+  /* 顶部 Tab */
+  .top-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px;background:var(--card-bg);border-radius:var(--radius) var(--radius) 0 0;padding:0 20px}
+  .top-tabs .tab{height:44px;line-height:44px;padding:0 16px;font-size:14px;color:var(--text-secondary);cursor:pointer;position:relative;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .top-tabs .tab:hover{color:var(--primary)}
+  .top-tabs .tab.on{color:var(--primary);font-weight:500;border-bottom-color:var(--primary)}
+
+  /* 筛选栏 */
+  .filter-bar{background:var(--card-bg);border-radius:0 0 var(--radius) var(--radius);padding:16px 20px;margin-bottom:16px;box-shadow:var(--shadow-card);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .filter-bar .filter-group{display:flex;align-items:center;gap:8px}
+  .filter-bar .filter-label{font-size:13px;color:var(--text-secondary);white-space:nowrap}
+  .filter-bar input[type=text],.filter-bar input[type=number],.filter-bar input[type=tel],.filter-bar input[type=datetime-local],.filter-bar select{height:32px;border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 10px;font-size:13px;color:var(--text);background:#fff;outline:none;min-width:120px}
+  .filter-bar input[type=text]:focus,.filter-bar input[type=number]:focus,.filter-bar input[type=tel]:focus,.filter-bar input[type=datetime-local]:focus,.filter-bar select:focus{border-color:var(--primary)}
+  .filter-bar input[type=text]::placeholder{color:var(--text-muted)}
+  .filter-bar .date-sep{color:var(--text-muted);font-size:12px}
+
+  /* 状态 Tab */
+  .status-tabs{display:flex;gap:6px;margin-bottom:14px}
+  .status-tabs .st{height:34px;line-height:34px;padding:0 14px;border-radius:var(--radius-sm);font-size:13px;color:var(--text-secondary);cursor:pointer;background:transparent;border:1px solid transparent}
+  .status-tabs .st:hover{color:var(--primary)}
+  .status-tabs .st.on{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:500}
+
+  /* 数据表格 */
+  .table-wrapper{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow-card);overflow:hidden}
+  .data-table{width:100%;border-collapse:collapse;font-size:13px}
+  .data-table thead th{background:#FAFBFC;color:var(--text-secondary);font-weight:500;text-align:left;padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap}
+  .data-table tbody td{padding:14px 16px;border-bottom:1px solid var(--border-light);color:var(--text);vertical-align:middle}
+  .data-table tbody tr:hover{background:#FAFBFC}
+  .data-table tbody tr:last-child td{border-bottom:none}
+  .cell-title{font-weight:500}
+  .cell-sub{font-size:12px;color:var(--text-muted);margin-top:2px}
+  .cell-line{font-size:12px;color:var(--text-secondary);margin-top:2px}
+  .action-btns{display:flex;gap:8px;justify-content:flex-start;flex-wrap:wrap;align-items:center}
+
+  /* 状态标签 */
+  .status-tag{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:500}
+  .status-tag .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+  .st-live{background:#F6FFED;color:var(--success);border:1px solid #B7EB8F}
+  .st-soon{background:#E6F7FF;color:var(--info);border:1px solid #91D5FF}
+  .st-end{background:#F5F5F5;color:var(--text-muted);border:1px solid var(--border)}
+  .st-replay{background:#FFFBE6;color:var(--warning);border:1px solid #FFE58F}
+  .st-violation{background:#FFF1F0;color:var(--danger);border:1px solid #FFCCC7}
+  .st-enabled{background:#F6FFED;color:var(--success);border:1px solid #B7EB8F}
+  .st-disabled{background:#F5F5F5;color:var(--text-muted);border:1px solid var(--border)}
+  .st-banned{background:#FFF1F0;color:var(--danger);border:1px solid #FFCCC7}
+  .st-recommend{background:#F6FFED;color:var(--success);border:1px solid #B7EB8F}
+  .st-func{background:#E6F7FF;color:var(--info);border:1px solid #91D5FF;font-size:11px;padding:2px 7px}
+
+  /* 分页 */
+  .pagination{display:flex;justify-content:flex-end;align-items:center;gap:8px;padding:12px 16px;background:#FAFBFC;border-top:1px solid var(--border-light);font-size:13px;color:var(--text-secondary)}
+  .pagination .pg-btn{height:28px;padding:0 10px;border:1px solid var(--border);background:#fff;border-radius:var(--radius-sm);cursor:pointer;color:var(--text)}
+  .pagination .pg-btn:hover:not(:disabled){border-color:var(--primary);color:var(--primary)}
+  .pagination .pg-btn:disabled{color:var(--text-muted);cursor:not-allowed}
+  .pagination .pg-cur{color:var(--primary);font-weight:500}
+  .pagination select{height:28px;border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 6px;background:#fff}
+
+  /* 空状态 */
+  .empty-state{text-align:center;padding:60px 0}
+  .empty-state .icon{font-size:48px;color:var(--border);margin-bottom:12px}
+  .empty-state .txt{font-size:13px;color:var(--text-muted)}
+
+  /* 弹窗 */
+  .modal{display:none;position:fixed;inset:0;z-index:200;align-items:center;justify-content:center}
+  .modal.show{display:flex}
+  .modal-mask{position:absolute;inset:0;background:rgba(0,0,0,0.45)}
+  .modal-box{position:relative;background:#fff;border-radius:var(--radius);width:640px;max-width:90vw;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.18);padding:20px 24px 24px}
+  .modal-title{font-size:16px;font-weight:600;margin-bottom:18px}
+  .form-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .form-row label{width:100px;text-align:right;font-size:13px;color:var(--text-secondary);flex-shrink:0}
+  .form-row label.required::before{content:"*";color:var(--danger);margin-right:4px}
+  .form-row input[type=text],.form-row input[type=number],.form-row input[type=tel],.form-row input[type=datetime-local],.form-row textarea,.form-row select{flex:1;height:36px;border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 12px;font-size:13px;outline:none}
+  .form-row textarea{height:72px;padding:8px 12px;resize:none}
+  .form-row input:focus,.form-row textarea:focus,.form-row select:focus{border-color:var(--primary)}
+  .form-row .hint{flex-basis:100%;margin-left:112px;font-size:12px;color:var(--text-muted)}
+  .form-row .readonly{background:var(--bg);color:var(--text-muted)}
+  .form-row .date-group{display:flex;align-items:center;gap:8px;flex:1}
+  .form-row .date-group input{flex:1}
+  .form-row .date-group .date-sep{color:var(--text-muted);font-size:12px}
+  .form-row .err-msg{flex-basis:100%;margin-left:112px;font-size:12px;color:var(--danger);display:none}
+  .form-row .err-msg.show{display:block}
+  .modal-acts{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+  .modal-acts .hint{flex:1;text-align:left;margin-left:0}
+
+  /* 开关 */
+  .switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer}
+  .switch input{display:none}
+  .switch .track{width:36px;height:20px;background:#D9D9D9;border-radius:10px;position:relative;transition:.2s}
+  .switch input:checked + .track{background:var(--primary)}
+  .switch .track::after{content:"";position:absolute;left:2px;top:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:.2s}
+  .switch input:checked + .track::after{left:18px}
+  .switch .lab{font-size:13px;color:var(--text)}
+
+  /* 多选框 */
+  .check-group{display:flex;gap:16px;flex:1;flex-wrap:wrap}
+  .check-item{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text)}
+  .check-item input{width:14px;height:14px;accent-color:var(--primary)}
+
+  /* 图片上传区 */
+  .cover-zone{margin:4px 0 18px;padding:14px 16px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border-light)}
+  .cover-zone .cz-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+  .cover-zone .cz-desc{font-size:12px;color:var(--text-muted);margin-bottom:12px;line-height:1.6}
+  .cover-cards{display:flex;gap:20px;flex-wrap:wrap}
+  .cover-card{width:152px}
+  .cover-card .cc-label{font-size:12px;color:var(--text-secondary);margin-bottom:5px;font-weight:500}
+  .cover-card .cc-spec{font-size:11px;color:var(--text-muted);margin-bottom:6px}
+  .cover-upload{position:relative;width:152px;height:128px;border:1px dashed var(--primary);border-radius:8px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;color:var(--text-muted);font-size:12px}
+  .cover-upload:hover{border-color:var(--primary-hover);background:var(--primary-light)}
+  .cover-upload .plus{font-size:28px;color:var(--primary);line-height:1;margin-bottom:4px}
+  .cover-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+  .cover-upload img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .cover-upload.has .ph{display:none}
+  .cover-reup{font-size:11px;color:var(--primary);margin-top:6px;cursor:pointer}
+  .cover-reup:hover{text-decoration:underline}
+  .cover-clear{font-size:11px;color:var(--text-muted);margin-top:6px;cursor:pointer;display:none}
+  .cover-clear.show{display:inline-block}
+  .cover-clear:hover{color:var(--danger)}
+  .cover-err{font-size:11px;color:var(--danger);margin-top:6px;display:none}
+  .cover-err.show{display:block}
+
+  /* 列表封面缩略图 */
+  .cover-thumb{width:60px;height:80px;border-radius:5px;object-fit:cover;background:linear-gradient(135deg,#e9e4ff,#d7e9ff);display:inline-flex;align-items:center;justify-content:center;font-size:18px;border:1px solid var(--border-light);flex-shrink:0;overflow:hidden}
+  .cover-thumb img{width:100%;height:100%;object-fit:cover}
+
+  /* Toast */
+  #toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%) translateY(100px);background:rgba(26,26,46,0.92);color:#fff;padding:10px 18px;border-radius:6px;font-size:13px;z-index:300;opacity:0;transition:all .25s;max-width:600px}
+  #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  #toast.err{background:rgba(255,77,79,0.95)}
+
+  /* 输出清单 */
+  .listbox{background:#fff;border-radius:8px;box-shadow:0 1px 2px rgba(0,0,0,0.03);padding:16px 20px;margin-top:24px;font-size:13px}
+  .listbox h3{font-size:14px;font-weight:600;margin-bottom:10px}
+  .listbox ol{padding-left:18px}
+  .listbox li{margin:5px 0;color:var(--text-secondary)}
+  .listbox li.done{color:var(--text)}
+  .listbox li.cur{color:var(--primary);font-weight:500}
+  .listbox li.plan{color:var(--text-muted)}
+
+  /* 配置商品弹窗内样式 */
+  .cart-tag-select{height:28px;border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 6px;font-size:12px;min-width:90px;outline:none}
+  .cart-tag-select:focus{border-color:var(--primary)}
+  .cart-tag-input{height:28px;border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 6px;font-size:12px;width:80px;outline:none}
+  .cart-tag-input:focus{border-color:var(--primary)}
+  .cart-cell-name{font-weight:500;font-size:13px}
+  .cart-cell-price{color:var(--danger);font-weight:600;font-size:13px}
+  .cart-cell-line{color:var(--text-muted);text-decoration:line-through;font-size:12px;margin-left:4px}
+  .cart-empty{padding:30px 0;text-align:center;color:var(--text-muted);font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<header class="top-header">
+  <div class="logo">
+    <div class="logo-icon">泰</div>
+    <span>泰尔平台端</span>
+  </div>
+  <div class="header-right">
+    <button class="icon-btn">🔔</button>
+    <button class="icon-btn">❓</button>
+    <div class="avatar">管</div>
+  </div>
+</header>
+
+<!-- 左侧边栏 -->
+<aside class="sidebar">
+  <ul class="sidebar-menu">
+    <li class="sidebar-section-title">平台类目</li>
+    <li><a href="#"><span class="menu-icon">🏠</span>商品中心</a></li>
+    <li><a href="#"><span class="menu-icon">🛒</span>订单管理</a></li>
+    <li><a href="#"><span class="menu-icon">👥</span>会员管理</a></li>
+    <li class="has-submenu open">
+      <a href="#"><span class="menu-icon">🎁</span>营销应用</a>
+      <ul class="submenu open">
+        <li><a href="#">优惠券</a></li>
+        <li><a href="#">秒杀</a></li>
+        <li><a href="#">拼团</a></li>
+        <li><a href="A1-直播场次管理.html" class="active">APP直播</a></li>
+        <li><a href="A2+L2-挂车配置与前台效果.html">挂车选品配置</a></li>
+        <li><a href="A4-直播数据看板.html">直播数据看板</a></li>
+      </ul>
+    </li>
+    <li><a href="#"><span class="menu-icon">📊</span>财务管理</a></li>
+    <li><a href="#"><span class="menu-icon">⚙️</span>系统配置</a></li>
+  </ul>
+</aside>
+
+<!-- 主内容区 -->
+<main class="main-content">
+  <div class="breadcrumb">
+    <a href="#">APP直播</a>
+    <span class="sep">/</span>
+    <span class="current" id="bcCurrent">直播间</span>
+  </div>
+
+  <!-- 顶部 Tab -->
+  <div class="top-tabs">
+    <div class="tab on" data-tab="room" onclick="switchTab('room')">直播间</div>
+    <div class="tab" data-tab="anchor" onclick="switchTab('anchor')">主播管理</div>
+  </div>
+
+  <!-- ===== 直播间视图 ===== -->
+  <div id="view-room">
+    <div class="page-header">
+      <h1>直播间管理</h1>
+      <div class="ph-actions">
+        <button class="btn btn-primary" onclick="openRoomModal()">+ 新建直播</button>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-group"><span class="filter-label">直播主题</span><input type="text" id="rKw" placeholder="请输入直播主题"></div>
+      <div class="filter-group"><span class="filter-label">主播昵称</span><input type="text" id="rAnchor" placeholder="请输入主播昵称"></div>
+      <div class="filter-group">
+        <span class="filter-label">直播时间</span>
+        <input type="datetime-local" id="rDateStart">
+        <span class="date-sep">至</span>
+        <input type="datetime-local" id="rDateEnd">
+      </div>
+      <button class="btn btn-primary" onclick="renderRoomList()">搜索</button>
+      <button class="btn btn-default" onclick="resetRoomFilter()">重置</button>
+      <button class="btn btn-default">展开</button>
+    </div>
+
+    <div class="status-tabs" id="roomStatusTabs">
+      <span class="st on" data-v="">全部</span>
+      <span class="st" data-v="直播中">直播中</span>
+      <span class="st" data-v="未开始">预告</span>
+      <span class="st" data-v="已结束">已结束</span>
+      <span class="st" data-v="违规下播">违规下播</span>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width:260px">直播信息</th>
+            <th style="width:220px">主播简介</th>
+            <th style="width:120px">主播昵称</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="roomBody"></tbody>
+      </table>
+      <div class="pagination">
+        <span>共 <span id="roomTotal">0</span> 条</span>
+        <select><option>10条/页</option><option>20条/页</option></select>
+        <button class="pg-btn" disabled>上一页</button>
+        <button class="pg-btn pg-cur">1</button>
+        <button class="pg-btn" disabled>下一页</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 主播管理视图 ===== -->
+  <div id="view-anchor" style="display:none">
+    <div class="page-header">
+      <h1>主播管理</h1>
+      <div class="ph-actions">
+        <button class="btn btn-primary" onclick="openAnchorModal()">+ 新增主播</button>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-group"><span class="filter-label">主播昵称</span><input type="text" id="aKw" placeholder="请输入主播昵称"></div>
+      <div class="filter-group"><span class="filter-label">直播ID</span><input type="text" id="aId" placeholder="请输入直播ID"></div>
+      <div class="filter-group"><span class="filter-label">手机号</span><input type="tel" id="aPhone" placeholder="请输入手机号"></div>
+      <button class="btn btn-primary" onclick="renderAnchorList()">搜索</button>
+      <button class="btn btn-default" onclick="resetAnchorFilter()">重置</button>
+      <button class="btn btn-default">展开</button>
+    </div>
+
+    <div class="status-tabs" id="anchorStatusTabs">
+      <span class="st on" data-v="">全部</span>
+      <span class="st" data-v="启用中">启用中</span>
+      <span class="st" data-v="已禁用">已禁用</span>
+      <span class="st" data-v="违规禁用">违规禁用</span>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width:240px">主播信息</th>
+            <th style="width:280px">主播简介</th>
+            <th style="width:110px">状态</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="anchorBody"></tbody>
+      </table>
+      <div class="pagination">
+        <span>共 <span id="anchorTotal">0</span> 条</span>
+        <select><option>10条/页</option><option>20条/页</option></select>
+        <button class="pg-btn" disabled>上一页</button>
+        <button class="pg-btn pg-cur">1</button>
+        <button class="pg-btn" disabled>下一页</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- 新建/编辑直播弹窗 -->
+<div class="modal" id="roomModal">
+  <div class="modal-mask" onclick="closeRoomModal()"></div>
+  <div class="modal-box">
+    <div class="modal-title" id="roomModalTitle">新建直播</div>
+    <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border-light)">基本信息</div>
+    <div class="form-row">
+      <label class="required">直播名称</label>
+      <input type="text" id="mrTitle" placeholder="请输入直播名称" maxlength="17">
+      <span class="hint" style="flex:unset;margin-left:0">直播名称不超过17个字</span>
+    </div>
+    <div class="form-row">
+      <label class="required">选择主播</label>
+      <select id="mrAnchor"></select>
+    </div>
+    <div class="form-row">
+      <label class="required">直播时间</label>
+      <div class="date-group">
+        <input type="datetime-local" id="mrStart">
+        <span class="date-sep">至</span>
+        <input type="datetime-local" id="mrEnd">
+      </div>
+    </div>
+    <div class="form-row">
+      <label></label>
+      <span class="hint">开播时间需在当前时间15分钟后，且开始时间不能在3个月后；开始和结束时间间隔不得短于30分钟，不得超过24小时</span>
+    </div>
+    <div class="form-row" id="mrTimeErrRow"><label></label><span class="err-msg" id="mrTimeErr"></span></div>
+
+    <div class="cover-zone">
+      <div class="cz-title">直播背景图</div>
+      <div class="cz-desc">建议尺寸：1080像素 × 1920像素，图片大小不得超过2M</div>
+      <div class="cover-cards">
+        <div class="cover-card">
+          <div class="cover-upload" id="coverBox_background">
+            <span class="ph"><span class="plus">+</span>点击上传</span>
+            <input type="file" id="coverInput_background" accept="image/jpeg,image/png,image/jpg" onchange="uploadCover('background',this)">
+          </div>
+          <div class="cover-reup" onclick="document.getElementById('coverInput_background').click()">重新上传</div>
+          <div class="cover-clear" id="coverClear_background" onclick="clearCover('background')">移除封面</div>
+          <div class="cover-err" id="coverErr_background"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cover-zone">
+      <div class="cz-title">主播分享图</div>
+      <div class="cz-desc">建议尺寸：800像素 × 640像素，图片大小不得超过1M</div>
+      <div class="cover-cards">
+        <div class="cover-card">
+          <div class="cover-upload" id="coverBox_share">
+            <span class="ph"><span class="plus">+</span>点击上传</span>
+            <input type="file" id="coverInput_share" accept="image/jpeg,image/png,image/jpg" onchange="uploadCover('share',this)">
+          </div>
+          <div class="cover-reup" onclick="document.getElementById('coverInput_share').click()">重新上传</div>
+          <div class="cover-clear" id="coverClear_share" onclick="clearCover('share')">移除封面</div>
+          <div class="cover-err" id="coverErr_share"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cover-zone">
+      <div class="cz-title">直播封面图</div>
+      <div class="cz-desc">建议尺寸：图片建议大小为300 × 300，图片大小不得超过100KB</div>
+      <div class="cover-cards">
+        <div class="cover-card">
+          <div class="cover-upload" id="coverBox_cover" style="width:152px;height:152px">
+            <span class="ph"><span class="plus">+</span>点击上传</span>
+            <input type="file" id="coverInput_cover" accept="image/jpeg,image/png,image/jpg" onchange="uploadCover('cover',this)">
+          </div>
+          <div class="cover-reup" onclick="document.getElementById('coverInput_cover').click()">重新上传</div>
+          <div class="cover-clear" id="coverClear_cover" onclick="clearCover('cover')">移除封面</div>
+          <div class="cover-err" id="coverErr_cover"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>是否被推荐</label>
+      <label class="switch">
+        <input type="checkbox" id="mrRecommend">
+        <span class="track"></span>
+        <span class="lab" id="mrRecommendLab">开启</span>
+      </label>
+      <span class="hint">开启后本场直播将有可能被官方推荐</span>
+    </div>
+
+    <div class="form-row" style="align-items:flex-start">
+      <label>直播间功能</label>
+      <div class="check-group">
+        <label class="check-item"><input type="checkbox" id="fnLike" checked><span>点赞</span></label>
+        <label class="check-item"><input type="checkbox" id="fnComment" checked><span>评论</span></label>
+        <label class="check-item"><input type="checkbox" id="fnShelf" checked><span>商品货架</span></label>
+        <label class="check-item"><input type="checkbox" id="fnReplay"><span>回放</span></label>
+        <label class="check-item"><input type="checkbox" id="fnShare" checked><span>分享</span></label>
+        <label class="check-item"><input type="checkbox" id="fnService"><span>客服</span></label>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>挂车上限 N</label>
+      <input type="number" id="mrLimit" value="10" min="1" max="30">
+    </div>
+
+    <div class="form-row" id="mrLiveIdRow" style="display:none">
+      <label>当前场次ID</label>
+      <input type="text" id="mrLiveId" class="readonly" readonly>
+    </div>
+    <div class="form-row" id="mrStatusRow" style="display:none">
+      <label>当前状态</label>
+      <input type="text" id="mrStatus" class="readonly" readonly>
+    </div>
+
+    <div class="modal-acts">
+      <span class="hint">提交后由后台调用火山引擎 <b>CreateActivityAPIV2</b> 创建直播间，火山返回场次ID（ActivityId）与观看页地址。</span>
+      <button class="btn btn-default" onclick="closeRoomModal()">取消</button>
+      <button class="btn btn-primary" onclick="confirmRoom()">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- 新增/编辑主播弹窗 -->
+<div class="modal" id="anchorModal">
+  <div class="modal-mask" onclick="closeAnchorModal()"></div>
+  <div class="modal-box">
+    <div class="modal-title" id="anchorModalTitle">新增主播</div>
+    <div class="form-row"><label>手机号</label><input type="tel" id="maPhone" placeholder="请输入手机号"></div>
+    <div class="form-row"><label>昵称</label><input type="text" id="maName" placeholder="请输入主播昵称"></div>
+    <div class="form-row"><label>主播简介</label><textarea id="maDesc" placeholder="请输入主播简介"></textarea></div>
+    <div class="form-row" id="maIdRow" style="display:none"><label>主播ID</label><input type="text" id="maId" class="readonly" readonly></div>
+    <div class="form-row" id="maStatusRow" style="display:none"><label>状态</label><select id="maStatus"><option value="启用中">启用中</option><option value="已禁用">已禁用</option><option value="违规禁用">违规禁用</option></select></div>
+    <div class="modal-acts">
+      <button class="btn btn-default" onclick="closeAnchorModal()">取消</button>
+      <button class="btn btn-primary" onclick="confirmAnchor()">确定</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- 配置商品弹窗（挂车） -->
+<div class="modal" id="cartModal">
+  <div class="modal-mask" onclick="closeCartModal()"></div>
+  <div class="modal-box" style="width:760px">
+    <div class="modal-title" id="cartModalTitle">配置商品</div>
+    <div class="form-row" style="margin-bottom:10px">
+      <label style="width:auto">直播</label>
+      <span id="cartRoomInfo" style="flex:0;color:var(--text-secondary)"></span>
+      <label style="width:auto;margin-left:auto">挂车上限</label>
+      <span id="cartLimitInfo" style="flex:0;font-weight:600;color:var(--primary)"></span>
+    </div>
+
+    <div style="display:flex;gap:16px;min-height:320px">
+      <!-- 商品库 -->
+      <div style="flex:1;display:flex;flex-direction:column">
+        <div class="form-row" style="margin-bottom:10px">
+          <input type="text" id="cartKw" placeholder="搜索商品名称 / 商品ID" style="flex:1;height:32px">
+          <button class="btn btn-primary" onclick="renderCartLib()">搜索</button>
+        </div>
+        <div style="flex:1;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius);background:#fff">
+          <table class="data-table" style="min-width:100%">
+            <thead>
+              <tr><th style="width:40px"></th><th>商品信息</th><th style="width:110px">标签</th><th style="width:70px">操作</th></tr>
+            </thead>
+            <tbody id="cartLibBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 已挂车 -->
+      <div style="width:280px;display:flex;flex-direction:column">
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px">已挂车商品（<span id="cartCount">0</span>）</div>
+        <div style="flex:1;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius);background:#fff">
+          <table class="data-table" style="min-width:100%">
+            <thead>
+              <tr><th style="width:36px">序</th><th>商品</th><th style="width:50px">操作</th></tr>
+            </thead>
+            <tbody id="cartSelBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-acts">
+      <span class="hint" id="cartHint">添加商品后点击确定保存到本场直播间</span>
+      <button class="btn btn-default" onclick="closeCartModal()">取消</button>
+      <button class="btn btn-primary" onclick="confirmCart()">确定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 主播数据源
+  const anchors = [
+    {id:'A001', name:'泰小虎', phone:'13800138000', desc:'泰小虎首席健康顾问，专注科学减重与肠道健康科普', status:'启用中'},
+    {id:'A002', name:'林营养师', phone:'13900139000', desc:'国家注册营养师，擅长慢病调理与膳食搭配', status:'启用中'},
+    {id:'A003', name:'陈医生', phone:'13700137000', desc:'三甲医院营养科主治医师，医学科普主播', status:'启用中'},
+  ];
+
+  // 直播间数据源（字段完整化）
+  const sessions = [
+    {
+      id:'room_20260715_01', liveId:'189827364756172838', title:'科学减重专场', subtitle:'科学减重 · 今晚 8 点专场',
+      startTime:'2026-07-15 20:00', endTime:'2026-07-15 22:00', status:'直播中', online:12483,
+      anchor:'泰小虎', anchorDesc:'泰小虎首席健康顾问，专注科学减重与肠道健康科普',
+      limit:10, recommended:true, functions:['点赞','评论','商品货架','分享'],
+      coverBackground:'', coverShare:'', coverVertical:'', coverHorizontal:'',
+      history:[], cart:[]
+    },
+    {
+      id:'room_20260716_02', liveId:'', title:'肠道健康日', subtitle:'肠道养护 · 益生菌专场',
+      startTime:'2026-07-16 19:30', endTime:'2026-07-16 21:30', status:'未开始', online:0,
+      anchor:'林营养师', anchorDesc:'国家注册营养师，擅长慢病调理与膳食搭配',
+      limit:8, recommended:false, functions:['点赞','评论','商品货架','分享','客服'],
+      coverBackground:'', coverShare:'', coverVertical:'', coverHorizontal:'',
+      history:[], cart:[]
+    },
+    {
+      id:'room_20260717_03', liveId:'189827364756172839', title:'夏日轻养生', subtitle:'夏日养生 · 轻断食专场',
+      startTime:'2026-07-17 15:00', endTime:'2026-07-17 17:00', status:'已结束', online:0,
+      anchor:'泰小虎', anchorDesc:'泰小虎首席健康顾问，专注科学减重与肠道健康科普',
+      limit:6, recommended:false, functions:['点赞','评论','商品货架','分享'],
+      coverBackground:'', coverShare:'', coverVertical:'', coverHorizontal:'',
+      history:[], cart:[]
+    },
+    {
+      id:'room_20260712_04', liveId:'189827364756172840', title:'会员专属答疑', subtitle:'会员日 · 一对一健康答疑',
+      startTime:'2026-07-12 20:00', endTime:'2026-07-12 21:30', status:'回放中', online:312,
+      anchor:'陈医生', anchorDesc:'三甲医院营养科主治医师，医学科普主播',
+      limit:6, recommended:true, functions:['点赞','评论','商品货架','回放','分享'],
+      coverBackground:'', coverShare:'', coverVertical:'', coverHorizontal:'',
+      history:[], cart:[]
+    },
+  ];
+
+  // 商品库（挂车来源）
+  const productLib = [
+    {id:'P001', name:'益生菌冻干粉（30条）', price:'¥89.00', linePrice:'¥129.00', tag:'爆款'},
+    {id:'P002', name:'膳食纤维代餐奶昔', price:'¥59.00', linePrice:'¥99.00', tag:'新品'},
+    {id:'P003', name:'复合维生素软糖', price:'¥39.90', linePrice:'¥69.00', tag:'热卖'},
+    {id:'P004', name:'鱼油软胶囊（60粒）', price:'¥129.00', linePrice:'¥199.00', tag:''},
+    {id:'P005', name:'乳清蛋白粉', price:'¥149.00', linePrice:'¥229.00', tag:''},
+    {id:'P006', name:'黑咖啡燃脂饮', price:'¥49.00', linePrice:'¥79.00', tag:'限时'},
+    {id:'P007', name:'睡眠褪黑素软糖', price:'¥69.00', linePrice:'¥99.00', tag:''},
+    {id:'P008', name:'酵素果冻', price:'¥29.90', linePrice:'¥49.00', tag:''}
+  ];
+  const cartTags = ['默认','爆款','新品','限时','专享','买赠'];
+  let curCartRoomId = null;
+  let curCartItems = [];
+
+  let curRoomId = null;
+  let curAnchorId = null;
+  let curRoomTab = '';
+  let curAnchorTab = '';
+  let pendingCover = {background:'', share:'', cover:'', vertical:'', horizontal:''};
+
+  const $ = id => document.getElementById(id);
+  const getSess = id => sessions.find(s=>s.id===id);
+  const getAnchor = id => anchors.find(a=>a.id===id);
+  const getAnchorByName = name => anchors.find(a=>a.name===name);
+  const statusClass = s => ({'直播中':'st-live','未开始':'st-soon','已结束':'st-end','回放中':'st-replay','违规下播':'st-violation'}[s]||'st-end');
+  const anchorStatusClass = s => ({'启用中':'st-enabled','已禁用':'st-disabled','违规禁用':'st-banned'}[s]||'st-disabled');
+  const statusHtml = s => `<span class="status-tag ${statusClass(s)}"><span class="dot"></span>${s}</span>`;
+  const anchorStatusHtml = s => `<span class="status-tag ${anchorStatusClass(s)}"><span class="dot"></span>${s}</span>`;
+  const genVolcId = () => '18'+String(Date.now()).slice(-11)+String(Math.floor(Math.random()*90)+10);
+
+  const toast = $('toast');
+  let toastTimer = null;
+  function showToast(t, isErr){
+    toast.textContent = t;
+    toast.classList.toggle('err', !!isErr);
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>toast.classList.remove('show'), 2600);
+  }
+
+  function genRoomId(){
+    const d = new Date(), pad = n=>String(n).padStart(2,'0');
+    const seq = String(sessions.length + 1).padStart(2,'0');
+    return 'room_'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'_'+seq;
+  }
+  function genAnchorId(){
+    const seq = String(anchors.length + 1).padStart(3,'0');
+    return 'A'+seq;
+  }
+
+  // Tab 切换
+  function switchTab(tab){
+    document.querySelectorAll('.top-tabs .tab').forEach(el=>{
+      el.classList.toggle('on', el.dataset.tab === tab);
+    });
+    $('bcCurrent').textContent = tab === 'room' ? '直播间' : '主播管理';
+    $('view-room').style.display = tab === 'room' ? 'block' : 'none';
+    $('view-anchor').style.display = tab === 'anchor' ? 'block' : 'none';
+    if(tab === 'room') renderRoomList();
+    else renderAnchorList();
+  }
+
+  // 状态筛 tab 绑定
+  function bindStatusTabs(containerId, setter, render){
+    const container = $(containerId);
+    container.querySelectorAll('.st').forEach(el=>{
+      el.onclick = ()=>{
+        container.querySelectorAll('.st').forEach(x=>x.classList.remove('on'));
+        el.classList.add('on');
+        setter(el.dataset.v);
+        render();
+      };
+    });
+  }
+  bindStatusTabs('roomStatusTabs', v=>curRoomTab=v, renderRoomList);
+  bindStatusTabs('anchorStatusTabs', v=>curAnchorTab=v, renderAnchorList);
+
+  // 直播间列表
+  function renderRoomList(){
+    const kw = ($('rKw').value||'').trim().toLowerCase();
+    const anchor = ($('rAnchor').value||'').trim().toLowerCase();
+    const ds = ($('rDateStart').value||'').replace('T',' ');
+    const de = ($('rDateEnd').value||'').replace('T',' ');
+
+    const rows = sessions.filter(s=>{
+      if(curRoomTab && s.status !== curRoomTab) return false;
+      if(kw && !s.title.toLowerCase().includes(kw)) return false;
+      if(anchor && !s.anchor.toLowerCase().includes(anchor)) return false;
+      if(ds && s.startTime < ds) return false;
+      if(de && s.startTime > de) return false;
+      return true;
+    });
+
+    $('roomTotal').textContent = rows.length;
+    $('roomBody').innerHTML = rows.map(s=>{
+      const ops = roomOps(s);
+      const tags = [];
+      if(s.recommended) tags.push(`<span class="status-tag st-recommend">推荐</span>`);
+      if(s.functions.length) tags.push(s.functions.map(f=>`<span class="status-tag st-func">${f}</span>`).join(''));
+      return `<tr>
+        <td>
+          <div style="display:flex;gap:10px;align-items:flex-start">
+            <span class="cover-thumb">${s.coverCover?`<img src="${s.coverCover}">`:'🖼️'}</span>
+            <div>
+              <div class="cell-title">${s.title}</div>
+              <div class="cell-sub">${s.subtitle}</div>
+              <div class="cell-line">${statusHtml(s.status)}　${s.startTime} ~ ${s.endTime}</div>
+              <div class="cell-line" style="margin-top:6px">${tags.join(' ')}</div>
+            </div>
+          </div>
+        </td>
+        <td><div style="max-width:260px;color:var(--text-secondary);font-size:13px">${s.anchorDesc||'—'}</div></td>
+        <td>${s.anchor}</td>
+        <td><div class="action-btns">${ops}</div></td>
+      </tr>`;
+    }).join('') || `<tr><td colspan="4"><div class="empty-state"><div class="icon">📭</div><div class="txt">暂无直播数据</div></div></td></tr>`;
+  }
+
+  function roomOps(s){
+    const base = `<button class="btn btn-link" onclick="openRoomModal('${s.id}')">编辑</button><button class="btn btn-link" onclick="openCartModal('${s.id}')">配置商品</button>`;
+    const stateBtn = {
+      '未开始': `<button class="btn btn-sm btn-primary" onclick="startStream('${s.id}',this)">开始直播</button>`,
+      '直播中': `<button class="btn btn-sm btn-danger" onclick="stopStream('${s.id}',this)">停止推流</button>`,
+      '已结束': `<button class="btn btn-sm btn-primary" onclick="restartStream('${s.id}',this)">再次开启直播</button><button class="btn btn-sm btn-default" onclick="enableReplay('${s.id}',this)">开启回放</button>`,
+      '回放中': `<button class="btn btn-sm btn-primary" onclick="restartStream('${s.id}',this)">再次开启直播</button><button class="btn btn-sm btn-default" onclick="stopReplay('${s.id}',this)">停止回放</button>`,
+      '违规下播': `<button class="btn btn-sm btn-primary" onclick="restartStream('${s.id}',this)">再次开启直播</button>`,
+    }[s.status] || '';
+    return base + stateBtn;
+  }
+
+  function resetRoomFilter(){
+    $('rKw').value=''; $('rAnchor').value=''; $('rDateStart').value=''; $('rDateEnd').value='';
+    curRoomTab='';
+    document.querySelectorAll('#roomStatusTabs .st').forEach((x,i)=>x.classList.toggle('on', i===0));
+    renderRoomList();
+  }
+
+  // 主播列表
+  function renderAnchorList(){
+    const kw = ($('aKw').value||'').trim().toLowerCase();
+    const id = ($('aId').value||'').trim().toLowerCase();
+    const phone = ($('aPhone').value||'').trim();
+    const rows = anchors.filter(a=>{
+      if(curAnchorTab && a.status !== curAnchorTab) return false;
+      if(kw && !a.name.toLowerCase().includes(kw)) return false;
+      if(id && !a.id.toLowerCase().includes(id)) return false;
+      if(phone && !a.phone.includes(phone)) return false;
+      return true;
+    });
+    $('anchorTotal').textContent = rows.length;
+    $('anchorBody').innerHTML = rows.map(a=>{
+      return `<tr>
+        <td>
+          <div class="cell-title">${a.name}</div>
+          <div class="cell-line">主播ID：${a.id}</div>
+          <div class="cell-line">手机号：${a.phone}</div>
+        </td>
+        <td><div style="max-width:300px;color:var(--text-secondary);font-size:13px">${a.desc||'—'}</div></td>
+        <td>${anchorStatusHtml(a.status)}</td>
+        <td><div class="action-btns">
+          <button class="btn btn-link" onclick="openAnchorModal('${a.id}')">编辑</button>
+          ${a.status==='启用中' ? `<button class="btn btn-sm btn-default" onclick="toggleAnchorStatus('${a.id}',this)">禁用</button>` : `<button class="btn btn-sm btn-primary" onclick="toggleAnchorStatus('${a.id}',this)">启用</button>`}
+        </div></td>
+      </tr>`;
+    }).join('') || `<tr><td colspan="4"><div class="empty-state"><div class="icon">📭</div><div class="txt">暂无主播数据</div></div></td></tr>`;
+  }
+
+  function resetAnchorFilter(){
+    $('aKw').value=''; $('aId').value=''; $('aPhone').value='';
+    curAnchorTab='';
+    document.querySelectorAll('#anchorStatusTabs .st').forEach((x,i)=>x.classList.toggle('on', i===0));
+    renderAnchorList();
+  }
+
+  // 火山接口模拟：统一调用 + 回调
+  function mockVolcCall(action, btn, onSuccess, onFail){
+    if(btn){
+      btn.disabled = true;
+      btn.dataset.original = btn.innerHTML;
+      btn.innerHTML = '<span class="spin"></span>请求中';
+    }
+    setTimeout(()=>{
+      const ok = Math.random() > 0.2;
+      if(btn){ btn.disabled = false; btn.innerHTML = btn.dataset.original || '操作'; delete btn.dataset.original; }
+      if(ok) onSuccess();
+      else onFail('火山接口返回：ActivityStatus 更新失败，当前直播间存在未结束的回放任务');
+    }, 1200);
+  }
+
+  function startStream(id, btn){
+    const s = getSess(id);
+    mockVolcCall('start', btn, ()=>{
+      if(!s.liveId) s.liveId = genVolcId();
+      s.status = '直播中'; s.online = Math.floor(Math.random()*5000)+2000;
+      renderRoomList(); showToast('火山回调成功：已开始推流（场次ID '+s.liveId+'）');
+    }, msg=>showToast('更改失败，失败原因【'+msg+'】', true));
+  }
+  function stopStream(id, btn){
+    const s = getSess(id);
+    mockVolcCall('stop', btn, ()=>{
+      s.status = '已结束'; s.online = 0; renderRoomList(); showToast('火山回调成功：已停止推流');
+    }, msg=>showToast('更改失败，失败原因【'+msg+'】', true));
+  }
+  function enableReplay(id, btn){
+    const s = getSess(id);
+    mockVolcCall('replay', btn, ()=>{
+      s.status = '回放中'; s.online = Math.floor(Math.random()*400)+50; renderRoomList(); showToast('火山回调成功：已开启回放');
+    }, msg=>showToast('更改失败，失败原因【'+msg+'】', true));
+  }
+  function stopReplay(id, btn){
+    const s = getSess(id);
+    mockVolcCall('stopReplay', btn, ()=>{
+      s.status = '已结束'; s.online = 0; renderRoomList(); showToast('火山回调成功：已停止回放');
+    }, msg=>showToast('更改失败，失败原因【'+msg+'】', true));
+  }
+  function restartStream(id, btn){
+    const s = getSess(id);
+    mockVolcCall('restart', btn, ()=>{
+      if(s.liveId) s.history.unshift(s.liveId);
+      s.liveId = genVolcId();
+      s.status = '直播中'; s.online = Math.floor(Math.random()*5000)+2000;
+      renderRoomList(); showToast('火山回调成功：已再次开播，新场次ID '+s.liveId);
+    }, msg=>showToast('更改失败，失败原因【'+msg+'】', true));
+  }
+
+  function toggleAnchorStatus(id, btn){
+    const a = getAnchor(id);
+    mockVolcCall('anchorStatus', btn, ()=>{
+      a.status = a.status === '启用中' ? '已禁用' : '启用中';
+      renderAnchorList(); showToast('主播状态已更新为「'+a.status+'」');
+    }, msg=>showToast('更改失败，失败原因【'+msg+'】', true));
+  }
+
+  // 图片上传规格
+  const coverSpecs = {
+    background:{ size: 2*1024*1024, sizeText:'2M', w:1080, h:1920, ratioText:'1080×1920' },
+    share:     { size: 1*1024*1024, sizeText:'1M', w:800, h:640, ratioText:'800×640' },
+    cover:     { size: 100*1024,   sizeText:'100KB', w:300, h:300, ratioText:'300×300' },
+  };
+  function uploadCover(side, input){
+    const file = input.files && input.files[0];
+    const errEl = $('coverErr_'+side);
+    errEl.classList.remove('show');
+    if(!file) return;
+    const spec = coverSpecs[side];
+    const okType = ['image/jpeg','image/png','image/jpg'].includes(file.type);
+    if(!okType){ errEl.textContent = '仅支持 JPG / PNG / JPEG 格式'; errEl.classList.add('show'); input.value=''; return; }
+    if(file.size > spec.size){ errEl.textContent = '图片大小不超过'+spec.sizeText; errEl.classList.add('show'); input.value=''; return; }
+    const reader = new FileReader();
+    reader.onload = e => { pendingCover[side] = e.target.result; renderCoverPreview(side); };
+    reader.readAsDataURL(file);
+  }
+  function renderCoverPreview(side){
+    const box = $('coverBox_'+side);
+    const img = box.querySelector('img');
+    if(pendingCover[side]){
+      box.classList.add('has');
+      let el = img;
+      if(!el){ el = document.createElement('img'); box.appendChild(el); }
+      el.src = pendingCover[side];
+    } else {
+      box.classList.remove('has');
+      if(img) img.remove();
+    }
+    $('coverClear_'+side).classList.toggle('show', !!pendingCover[side]);
+  }
+  function clearCover(side){
+    pendingCover[side] = '';
+    const input = $('coverInput_'+side); if(input) input.value = '';
+    renderCoverPreview(side);
+  }
+
+  // 直播弹窗
+  function openRoomModal(id){
+    curRoomId = id || null;
+    $('roomModalTitle').textContent = id ? '编辑直播' : '新建直播';
+    const anchorSel = $('mrAnchor');
+    anchorSel.innerHTML = anchors.filter(a=>a.status==='启用中').map(a=>`<option value="${a.name}">${a.name}</option>`).join('');
+    $('mrTimeErr').classList.remove('show');
+
+    if(id){
+      const s = getSess(id);
+      $('mrTitle').value = s.title;
+      $('mrStart').value = s.startTime.replace(' ','T');
+      $('mrEnd').value = s.endTime.replace(' ','T');
+      $('mrAnchor').value = s.anchor;
+      $('mrLimit').value = s.limit;
+      $('mrRecommend').checked = s.recommended;
+      $('mrRecommendLab').textContent = s.recommended ? '开启' : '关闭';
+      const fnMap = {'点赞':'fnLike','评论':'fnComment','商品货架':'fnShelf','回放':'fnReplay','分享':'fnShare','客服':'fnService'};
+      ['fnLike','fnComment','fnShelf','fnReplay','fnShare','fnService'].forEach(k=>$(k).checked=false);
+      s.functions.forEach(f=>{ const k=fnMap[f]; if(k) $(k).checked=true; });
+      $('mrLiveId').value = s.liveId || '（未开播，开播后由火山返回）';
+      $('mrStatus').value = s.status;
+      $('mrLiveIdRow').style.display = 'flex';
+      $('mrStatusRow').style.display = 'flex';
+      pendingCover = {background:s.coverBackground||'', share:s.coverShare||'', cover:s.coverCover||'', vertical:s.coverVertical||'', horizontal:s.coverHorizontal||''};
+      ['background','share','cover','vertical','horizontal'].forEach(renderCoverPreview);
+    } else {
+      $('mrTitle').value = '';
+      const now = new Date(); now.setMinutes(now.getMinutes() - now.getMinutes()%5);
+      const end = new Date(now.getTime() + 60*60*1000);
+      $('mrStart').value = now.toISOString().slice(0,16);
+      $('mrEnd').value = end.toISOString().slice(0,16);
+      $('mrAnchor').value = anchors[0].name;
+      $('mrLimit').value = 10;
+      $('mrRecommend').checked = false;
+      $('mrRecommendLab').textContent = '关闭';
+      ['fnLike','fnComment','fnShelf','fnReplay','fnShare','fnService'].forEach(k=>$(k).checked=false);
+      $('fnLike').checked=true; $('fnComment').checked=true; $('fnShelf').checked=true; $('fnShare').checked=true;
+      $('mrLiveId').value = '';
+      $('mrStatus').value = '未开始';
+      $('mrLiveIdRow').style.display = 'none';
+      $('mrStatusRow').style.display = 'none';
+      pendingCover = {background:'', share:'', cover:'', vertical:'', horizontal:''};
+      ['background','share','cover','vertical','horizontal'].forEach(renderCoverPreview);
+    }
+    $('roomModal').classList.add('show');
+  }
+  function closeRoomModal(){
+    $('roomModal').classList.remove('show');
+  }
+
+  function validateTime(){
+    const start = $('mrStart').value ? new Date($('mrStart').value) : null;
+    const end = $('mrEnd').value ? new Date($('mrEnd').value) : null;
+    const errEl = $('mrTimeErr');
+    const now = new Date();
+    if(!start || !end){ errEl.textContent='请选择完整的直播时间'; errEl.classList.add('show'); return false; }
+    if(start <= now){ errEl.textContent='开播时间需在当前时间15分钟后'; errEl.classList.add('show'); return false; }
+    const maxStart = new Date(now.getTime() + 90*24*60*60*1000);
+    if(start > maxStart){ errEl.textContent='开始时间不能超过3个月后'; errEl.classList.add('show'); return false; }
+    const gap = (end - start)/1000/60;
+    if(gap < 30){ errEl.textContent='直播时间间隔不得短于30分钟'; errEl.classList.add('show'); return false; }
+    if(gap > 24*60){ errEl.textContent='直播时间间隔不得超过24小时'; errEl.classList.add('show'); return false; }
+    errEl.classList.remove('show');
+    return true;
+  }
+
+  function confirmRoom(){
+    const title = $('mrTitle').value.trim();
+    if(!title){ showToast('请填写直播名称', true); return; }
+    if(title.length > 17){ showToast('直播名称不超过17个字', true); return; }
+    if(!validateTime()) return;
+
+    const startTime = $('mrStart').value.replace('T',' ');
+    const endTime = $('mrEnd').value.replace('T',' ');
+    const anchorName = $('mrAnchor').value;
+    const anchorDesc = (getAnchorByName(anchorName) || {}).desc || '—';
+    const limit = parseInt($('mrLimit').value) || 10;
+    const recommended = $('mrRecommend').checked;
+    const functions = [];
+    const fnMap = {'fnLike':'点赞','fnComment':'评论','fnShelf':'商品货架','fnReplay':'回放','fnShare':'分享','fnService':'客服'};
+    Object.keys(fnMap).forEach(k=>{ if($(k).checked) functions.push(fnMap[k]); });
+
+    if(curRoomId){
+      const s = getSess(curRoomId);
+      s.title = title; s.startTime = startTime; s.endTime = endTime;
+      s.anchor = anchorName; s.anchorDesc = anchorDesc; s.limit = limit;
+      s.recommended = recommended; s.functions = functions;
+      s.coverBackground = pendingCover.background; s.coverShare = pendingCover.share; s.coverCover = pendingCover.cover;
+      s.coverVertical = pendingCover.vertical; s.coverHorizontal = pendingCover.horizontal;
+      showToast('直播信息已更新');
+    } else {
+      const id = genRoomId();
+      sessions.unshift({
+        id, liveId:'', title, subtitle:'—', startTime, endTime, status:'未开始', online:0,
+        anchor:anchorName, anchorDesc, limit, recommended, functions,
+        coverBackground:pendingCover.background, coverShare:pendingCover.share, coverCover:pendingCover.cover,
+        coverVertical:pendingCover.vertical, coverHorizontal:pendingCover.horizontal,
+        history:[], cart:[]
+      });
+      showToast('直播已创建（未开始），提交火山后返回场次ID');
+    }
+    closeRoomModal(); renderRoomList();
+  }
+
+  // 推荐开关标签联动
+  $('mrRecommend').addEventListener('change', function(){
+    $('mrRecommendLab').textContent = this.checked ? '开启' : '关闭';
+  });
+
+  // 主播弹窗
+  function openAnchorModal(id){
+    curAnchorId = id || null;
+    $('anchorModalTitle').textContent = id ? '编辑主播' : '新增主播';
+    if(id){
+      const a = getAnchor(id);
+      $('maName').value = a.name;
+      $('maPhone').value = a.phone;
+      $('maDesc').value = a.desc;
+      $('maId').value = a.id;
+      $('maStatus').value = a.status;
+      $('maIdRow').style.display = 'flex';
+      $('maStatusRow').style.display = 'flex';
+    } else {
+      $('maName').value = '';
+      $('maPhone').value = '';
+      $('maDesc').value = '';
+      $('maId').value = '';
+      $('maStatus').value = '启用中';
+      $('maIdRow').style.display = 'none';
+      $('maStatusRow').style.display = 'none';
+    }
+    $('anchorModal').classList.add('show');
+  }
+  function closeAnchorModal(){
+    $('anchorModal').classList.remove('show');
+  }
+  function confirmAnchor(){
+    const name = $('maName').value.trim();
+    if(!name){ showToast('请填写主播昵称', true); return; }
+    const phone = $('maPhone').value.trim();
+    const desc = $('maDesc').value.trim() || '—';
+    if(curAnchorId){
+      const a = getAnchor(curAnchorId);
+      a.name = name; a.phone = phone; a.desc = desc;
+      if($('maStatusRow').style.display !== 'none') a.status = $('maStatus').value;
+      sessions.forEach(s=>{ if(s.anchor === name) s.anchorDesc = desc; });
+      showToast('主播信息已更新');
+    } else {
+      const id = genAnchorId();
+      anchors.push({id, name, phone, desc, status:'启用中'});
+      showToast('主播已创建');
+    }
+    closeAnchorModal(); renderAnchorList(); if($('view-room').style.display !== 'none') renderRoomList();
+  }
+
+  // ========== 配置商品弹窗 ==========
+  function openCartModal(roomId){
+    curCartRoomId = roomId;
+    const s = getSess(roomId);
+    curCartItems = (s.cart || []).map((it,idx)=>({...it, seq:idx+1}));
+    $('cartModalTitle').textContent = '配置商品 - ' + s.title;
+    $('cartRoomInfo').textContent = s.title;
+    $('cartLimitInfo').textContent = s.limit + ' 个';
+    $('cartKw').value = '';
+    renderCartLib();
+    renderCartSel();
+    $('cartModal').classList.add('show');
+  }
+  function closeCartModal(){
+    $('cartModal').classList.remove('show');
+    curCartRoomId = null; curCartItems = [];
+  }
+  function renderCartLib(){
+    const kw = ($('cartKw').value || '').trim().toLowerCase();
+    const s = getSess(curCartRoomId);
+    const usedIds = new Set(curCartItems.map(it=>it.pid));
+    const rows = productLib.filter(p => {
+      if(usedIds.has(p.id)) return false;
+      if(kw && !p.name.toLowerCase().includes(kw) && !p.id.toLowerCase().includes(kw)) return false;
+      return true;
+    });
+    const full = curCartItems.length >= s.limit;
+    $('cartLibBody').innerHTML = rows.map(p=>{
+      const tagOpts = cartTags.map(t=>`<option value="${t}" ${t===(p.tag||'默认')?'selected':''}>${t}</option>`).join('');
+      return `<tr>
+        <td><span style="font-size:12px;color:var(--text-muted)">${p.id}</span></td>
+        <td>
+          <div class="cart-cell-name">${p.name}</div>
+          <div><span class="cart-cell-price">${p.price}</span><span class="cart-cell-line">${p.linePrice}</span></div>
+        </td>
+        <td><select class="cart-tag-select" id="tag_${p.id}">${tagOpts}</select></td>
+        <td><button class="btn btn-sm btn-primary" onclick="addCartItem('${p.id}')" ${full?'disabled':''}>添加</button></td>
+      </tr>`;
+    }).join('') || `<tr><td colspan="4"><div class="cart-empty">暂无商品</div></td></tr>`;
+  }
+  function renderCartSel(){
+    $('cartCount').textContent = curCartItems.length;
+    $('cartSelBody').innerHTML = curCartItems.map((it,idx)=>`<tr>
+      <td>${idx+1}</td>
+      <td>
+        <div class="cart-cell-name">${it.name}</div>
+        <div><span class="status-tag st-func">${it.tag||'默认'}</span></div>
+      </td>
+      <td><button class="btn btn-link" onclick="removeCartItem('${it.pid}')">移除</button></td>
+    </tr>`).join('') || `<tr><td colspan="3"><div class="cart-empty">暂无已挂车商品</div></td></tr>`;
+    const s = getSess(curCartRoomId);
+    const full = curCartItems.length >= s.limit;
+    $('cartHint').textContent = full ? `已达到挂车上限 ${s.limit} 个，需移除后才能继续添加` : '添加商品后点击确定保存到本场直播间';
+    $('cartHint').style.color = full ? 'var(--danger)' : 'var(--text-muted)';
+  }
+  function addCartItem(pid){
+    const s = getSess(curCartRoomId);
+    if(curCartItems.length >= s.limit){ showToast('已达到挂车上限 ' + s.limit + ' 个', true); return; }
+    const p = productLib.find(x=>x.id===pid);
+    if(!p) return;
+    const tagSel = $('tag_'+pid);
+    const tag = tagSel ? tagSel.value : '默认';
+    curCartItems.push({pid:p.id, name:p.name, price:p.price, tag:tag});
+    renderCartLib(); renderCartSel();
+  }
+  function removeCartItem(pid){
+    curCartItems = curCartItems.filter(it=>it.pid !== pid);
+    curCartItems.forEach((it,idx)=>it.seq=idx+1);
+    renderCartLib(); renderCartSel();
+  }
+  function confirmCart(){
+    if(!curCartRoomId) return;
+    const s = getSess(curCartRoomId);
+    s.cart = curCartItems.map(it=>({pid:it.pid, name:it.name, price:it.price, tag:it.tag}));
+    showToast('已保存挂车配置：' + s.cart.length + ' 个商品');
+    closeCartModal(); renderRoomList();
+  }
+
+  // 初始化
+  renderRoomList();
+  renderAnchorList();
+</script>
+</body>
+</html>
