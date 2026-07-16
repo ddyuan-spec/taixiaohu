@@ -148,6 +148,17 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
 .refill-box label{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;color:#555;}
 .rw-input{width:180px!important;font-family:'SFMono-Regular',Consolas,'Courier New',monospace;}
 .code-field{font-family:'SFMono-Regular',Consolas,'Courier New',monospace;color:#5b4cbd;background:#f5f0ff;}
+
+/* 状态区块：不同状态对应不同条件表 */
+.state-block{margin:12px 0 4px;background:#fff;border:1px solid #e6e6e6;border-radius:8px;overflow:hidden;}
+.state-block-title{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f8f9fa;border-bottom:1px solid #e6e6e6;font-size:13px;font-weight:600;color:#555;}
+.state-block-title .state-name{font-size:12px;font-weight:700;padding:3px 10px;border-radius:10px;color:#fff;}
+.state-block-title .state-name.done{background:#07c160;}
+.state-block-title .state-name.partial{background:#e6a23c;}
+.state-block-body{padding:10px 14px 14px;}
+.state-block-body .be-subhead{margin:0 0 8px;color:#999;font-size:12px;}
+.state-block-body .be-table{margin:0;}
+.empty-cond{padding:20px;text-align:center;color:#bbb;font-size:13px;background:#fafafa;border-radius:6px;}
 </style>
 </head>
 <body>
@@ -331,18 +342,49 @@ select.fi{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http:
             </div>
           </div>
 
-          <div class="be-subhead">完成条件（属性写死 · 仅可改关系符与值，不可增删条件）</div>
-          <table class="be-table" id="engineTable">
-            <thead>
-              <tr>
-                <th style="width:92px;">状态</th>
-                <th style="width:130px;">判定属性</th>
-                <th style="width:120px;">关系</th>
-                <th>值</th>
-              </tr>
-            </thead>
-            <tbody id="engineTbody"><!-- JS 渲染 --></tbody>
-          </table>
+          <div class="be-subhead">完成条件（判定属性写死 · 仅可改关系符与值，不可增删条件）</div>
+
+          <!-- 已完成状态 -->
+          <div class="state-block">
+            <div class="state-block-title">
+              <span>状态变更为</span>
+              <span class="state-name done">已完成</span>
+            </div>
+            <div class="state-block-body">
+              <div class="be-subhead">完成条件</div>
+              <table class="be-table" id="engineTableDone">
+                <thead>
+                  <tr>
+                    <th style="width:130px;">判定属性</th>
+                    <th style="width:120px;">关系</th>
+                    <th>值</th>
+                  </tr>
+                </thead>
+                <tbody id="engineTbodyDone"><!-- JS 渲染 --></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 部分完成状态（仅启用时显示） -->
+          <div class="state-block" id="partialBlock" style="display:none;">
+            <div class="state-block-title">
+              <span>状态变更为</span>
+              <span class="state-name partial">部分完成</span>
+            </div>
+            <div class="state-block-body">
+              <div class="be-subhead">完成条件</div>
+              <table class="be-table" id="engineTablePartial">
+                <thead>
+                  <tr>
+                    <th style="width:130px;">判定属性</th>
+                    <th style="width:120px;">关系</th>
+                    <th>值</th>
+                  </tr>
+                </thead>
+                <tbody id="engineTbodyPartial"><!-- JS 渲染 --></tbody>
+              </table>
+            </div>
+          </div>
 
           <div class="refill-box">
             <label>
@@ -557,25 +599,30 @@ function resetSearch(){
 
 // ==================== 引擎条件表渲染 ====================
 // 属性(attrName)写死显示为文本，关系符(op)与值(val)可编辑；不可增删条件
-function engineRowHTML(state, stateLabel, r){
+function engineRowHTML(r){
   const ops = ['==','!=','>=','<=','includes','exists'];
   let opts = ops.map(o=>`<option value="${o}" ${o===r.op?'selected':''}>${OP_LABEL[o]}</option>`).join('');
   const isExists = r.op==='exists';
-  return `<tr data-state="${state}" data-attr="${r.attr}" data-attrname="${r.attrName||r.attr}">
-    <td><span class="be-state ${state}">${stateLabel}</span></td>
+  return `<tr data-attr="${r.attr}" data-attrname="${r.attrName||r.attr}">
     <td class="be-attr">${r.attrName||r.attr}</td>
     <td><select class="fi cond-op" onchange="onOpChange(this)">${opts}</select></td>
     <td><input class="fi cond-val" data-op="${r.op}" value="${r.val||''}" ${isExists?'disabled':''} placeholder="值，如 completed" /></td>
   </tr>`;
 }
 function renderEngineRows(eng){
-  const tbody = document.getElementById('engineTbody');
-  let html = '';
-  (eng.completeRules||[]).forEach(r=>{ html += engineRowHTML('done','已完成',r); });
-  if(eng.partialEnabled){
-    (eng.partialRules||[]).forEach(r=>{ html += engineRowHTML('partial','部分完成',r); });
+  const doneBody = document.getElementById('engineTbodyDone');
+  const partialBody = document.getElementById('engineTbodyPartial');
+  const partialBlock = document.getElementById('partialBlock');
+  let doneHtml = '', partialHtml = '';
+  (eng.completeRules||[]).forEach(r=>{ doneHtml += engineRowHTML(r); });
+  if(eng.partialEnabled && (eng.partialRules||[]).length){
+    (eng.partialRules||[]).forEach(r=>{ partialHtml += engineRowHTML(r); });
+    partialBlock.style.display = '';
+  } else {
+    partialBlock.style.display = 'none';
   }
-  tbody.innerHTML = html;
+  doneBody.innerHTML = doneHtml || '<tr><td colspan="3"><div class="empty-cond">暂无判定条件</div></td></tr>';
+  partialBody.innerHTML = partialHtml || '<tr><td colspan="3"><div class="empty-cond">暂无判定条件</div></td></tr>';
 }
 function onOpChange(sel){
   const inp = sel.closest('tr').querySelector('.cond-val');
@@ -584,17 +631,22 @@ function onOpChange(sel){
   else { inp.disabled=false; }
 }
 function readEngineRows(){
-  const rows = [...document.querySelectorAll('#engineTbody tr')];
   const done=[], partial=[];
-  rows.forEach(tr=>{
-    const state = tr.dataset.state;
-    const rule = {
+  document.querySelectorAll('#engineTbodyDone tr[data-attr]').forEach(tr=>{
+    done.push({
       attr: tr.dataset.attr,
       attrName: tr.dataset.attrname,
       op: tr.querySelector('.cond-op').value,
       val: tr.querySelector('.cond-val').value.trim()
-    };
-    if(state==='done') done.push(rule); else partial.push(rule);
+    });
+  });
+  document.querySelectorAll('#engineTbodyPartial tr[data-attr]').forEach(tr=>{
+    partial.push({
+      attr: tr.dataset.attr,
+      attrName: tr.dataset.attrname,
+      op: tr.querySelector('.cond-op').value,
+      val: tr.querySelector('.cond-val').value.trim()
+    });
   });
   return { done, partial };
 }
