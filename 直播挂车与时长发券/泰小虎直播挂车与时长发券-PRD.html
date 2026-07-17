@@ -46,6 +46,9 @@
   .toc{background:#fff;border:1px solid #e5e2ef;border-radius:12px;padding:16px 22px;font-size:13px}
   .toc a{color:var(--c-d);text-decoration:none}
   .toc ol{margin:6px 0;padding-left:22px}
+  .two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+  .two-col img{width:100%;max-width:100%;border:1px solid #e5e2ef;border-radius:12px}
+  .two-col p:first-child{margin-top:0;font-size:12.5px;color:#3a3f4a}
 </style>
 </head>
 <body>
@@ -263,10 +266,16 @@
 <div class="note"><b>原型参考：</b><code>L-客户端合并原型.html</code>——包含 L1 直播观看页、L4 登录引导页、L3 商品落地页。以下界面描述以截图为准。</div>
 
 <h4>界面设计（原型图）</h4>
-<p><b>图 D-1：L1 直播观看页（已登录态）</b></p>
-<p><img src="PRD配图/截图-客户端-L1观看页-已登录.png" alt="L1 直播观看页（已登录）" style="max-width:360px;border:1px solid #e5e2ef;border-radius:12px"></p>
-<p><b>图 D-2：L1 直播观看页（未登录遮罩）</b></p>
-<p><img src="PRD配图/截图-客户端-L1未登录遮罩.png" alt="L1 未登录遮罩" style="max-width:360px;border:1px solid #e5e2ef;border-radius:12px"></p>
+<div class="two-col">
+  <div>
+    <p><b>图 D-1：L1 直播观看页（已登录态）</b></p>
+    <p><img src="PRD配图/截图-客户端-L1观看页-已登录.png" alt="L1 直播观看页（已登录）" style="border:1px solid #e5e2ef;border-radius:12px"></p>
+  </div>
+  <div>
+    <p><b>图 D-2：L1 直播观看页（未登录遮罩）</b></p>
+    <p><img src="PRD配图/截图-客户端-L1未登录遮罩.png" alt="L1 未登录遮罩" style="border:1px solid #e5e2ef;border-radius:12px"></p>
+  </div>
+</div>
 
 <h4>交互说明</h4>
 <table>
@@ -315,10 +324,16 @@
 <div class="note"><b>原型参考：</b><code>L-客户端合并原型.html</code>——L5 获券通知弹窗、L6 消息中心。</div>
 
 <h4>界面设计（原型图）</h4>
-<p><b>图 D-3：L5 获券通知弹窗</b></p>
-<p><img src="PRD配图/截图-客户端-L5获券弹窗.png" alt="L5 获券通知弹窗" style="max-width:360px;border:1px solid #e5e2ef;border-radius:12px"></p>
-<p><b>图 D-4：L6 消息中心（券到账记录+红点）</b></p>
-<p><img src="PRD配图/截图-客户端-L6消息中心.png" alt="L6 消息中心" style="max-width:360px;border:1px solid #e5e2ef;border-radius:12px"></p>
+<div class="two-col">
+  <div>
+    <p><b>图 D-3：L5 获券通知弹窗</b></p>
+    <p><img src="PRD配图/截图-客户端-L5获券弹窗.png" alt="L5 获券通知弹窗" style="border:1px solid #e5e2ef;border-radius:12px"></p>
+  </div>
+  <div>
+    <p><b>图 D-4：L6 消息中心（券到账记录+红点）</b></p>
+    <p><img src="PRD配图/截图-客户端-L6消息中心.png" alt="L6 消息中心" style="border:1px solid #e5e2ef;border-radius:12px"></p>
+  </div>
+</div>
 
 <h4>交互说明</h4>
 <table>
