@@ -246,7 +246,7 @@ const centerData = [
   {id:'P20005',name:'即食燕窝礼盒',type:'滋补',price:'¥299',cat:'滋补养生',ot:'不是积分商品',ct:'2026-07-21'},
   {id:'P20006',name:'无糖黑芝麻丸',type:'零食',price:'¥49',cat:'休闲食品',ot:'积分商品',ct:'2026-07-21'},
 ];
-const rooms = [
+const liveRooms = [
   {id:'1037',title:'test1',anchor:'小虎姐',status:'已结束',start:'2026-07-19 03:37',end:'2026-07-19 14:17',cart:2,cover:''},
   {id:'1042',title:'夏季健康好物专场',anchor:'小虎姐',status:'直播中',start:'2026-07-21 19:30',end:'—',cart:5,cover:''},
   {id:'1058',title:'本草堂祛湿养生局',anchor:'阿堂',status:'预告',start:'2026-07-22 20:00',end:'—',cart:0,cover:''},
@@ -392,26 +392,37 @@ function confirmAdd(){
 /* ---------------- 直播间管理 ---------------- */
 let lrPage=1,lrPages=1;const LR_PAGE=4;
 function renderLiveRooms(){
-  const kw=document.getElementById('lr-search').value.trim().toLowerCase();
-  const st=document.getElementById('lr-status').value;
-  let rows=rooms.filter(r=(!kw||r.id.toLowerCase().includes(kw)||r.title.toLowerCase().includes(kw)||r.anchor.toLowerCase().includes(kw))&&(!st||r.status===st));
+  const kwBox=document.getElementById('lr-search');
+  const stBox=document.getElementById('lr-status');
+  const kw=(kwBox&&kwBox.value||'').trim().toLowerCase();
+  const st=stBox?stBox.value:'';
+  const rows=liveRooms.filter(function(r){
+    const id=String(r.id||'').toLowerCase();
+    const title=String(r.title||'').toLowerCase();
+    const anchor=String(r.anchor||'').toLowerCase();
+    const match=!kw||id.indexOf(kw)>=0||title.indexOf(kw)>=0||anchor.indexOf(kw)>=0;
+    const statusMatch=!st||r.status===st;
+    return match&&statusMatch;
+  });
   lrPages=Math.max(1,Math.ceil(rows.length/LR_PAGE));
   if(lrPage>lrPages)lrPage=lrPages;
-  if(rows.length===0){document.getElementById('lr-body').innerHTML=`<tr><td colspan="8"><div class="empty"><div class="ic">无</div><div>暂无匹配的直播间</div></div></td></tr>`;document.getElementById('lr-total').textContent='共 0 条 · 第 1/1 页';setPagerState('lr',1,1);return;}
+  if(rows.length===0){
+    document.getElementById('lr-body').innerHTML='<tr><td colspan="8"><div class="empty"><div class="ic">无</div><div>暂无匹配的直播间</div></div></td></tr>';
+    document.getElementById('lr-total').textContent='共 0 条 · 第 1/1 页';
+    setPagerState('lr',1,1);return;
+  }
   const pageRows=rows.slice((lrPage-1)*LR_PAGE,(lrPage-1)*LR_PAGE+LR_PAGE);
-  document.getElementById('lr-body').innerHTML=pageRows.map(r=>`
-    <tr>
-      <td>${r.id}</td>
-      <td><div style="display:flex;gap:10px;align-items:center"><div class="thumb" style="width:48px;height:36px;border-radius:4px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center">封</div><div class="pname">${r.title}</div></div></td>
-      <td>${r.anchor}</td>
-      <td>${statusTag(r.status)}</td>
-      <td>${r.start}</td><td>${r.end}</td><td>${r.cart}</td>
-      <td>
-        <button class="btn-link" onclick="openCart('${r.id}')">查看挂车商品</button>
-        <button class="btn-link" onclick="viewRoomLog('${r.id}')">查看日志</button>
-      </td>
-    </tr>`).join('');
-  document.getElementById('lr-total').textContent=`共 ${rows.length} 条 · 第 ${lrPage}/${lrPages} 页`;
+  document.getElementById('lr-body').innerHTML=pageRows.map(function(r){
+    return '<tr>'
+      +'<td>'+r.id+'</td>'
+      +'<td><div style="display:flex;gap:10px;align-items:center"><div class="thumb" style="width:48px;height:36px;border-radius:4px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center">封</div><div class="pname">'+r.title+'</div></div></td>'
+      +'<td>'+r.anchor+'</td>'
+      +'<td>'+statusTag(r.status)+'</td>'
+      +'<td>'+r.start+'</td><td>'+r.end+'</td><td>'+r.cart+'</td>'
+      +'<td><button class="btn-link" onclick="openCart(\''+r.id+'\')">查看挂车商品</button> <button class="btn-link" onclick="viewRoomLog(\''+r.id+'\')">查看日志</button></td>'
+    +'</tr>';
+  }).join('');
+  document.getElementById('lr-total').textContent='共 '+rows.length+' 条 · 第 '+lrPage+'/'+lrPages+' 页';
   setPagerState('lr',lrPage,lrPages);
 }
 function refreshRooms(){toast('已向火山后台重新拉取直播间与挂车数据');renderLiveRooms();}
@@ -421,15 +432,15 @@ function syncRooms(){
   setTimeout(()=>{
     // 同步后更新房间列表（模拟火山返回了新数据）
     const now=new Date();
-    rooms.forEach(r=>{
+    liveRooms.forEach(r=>{
       if(r.status==='直播中') r.cart=Math.floor(3+Math.random()*6);
     });
     renderLiveRooms();
-    toast(`同步完成：已获取 ${rooms.length} 个直播间，共 ${rooms.reduce((s,r)=>s+r.cart,0)} 个关联商品`);
+    toast(`同步完成：已获取 ${liveRooms.length} 个直播间，共 ${liveRooms.reduce((s,r)=>s+r.cart,0)} 个关联商品`);
   },1200);
 }
 function openCart(rid){
-  const r=rooms.find(x=>x.id===rid);
+  const r=liveRooms.find(x=>x.id===rid);
   document.getElementById('cart-title').textContent=`${r.title} · 直播商品（${r.cart}个）`;
   const list=cartMap[rid]||[];
   const body=document.getElementById('cart-body');
@@ -461,7 +472,7 @@ function openCart(rid){
   document.getElementById('cart-drawer').classList.add('show');
 }
 function closeCart(){document.getElementById('cart-mask').classList.remove('show');document.getElementById('cart-drawer').classList.remove('show');}
-function viewRoomLog(rid){const r=rooms.find(x=>x.id===rid);toast(`查看「${r.title}」的操作日志（对接火山引擎日志服务）`);}
+function viewRoomLog(rid){const r=liveRooms.find(x=>x.id===rid);toast(`查看「${r.title}」的操作日志（对接火山引擎日志服务）`);}
 
 /* ---------------- 数据统计 ---------------- */
 let curTab='month';
