@@ -437,7 +437,7 @@ function renderLiveRooms(){
       +'<td>'+r.anchor+'</td>'
       +'<td>'+statusTag(r.status)+'</td>'
       +'<td>'+r.start+'</td><td>'+r.end+'</td><td>'+r.cart+'</td>'
-      +'<td><button class="btn-link" onclick="openCart(\''+r.id+'\')">查看挂车商品</button> <button class="btn-link" onclick="viewRoomLog(\''+r.id+'\')">查看日志</button></td>'
+      +'<td><button class="btn-link" onclick="openCart(\''+r.id+'\')">查看挂车商品</button></td>'
     +'</tr>';
   }).join('');
   document.getElementById('lr-total').textContent='共 '+rows.length+' 条 · 第 '+lrPage+'/'+lrPages+' 页';
@@ -459,21 +459,23 @@ function syncRooms(){
 }
 function openCart(rid){
   const r=liveRooms.find(x=>x.id===rid);
-  document.getElementById('cart-title').textContent=`${r.title} · 直播商品（${r.cart}个）`;
+  document.getElementById('cart-title').textContent=r.title+'的直播商品';
   const list=cartMap[rid]||[];
   const body=document.getElementById('cart-body');
   if(list.length===0){
-    body.innerHTML=`<div class="empty"><div class="ic">空</div><div>当前直播间暂无挂车商品</div><div style="margin-top:10px"><button class="btn btn-primary" onclick="closeCart()">添加到直播间商品</button></div></div>`;
+    body.innerHTML=`<div class="empty"><div class="ic">空</div><div>当前直播间暂无挂车商品，点击右上角「同步」拉取火山引擎商品数据</div></div>`;
   } else {
     body.innerHTML=`
-      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-        <input class="input" placeholder="搜索商品信息" style="width:160px" oninput="filterCart(this.value,'${rid}')">
-        <select class="select"><option>全部类别</option><option>饮品</option><option>零食</option><option>保健</option></select>
-        <button class="btn btn-danger" style="font-size:12px;padding:5px 10px">删除</button>
-        <button class="btn btn-danger" style="font-size:12px;padding:5px 10px;flex:1;text-align:right">＋ 添加到直播间商品</button>
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+        <input class="input" id="cart-search-${rid}" placeholder="商品名称" style="width:150px">
+        <input class="input" id="cart-id-s-${rid}" placeholder="商品编号" style="width:130px">
+        <select class="select" id="cart-cat-${rid}"><option value="">类别</option><option>饮品</option><option>零食</option><option>保健</option><option>茶饮</option><option>冲调</option><option>烘焙</option></select>
+        <div style="flex:1"></div>
+        <button class="btn btn-danger" style="font-size:12px;padding:5px 14px;border-radius:4px" onclick="syncCartGoods('${rid}')">同步</button>
+        <button class="btn btn-danger" style="font-size:12px;padding:5px 14px;border-radius:4px" onclick="syncCartAll('${rid}')">同步全部商品</button>
       </div>
       <table>
-        <thead><tr><th>商品编号</th><th>商品信息</th><th>类别</th><th>排序</th><th>销量</th><th>销售台</th></tr></thead>
+        <thead><tr><th>商品编号</th><th>商品信息</th><th>类别</th><th>排序</th><th>销量</th><th>销量台</th><th>销售合计</th></tr></thead>
         <tbody>${list.map(c=>`
           <tr>
             <td>${c.id}</td>
@@ -482,6 +484,7 @@ function openCart(rid){
             <td><input type="number" value="${Math.floor(Math.random()*99)+1}" style="width:56px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-size:12px"></td>
             <td>${c.sales}</td>
             <td>${Math.floor(c.sales*(0.6+Math.random()*0.3))}</td>
+            <td>${(c.sales*parseFloat(c.price.replace('¥',''))).toLocaleString()}</td>
           </tr>`).join('')}</tbody>
       </table>
       <div class="pager" style="padding-top:10px"><span>共 ${list.length} 条</span><span style="color:#bbb">·</span><span>10条/页</span></div>`;
@@ -489,8 +492,13 @@ function openCart(rid){
   document.getElementById('cart-mask').classList.add('show');
   document.getElementById('cart-drawer').classList.add('show');
 }
+function syncCartGoods(rid){
+  toast(`正在同步「${rid}」的直播间商品（从火山引擎拉取最新数据）…`);
+}
+function syncCartAll(rid){
+  toast(`正在同步全部直播间商品（从火山引擎全量拉取）…`);
+}
 function closeCart(){document.getElementById('cart-mask').classList.remove('show');document.getElementById('cart-drawer').classList.remove('show');}
-function viewRoomLog(rid){const r=liveRooms.find(x=>x.id===rid);toast(`查看「${r.title}」的操作日志（对接火山引擎日志服务）`);}
 
 /* ---------------- 数据统计 ---------------- */
 let curTab='month';
