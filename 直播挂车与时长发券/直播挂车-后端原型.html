@@ -113,7 +113,7 @@
       <section id="live-product">
         <div class="page-title">直播商品</div>
         <div class="page-desc">平台端直播商品池管理（系统商品中心选品同步）</div>
-        <div class="notice">该栏目下的商品会推送至直播间，只有推送至直播间的商品才可在直播间展示。如果商品需要变更，请先前往商城板块编辑商品资料，再在此栏目进行更新，点击更新商品操作会将商城的商品最新资料同步至直播间。</div>
+        <div class="notice">该栏目下的商品会推送至直播间，只有推送至直播间的商品才可在直播间展示。如商品资料变更，请先前往商城板块更新商品资料，再在此栏目重新推送即可同步至直播间，推送状态以火山引擎返回为准。</div>
         <div class="toolbar">
           <button class="btn btn-danger" id="btn-add">＋ 新增</button>
           <input class="input" id="lp-search" placeholder="商品名称 / 商品编号" style="width:220px">
@@ -325,7 +325,6 @@ function renderLiveProducts(){
       <td>${statusTag(r.status)}</td>
       <td>
         <button class="btn-link danger" onclick="removeProduct('${r.id}')">移除</button>
-        <button class="btn-link" onclick="updateProduct('${r.id}')">更新</button>
         ${pushBtns(r)}
       </td>
     </tr>`).join('');
@@ -357,10 +356,6 @@ function removeProduct(id){
   if(confirm(`确认从直播商品池移除「${r.name}」？`)){
     const i=lpData.indexOf(r);lpData.splice(i,1);renderLiveProducts();toast('已移除');
   }
-}
-function updateProduct(id){
-  const r=lpData.find(x=>x.id===id);
-  toast(`已同步「${r.name}」最新资料（库存/价格/主图）`);
 }
 
 /* ---------------- 选择商品弹窗 ---------------- */
