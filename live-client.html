@@ -3,398 +3,306 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>泰小虎 · 直播客户端集合（L1 / L3 / L4 / L5 / L6）</title>
+<title>泰小虎直播小黄车 · 用户端原型</title>
 <style>
-  :root{
-    --c:#7c5cff; --c-d:#534AB7; --c-l:#EEEDFE; --ink:#2a2f3a; --mut:#6b6f7a;
-    --teal:#0F6E56; --red:#b42318; --gold:#e6a23c; --bg:#f4f3f8; --line:#e5e2ef;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--bg);line-height:1.5}
-  .stage{display:flex;gap:24px;padding:22px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
-  /* 演示导航面板 */
-  .panel{width:250px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px}
-  .panel h3{margin:0 0 12px;font-size:14px;color:var(--c-d)}
-  .nav-btn{display:block;width:100%;text-align:left;border:1px solid #d9d3f7;background:var(--c-l);color:var(--c-d);border-radius:8px;padding:9px 12px;font-size:13px;cursor:pointer;margin-bottom:8px}
-  .nav-btn.on{background:var(--c);color:#fff;border-color:var(--c)}
-  .nav-btn small{display:block;font-size:11px;opacity:.7;margin-top:2px}
-  .panel .sec{font-size:11px;color:var(--mut);margin:14px 0 6px}
-  .panel .row{display:flex;gap:6px;flex-wrap:wrap}
-  .env-btn{border:1px solid #d9d3f7;background:#fff;color:var(--mut);border-radius:8px;padding:5px 9px;font-size:11px;cursor:pointer}
-  .env-btn.on{background:var(--c);color:#fff;border-color:var(--c)}
-  .mini{font-size:11.5px;color:var(--mut);background:#faf9fd;border:1px dashed #d9d3f7;border-radius:8px;padding:8px 10px;margin-top:6px}
-
+  *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;-webkit-tap-highlight-color:transparent;}
+  body{background:#e9ecf2;display:flex;justify-content:center;padding:24px;gap:28px;flex-wrap:wrap;}
+  .cart-ic{width:26px;height:26px;}
+  /* 控制面板 */
+  .panel{width:300px;align-self:flex-start;background:#fff;border:1px solid #e6e9ef;border-radius:12px;padding:18px;box-shadow:0 4px 16px rgba(20,30,60,.08);}
+  .panel h3{font-size:15px;margin-bottom:12px;}
+  .panel .grp{margin-bottom:16px;}
+  .panel label{font-size:12px;color:#8a93a5;display:block;margin-bottom:6px;}
+  .seg{display:flex;border:1px solid #e6e9ef;border-radius:8px;overflow:hidden;}
+  .seg button{flex:1;border:none;background:#fff;padding:8px 0;cursor:pointer;font-size:13px;color:#1f2733;}
+  .seg button.active{background:#2f6fed;color:#fff;}
+  .states{display:flex;flex-wrap:wrap;gap:8px;}
+  .states button{border:1px solid #e6e9ef;background:#fff;border-radius:18px;padding:6px 12px;font-size:12px;cursor:pointer;color:#1f2733;}
+  .states button.active{background:#fff3df;border-color:#f5a623;color:#d98a12;}
+  .panel .tip{font-size:12px;color:#8a93a5;line-height:1.6;background:#f6f8fc;padding:10px;border-radius:8px;}
   /* 手机 */
-  .phone{width:375px;height:760px;background:#000;border-radius:36px;padding:10px;position:relative;box-shadow:0 12px 40px rgba(80,60,180,.22)}
-  .screen{width:100%;height:100%;background:#fff;border-radius:28px;overflow:hidden;position:relative;display:flex;flex-direction:column}
-  .page{display:none;flex:1;flex-direction:column;min-height:0}
-  .page.on{display:flex}
-
-  /* 顶部栏 */
-  .topbar{height:48px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#fff;border-bottom:1px solid #f0eef7;font-size:15px;font-weight:600}
-  .topbar .bk{font-size:22px;color:var(--ink);cursor:pointer}
-  .topbar .rt{font-size:13px;color:var(--c-d);cursor:pointer}
-
-  /* 播放器 */
-  .player{height:210px;background:linear-gradient(135deg,#2a2350,#4a3d8f);position:relative;flex-shrink:0;color:#fff}
-  .player .top{display:flex;justify-content:space-between;align-items:center;padding:10px 12px}
-  .player .back{font-size:18px;cursor:pointer}
-  .player .live-tag{background:#ff4d4f;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
-  .player .online{font-size:11px;opacity:.85}
-  .player .cover{position:absolute;inset:0;background:linear-gradient(135deg,#e9e4ff,#d7e9ff);display:flex;align-items:center;justify-content:center;font-size:46px;color:#b9aef0}
-  .player .anchor{position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:8px;z-index:2}
-  .player .avatar{width:34px;height:34px;border-radius:50%;background:#fff2;display:flex;align-items:center;justify-content:center;font-size:16px}
-  .player .anchor .nm{font-size:13px;font-weight:600}
-  .player .anchor .sub{font-size:10px;opacity:.8}
-  .player .close{position:absolute;right:12px;bottom:14px;background:rgba(0,0,0,.3);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:14px;z-index:2}
-
-  /* 挂车条 */
-  .rail{flex-shrink:0;background:#faf9fd;border-bottom:1px solid #eee;padding:8px 10px}
-  .rail .ttl{font-size:11px;color:var(--mut);margin-bottom:6px;display:flex;justify-content:space-between}
-  .rail .cards{display:flex;gap:8px;overflow-x:auto}
-  .gcard{flex:0 0 124px;border:1px solid #eceaf6;border-radius:10px;background:#fff;padding:6px;cursor:pointer}
-  .gcard .img{height:58px;border-radius:7px;background:linear-gradient(135deg,#e9e4ff,#d7e9ff);display:flex;align-items:center;justify-content:center;font-size:22px}
-  .gcard .nm{font-size:11px;margin:4px 0 2px;line-height:1.3;height:28px;overflow:hidden}
-  .gcard .pr{font-size:13px;color:var(--c-d);font-weight:700}
-  .gcard .pr small{font-size:10px;font-weight:400;color:var(--mut);text-decoration:line-through;margin-left:3px}
-  .gcard .buy{flex-shrink:0;background:var(--c);color:#fff;font-size:10px;padding:2px 8px;border-radius:8px;margin-top:3px;display:inline-block}
-
-  /* 互动区 */
-  .chat{flex:1;overflow-y:auto;padding:10px 12px;background:#fff}
-  .msg{font-size:12px;margin:5px 0;color:#444}
-  .msg b{color:var(--c-d)}
-  .sys{color:#999;font-size:11px;text-align:center;margin:6px 0}
-  .bar{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid #eee;background:#faf9fd}
-  .bar input{flex:1;border:1px solid #e3e0f0;border-radius:18px;padding:7px 12px;font-size:12px;outline:none}
-  .bar .ic{font-size:18px;color:var(--mut)}
-
-  /* 未登录遮罩 */
-  .mask{position:absolute;inset:0;background:rgba(20,16,40,.92);color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;border-radius:28px;z-index:30;padding:30px;text-align:center}
-  .mask.show{display:flex}
-  .mask .big{font-size:46px;margin-bottom:12px}
-  .mask h2{color:#fff;font-size:18px;margin:0 0 6px}
-  .mask p{font-size:13px;opacity:.85;margin:0 0 20px}
-  .mask .go{background:var(--c);color:#fff;border:none;border-radius:24px;padding:11px 40px;font-size:15px;font-weight:600;cursor:pointer}
-
-  /* 跳转确认 */
-  .sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:18px 18px 0 0;padding:16px 18px 22px;transform:translateY(110%);transition:.25s;z-index:40;box-shadow:0 -6px 20px rgba(0,0,0,.12)}
-  .sheet.show{transform:translateY(0)}
-  .sheet .sh{display:flex;gap:10px;align-items:center}
-  .sheet .sh .img{width:54px;height:54px;border-radius:10px;background:linear-gradient(135deg,#e9e4ff,#d7e9ff);display:flex;align-items:center;justify-content:center;font-size:24px}
-  .sheet .sh .nm{font-size:13px;font-weight:600}
-  .sheet .sh .pr{font-size:15px;color:var(--c-d);font-weight:700;margin-top:2px}
-  .sheet .env{font-size:12px;color:var(--mut);margin:12px 0;padding:10px;background:#faf9fd;border-radius:10px}
-  .sheet .acts{display:flex;gap:10px}
-  .sheet .acts .a1{flex:1;border:1px solid #d9d3f7;background:var(--c-l);color:var(--c-d);border-radius:22px;padding:10px;text-align:center;font-size:14px;cursor:pointer}
-  .sheet .acts .a2{flex:1;background:var(--c);color:#fff;border-radius:22px;padding:10px;text-align:center;font-size:14px;cursor:pointer}
-
-  /* 商品落地页 */
-  .gv{flex:1;overflow-y:auto;background:#fff}
-  .gv .hero{height:230px;background:linear-gradient(135deg,#e9e4ff,#d7e9ff);display:flex;align-items:center;justify-content:center;font-size:64px;color:#b9aef0;position:relative}
-  .gv .hero .tag{position:absolute;left:12px;top:12px;background:var(--c);color:#fff;font-size:11px;padding:3px 9px;border-radius:8px}
-  .gv .info{padding:14px 16px}
-  .gv .info .nm{font-size:17px;font-weight:700}
-  .gv .info .pr{font-size:22px;color:var(--c-d);font-weight:800;margin-top:6px}
-  .gv .info .pr small{font-size:13px;color:var(--mut);text-decoration:line-through;font-weight:400;margin-left:6px}
-  .gv .info .desc{font-size:12.5px;color:var(--mut);margin-top:8px;line-height:1.7}
-  .gv .coupon{margin:6px 16px;background:var(--c-l);border:1px dashed var(--c);border-radius:10px;padding:10px 12px}
-  .gv .coupon .ct{font-size:12px;color:var(--c-d);font-weight:600;margin-bottom:6px}
-  .gv .coupon .row{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--ink);padding:4px 0}
-  .gv .coupon .pick{border:1px solid var(--c);color:var(--c);border-radius:14px;padding:3px 12px;font-size:11px;cursor:pointer}
-  .gv .coupon .pick.on{background:var(--c);color:#fff}
-  .gv .anchor-card{margin:6px 16px;background:#faf9fd;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--mut)}
-  .gv .anchor-card .a{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#e9e4ff,#d7e9ff);display:flex;align-items:center;justify-content:center;font-size:16px}
-  .gv .bottom{flex-shrink:0;display:flex;gap:10px;padding:10px 14px;border-top:1px solid #f0eef7;background:#fff}
-  .gv .bottom .cart{font-size:12px;color:var(--mut);display:flex;flex-direction:column;align-items:center;justify-content:center;width:54px}
-  .gv .bottom .buy{flex:1;background:var(--c);color:#fff;border:none;border-radius:24px;padding:12px;font-size:15px;font-weight:700;cursor:pointer}
-  .gv .bottom .buy.dis{background:#ccc}
-
-  /* 登录页 */
-  .login{flex:1;display:flex;flex-direction:column;align-items:center;padding:40px 30px;background:linear-gradient(180deg,#fff,#faf9fd)}
-  .login .logo{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--c-d));display:flex;align-items:center;justify-content:center;font-size:40px;color:#fff;margin-bottom:14px}
-  .login h2{font-size:19px;margin:0 0 4px;color:var(--ink)}
-  .login .sub{font-size:13px;color:var(--mut);margin-bottom:28px}
-  .login input{width:100%;height:46px;border:1px solid var(--line);border-radius:10px;padding:0 14px;font-size:14px;margin-bottom:12px;outline:none}
-  .login input:focus{border-color:var(--c)}
-  .login .code{display:flex;gap:10px}
-  .login .code input{flex:1}
-  .login .code button{width:110px;border:1px solid var(--c);color:var(--c);background:var(--c-l);border-radius:10px;font-size:13px;cursor:pointer}
-  .login .primary{width:100%;height:48px;background:var(--c);color:#fff;border:none;border-radius:24px;font-size:16px;font-weight:700;margin-top:18px;cursor:pointer}
-  .login .wx{width:100%;height:46px;background:#07c160;color:#fff;border:none;border-radius:24px;font-size:15px;margin-top:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
-  .login .agree{font-size:11px;color:var(--mut);margin-top:16px;text-align:center}
-
-  /* 通知弹窗 */
-  .notify-mask{position:absolute;inset:0;background:rgba(20,16,40,.5);display:none;align-items:center;justify-content:center;z-index:45;padding:30px}
-  .notify-mask.show{display:flex}
-  .notify{width:280px;background:#fff;border-radius:18px;padding:22px 20px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.2)}
-  .notify .ic{width:56px;height:56px;border-radius:50%;background:var(--c-l);color:var(--c);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px}
-  .notify h3{margin:0 0 4px;font-size:17px;color:var(--ink)}
-  .notify .desc{font-size:12.5px;color:var(--mut);margin-bottom:14px}
-  .notify .clist{background:var(--c-l);border-radius:10px;padding:10px;margin-bottom:16px;text-align:left}
-  .notify .clist .ci{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:5px 0}
-  .notify .clist .ci .a{width:26px;height:26px;border-radius:6px;background:#fff;color:var(--c-d);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
-  .notify .use{width:100%;background:var(--c);color:#fff;border:none;border-radius:24px;padding:11px;font-size:15px;font-weight:700;cursor:pointer}
-  .notify .later{font-size:12px;color:var(--mut);margin-top:12px;cursor:pointer}
-
-  /* 消息中心 */
-  .mc{flex:1;overflow-y:auto;background:#faf9fd}
-  .mc .sec-t{font-size:12px;color:var(--mut);padding:12px 16px 6px}
-  .mc .item{background:#fff;margin:0 0 1px;padding:13px 16px;display:flex;gap:12px;align-items:flex-start;cursor:pointer}
-  .mc .item .a{width:40px;height:40px;border-radius:10px;background:var(--c-l);color:var(--c);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-  .mc .item .ct{flex:1}
-  .mc .item .ct .t{font-size:13.5px;font-weight:600;color:var(--ink)}
-  .mc .item .ct .d{font-size:12px;color:var(--mut);margin-top:3px;line-height:1.5}
-  .mc .item .ct .time{font-size:11px;color:#bbb;margin-top:4px}
-  .mc .item .badge{background:#ff4d4f;color:#fff;font-size:10px;padding:1px 6px;border-radius:8px;align-self:center}
-
-  /* toast */
-  .toast{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);background:rgba(0,0,0,.82);color:#fff;font-size:12.5px;padding:10px 16px;border-radius:10px;z-index:50;opacity:0;transition:.2s;pointer-events:none;max-width:280px;text-align:center}
-  .toast.show{opacity:1}
-
-  /* 输出清单 */
-  .listbox{width:300px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px}
-  .listbox h3{margin:0 0 10px;font-size:14px;color:var(--c-d)}
-  .listbox ol{margin:0;padding-left:18px;font-size:12.5px;color:#3a3f4a}
-  .listbox li{margin:5px 0}
-  .listbox .done{color:var(--teal);font-weight:600}
-  .listbox .plan{color:var(--mut)}
+  .phone{width:375px;height:780px;background:#111;border-radius:38px;padding:10px;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;flex:0 0 auto;}
+  .screen{width:100%;height:100%;background:#000;border-radius:28px;overflow:hidden;position:relative;}
+  .statusbar{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;color:#fff;font-size:12px;position:absolute;top:0;left:0;right:0;z-index:6;}
+  /* 观看页 */
+  #live{position:absolute;inset:0;background:linear-gradient(160deg,#1a2230,#0d1117);}
+  .video{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#5a6478;font-size:13px;}
+  .video .play{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:22px;}
+  .top-bar{position:absolute;top:40px;left:12px;right:12px;display:flex;align-items:center;gap:8px;z-index:5;}
+  .anchor{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.35);padding:4px 10px 4px 4px;border-radius:20px;}
+  .anchor .a-av{width:30px;height:30px;border-radius:50%;background:#f5a623;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+  .anchor .a-name{color:#fff;font-size:13px;font-weight:600;}
+  .anchor .follow{background:#f5414f;color:#fff;font-size:11px;padding:2px 8px;border-radius:12px;}
+  .live-tag{background:rgba(245,65,79,.9);color:#fff;font-size:11px;padding:3px 8px;border-radius:6px;font-weight:700;}
+  .close-x{margin-left:auto;color:#fff;font-size:18px;background:rgba(0,0,0,.3);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  /* 小黄车浮层 */
+  .fab{position:absolute;right:14px;bottom:120px;z-index:7;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;}
+  .fab .circle{width:52px;height:52px;border-radius:50%;background:#ffd000;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 4px 12px rgba(255,208,0,.5);}
+  .fab .badge{position:absolute;top:-4px;right:-4px;background:#f5414f;color:#fff;font-size:11px;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;font-weight:700;}
+  .fab .fab-txt{color:#ffd000;font-size:11px;font-weight:700;}
+  .fab.hidden{display:none;}
+  /* 底部抽屉 */
+  .sheet-mask{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:10;opacity:0;pointer-events:none;transition:.25s;}
+  .sheet-mask.show{opacity:1;pointer-events:auto;}
+  .sheet{position:absolute;left:0;right:0;bottom:0;height:62%;background:#f6f7f9;border-radius:16px 16px 0 0;z-index:11;transform:translateY(100%);transition:transform .28s ease;display:flex;flex-direction:column;}
+  .sheet.show{transform:translateY(0);}
+  .sheet-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #eceef2;}
+  .sheet-head .t{font-weight:700;font-size:15px;}
+  .sheet-head .x{border:none;background:none;font-size:20px;color:#8a93a5;cursor:pointer;}
+  .sheet-body{flex:1;overflow:auto;padding:12px 14px;}
+  .prod{display:flex;gap:10px;background:#fff;border-radius:10px;padding:10px;margin-bottom:10px;position:relative;}
+  .prod .pic{width:72px;height:72px;border-radius:8px;background:#eef1f6;display:flex;align-items:center;justify-content:center;color:#b8c0d0;font-size:11px;flex:0 0 auto;}
+  .prod .idx{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.55);color:#fff;font-size:11px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .prod .info{flex:1;min-width:0;}
+  .prod .nm{font-size:14px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .prod .atag{display:inline-block;background:#fff3df;color:#d98a12;font-size:11px;padding:1px 6px;border-radius:4px;margin-top:4px;}
+  .prod .pr{color:#f5414f;font-weight:700;font-size:15px;margin-top:6px;}
+  .prod .pr .old{color:#b8c0d0;font-size:11px;font-weight:400;text-decoration:line-through;margin-left:6px;}
+  .prod .go{position:absolute;right:10px;bottom:10px;background:#f5414f;color:#fff;font-size:12px;padding:5px 12px;border-radius:16px;}
+  .prod.down{opacity:.5;}
+  .prod.down .go{background:#b8c0d0;}
+  .empty{text-align:center;color:#8a93a5;padding:50px 20px;}
+  .empty .e-ic{font-size:42px;opacity:.4;}
+  .fail{text-align:center;color:#8a93a5;padding:50px 20px;}
+  .fail button{margin-top:12px;border:1px solid #2f6fed;color:#2f6fed;background:#fff;border-radius:18px;padding:6px 16px;cursor:pointer;}
+  /* 跳转确认 sheet */
+  .confirm-mask{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:12;opacity:0;pointer-events:none;transition:.2s;}
+  .confirm-mask.show{opacity:1;pointer-events:auto;}
+  .confirm{position:absolute;left:0;right:0;bottom:0;background:#fff;z-index:13;border-radius:16px 16px 0 0;transform:translateY(100%);transition:transform .25s ease;padding:20px 18px 26px;}
+  .confirm.show{transform:translateY(0);}
+  .confirm .ct{font-weight:700;font-size:16px;margin-bottom:6px;}
+  .confirm .cd{color:#8a93a5;font-size:13px;line-height:1.6;margin-bottom:18px;}
+  .confirm .row{display:flex;gap:10px;margin-bottom:12px;}
+  .confirm .row .pic{width:56px;height:56px;border-radius:8px;background:#eef1f6;display:flex;align-items:center;justify-content:center;color:#b8c0d0;font-size:10px;}
+  .confirm .row .ct2{font-weight:600;font-size:14px;}
+  .confirm .row .cp{color:#f5414f;font-weight:700;margin-top:4px;}
+  .confirm .btns{display:flex;gap:12px;margin-top:14px;}
+  .confirm .btns button{flex:1;padding:12px 0;border-radius:24px;font-size:15px;font-weight:600;cursor:pointer;border:none;}
+  .confirm .cancel{background:#f0f2f5;color:#1f2733;}
+  .confirm .ok{background:#f5414f;color:#fff;}
+  /* 商品详情页 L3 */
+  #detail{position:absolute;inset:0;background:#fff;transform:translateX(100%);transition:transform .3s ease;z-index:20;display:flex;flex-direction:column;}
+  #detail.show{transform:translateX(0);}
+  .d-top{display:flex;align-items:center;padding:12px 14px;gap:10px;border-bottom:1px solid #f0f2f5;}
+  .d-back{border:none;background:none;font-size:20px;cursor:pointer;color:#1f2733;}
+  .d-title{font-weight:600;}
+  .d-scroll{flex:1;overflow:auto;}
+  .d-banner{height:300px;background:linear-gradient(135deg,#ffd9d9,#fff0f0);display:flex;align-items:center;justify-content:center;color:#c98;font-size:14px;}
+  .d-info{padding:14px 16px;}
+  .d-nm{font-size:18px;font-weight:700;line-height:1.4;}
+  .d-price{color:#f5414f;font-weight:700;font-size:24px;margin-top:8px;}
+  .d-price .old{color:#b8c0d0;font-size:13px;font-weight:400;text-decoration:line-through;margin-left:8px;}
+  .d-coupon{margin-top:12px;border:1px dashed #f5a623;color:#d98a12;font-size:13px;padding:8px 12px;border-radius:8px;display:inline-block;}
+  .d-anchor{display:flex;align-items:center;gap:10px;margin-top:16px;padding:12px;background:#f6f8fc;border-radius:10px;}
+  .d-anchor .da{width:40px;height:40px;border-radius:50%;background:#f5a623;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
+  .d-anchor .dn{font-weight:600;}
+  .d-anchor .df{color:#8a93a5;font-size:12px;}
+  .d-anchor .dfb{margin-left:auto;background:#fff;border:1px solid #f5414f;color:#f5414f;font-size:12px;padding:5px 12px;border-radius:16px;}
+  .d-bottom{display:flex;gap:12px;padding:12px 16px;border-top:1px solid #f0f2f5;}
+  .d-bottom button{flex:1;padding:13px 0;border-radius:24px;border:none;font-size:16px;font-weight:700;cursor:pointer;}
+  .d-bottom .cart{background:#ffd000;color:#5a4a00;}
+  .d-bottom .buy{background:#f5414f;color:#fff;}
+  .toast{position:absolute;top:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;padding:9px 16px;border-radius:8px;font-size:13px;opacity:0;transition:.25s;z-index:30;white-space:nowrap;}
+  .toast.show{opacity:1;}
 </style>
 </head>
 <body>
-<div class="stage">
-  <!-- 演示导航 -->
+
+  <!-- 控制面板（演示用） -->
   <div class="panel">
-    <h3>演示导航（客户端）</h3>
-    <button class="nav-btn on" data-p="watch" onclick="go('watch')">L1 直播观看页<small>播放器/挂车/未登录遮罩</small></button>
-    <button class="nav-btn" data-p="goods" onclick="go('goods')">L3 商品落地页<small>挂车跳转目标·用券下单</small></button>
-    <button class="nav-btn" data-p="login" onclick="go('login')">L4 登录引导页<small>未登录观看→登录</small></button>
-    <button class="nav-btn" data-p="notify" onclick="go('notify')">L5 获券通知弹窗<small>登录后弹窗·去使用</small></button>
-    <button class="nav-btn" data-p="msg" onclick="go('msg')">L6 消息中心<small>券到账记录·红点</small></button>
-    <div class="sec">当前环境（影响挂车跳转目标）</div>
-    <div class="row" id="envRow">
-      <button class="env-btn on" data-env="微信">微信</button>
-      <button class="env-btn" data-env="App">App</button>
-      <button class="env-btn" data-env="浏览器">浏览器H5</button>
+    <h3>演示控制台</h3>
+    <div class="grp">
+      <label>终端环境（三端共享交互，跳转目标不同）</label>
+      <div class="seg" id="env-seg">
+        <button data-env="wx" class="active">微信小程序</button>
+        <button data-env="app">App</button>
+        <button data-env="h5">H5</button>
+      </div>
     </div>
-    <div class="mini">• L1 挂车点击 → 跳 L3<br>• L1 未登录 → L4 登录 → 触发 L5 通知 → 去使用到 L3<br>• L5/L6 通知由 T+1 批处理发券后推送</div>
+    <div class="grp">
+      <label>抽屉 / 角标状态</label>
+      <div class="states" id="state-seg">
+        <button data-st="normal" class="active">有挂车</button>
+        <button data-st="empty">空态</button>
+        <button data-st="fail">加载失败</button>
+      </div>
+    </div>
+    <div class="tip">
+      操作指引：<br>
+      1. 点击右下角「小黄车」浮层展开商品抽屉；<br>
+      2. 点击商品卡片或「去看看」弹出跳转确认；<br>
+      3. 点「立即前往」进入商品详情页（L3）；<br>
+      4. 切换上方终端可查看不同跳转目标文案。
+    </div>
   </div>
 
   <!-- 手机 -->
   <div class="phone">
-    <div class="screen" id="screen">
-      <section class="page on" id="page-watch"></section>
-      <section class="page" id="page-goods"></section>
-      <section class="page" id="page-login"></section>
-      <section class="page" id="page-notify"></section>
-      <section class="page" id="page-msg"></section>
+    <div class="screen">
+      <div class="statusbar"><span id="clock">20:30</span><span>●●● 5G ▮</span></div>
 
-      <!-- 跳转确认 sheet -->
-      <div class="sheet" id="sheet">
-        <div class="sh">
-          <div class="img" id="sImg">🍫</div>
-          <div><div class="nm" id="sNm">商品</div><div class="pr" id="sPr">¥0</div></div>
+      <!-- 观看页 -->
+      <div id="live">
+        <div class="video"><div class="play">▶</div></div>
+        <div class="top-bar">
+          <div class="anchor">
+            <div class="a-av">虎</div>
+            <div class="a-name">小虎姐</div>
+            <div class="follow">+关注</div>
+          </div>
+          <div class="live-tag">● 直播中</div>
+          <div class="close-x">×</div>
         </div>
-        <div class="env" id="sEnv">环境</div>
-        <div class="acts"><div class="a1" onclick="closeSheet()">取消</div><div class="a2" onclick="confirmJump()">立即前往</div></div>
+
+        <!-- 小黄车浮层 -->
+        <div class="fab" id="fab" onclick="openSheet()">
+          <div class="circle">
+            <svg class="cart-ic" viewBox="0 0 24 24" fill="none"><path d="M3 4h2l2.4 11.2A2 2 0 0 0 9.36 17H17.5a2 2 0 0 0 1.95-1.57L21 8H6.2" stroke="#5a4a00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="1.4" fill="#5a4a00"/><circle cx="18" cy="20" r="1.4" fill="#5a4a00"/></svg>
+            <span class="badge" id="fab-badge">5</span>
+          </div>
+          <div class="fab-txt">购物车</div>
+        </div>
       </div>
-      <!-- 通知弹窗 -->
-      <div class="notify-mask" id="nMask">
-        <div class="notify" id="nBox"></div>
+
+      <!-- 商品抽屉 -->
+      <div class="sheet-mask" id="sheet-mask" onclick="closeSheet()"></div>
+      <div class="sheet" id="sheet">
+        <div class="sheet-head"><div class="t" id="sheet-t">直播商品 5</div><button class="x" onclick="closeSheet()">×</button></div>
+        <div class="sheet-body" id="sheet-body"></div>
       </div>
+
+      <!-- 跳转确认 -->
+      <div class="confirm-mask" id="confirm-mask" onclick="closeConfirm()"></div>
+      <div class="confirm" id="confirm">
+        <div class="ct">前往商品详情</div>
+        <div class="cd" id="confirm-desc"></div>
+        <div class="row">
+          <div class="pic">图</div>
+          <div><div class="ct2" id="cf-nm"></div><div class="cp" id="cf-pr"></div></div>
+        </div>
+        <div class="btns">
+          <button class="cancel" onclick="closeConfirm()">取消</button>
+          <button class="ok" onclick="doJump()">立即前往</button>
+        </div>
+      </div>
+
+      <!-- 商品详情页 L3 -->
+      <div id="detail">
+        <div class="d-top"><button class="d-back" onclick="closeDetail()">‹</button><span class="d-title">商品详情</span></div>
+        <div class="d-scroll">
+          <div class="d-banner">商品主图 / 视频</div>
+          <div class="d-info">
+            <div class="d-nm" id="d-nm"></div>
+            <div class="d-price" id="d-pr"></div>
+            <div class="d-coupon" style="cursor:pointer" onclick="getCoupon(this)">领券立减 ¥20 · 满 199 可用</div>
+            <div class="d-anchor">
+              <div class="da">虎</div>
+              <div><div class="dn">小虎姐</div><div class="df">直播讲解中 · 点击进入直播间</div></div>
+              <button class="dfb" onclick="enterLive()">进直播间</button>
+            </div>
+          </div>
+        </div>
+        <div class="d-bottom"><button class="cart" onclick="buyCart()">加入购物车</button><button class="buy" onclick="buyNow()">立即购买</button></div>
+      </div>
+
       <div class="toast" id="toast"></div>
     </div>
   </div>
 
-</div>
-
 <script>
-  let env='微信', cur='watch', loggedIn=false;
-  const products = [
-    {emoji:'🍫', nm:'低卡蛋白棒 代餐零食', pr:39, op:59, tag:'直播专享'},
-    {emoji:'🦠', nm:'肠道益生菌冻干粉', pr:89, op:129, tag:'热销'},
-    {emoji:'🍵', nm:'红豆薏米养生茶包', pr:49, op:79, tag:'新品'},
-  ];
-  // 已发放但未核销的券（T+1 批处理发券结果）
-  let coupons = [
-    {name:'直播间满99减30', amt:'¥30', got:'2026-07-16 09:12'},
-    {name:'直播间满199减60', amt:'¥60', got:'2026-07-16 09:12'},
-  ];
-  let picked = null; // 商品落地页选中的券
+/* mock 挂车商品（复用后端 cartMap R8001） */
+const cartList=[
+  {id:'P10001',name:'泰小虎·胶原蛋白肽饮 海洋鱼胶原',tag:'直播专享',price:'¥129',old:'¥159',down:false},
+  {id:'P10002',name:'有机冷压初榨橄榄油 500ml 物理压榨',tag:'限时',price:'¥89',old:'¥109',down:false},
+  {id:'P10004',name:'冻干草莓脆 无添加零食',tag:'',price:'¥39',old:'',down:false},
+  {id:'P10006',name:'低GI全麦欧包 6枚 早餐代餐',tag:'直播专享',price:'¥45',old:'',down:false},
+  {id:'P20001',name:'玻尿酸精华水 120ml 补水保湿',tag:'',price:'¥199',old:'¥259',down:true},
+];
+const envText={wx:'将跳转至「商城小程序」商品详情页',app:'将跳转至「商城 App」商品详情页',h5:'将跳转至 H5 商品落地页（purchase_channel=h5）'};
+let env='wx';
+let curState='normal';
+let pending=null;
 
-  const $ = id=>document.getElementById(id);
-  const screen = $('screen');
-  const toast = $('toast');
-  function showToast(t){toast.textContent=t;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1800);}
-  function go(p){cur=p;document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));$('page-'+p).classList.add('on');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('on',b.dataset.p===p));render();if(p==='notify'){renderNotifyPage();}}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1800);}
 
-  // ============ L1 观看页 ============
-  function renderWatch(){
-    return `
-      <div class="topbar"><span class="bk" onclick="go('watch')">‹</span><span>泰小虎健康直播间</span><span class="rt">⊕</span></div>
-      <div class="player">
-        <div class="top"><span class="back">‹</span><span class="live-tag">● LIVE</span><span class="online">👁 1.2万 在线</span></div>
-        <div class="cover">🖼️</div>
-        <div class="anchor"><div class="avatar">🐯</div><div><div class="nm">泰小虎健康直播间</div><div class="sub">科学减重 · 今晚 8 点专场</div></div></div>
-        <div class="close">✕</div>
+/* 环境切换 */
+document.querySelectorAll('#env-seg button').forEach(b=>{
+  b.onclick=()=>{document.querySelectorAll('#env-seg button').forEach(x=>x.classList.remove('active'));b.classList.add('active');env=b.dataset.env;toast(envText[env]);};
+});
+/* 状态切换 */
+document.querySelectorAll('#state-seg button').forEach(b=>{
+  b.onclick=()=>{document.querySelectorAll('#state-seg button').forEach(x=>x.classList.remove('active'));b.classList.add('active');curState=b.dataset.st;closeSheet();closeConfirm();renderFab();renderSheet();};
+});
+
+function renderFab(){
+  const fab=document.getElementById('fab');
+  const badge=document.getElementById('fab-badge');
+  if(curState==='empty'){fab.classList.add('hidden');}
+  else if(curState==='fail'){fab.classList.add('hidden');}
+  else{fab.classList.remove('hidden');badge.textContent=cartList.length;}
+}
+
+function renderSheet(){
+  const body=document.getElementById('sheet-body');
+  const t=document.getElementById('sheet-t');
+  if(curState==='empty'){
+    t.textContent='直播商品 0';
+    body.innerHTML=`<div class="empty"><div class="e-ic">空</div><div style="margin-top:10px;font-weight:600;color:#1f2733">该直播间暂未挂车商品</div><div style="margin-top:6px;font-size:13px">主播讲解商品后，这里会展示可购买的健康好物</div></div>`;
+    return;
+  }
+  if(curState==='fail'){
+    t.textContent='直播商品';
+    body.innerHTML=`<div class="fail"><div class="e-ic">失败</div><div style="margin-top:10px">挂车商品加载失败</div><button onclick="retrySheet()">点击重试</button></div>`;
+    return;
+  }
+  t.textContent='直播商品 '+cartList.length;
+  body.innerHTML=cartList.map((c,i)=>`
+    <div class="prod ${c.down?'down':''}" onclick="onCard('${c.id}')">
+      <span class="idx">${i+1}</span>
+      <div class="pic">图</div>
+      <div class="info">
+        <div class="nm">${c.name}</div>
+        ${c.tag?`<span class="atag">${c.tag}</span>`:''}
+        <div class="pr">${c.price}${c.old?`<span class="old">${c.old}</span>`:''}</div>
       </div>
-      <div class="rail">
-        <div class="ttl"><span>🛒 直播专享好物（挂车 3）</span><span>右滑查看 ›</span></div>
-        <div class="cards">${products.map((p,i)=>`
-          <div class="gcard" onclick="openJump(${i})">
-            <div class="img">${p.emoji}</div><div class="nm">${p.nm}</div>
-            <div class="pr">¥${p.pr}<small>¥${p.op}</small></div><span class="buy">立即购买</span>
-          </div>`).join('')}
-        </div>
-      </div>
-      <div class="chat">
-        <div class="sys">— 主播已开启健康科普直播 —</div>
-        <div class="msg"><b>小美</b>：蛋白棒真的好吃还不胖吗？</div>
-        <div class="msg"><b>主播</b>：一根只有 90 大卡，代餐刚刚好～</div>
-        <div class="msg"><b>阿强</b>：已下单益生菌，蹲一个发券</div>
-        <div class="sys">— 观看满 5 分钟可领直播间专属券 —</div>
-        <div class="sys">时长发券为 T+1 批处理，登录后将在首页弹窗告知已发放券</div>
-      </div>
-      <div class="bar"><input placeholder="说点什么…"><span class="ic">❤️</span><span class="ic">↗</span></div>
-      <div class="mask ${loggedIn?'':'show'}" id="mask">
-        <div class="big">🔐</div><h2>请先登录</h2>
-        <p>观看直播并领取专属优惠券<br>需要先登录你的泰小虎账号</p>
-        <button class="go" onclick="go('login')">去登录</button>
-      </div>`;
-  }
-  function openJump(i){
-    const p=products[i];
-    $('sImg').textContent=p.emoji; $('sNm').textContent=p.nm; $('sPr').textContent='¥'+p.pr;
-    $('sEnv').textContent='当前环境：'+env+' → 将跳转「'+(env==='微信'?'商城小程序':env==='App'?'商城App':'商城H5')+'」商品详情页';
-    $('sheet').dataset.pid=i;
-    $('sheet').classList.add('show');
-  }
-  function closeSheet(){$('sheet').classList.remove('show');}
-  function confirmJump(){
-    const i=parseInt($('sheet').dataset.pid||'0');
-    closeSheet();
-    showToast('跳转「'+(env==='微信'?'商城小程序':env==='App'?'商城App':'商城H5')+'」商品详情页');
-    picked=null; go('goods'); currentGoods=i; render();
-  }
+      <div class="go">${c.down?'已下架':'去看看'}</div>
+    </div>`).join('');
+}
+function retrySheet(){toast('重新请求挂车列表…');setTimeout(()=>{curState='normal';document.querySelectorAll('#state-seg button').forEach(x=>x.classList.toggle('active',x.dataset.st==='normal'));renderFab();renderSheet();},600);}
 
-  // ============ L3 商品落地页 ============
-  let currentGoods=0;
-  function renderGoods(){
-    const p=products[currentGoods];
-    const hasCoupon = coupons.length>0;
-    return `
-      <div class="topbar"><span class="bk" onclick="go('watch')">‹</span><span>商品详情</span><span class="rt">⋯</span></div>
-      <div class="gv">
-        <div class="hero">${p.emoji}<span class="tag">${p.tag}</span></div>
-        <div class="info">
-          <div class="nm">${p.nm}</div>
-          <div class="pr">¥${p.pr}<small>¥${p.op}</small></div>
-          <div class="desc">泰小虎严选健康好物，直播专享价。科学配比、低卡轻负担，适合减脂期与日常养生。</div>
-        </div>
-        ${hasCoupon?`
-        <div class="coupon">
-          <div class="ct">可用优惠券（直播间发放）</div>
-          ${coupons.map((c,idx)=>`
-            <div class="row"><span>${c.name}</span><span class="pick ${picked===idx?'on':''}" onclick="pickCoupon(${idx})">${picked===idx?'已选':'选券'}</span></div>`).join('')}
-        </div>`:`<div class="coupon"><div class="ct">暂无可用券</div><div class="row"><span style="color:var(--mut)">观看直播满 5 分钟可领直播间专属券</span></div></div>`}
-        <div class="anchor-card"><div class="a">🐯</div><div>泰小虎健康直播间 · 当前主播正在讲解该商品，下单享直播专享价</div></div>
-      </div>
-      <div class="bottom">
-        <div class="cart" onclick="go('watch')">🛒<span>购物车</span></div>
-        <button class="buy ${hasCoupon&&picked===null?'dis':''}" onclick="submitOrder()">${picked!==null?'选券下单 · ¥'+(p.pr-parseInt(coupons[picked].amt.replace('¥',''))):'立即购买 · ¥'+p.pr}</button>
-      </div>`;
-  }
-  function pickCoupon(idx){picked = picked===idx?null:idx; render();}
-  function submitOrder(){
-    if(coupons.length>0 && picked===null){ showToast('请选择一张优惠券'); return; }
-    showToast('下单成功，券已核销');
-    if(picked!==null){ coupons.splice(picked,1); picked=null; }
-    render();
-  }
+function openSheet(){
+  if(curState==='fail'){renderSheet();document.getElementById('sheet-mask').classList.add('show');document.getElementById('sheet').classList.add('show');return;}
+  document.getElementById('sheet-mask').classList.add('show');
+  document.getElementById('sheet').classList.add('show');
+}
+function closeSheet(){document.getElementById('sheet-mask').classList.remove('show');document.getElementById('sheet').classList.remove('show');}
 
-  // ============ L4 登录页 ============
-  function renderLogin(){
-    return `
-      <div class="login">
-        <div class="logo">🐯</div>
-        <h2>泰小虎健康</h2>
-        <div class="sub">登录后观看直播、领取专属券</div>
-        <input placeholder="请输入手机号">
-        <div class="code"><input placeholder="验证码"><button onclick="showToast('验证码已发送')">获取验证码</button></div>
-        <button class="primary" onclick="doLogin()">手机号登录</button>
-        <button class="wx" onclick="doLogin()">💬 微信一键登录</button>
-        <div class="agree">登录即同意《用户协议》与《隐私政策》</div>
-      </div>`;
-  }
-  function doLogin(){
-    loggedIn=true; showToast('登录成功');
-    go('watch');
-    if(coupons.length>0){ setTimeout(renderNotify, 350); }
-  }
+function onCard(id){
+  const c=cartList.find(x=>x.id===id);
+  if(c.down){toast('该商品已下架');return;}
+  pending=c;
+  document.getElementById('cf-nm').textContent=c.name;
+  document.getElementById('cf-pr').textContent=c.price;
+  document.getElementById('confirm-desc').textContent=envText[env];
+  document.getElementById('confirm-mask').classList.add('show');
+  document.getElementById('confirm').classList.add('show');
+}
+function closeConfirm(){document.getElementById('confirm-mask').classList.remove('show');document.getElementById('confirm').classList.remove('show');}
+function doJump(){
+  closeConfirm();closeSheet();
+  document.getElementById('d-nm').textContent=pending.name;
+  document.getElementById('d-pr').innerHTML=`${pending.price}${pending.old?`<span class="old">${pending.old}</span>`:''}`;
+  document.getElementById('detail').classList.add('show');
+  toast('已跳转（原型模拟）');
+}
+function closeDetail(){document.getElementById('detail').classList.remove('show');}
+function buyCart(){toast('已加入购物车（原型模拟）');}
+function buyNow(){toast('正在创建订单…（原型模拟）');}
+function enterLive(){toast('返回直播间（原型模拟）');closeDetail();}
+function getCoupon(el){if(el.dataset.got)return;el.dataset.got='1';el.textContent='已领取 · 领券立减 ¥20';el.style.background='#e6f7ef';el.style.color='#1fab6b';el.style.borderColor='#1fab6b';toast('优惠券已领取');}
 
-  // ============ L5 获券通知弹窗 ============
-  function renderNotify(){
-    const box=$('nBox');
-    box.innerHTML=`
-      <div class="ic">🎁</div>
-      <h3>获得 ${coupons.length} 张优惠券</h3>
-      <div class="desc">你在「科学减重专场」观看满 5 分钟，已发放专属券</div>
-      <div class="clist">${coupons.map(c=>`
-        <div class="ci"><span class="a">${c.amt.replace('¥','')}</span><span>${c.name}</span></div>`).join('')}
-      </div>
-      <button class="use" onclick="useCoupon()">去使用</button>
-      <div class="later" onclick="closeNotify()">稍后再说</div>`;
-    $('nMask').classList.add('show');
-  }
-  function useCoupon(){ closeNotify(); picked=null; go('goods'); }
-  function closeNotify(){ $('nMask').classList.remove('show'); }
-
-  // L5 演示页（导航进入时展示，等价于登录后弹出的获券通知）
-  function renderNotifyPage(){
-    $('page-notify').innerHTML = `
-      <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:30px;background:rgba(20,16,40,.5)">
-        <div class="notify">
-          <div class="ic">🎁</div>
-          <h3>获得 ${coupons.length} 张优惠券</h3>
-          <div class="desc">你在「科学减重专场」观看满 5 分钟，已发放专属券</div>
-          <div class="clist">${coupons.map(c=>`<div class="ci"><span class="a">${c.amt.replace('¥','')}</span><span>${c.name}</span></div>`).join('')}</div>
-          <button class="use" onclick="useCoupon()">去使用</button>
-          <div class="later" onclick="go('watch')">返回观看</div>
-        </div>
-      </div>`;
-  }
-
-  // ============ L6 消息中心 ============
-  function renderMsg(){
-    const items=[...coupons.map(c=>({ic:'🎁',t:'优惠券到账',d: c.name+'，有效期 7 天',time:c.got,unread:true})),
-      {ic:'📺',t:'你关注的直播开播提醒',d:'泰小虎健康直播间「肠道健康日」即将开播',time:'2026-07-16 08:30',unread:false},
-      {ic:'🎉',t:'直播回放已生成',d:'「会员专属答疑」回放可观看',time:'2026-07-13 10:00',unread:false}];
-    return `
-      <div class="topbar"><span class="bk" onclick="go('watch')">‹</span><span>消息中心</span><span class="rt">全部已读</span></div>
-      <div class="mc">
-        <div class="sec-t">通知</div>
-        ${items.map(it=>`
-          <div class="item" onclick="showToast('查看：${it.t}')">
-            <div class="a">${it.ic}</div>
-            <div class="ct"><div class="t">${it.t}</div><div class="d">${it.d}</div><div class="time">${it.time}</div></div>
-            ${it.unread?'<span class="badge">未读</span>':''}
-          </div>`).join('')}
-      </div>`;
-  }
-
-  // 环境切换
-  document.querySelectorAll('#envRow .env-btn').forEach(b=>b.onclick=()=>{
-    document.querySelectorAll('#envRow .env-btn').forEach(x=>x.classList.remove('on'));
-    b.classList.add('on'); env=b.dataset.env;
-    if($('sheet').classList.contains('show')){const i=parseInt($('sheet').dataset.pid||'0');openJump(i);}
-  });
-
-  function render(){
-    $('page-watch').innerHTML = renderWatch();
-    $('page-goods').innerHTML = renderGoods();
-    $('page-login').innerHTML = renderLogin();
-    $('page-msg').innerHTML = renderMsg();
-  }
-  render();
+/* 初始化 */
+renderFab();renderSheet();
 </script>
 </body>
 </html>
