@@ -6,122 +6,294 @@
 <title>泰小虎直播管理 · 平台端后台原型</title>
 <style>
   :root{
-    --primary:#2f6fed; --primary-dark:#1f55c7; --danger:#f5414f; --danger-dark:#d92b39;
-    --success:#1fab6b; --warning:#f5a623; --info:#2f6fed;
-    --bg:#f0f2f5; --panel:#ffffff; --border:#e6e9ef; --text:#1f2733; --sub:#8a93a5;
-    --radius:8px; --shadow:0 2px 10px rgba(20,30,60,.08);
+    --primary:#6B4FE8; --primary-dark:#5430D6; --primary-light:#EDE9FE;
+    --danger:#EF4444; --danger-dark:#DC2626; --danger-light:#FEE2E2;
+    --success:#10B981; --warning:#F59E0B;
+    --bg:#f3f4f6; --panel:#ffffff; --border:#e5e7eb; --text:#111827; --sub:#6b7280;
+    --sidebar-bg:#ffffff; --header-h:56px; --sidebar-w:220px;
+    --radius:8px; --shadow:0 1px 3px rgba(0,0,0,.08);
   }
-  *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;}
-  body{background:var(--bg);color:var(--text);font-size:14px;}
-  .topbar{height:56px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;}
-  .logo{font-weight:700;font-size:17px;color:var(--primary);display:flex;align-items:center;gap:8px;}
-  .logo .dot{width:10px;height:10px;border-radius:50%;background:var(--primary);display:inline-block;}
-  .topbar .sys-name{font-size:15px;color:var(--text);}
+  *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;}
+  body{background:var(--bg);color:var(--text);font-size:14px;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+
+  /* ===== 顶栏 ===== */
+  .topbar{height:var(--header-h);background:var(--primary);display:flex;align-items:center;padding:0 20px;gap:14px;color:#fff;flex-shrink:0;z-index:100;}
+  .logo{font-weight:700;font-size:18px;display:flex;align-items:center;gap:8px;}
+  .logo-icon{width:28px;height:28px;background:rgba(255,255,255,.2);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+  .topbar .sys-name{font-size:14px;opacity:.88;font-weight:500;}
   .topbar .spacer{flex:1;}
-  .topbar .user{display:flex;align-items:center;gap:8px;color:var(--sub);}
-  .avatar{width:30px;height:30px;border-radius:50%;background:#dfe6f3;display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:700;}
-  .layout{display:block;min-height:calc(100vh - 110px);}
-  .pagenav{display:flex;background:#fff;border-bottom:1px solid var(--border);padding:0 20px;}
-  .pagenav-item{padding:15px 18px;cursor:pointer;color:var(--sub);font-size:14px;font-weight:600;border-bottom:2px solid transparent;text-decoration:none;line-height:1;}
-  .pagenav-item:hover{color:var(--text);}
-  .pagenav-item.active{color:var(--primary);border-bottom-color:var(--primary);}
-  .content{flex:1;padding:20px 24px;overflow:auto;}
-  .page-title{font-size:18px;font-weight:700;margin-bottom:4px;}
-  .page-desc{color:var(--sub);font-size:13px;margin-bottom:16px;}
-  .notice{background:#eef5ff;border:1px solid #d6e4ff;color:#2351a8;padding:10px 14px;border-radius:var(--radius);font-size:13px;line-height:1.6;margin-bottom:16px;}
+  .topbar .user{display:flex;align-items:center;gap:8px;font-size:13px;opacity:.9;cursor:pointer;}
+  .avatar{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+
+  /* ===== 主体布局：左侧边栏 + 右侧内容 ===== */
+  .layout{display:flex;flex:1;overflow:hidden;}
+
+  /* 左侧导航 */
+  .sidebar{
+    width:var(--sidebar-w);background:var(--sidebar-bg);border-right:1px solid var(--border);
+    display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
+    scrollbar-width:thin;
+  }
+  .sidebar-group{border-bottom:1px solid #f0f0f0;}
+  .sidebar-group-title{
+    padding:12px 18px 8px;font-size:12px;color:var(--sub);font-weight:600;
+    display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;
+  }
+  .sidebar-group-title .arrow{font-size:10px;transition:transform .2s;width:12px;text-align:center;}
+  .sidebar-group-title .arrow.collapsed{transform:rotate(-90deg);}
+  .sidebar-item{
+    padding:9px 18px 9px 34px;font-size:13.5px;color:#374151;cursor:pointer;
+    display:flex;align-items:center;gap:8px;border-left:3px solid transparent;
+    transition:background .12s,color .12s,border-color .12s;line-height:1.4;
+  }
+  .sidebar-item:hover{background:#f9fafb;color:var(--text);}
+  .sidebar-item.active{
+    background:var(--primary-light);color:var(--primary);
+    border-left-color:var(--primary);font-weight:600;
+  }
+  .sidebar-item .ico{width:16px;text-align:center;font-size:13px;opacity:.6;}
+
+  /* 右侧内容区 */
+  .main-area{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);}
+
+  /* 页面标题行 */
+  .page-header{
+    background:var(--panel);padding:16px 24px;border-bottom:1px solid var(--border);
+    flex-shrink:0;
+  }
+  .page-header h1{font-size:17px;font-weight:700;color:var(--text);margin-bottom:2px;}
+  .page-header p{font-size:12.5px;color:var(--sub);}
+
+  /* 子标签页 (商品列表页用) */
+  .subtabs{display:flex;gap:4px;padding:0 24px;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0;}
+  .subtab{
+    padding:11px 18px;cursor:pointer;color:var(--sub);font-size:13.5px;font-weight:600;
+    border-bottom:2px solid transparent;transition:all .15s;line-height:1;
+  }
+  .subtab:hover{color:var(--text);}
+  .subtab.active{color:var(--primary);border-bottom-color:var(--primary);}
+  .subtab-pill.active{
+    background:var(--danger);color:#fff;border-radius:16px;padding:5px 16px;border:none;
+  }
+
+  /* 内容滚动区 */
+  .content{flex:1;padding:20px 24px;overflow-y:auto;}
+
+  /* 公共组件 */
+  .notice{
+    background:#EEF2FF;border:1px solid #C7D2FE;color:#4338CA;padding:11px 16px;
+    border-radius:var(--radius);font-size:13px;line-height:1.65;margin-bottom:16px;
+  }
   .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
-  .btn{padding:7px 14px;border:none;border-radius:6px;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;gap:6px;transition:.15s;}
+  .btn{
+    padding:7px 16px;border:none;border-radius:6px;cursor:pointer;font-size:13px;
+    display:inline-flex;align-items:center;gap:5px;transition:.15s;font-weight:500;
+  }
   .btn-primary{background:var(--primary);color:#fff;}
   .btn-primary:hover{background:var(--primary-dark);}
   .btn-danger{background:var(--danger);color:#fff;}
   .btn-danger:hover{background:var(--danger-dark);}
+  .btn-danger-outline{background:#fff;color:var(--danger);border:1px solid var(--danger);}
+  .btn-danger-outline:hover{background:var(--danger-light);}
   .btn-ghost{background:#fff;border:1px solid var(--border);color:var(--text);}
-  .btn-ghost:hover{background:#f6f8fc;}
-  .btn-link{background:none;border:none;color:var(--primary);cursor:pointer;font-size:13px;padding:2px 6px;}
+  .btn-ghost:hover{background:#f9fafb;}
+  .btn-link{background:none;border:none;color:var(--primary);cursor:pointer;font-size:13px;padding:2px 6px;font-weight:500;}
   .btn-link.danger{color:var(--danger);}
   .btn-link:hover{text-decoration:underline;}
-  .input,.select{padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;background:#fff;}
-  .input:focus,.select:focus{border-color:var(--primary);}
+
+  .input,.select{
+    padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;
+    outline:none;background:#fff;transition:border-color .15s;
+  }
+  .input:focus,.select:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(107,79,232,.12);}
+
   .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
   table{width:100%;border-collapse:collapse;}
   th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border);font-size:13px;}
-  th{background:#fafbfd;color:var(--sub);font-weight:600;white-space:nowrap;}
-  tbody tr:hover{background:#f9fbff;}
-  .thumb{width:40px;height:40px;border-radius:6px;background:#eef1f6;display:inline-flex;align-items:center;justify-content:center;color:#b8c0d0;font-size:11px;object-fit:cover;}
-  .pname{font-weight:600;}
-  .ptype{color:var(--sub);font-size:12px;}
-  .tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:12px;font-weight:600;}
-  .tag.gray{background:#eef0f4;color:#6b7384;}
-  .tag.blue{background:#e7f0ff;color:#2f6fed;}
-  .tag.green{background:#e6f7ef;color:#1fab6b;}
-  .tag.orange{background:#fff3df;color:#d98a12;}
-  .tag.red{background:#fdeaec;color:#f5414f;}
+  th{background:#fafbfc;color:var(--sub);font-weight:600;white-space:nowrap;font-size:12.5px;}
+  tbody tr:hover{background:#faffff;}
+  .thumb{width:44px;height:44px;border-radius:6px;background:#eef1f6;display:inline-flex;align-items:center;justify-content:center;color:#a0aab8;font-size:11px;object-fit:cover;flex-shrink:0;}
+  .thumb-sm{width:36px;height:36px;border-radius:5px;font-size:10px;}
+  .pname{font-weight:600;font-size:13px;color:var(--text);}
+  .ptype{color:var(--sub);font-size:12px;margin-top:1px;}
+  .tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;}
+  .tag.gray{background:#f3f4f6;color:#6b7280;}
+  .tag.blue{background:#EFF6FF;color:#2563EB;}
+  .tag.green{background:#ECFDF5;color:#059669;}
+  .tag.orange{background:#FFF7ED;color:#EA580C;}
+  .tag.red{background:#FEF2F2;color:#DC2626;}
+
   .pager{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:12px 14px;color:var(--sub);font-size:13px;}
-  .pager .pg-btn{border:1px solid var(--border);background:#fff;border-radius:6px;padding:4px 10px;cursor:pointer;}
+  .pg-input{width:48px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;text-align:center;font-size:12px;}
+  .pg-btn{border:1px solid var(--border);background:#fff;border-radius:5px;padding:4px 12px;cursor:pointer;font-size:12px;}
+  .pg-btn:hover:not(:disabled){background:#f9fafb;}
+  .pg-btn:disabled{opacity:.4;cursor:default;}
   .empty{padding:60px 20px;text-align:center;color:var(--sub);}
-  .empty .ic{font-size:40px;opacity:.4;}
-  .modal-mask{position:fixed;inset:0;background:rgba(20,28,48,.45);display:none;align-items:center;justify-content:center;z-index:50;}
+  .empty .ic{font-size:42px;opacity:.3;margin-bottom:8px;}
+
+  /* 弹窗 */
+  .modal-mask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:200;}
   .modal-mask.show{display:flex;}
-  .modal{background:#fff;border-radius:10px;width:760px;max-width:92vw;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.25);}
-  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);font-weight:700;font-size:15px;}
-  .modal-close{border:none;background:none;font-size:20px;cursor:pointer;color:var(--sub);}
-  .modal-body{padding:16px 20px;overflow:auto;}
-  .modal-foot{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:#fafbfd;}
-  .selected-tip{background:#eef3ff;color:#2351a8;padding:8px 14px;border-radius:6px;font-size:13px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;}
-  .selected-tip a{color:var(--danger);cursor:pointer;}
-  .drawer-mask{position:fixed;inset:0;background:rgba(20,28,48,.4);display:none;z-index:40;}
-  .drawer-mask.show{display:block;}
-  .drawer{position:fixed;top:0;right:0;height:100%;width:520px;max-width:94vw;background:#fff;box-shadow:-8px 0 30px rgba(0,0,0,.18);transform:translateX(100%);transition:transform .28s ease;z-index:41;display:flex;flex-direction:column;}
-  .drawer.show{transform:translateX(0);}
-  .drawer-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-weight:700;}
-  .drawer-body{padding:16px 20px;overflow:auto;flex:1;}
-  .cart-card{display:flex;gap:12px;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:10px;}
-  .cart-card .thumb{width:64px;height:64px;}
-  .skeleton{background:linear-gradient(90deg,#eef1f6 25%,#f6f8fb 37%,#eef1f6 63%);background-size:400% 100%;animation:sk 1.2s infinite;height:18px;border-radius:5px;}
-  @keyframes sk{0%{background-position:100% 0}100%{background-position:-100% 0}}
-  .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#1f2733;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:.25s;z-index:99;pointer-events:none;}
-  .toast.show{opacity:1;}
-  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:16px;}
-  .tab{padding:10px 16px;cursor:pointer;color:var(--sub);border-bottom:2px solid transparent;font-weight:600;}
-  .tab.active{color:var(--primary);border-bottom-color:var(--primary);}
-  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
-  .stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);}
-  .stat-card .label{color:var(--sub);font-size:12px;margin-bottom:6px;}
-  .stat-card .val{font-size:22px;font-weight:700;}
+  .modal{
+    background:#fff;border-radius:12px;width:800px;max-width:94vw;max-height:86vh;
+    display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.22);
+  }
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--border);font-weight:700;font-size:15px;}
+  .modal-close{border:none;background:none;font-size:20px;cursor:pointer;color:var(--sub);line-height:1;}
+  .modal-close:hover{color:var(--text);}
+  .modal-body{padding:18px 22px;overflow-y:auto;flex:1;}
+  .modal-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:#fafbfc;}
+
+  .selected-tip{background:#EEF2FF;border:1px solid #C7D2FE;color:#4338CA;padding:9px 14px;border-radius:6px;font-size:13px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+  .selected-tip a{color:var(--danger);cursor:pointer;font-weight:600;}
+
   .hidden{display:none!important;}
+
+  .toast{
+    position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;
+    padding:10px 22px;border-radius:8px;font-size:13px;opacity:0;transition:.25s;z-index:999;
+    pointer-events:none;font-weight:500;
+  }
+  .toast.show{opacity:1;}
+
+  .tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:16px;}
+  .tab{padding:10px 18px;cursor:pointer;color:var(--sub);border-bottom:2px solid transparent;font-weight:600;margin-bottom:-2px;}
+  .tab.active{color:var(--primary);border-bottom-color:var(--primary);}
+
+  .skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#f8f8f8 37%,#f0f0f0 63%);background-size:400% 100%;animation:sk 1.2s infinite;height:18px;border-radius:5px;}
+  @keyframes sk{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+  /* 商品列表页特有 */
+  .room-breadcrumb{font-size:13px;color:var(--sub);margin-bottom:14px;}
+  .room-breadcrumb a{color:var(--primary);cursor:pointer;}
+  .room-breadcrumb a:hover{text-decoration:underline;}
 </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="logo"><span class="dot"></span>泰小虎</div>
-    <div class="sys-name">直播管理 · 平台端后台（原型）</div>
-    <div class="spacer"></div>
-    <div class="user"><span class="avatar">运</span>直播运营（demo）</div>
-  </header>
-  <nav class="pagenav">
-    <a class="pagenav-item active" data-page="live-product" href="#live-product">直播商品</a>
-    <a class="pagenav-item" data-page="live-room" href="#live-room">直播间管理</a>
-    <a class="pagenav-item" data-page="live-data" href="#live-data">直播数据统计</a>
+
+<!-- ===== 顶栏 ===== -->
+<header class="topbar">
+  <div class="logo"><div class="logo-icon">🐯</div>泰小虎</div>
+  <div class="sys-name">直播管理 · 平台端后台（原型）</div>
+  <div class="spacer"></div>
+  <div class="user"><span class="avatar">运</span><span>直播运营</span></div>
+</header>
+
+<div class="layout">
+  <!-- ===== 左侧导航栏 ===== -->
+  <nav class="sidebar" id="sidebar">
+    <!-- 订单管理 -->
+    <div class="sidebar-group">
+      <div class="sidebar-group-title" onclick="toggleGroup(this)"><span class="arrow">▾</span>订单管理</div>
+      <div class="sidebar-group-body">
+        <div class="sidebar-item"><span class="ico">📋</span>订单列表</div>
+        <div class="sidebar-item"><span class="ico">📦</span>售后工单</div>
+        <div class="sidebar-item"><span class="ico">💰</span>退款列表</div>
+      </div>
+    </div>
+    <!-- 营销管理 -->
+    <div class="sidebar-group">
+      <div class="sidebar-group-title" onclick="toggleGroup(this)"><span class="arrow">▾</span>营销管理</div>
+      <div class="sidebar-group-body">
+        <div class="sidebar-item"><span class="ico">🎫</span>签到打卡</div>
+        <div class="sidebar-item"><span class="ico">🎁</span>优惠券管理</div>
+        <div class="sidebar-item"><span class="ico">🛒</span>平台弹窗</div>
+      </div>
+    </div>
+    <!-- 内容应用 -->
+    <div class="sidebar-group">
+      <div class="sidebar-group-title" onclick="toggleGroup(this)"><span class="arrow collapsed">▾</span>内容应用</div>
+      <div class="sidebar-group-body" style="display:none">
+        <div class="sidebar-item"><span class="ico">🏷️</span>优惠券</div>
+        <div class="sidebar-item"><span class="ico">📦</span>商品管理</div>
+        <div class="sidebar-item"><span class="ico">📊</span>库存</div>
+        <div class="sidebar-item"><span class="ico">💵</span>价格</div>
+        <div class="sidebar-item"><span class="ico">🏷️</span>折扣</div>
+        <div class="sidebar-item"><span class="ico">🚚</span>物流</div>
+        <div class="sidebar-item"><span class="ico">💨</span>运费</div>
+        <div class="sidebar-item"><span class="ico">🏷️</span>标签</div>
+      </div>
+    </div>
+    <!-- 数据管理 -->
+    <div class="sidebar-group">
+      <div class="sidebar-group-title" onclick="toggleGroup(this)"><span class="arrow collapsed">▾</span>数据管理</div>
+      <div class="sidebar-group-body" style="display:none">
+        <div class="sidebar-item"><span class="ico">📈</span>店铺数据</div>
+        <div class="sidebar-item"><span class="ico">📊</span>生意参谋</div>
+        <div class="sidebar-item"><span class="ico">💰</span>电商流水</div>
+        <div class="sidebar-item"><span class="ico">📉</span>销量分析</div>
+        <div class="sidebar-item"><span class="ico">👁️</span>流量复盘</div>
+      </div>
+    </div>
+    <!-- 会员系统 -->
+    <div class="sidebar-group">
+      <div class="sidebar-group-title" onclick="toggleGroup(this)"><span class="arrow collapsed">▾</span>会员系统</div>
+      <div class="sidebar-group-body" style="display:none"></div>
+    </div>
+    <!-- 平台运营 -->
+    <div class="sidebar-group">
+      <div class="sidebar-group-title" onclick="toggleGroup(this)"><span class="arrow collapsed">▾</span>平台运营</div>
+      <div class="sidebar-group-body" style="display:none"></div>
+    </div>
+    <!-- 行业榜 -->
+    <div class="sidebar-group">
+      <div class="sidebar-group-title"><span class="arrow"></span>行业榜</div>
+    </div>
+    <!-- 商品编码 -->
+    <div class="sidebar-group">
+      <div class="sidebar-group-title"><span class="arrow"></span>商品编码</div>
+    </div>
+    <!-- 热词管理 -->
+    <div class="sidebar-group">
+      <div class="sidebar-group-title"><span class="arrow"></span>热词管理</div>
+    </div>
+    <!-- 全局标签 -->
+    <div class="sidebar-group">
+      <div class="sidebar-group-title"><span class="arrow"></span>全局标签</div>
+    </div>
+    <!-- ★ 直播管理（展开高亮）★ -->
+    <div class="sidebar-group" id="sg-live">
+      <div class="sidebar-group-title" onclick="toggleGroup(this)"><span class="arrow">▾</span>直播管理</div>
+      <div class="sidebar-group-body">
+        <div class="sidebar-item" data-goto="live-product"><span class="ico">📺</span>直播商品</div>
+        <div class="sidebar-item active" data-goto="live-room"><span class="ico">🎙️</span>直播间管理</div>
+        <div class="sidebar-item"><span class="ico">🛒</span>直播间商品总览</div>
+        <div class="sidebar-item"><span class="ico">📋</span>直播间总订单</div>
+        <div class="sidebar-item" data-goto="live-data"><span class="ico">📊</span>直播数据统计</div>
+      </div>
+    </div>
+    <!-- 研发 -->
+    <div class="sidebar-group">
+      <div class="sidebar-group-title" onclick="toggleGroup(this)"><span class="arrow collapsed">▾</span>研发</div>
+      <div class="sidebar-group-body" style="display:none"></div>
+    </div>
+    <!-- 手机设备 -->
+    <div class="sidebar-group">
+      <div class="sidebar-group-title" onclick="toggleGroup(this)"><span class="arrow collapsed">▾</span>手机设备</div>
+      <div class="sidebar-group-body" style="display:none"></div>
+    </div>
   </nav>
-  <div class="layout">
-    <main class="content">
-      <!-- ===== 直播商品 ===== -->
-      <section id="live-product">
-        <div class="page-title">直播商品</div>
-        <div class="page-desc">平台端直播商品池管理（系统商品中心选品同步）</div>
+
+  <!-- ===== 主内容区 ===== -->
+  <div class="main-area">
+
+    <!-- ========== 页面：直播商品 ========== -->
+    <div id="view-live-product" class="view-panel">
+      <div class="page-header">
+        <h1>直播商品</h1>
+        <p>平台端直播商品池管理（系统商品中心选品同步）</p>
+      </div>
+      <div class="content">
         <div class="notice">该栏目下的商品会推送至直播间，只有推送至直播间的商品才可在直播间展示。如商品资料变更，请先前往商城板块更新商品资料，再在此栏目重新推送即可同步至直播间，推送状态以火山引擎返回为准。</div>
         <div class="toolbar">
           <button class="btn btn-danger" id="btn-add">＋ 新增</button>
           <input class="input" id="lp-search" placeholder="商品名称 / 商品编号" style="width:220px">
           <select class="select" id="lp-merchant">
             <option value="">全部商家</option>
-            <option>泰小虎健康旗舰店</option>
-            <option>优鲜生活馆</option>
-            <option>本草堂</option>
+            <option>泰小虎健康旗舰店</option><option>优鲜生活馆</option><option>本草堂</option>
           </select>
           <select class="select" id="lp-status">
-            <option value="">全部状态</option>
-            <option>未推送</option><option>推送成功</option><option>推送失败</option>
+            <option value="">全部状态</option><option>未推送</option><option>推送成功</option><option>推送失败</option>
           </select>
           <button class="btn btn-ghost" onclick="lpPage=1;renderLiveProducts()">查询</button>
         </div>
@@ -134,12 +306,16 @@
           </table>
           <div class="pager"><span id="lp-total">共 0 条</span><span class="pg-btn" id="lp-prev">上一页</span><span class="pg-btn" id="lp-next">下一页</span></div>
         </div>
-      </section>
+      </div>
+    </div>
 
-      <!-- ===== 直播间管理 ===== -->
-      <section id="live-room" class="hidden">
-        <div class="page-title">直播间管理</div>
-        <div class="page-desc">对接火山引擎企业直播后台 · 平台端只读展示与查询（不开放修改栏目）</div>
+    <!-- ========== 页面：直播间管理 ========== -->
+    <div id="view-live-room" class="view-panel hidden">
+      <div class="page-header">
+        <h1>直播间管理</h1>
+        <p>对接火山引擎企业直播后台 · 平台端只读展示与查询（不开放修改栏目）</p>
+      </div>
+      <div class="content">
         <div class="toolbar">
           <input class="input" id="lr-search" placeholder="直播间 ID / 标题 / 主播" style="width:260px">
           <select class="select" id="lr-status">
@@ -159,41 +335,79 @@
           </table>
           <div class="pager"><span id="lr-total">共 0 条</span><span class="pg-btn" id="lr-prev">上一页</span><span class="pg-btn" id="lr-next">下一页</span></div>
         </div>
-      </section>
+      </div>
+    </div>
 
-      <!-- ===== 直播数据统计 ===== -->
-      <section id="live-data" class="hidden">
-        <div class="page-title">直播数据统计</div>
-        <div class="page-desc">直播带来的支付订单、新用户及转化相关数据（月汇总 / 日汇总）</div>
+    <!-- ========== 页面：直播间商品列表（页面跳转，非抽屉）========== -->
+    <div id="view-room-products" class="view-panel hidden">
+      <div class="page-header">
+        <h1 id="rp-title">直播间商品列表</h1>
+        <p>查看和管理指定直播间的挂车商品</p>
+      </div>
+      <!-- 子标签页（参考截图2） -->
+      <div class="subtabs">
+        <div class="subtab" onclick="goBackRoom()">页面总览</div>
+        <div class="subtab" onclick="goLiveProduct()">直播商品</div>
+        <div class="subtab">直播设置</div>
+        <div class="subtab active subtab-pill">商品列表</div>
+      </div>
+      <div class="content">
+        <div class="room-breadcrumb"><a onclick="goBackRoom()">← 返回直播间管理</a></div>
+        <div class="toolbar">
+          <input class="input" id="rp-name" placeholder="商品名称" style="width:170px">
+          <input class="input" id="rp-id" placeholder="商品编号" style="width:150px">
+          <select class="select" id="rp-merchant">
+            <option value="">店家</option><option>泰小虎健康旗舰店</option><option>优鲜生活馆</option><option>本草堂</option><option>广东一心堂文化有限公司</option>
+          </select>
+          <div style="flex:1"></div>
+          <button class="btn btn-danger" onclick="searchRp()" style="border-radius:6px">搜索</button>
+          <button class="btn btn-ghost" onclick="resetRp()">重置</button>
+          <button class="btn btn-danger-outline" onclick="addRoomGoods()" style="border-radius:6px">＋ 添加本直播间商品</button>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr>
+              <th>商品编号</th><th>商品信息</th><th>店家</th><th>库存</th><th>销量</th><th>销售价</th>
+            </tr></thead>
+            <tbody id="rp-body"></tbody>
+          </table>
+          <div class="pager">
+            <span id="rp-total">共 0 条</span>
+            <select class="pg-input" id="rp-ps" style="width:auto"><option>10条/页</option><option>20条/页</option><option>50条/页</option></select>
+            <span class="pg-btn" id="rp-prev">‹</span>
+            <input class="pg-input" id="rp-pg" type="number" value="1" min="1" style="width:46px">
+            <span class="pg-btn" id="rp-next">›</span>
+            <span>尾页</span>
+            <input class="pg-input" id="rp-last" type="number" value="1" min="1" style="width:46px" disabled>
+            <span>页</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 页面：直播数据统计 ========== -->
+    <div id="view-live-data" class="view-panel hidden">
+      <div class="page-header">
+        <h1>直播数据统计</h1>
+        <p>直播带来的支付订单、新用户及转化相关数据（月汇总 / 日汇总）</p>
+      </div>
+      <div class="content">
         <div class="tabs">
-          <div class="tab active" data-tab="month" id="tab-month">月汇总</div>
-          <div class="tab" data-tab="day" id="tab-day">日汇总</div>
+          <div class="tab active" data-tab="month" id="tab-month" onclick="switchTab('month')">月汇总</div>
+          <div class="tab" data-tab="day" id="tab-day" onclick="switchTab('day')">日汇总</div>
         </div>
         <div class="toolbar">
           <select class="select" id="data-year"><option>2026</option><option>2025</option></select>
           <select class="select" id="data-month">
             <option value="all">全部月份</option>
-            <option value="01">01月</option><option value="02">02月</option><option value="03">03月</option>
-            <option value="04">04月</option><option value="05">05月</option><option value="06">06月</option>
-            <option value="07">07月</option><option value="08">08月</option><option value="09">09月</option>
-            <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+            <script>for(let m=1;m<=12;m++)document.write('<option value="'+String(m).padStart(2,'0')+'">'+m+'月</option>');</script>
           </select>
           <select class="select hidden" id="data-day">
             <option value="all">全部日期</option>
-            <option value="01">01日</option><option value="02">02日</option><option value="03">03日</option>
-            <option value="04">04日</option><option value="05">05日</option><option value="06">06日</option>
-            <option value="07">07日</option><option value="08">08日</option><option value="09">09日</option>
-            <option value="10">10日</option><option value="11">11日</option><option value="12">12日</option>
-            <option value="13">13日</option><option value="14">14日</option><option value="15">15日</option>
-            <option value="16">16日</option><option value="17">17日</option><option value="18">18日</option>
-            <option value="19">19日</option><option value="20">20日</option><option value="21">21日</option>
-            <option value="22">22日</option><option value="23">23日</option><option value="24">24日</option>
-            <option value="25">25日</option><option value="26">26日</option><option value="27">27日</option>
-            <option value="28">28日</option><option value="29">29日</option><option value="30">30日</option>
-            <option value="31">31日</option>
+            <script>for(let d=1;d<=31;d++)document.write('<option value="'+String(d).padStart(2,'0')+'">'+d+'日</option>');</script>
           </select>
           <button class="btn btn-ghost" onclick="renderStats()">查询</button>
-          <div class="spacer" style="flex:1"></div>
+          <div style="flex:1"></div>
           <button class="btn btn-primary" onclick="exportData()">⬇ 导出</button>
         </div>
         <div class="card">
@@ -203,47 +417,42 @@
           </table>
           <div class="pager"><span id="stat-total">共 0 条</span></div>
         </div>
-      </section>
-    </main>
-  </div>
-
-  <!-- 选择商品弹窗 -->
-  <div class="modal-mask" id="add-mask">
-    <div class="modal">
-      <div class="modal-head"><span>选择商品</span><button class="modal-close" onclick="closeAdd()">×</button></div>
-      <div class="modal-body">
-        <div class="selected-tip">已选择 <b id="sel-count">0</b> 项 <a onclick="clearSel()">清空</a></div>
-        <div class="toolbar">
-          <input class="input" id="c-name" placeholder="商品名称" style="width:160px">
-          <input class="input" id="c-id" placeholder="商品编号" style="width:140px">
-          <select class="select" id="c-type"><option value="">运营类型</option><option>不是积分商品</option><option>积分商品</option></select>
-          <button class="btn btn-ghost" onclick="renderCenter()">查询</button>
-        </div>
-        <div class="card">
-          <table>
-            <thead><tr><th style="width:40px"><input type="checkbox" id="c-all" onclick="toggleAll(this)"></th><th>商品编号</th><th>商品信息</th><th>销售价</th><th>品牌分类</th><th>运营类型</th><th>创建时间</th></tr></thead>
-            <tbody id="c-body"></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="modal-foot">
-        <button class="btn btn-ghost" onclick="closeAdd()">取消</button>
-        <button class="btn btn-primary" onclick="confirmAdd()">批量选择并加入</button>
       </div>
     </div>
-  </div>
 
-  <!-- 挂车商品抽屉 -->
-  <div class="drawer-mask" id="cart-mask" onclick="closeCart()"></div>
-  <div class="drawer" id="cart-drawer">
-    <div class="drawer-head"><span id="cart-title">直播间挂车商品</span><button class="modal-close" onclick="closeCart()">×</button></div>
-    <div class="drawer-body" id="cart-body"></div>
-  </div>
+  </div><!-- end main-area -->
+</div><!-- end layout -->
 
-  <div class="toast" id="toast"></div>
+<!-- ===== 选择商品弹窗 ===== -->
+<div class="modal-mask" id="add-mask">
+  <div class="modal">
+    <div class="modal-head"><span>选择商品</span><button class="modal-close" onclick="closeAdd()">×</button></div>
+    <div class="modal-body">
+      <div class="selected-tip">已选择 <b id="sel-count">0</b> 项 <a onclick="clearSel()">清空</a></div>
+      <div class="toolbar">
+        <input class="input" id="c-name" placeholder="商品名称" style="width:160px">
+        <input class="input" id="c-id" placeholder="商品编号" style="width:140px">
+        <select class="select" id="c-type"><option value="">运营类型</option><option>不是积分商品</option><option>积分商品</option></select>
+        <button class="btn btn-ghost" onclick="renderCenter()">查询</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th style="width:40px"><input type="checkbox" id="c-all" onclick="toggleAll(this)"></th><th>商品编号</th><th>商品信息</th><th>销售价</th><th>品牌分类</th><th>运营类型</th><th>创建时间</th></tr></thead>
+          <tbody id="c-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeAdd()">取消</button>
+      <button class="btn btn-primary" onclick="confirmAdd()">批量选择并加入</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-/* ---------------- mock 数据 ---------------- */
+/* ==================== Mock 数据 ==================== */
 const lpData = [
   {id:'P10001',name:'泰小虎·胶原蛋白肽饮',type:'饮品',merchant:'泰小虎健康旗舰店',stock:320,sales:1280,price:'¥129',status:'推送成功'},
   {id:'P10002',name:'有机冷压初榨橄榄油 500ml',type:'食用油',merchant:'优鲜生活馆',stock:88,sales:560,price:'¥89',status:'推送成功'},
@@ -252,6 +461,7 @@ const lpData = [
   {id:'P10005',name:'深海鱼油软胶囊 60粒',type:'保健',merchant:'泰小虎健康旗舰店',stock:150,sales:880,price:'¥159',status:'推送失败'},
   {id:'P10006',name:'低GI全麦欧包 6枚',type:'烘焙',merchant:'优鲜生活馆',stock:260,sales:760,price:'¥45',status:'推送成功'},
 ];
+
 const centerData = [
   {id:'P20001',name:'玻尿酸精华水 120ml',type:'护肤',price:'¥199',cat:'美妆个护',ot:'不是积分商品',ct:'2026-07-18'},
   {id:'P20002',name:'高蛋白牛肉干 100g',type:'零食',price:'¥69',cat:'休闲食品',ot:'不是积分商品',ct:'2026-07-19'},
@@ -260,331 +470,484 @@ const centerData = [
   {id:'P20005',name:'即食燕窝礼盒',type:'滋补',price:'¥299',cat:'滋补养生',ot:'不是积分商品',ct:'2026-07-21'},
   {id:'P20006',name:'无糖黑芝麻丸',type:'零食',price:'¥49',cat:'休闲食品',ot:'积分商品',ct:'2026-07-21'},
 ];
+
 const liveRooms = [
-  {id:'1037',title:'test1',anchor:'小虎姐',status:'已结束',start:'2026-07-19 03:37',end:'2026-07-19 14:17',cart:2,cover:''},
-  {id:'1042',title:'夏季健康好物专场',anchor:'小虎姐',status:'直播中',start:'2026-07-21 19:30',end:'—',cart:5,cover:''},
-  {id:'1058',title:'本草堂祛湿养生局',anchor:'阿堂',status:'预告',start:'2026-07-22 20:00',end:'—',cart:0,cover:''},
-  {id:'1063',title:'优鲜生活馆美食节',anchor:'鲜鲜',status:'已结束',start:'2026-07-20 18:00',end:'2026-07-20 21:00',cart:3,cover:''},
+  {id:'1037',title:'test1',anchor:'小虎姐',status:'已结束',start:'2026-07-19 03:37',end:'2026-07-19 14:17',cart:2},
+  {id:'1042',title:'夏季健康好物专场',anchor:'小虎姐',status:'直播中',start:'2026-07-21 19:30',end:'—',cart:5},
+  {id:'1058',title:'本草堂祛湿养生局',anchor:'阿堂',status:'预告',start:'2026-07-22 20:00',end:'—',cart:0},
+  {id:'1063',title:'优鲜生活馆美食节',anchor:'鲜鲜',status:'已结束',start:'2026-07-20 18:00',end:'2026-07-20 21:00',cart:3},
 ];
-const cartMap = {
+
+// 每个直播间的挂车商品（模拟数据，对齐截图2的字段结构）
+const roomProductsMap = {
   '1037':[
-    {id:'P10003',name:'本草堂·祛湿茶包',type:'茶饮',price:'¥59',stock:0,sales:80},
-    {id:'P20006',name:'无糖黑芝麻丸',type:'零食',price:'¥49',stock:200,sales:60},
+    {pid:'590',name:'222222',type:'商品描述|安溪茶品',merchant:'',stock:'0',sales:'0',price:'1'},
+    {pid:'586',name:'蔓欧补叶+1908水卡',type:'商品描述|安溪茶品',merchant:'广东一心堂文化有限公司',stock:'3938',sales:'75',price:'2250'},
   ],
   '1042':[
-    {id:'P10001',name:'泰小虎·胶原蛋白肽饮',type:'饮品',price:'¥129',stock:320,sales:420},
-    {id:'P10002',name:'有机冷压初榨橄榄油',type:'食用油',price:'¥89',stock:88,sales:120},
-    {id:'P10004',name:'冻干草莓脆 无添加',type:'零食',price:'¥39',stock:540,sales:610},
-    {id:'P10006',name:'低GI全麦欧包 6枚',type:'烘焙',price:'¥45',stock:260,sales:230},
-    {id:'P20001',name:'玻尿酸精华水 120ml',type:'护肤',price:'¥199',stock:120,sales:90},
+    {pid:'P10001',name:'泰小虎·胶原蛋白肽饮',type:'饮品',merchant:'泰小虎健康旗舰店',stock:'320',sales:'1280',price:'129'},
+    {pid:'P10002',name:'有机冷压初榨橄榄油',type:'食用油',merchant:'优鲜生活馆',stock:'88',sales:'560',price:'89'},
+    {pid:'P10004',name:'冻干草莓脆 无添加',type:'零食',merchant:'优鲜生活馆',stock:'540',sales:'2100',price:'39'},
+    {pid:'P10006',name:'低GI全麦欧包 6枚',type:'烘焙',merchant:'优鲜生活馆',stock:'260',sales:'760',price:'45'},
+    {pid:'P20001',name:'玻尿酸精华水 120ml',type:'护肤',merchant:'泰小虎健康旗舰店',stock:'120',sales:'90',price:'199'},
   ],
-  R8002:[ {id:'P10003',name:'本草堂·祛湿茶包',type:'茶饮',price:'¥59',stock:0,sales:340}, {id:'P20004',name:'儿童钙铁锌咀嚼片',type:'保健',price:'¥79',stock:60,sales:50}, {id:'P20006',name:'无糖黑芝麻丸',type:'零食',price:'¥49',stock:200,sales:70} ],
-  '1063':[ {id:'P10002',name:'有机冷压初榨橄榄油',type:'食用油',price:'¥89',stock:88,sales:120}, {id:'P20004',name:'儿童钙铁锌咀嚼片',type:'保健',price:'¥79',stock:60,sales:50} ],
+  '1063':[
+    {pid:'P10002',name:'有机冷压初榨橄榄油',type:'食用油',merchant:'优鲜生活馆',stock:'88',sales:'120',price:'89'},
+    {pid:'P20004',name:'儿童钙铁锌咀嚼片',type:'保健',merchant:'泰小虎健康旗舰店',stock:'60',sales:'50',price:'79'},
+  ],
 };
 
-/* ---------------- 工具 ---------------- */
+let currentRoomId = null;
+
+/* ==================== 工具函数 ==================== */
 function statusTag(s){
-  const m={ '未推送':['gray'],'推送中':['blue'],'推送成功':['green'],'推送失败':['red'],
-    '直播中':['green'],'预告':['blue'],'已结束':['gray'],'违规下播':['orange'] };
-  const [c]=m[s]||['gray']; return `<span class="tag ${c}">${s}</span>`;
+  const m={
+    '未推送':['gray'],'推送中':['blue'],'推送成功':['green'],'推送失败':['red'],
+    '直播中':['green'],'预告':['blue'],'已结束':['gray'],'违规下播':['orange']
+  };
+  const [c]=m[s]||['gray'];
+  return '<span class="tag '+c+'">'+s+'</span>';
 }
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1800);}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>t.classList.remove('show'),1800);
+}
 function setPagerState(prefix,page,pages){
-  const prev=document.getElementById(prefix+'-prev'),next=document.getElementById(prefix+'-next');
+  const prev=document.getElementById(prefix+'-prev');
+  const next=document.getElementById(prefix+'-next');
   if(!prev||!next)return;
-  const atStart=page<=1, atEnd=page>=pages;
-  prev.style.opacity=atStart?'.4':'';prev.style.pointerEvents=atStart?'none':'';
-  next.style.opacity=atEnd?'.4':'';next.style.pointerEvents=atEnd?'none':'';
+  prev.disabled=page<=1;
+  next.disabled=page>=pages;
 }
 
-/* ---------------- 页面跳转（hash 路由，替代侧边栏） ---------------- */
+/* ==================== 页面路由（左侧导航驱动） ==================== */
+const validPages=['live-product','live-room','room-products','live-data'];
+
+function switchView(page){
+  // 隐藏所有视图
+  document.querySelectorAll('.view-panel').forEach(function(el){ el.classList.add('hidden'); });
+  // 显示目标
+  var target=document.getElementById('view-'+page);
+  if(target) target.classList.remove('hidden');
+
+  // 更新左侧导航高亮
+  document.querySelectorAll('.sidebar-item[data-goto]').forEach(function(el){
+    el.classList.toggle('active',el.dataset.goto===page);
+  });
+
+  // 更新 URL hash
+  location.hash='#'+page;
+
+  // 渲染对应数据
+  if(page==='live-product') renderLiveProducts();
+  if(page==='live-room') renderLiveRooms();
+  if(page==='room-products') renderRoomProducts();
+  if(page==='live-data') renderStats();
+}
+
 function navigate(){
-  const valid=['live-product','live-room','live-data'];
-  let p=decodeURIComponent(location.hash.replace('#',''));
-  if(!valid.includes(p))p='live-product';
-  ['live-product','live-room','live-data'].forEach(id=>document.getElementById(id).classList.toggle('hidden',id!==p));
-  document.querySelectorAll('.pagenav-item').forEach(a=>a.classList.toggle('active',a.dataset.page===p));
-  if(p==='live-product') renderLiveProducts();
-  if(p==='live-room') renderLiveRooms();
-  if(p==='live-data') renderStats();
+  var p=decodeURIComponent(location.hash.replace('#',''));
+  if(validPages.indexOf(p)===-1) p='live-product';
+  switchView(p);
 }
 window.addEventListener('hashchange',navigate);
 
-/* ---------------- 分页按钮 ---------------- */
-document.getElementById('lp-prev').onclick=()=>{if(lpPage>1){lpPage--;renderLiveProducts();}};
-document.getElementById('lp-next').onclick=()=>{if(lpPage<lpPages){lpPage++;renderLiveProducts();}};
-document.getElementById('lr-prev').onclick=()=>{if(lrPage>1){lrPage--;renderLiveRooms();}};
-document.getElementById('lr-next').onclick=()=>{if(lrPage<lrPages){lrPage++;renderLiveRooms();}};
+// 侧边栏点击事件
+document.addEventListener('click',function(e){
+  var item=e.target.closest('.sidebar-item[data-goto]');
+  if(item){ switchView(item.dataset.goto); }
+});
 
-/* ---------------- 直播商品 ---------------- */
-let lpPage=1,lpPages=1;const LP_PAGE=5;
-function renderLiveProducts(){
-  const kw=document.getElementById('lp-search').value.trim().toLowerCase();
-  const mc=document.getElementById('lp-merchant').value;
-  const st=document.getElementById('lp-status').value;
-  let rows=lpData.filter(r=>(!kw||r.name.toLowerCase().includes(kw)||r.id.toLowerCase().includes(kw))&&(!mc||r.merchant===mc)&&(!st||r.status===st));
-  lpPages=Math.max(1,Math.ceil(rows.length/LP_PAGE));
-  if(lpPage>lpPages)lpPage=lpPages;
-  if(rows.length===0){
-    document.getElementById('lp-body').innerHTML=`<tr><td colspan="8"><div class="empty"><div class="ic">空</div><div>直播商品池为空，点击「新增」从商品中心选品</div></div></td></tr>`;
-    document.getElementById('lp-total').textContent=`共 0 条 · 第 1/1 页`;
-    setPagerState('lp',1,1);return;
+function toggleGroup(el){
+  var arrow=el.querySelector('.arrow');
+  var body=el.nextElementSibling;
+  if(body && body.classList.contains('sidebar-group-body')){
+    var isHidden=body.style.display==='none';
+    body.style.display=isHidden?'':'none';
+    if(arrow) arrow.classList.toggle('collapsed',!isHidden);
   }
-  const pageRows=rows.slice((lpPage-1)*LP_PAGE,(lpPage-1)*LP_PAGE+LP_PAGE);
-  document.getElementById('lp-body').innerHTML=pageRows.map(r=>`
-    <tr>
-      <td>${r.id}</td>
-      <td><div style="display:flex;gap:10px;align-items:center"><div class="thumb">图</div><div><div class="pname">${r.name}</div><div class="ptype">${r.type}</div></div></div></td>
-      <td>${r.merchant}</td><td>${r.stock}</td><td>${r.sales}</td><td>${r.price}</td>
-      <td>${statusTag(r.status)}</td>
-      <td>
-        <button class="btn-link danger" onclick="removeProduct('${r.id}')">移除</button>
-        ${pushBtns(r)}
-      </td>
-    </tr>`).join('');
-  document.getElementById('lp-total').textContent=`共 ${rows.length} 条 · 第 ${lpPage}/${lpPages} 页`;
+}
+
+/* ==================== 分页按钮绑定 ==================== */
+document.getElementById('lp-prev').onclick=function(){if(lpPage>1){lpPage--;renderLiveProducts();}};
+document.getElementById('lp-next').onclick=function(){if(lpPage<lpPages){lpPage++;renderLiveProducts();}};
+document.getElementById('lr-prev').onclick=function(){if(lrPage>1){lrPage--;renderLiveRooms();}};
+document.getElementById('lr-next').onclick=function(){if(lrPage<lrPages){lrPage++;renderLiveRooms();}};
+document.getElementById('rp-prev').onclick=function(){if(rpPage>1){rpPage--;renderRoomProducts();}};
+document.getElementById('rp-next').onclick=function(){if(rpPage<rpPages){rpPage++;renderRoomProducts();}};
+
+/* ==================== 直播商品池 ==================== */
+var lpPage=1, lpPages=1;
+const LP_PAGE=5;
+
+function renderLiveProducts(){
+  var kw=document.getElementById('lp-search').value.trim().toLowerCase();
+  var mc=document.getElementById('lp-merchant').value;
+  var st=document.getElementById('lp-status').value;
+  var rows=lpData.filter(function(r){
+    return (!kw||(r.name.toLowerCase().indexOf(kw)>=0||r.id.toLowerCase().indexOf(kw)>=0))
+      &&(!mc||r.merchant===mc)&&(!st||r.status===st);
+  });
+  lpPages=Math.max(1,Math.ceil(rows.length/LP_PAGE));
+  if(lpPage>lpPages) lpPage=lpPages;
+
+  if(rows.length===0){
+    document.getElementById('lp-body').innerHTML='<tr><td colspan="8"><div class="empty"><div class="ic">空</div><div>直播商品池为空，点击「新增」从商品中心选品</div></div></td></tr>';
+    document.getElementById('lp-total').textContent='共 0 条';
+    setPagerState('lp',1,1);
+    return;
+  }
+
+  var pageRows=rows.slice((lpPage-1)*LP_PAGE,(lpPage-1)*LP_PAGE+LP_PAGE);
+  document.getElementById('lp-body').innerHTML=pageRows.map(function(r){
+    return '<tr>'
+      +'<td>'+r.id+'</td>'
+      +'<td><div style="display:flex;gap:10px;align-items:center">'
+        +'<div class="thumb">图</div>'
+        +'<div><div class="pname">'+r.name+'</div><div class="ptype">'+r.type+'</div></div>'
+      +'</div></td>'
+      +'<td>'+r.merchant+'</td><td>'+r.stock+'</td><td>'+r.sales+'</td><td>'+r.price+'</td>'
+      +'<td>'+statusTag(r.status)+'</td>'
+      +'<td>'
+        +'<button class="btn-link danger" onclick="removeProduct(\''+r.id+'\')">移除</button> '
+        +pushBtns(r)
+      +'</td>'
+    +'</tr>';
+  }).join('');
+  document.getElementById('lp-total').textContent='共 '+rows.length+' 条 · 第 '+lpPage+'/'+lpPages+' 页';
   setPagerState('lp',lpPage,lpPages);
 }
+
 function pushBtns(r){
-  /* 推送状态由火山引擎返回决定：成功=成功，失败=失败
-     未推送 → 显示「推送」；已推送（含失败）→ 显示「更新」（重新推） */
-  if(r.status==='未推送') return `<button class="btn-link" onclick="pushProduct('${r.id}')">推送</button>`;
-  return `<button class="btn-link" onclick="pushProduct('${r.id}')">更新</button>`;
+  if(r.status==='未推送') return '<button class="btn-link" onclick="pushProduct(\''+r.id+'\')">推送</button>';
+  return '<button class="btn-link" onclick="pushProduct(\''+r.id+'\')">更新</button>';
 }
 function pushProduct(id){
-  /* 模拟火山引擎返回：随机成功/失败 */
-  const r=lpData.find(x=>x.id===id);if(!r)return;
-  toast(`正在向火山引擎推送「${r.name}」…`);
-  setTimeout(()=>{
-    // 80% 概率模拟火山返回成功，20% 失败
-    const ok=Math.random()>0.2;
+  var r=lpData.find(function(x){return x.id===id;});
+  if(!r)return;
+  toast('正在向火山引擎推送「'+r.name+'」…');
+  setTimeout(function(){
+    var ok=Math.random()>0.2;
     r.status=ok?'推送成功':'推送失败';
     renderLiveProducts();
-    if(ok) toast(`「${r.name}」推送成功（火山引擎确认）`);
-    else toast(`「${r.name}」推送失败（火山引擎返回异常）`);
+    toast(ok?'「'+r.name+'」推送成功（火山引擎确认）':'「'+r.name+'」推送失败（火山引擎返回异常）');
   },800);
 }
 function removeProduct(id){
-  const r=lpData.find(x=>x.id===id);
-  if(r && r.status==='推送中'){toast('推送中商品不可移除');return;}
-  if(confirm(`确认从直播商品池移除「${r.name}」？`)){
-    const i=lpData.indexOf(r);lpData.splice(i,1);renderLiveProducts();toast('已移除');
+  var r=lpData.find(function(x){return x.id===id;});
+  if(!r)return;
+  if(confirm('确认从直播商品池移除「'+r.name+'」？')){
+    var i=lpData.indexOf(r);
+    lpData.splice(i,1);
+    renderLiveProducts();
+    toast('已移除');
   }
 }
 
-/* ---------------- 选择商品弹窗 ---------------- */
-let selSet=new Set();
+/* ==================== 选择商品弹窗 ==================== */
+var selSet=new Set();
 function openAdd(){selSet.clear();renderCenter();document.getElementById('add-mask').classList.add('show');updateSelCount();}
 function closeAdd(){document.getElementById('add-mask').classList.remove('show');}
 document.getElementById('btn-add').onclick=openAdd;
+
 function renderCenter(){
-  const kw=document.getElementById('c-name').value.trim().toLowerCase();
-  const idq=document.getElementById('c-id').value.trim().toLowerCase();
-  const ot=document.getElementById('c-type').value;
-  let rows=centerData.filter(r=(!kw||r.name.toLowerCase().includes(kw))&&(!idq||r.id.toLowerCase().includes(idq))&&(!ot||r.ot===ot));
-  document.getElementById('c-body').innerHTML=rows.map(r=>`
-    <tr>
-      <td><input type="checkbox" ${selSet.has(r.id)?'checked':''} onclick="toggleSel('${r.id}',this)"></td>
-      <td>${r.id}</td>
-      <td><div style="display:flex;gap:10px;align-items:center"><div class="thumb">图</div><div class="pname">${r.name}</div></div></td>
-      <td>${r.price}</td><td>${r.cat}</td><td>${r.ot}</td><td>${r.ct}</td>
-    </tr>`).join('');
+  var kw=document.getElementById('c-name').value.trim().toLowerCase();
+  var idq=document.getElementById('c-id').value.trim().toLowerCase();
+  var ot=document.getElementById('c-type').value;
+  var rows=centerData.filter(function(r){
+    return (!kw||r.name.toLowerCase().indexOf(kw)>=0)
+      &&(!idq||r.id.toLowerCase().indexOf(idq)>=0)
+      &&(!ot||r.ot===ot);
+  });
+  document.getElementById('c-body').innerHTML=rows.map(function(r){
+    return '<tr>'
+      +'<td><input type="checkbox" '+(selSet.has(r.id)?'checked':'')+' onclick="toggleSel(\''+r.id+'\',this)"></td>'
+      +'<td>'+r.id+'</td>'
+      +'<td><div style="display:flex;gap:10px;align-items:center"><div class="thumb">图</div><div class="pname">'+r.name+'</div></div></td>'
+      +'<td>'+r.price+'</td><td>'+r.cat+'</td><td>'+r.ot+'</td><td>'+r.ct+'</td>'
+    +'</tr>';
+  }).join('');
 }
-function toggleSel(id,el){if(el.checked)selSet.add(id);else selSet.delete(id);updateSelCount();}
-function toggleAll(el){document.querySelectorAll('#c-body input[type=checkbox]').forEach(c=>{c.checked=el.checked;if(el.checked)selSet.add(c.closest('tr').querySelector('td:nth-child(2)').textContent);});updateSelCount();}
+function toggleSel(id,el){
+  if(el.checked) selSet.add(id); else selSet.delete(id);
+  updateSelCount();
+}
+function toggleAll(el){
+  document.querySelectorAll('#c-body input[type=checkbox]').forEach(function(c){
+    c.checked=el.checked;
+    if(el.checked){
+      var pid=c.closest('tr').querySelector('td:nth-child(2)').textContent;
+      selSet.add(pid);
+    }
+  });
+  updateSelCount();
+}
 function updateSelCount(){document.getElementById('sel-count').textContent=selSet.size;}
 function clearSel(){selSet.clear();renderCenter();updateSelCount();}
 function confirmAdd(){
   if(selSet.size===0){toast('请先选择商品');return;}
-  let added=0;
-  centerData.forEach(r=>{if(selSet.has(r.id)&&!lpData.find(x=>x.id===r.id)){
-    lpData.unshift({id:r.id,name:r.name,type:r.cat==='美妆个护'?'护肤':r.cat,merchant:'系统商品中心',stock:Math.floor(Math.random()*500),sales:0,price:r.price,status:'未推送'});added++;}});
-  closeAdd();renderLiveProducts();
-  toast(`已加入 ${added} 个商品（重复项自动跳过）`);
+  var added=0;
+  centerData.forEach(function(r){
+    if(selSet.has(r.id)&&!lpData.find(function(x){return x.id===r.id;})){
+      lpData.unshift({
+        id:r.id,name:r.name,
+        type:r.cat==='美妆个护'?'护肤':r.cat,
+        merchant:'系统商品中心',
+        stock:Math.floor(Math.random()*500),sales:0,
+        price:r.price,status:'未推送'
+      });
+      added++;
+    }
+  });
+  closeAdd();
+  renderLiveProducts();
+  toast('已加入 '+added+' 个商品（重复项自动跳过）');
 }
 
-/* ---------------- 直播间管理 ---------------- */
-let lrPage=1,lrPages=1;const LR_PAGE=4;
+/* ==================== 直播间管理 ==================== */
+var lrPage=1, lrPages=1;
+const LR_PAGE=4;
+
 function renderLiveRooms(){
-  const kwBox=document.getElementById('lr-search');
-  const stBox=document.getElementById('lr-status');
-  const kw=(kwBox&&kwBox.value||'').trim().toLowerCase();
-  const st=stBox?stBox.value:'';
-  const rows=liveRooms.filter(function(r){
-    const id=String(r.id||'').toLowerCase();
-    const title=String(r.title||'').toLowerCase();
-    const anchor=String(r.anchor||'').toLowerCase();
-    const match=!kw||id.indexOf(kw)>=0||title.indexOf(kw)>=0||anchor.indexOf(kw)>=0;
-    const statusMatch=!st||r.status===st;
-    return match&&statusMatch;
+  var kwBox=document.getElementById('lr-search');
+  var stBox=document.getElementById('lr-status');
+  var kw=(kwBox&&kwBox.value||'').trim().toLowerCase();
+  var st=stBox?stBox.value:'';
+
+  var rows=liveRooms.filter(function(r){
+    var id=String(r.id||'').toLowerCase();
+    var title=String(r.title||'').toLowerCase();
+    var anchor=String(r.anchor||'').toLowerCase();
+    var match=!kw||(id.indexOf(kw)>=0||title.indexOf(kw)>=0||anchor.indexOf(kw)>=0);
+    return match&&(!st||r.status===st);
   });
+
   lrPages=Math.max(1,Math.ceil(rows.length/LR_PAGE));
-  if(lrPage>lrPages)lrPage=lrPages;
+  if(lrPage>lrPages) lrPage=lrPages;
+
   if(rows.length===0){
     document.getElementById('lr-body').innerHTML='<tr><td colspan="8"><div class="empty"><div class="ic">无</div><div>暂无匹配的直播间</div></div></td></tr>';
-    document.getElementById('lr-total').textContent='共 0 条 · 第 1/1 页';
-    setPagerState('lr',1,1);return;
+    document.getElementById('lr-total').textContent='共 0 条';
+    setPagerState('lr',1,1);
+    return;
   }
-  const pageRows=rows.slice((lrPage-1)*LR_PAGE,(lrPage-1)*LR_PAGE+LR_PAGE);
+
+  var pageRows=rows.slice((lrPage-1)*LR_PAGE,(lrPage-1)*LR_PAGE+LR_PAGE);
   document.getElementById('lr-body').innerHTML=pageRows.map(function(r){
     return '<tr>'
       +'<td>'+r.id+'</td>'
-      +'<td><div style="display:flex;gap:10px;align-items:center"><div class="thumb" style="width:48px;height:36px;border-radius:4px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center">封</div><div class="pname">'+r.title+'</div></div></td>'
+      +'<td><div style="display:flex;gap:10px;align-items:center">'
+        +'<div class="thumb thumb-sm" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;">封</div>'
+        +'<div class="pname">'+r.title+'</div>'
+      +'</div></td>'
       +'<td>'+r.anchor+'</td>'
       +'<td>'+statusTag(r.status)+'</td>'
       +'<td>'+r.start+'</td><td>'+r.end+'</td><td>'+r.cart+'</td>'
-      +'<td><button class="btn-link" onclick="openCart(\''+r.id+'\')">查看挂车商品</button></td>'
+      +'<td><button class="btn-link" onclick="openRoomProducts(\''+r.id+'\')" style="color:var(--danger);font-weight:600;">商品列表</button></td>'
     +'</tr>';
   }).join('');
   document.getElementById('lr-total').textContent='共 '+rows.length+' 条 · 第 '+lrPage+'/'+lrPages+' 页';
   setPagerState('lr',lrPage,lrPages);
 }
-function refreshRooms(){toast('已向火山后台重新拉取直播间与挂车数据');renderLiveRooms();}
+
+function refreshRooms(){
+  toast('已向火山后台重新拉取直播间与挂车数据');
+  renderLiveRooms();
+}
 function syncRooms(){
-  /* 模拟「同步直播间」：调火山引擎 OpenAPI 拉取最新直播间列表 + 关联商品 */
   toast('正在同步火山引擎直播间与商品信息…');
-  setTimeout(()=>{
-    // 同步后更新房间列表（模拟火山返回了新数据）
-    const now=new Date();
-    liveRooms.forEach(r=>{
+  setTimeout(function(){
+    liveRooms.forEach(function(r){
       if(r.status==='直播中') r.cart=Math.floor(3+Math.random()*6);
     });
     renderLiveRooms();
-    toast(`同步完成：已获取 ${liveRooms.length} 个直播间，共 ${liveRooms.reduce((s,r)=>s+r.cart,0)} 个关联商品`);
+    toast('同步完成：已获取 '+liveRooms.length+' 个直播间，共 '+liveRooms.reduce(function(s,r){return s+r.cart;},0)+' 个关联商品');
   },1200);
 }
-function openCart(rid){
-  const r=liveRooms.find(x=>x.id===rid);
-  document.getElementById('cart-title').textContent=r.title+'的直播商品';
-  const list=cartMap[rid]||[];
-  const body=document.getElementById('cart-body');
-  if(list.length===0){
-    body.innerHTML=`<div class="empty"><div class="ic">空</div><div>当前直播间暂无挂车商品，点击右上角「同步」拉取火山引擎商品数据</div></div>`;
-  } else {
-    body.innerHTML=`
-      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-        <input class="input" id="cart-search-${rid}" placeholder="商品名称" style="width:150px">
-        <input class="input" id="cart-id-s-${rid}" placeholder="商品编号" style="width:130px">
-        <select class="select" id="cart-cat-${rid}"><option value="">类别</option><option>饮品</option><option>零食</option><option>保健</option><option>茶饮</option><option>冲调</option><option>烘焙</option></select>
-        <div style="flex:1"></div>
-        <button class="btn btn-danger" style="font-size:12px;padding:5px 14px;border-radius:4px" onclick="syncCartGoods('${rid}')">同步</button>
-        <button class="btn btn-danger" style="font-size:12px;padding:5px 14px;border-radius:4px" onclick="syncCartAll('${rid}')">同步全部商品</button>
-      </div>
-      <table>
-        <thead><tr><th>商品编号</th><th>商品信息</th><th>类别</th><th>排序</th><th>销量</th><th>销量台</th><th>销售合计</th></tr></thead>
-        <tbody>${list.map(c=>`
-          <tr>
-            <td>${c.id}</td>
-            <td><div style="display:flex;gap:10px;align-items:center"><div class="thumb" style="width:48px;height:36px;border-radius:4px;background:linear-gradient(135deg,#43e97b,#38f9d7);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center">图</div><div><div class="pname">${c.name}</div><div class="ptype">${c.type}</div></div></div></td>
-            <td>${c.type}</td>
-            <td><input type="number" value="${Math.floor(Math.random()*99)+1}" style="width:56px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-size:12px"></td>
-            <td>${c.sales}</td>
-            <td>${Math.floor(c.sales*(0.6+Math.random()*0.3))}</td>
-            <td>${(c.sales*parseFloat(c.price.replace('¥',''))).toLocaleString()}</td>
-          </tr>`).join('')}</tbody>
-      </table>
-      <div class="pager" style="padding-top:10px"><span>共 ${list.length} 条</span><span style="color:#bbb">·</span><span>10条/页</span></div>`;
-  }
-  document.getElementById('cart-mask').classList.add('show');
-  document.getElementById('cart-drawer').classList.add('show');
-}
-function syncCartGoods(rid){
-  toast(`正在同步「${rid}」的直播间商品（从火山引擎拉取最新数据）…`);
-}
-function syncCartAll(rid){
-  toast(`正在同步全部直播间商品（从火山引擎全量拉取）…`);
-}
-function closeCart(){document.getElementById('cart-mask').classList.remove('show');document.getElementById('cart-drawer').classList.remove('show');}
 
-/* ---------------- 数据统计 ---------------- */
-let curTab='month';
-document.getElementById('tab-month').onclick=()=>{curTab='month';switchTab();};
-document.getElementById('tab-day').onclick=()=>{curTab='day';switchTab();};
-function switchTab(){
+/* ==================== 直播间商品列表（页面跳转）==================== */
+var rpPage=1, rpPages=1;
+const RP_PAGE=10;
+
+/** 打开某直播间的商品列表页（页面跳转，非抽屉）*/
+function openRoomProducts(roomId){
+  currentRoomId=roomId;
+  var room=liveRooms.find(function(x){return x.id===roomId;});
+  if(room){
+    document.getElementById('rp-title').textContent=room.title+'的直播商品';
+  }
+  rpPage=1;
+  switchView('room-products');
+}
+
+/** 返回直播间管理 */
+function goBackRoom(){ switchView('live-room'); }
+/** 跳转直播商品 */
+function goLiveProduct(){ switchView('live-product'); }
+
+function renderRoomProducts(){
+  var list=roomProductsMap[currentRoomId]||[];
+  var kw=document.getElementById('rp-name').value.trim().toLowerCase();
+  var idq=document.getElementById('rp-id').value.trim().toLowerCase();
+  var mc=document.getElementById('rp-merchant').value;
+
+  list=list.filter(function(p){
+    return (!kw||p.name.toLowerCase().indexOf(kw)>=0||p.pid.toLowerCase().indexOf(kw)>=0)
+      &&(!idq||p.pid.toLowerCase().indexOf(idq)>=0)
+      &&(!mc||p.merchant===mc);
+  });
+
+  rpPages=Math.max(1,Math.ceil(list.length/RP_PAGE));
+  if(rpPage>rpPages) rpPage=rpPages;
+
+  if(list.length===0){
+    document.getElementById('rp-body').innerHTML='<tr><td colspan="6"><div class="empty"><div class="ic">空</div><div>当前直播间暂无挂车商品</div></div></td></tr>';
+    document.getElementById('rp-total').textContent='共 0 条';
+    document.getElementById('rp-pg').value=1;
+    document.getElementById('rp-last').value=1;
+    return;
+  }
+
+  var pageRows=list.slice((rpPage-1)*RP_PAGE,(rpPage-1)*RP_PAGE+RP_PAGE);
+  document.getElementById('rp-body').innerHTML=pageRows.map(function(p){
+    // 根据 name 中的 | 判断是否有子描述
+    var parts=p.name.split('|');
+    var displayName=parts[0]||p.name;
+    var descPart=parts[1]||p.type;
+    return '<tr>'
+      +'<td>'+p.pid+'</td>'
+      +'<td><div style="display:flex;gap:10px;align-items:center">'
+        +'<div class="thumb" style="width:48px;height:36px;border-radius:5px;'
+          +(p.pid.charAt(0)==='5'
+            ?'background:linear-gradient(135deg,#43e97b,#38f9d7)'
+            :'background:linear-gradient(135deg,#6B4FE8,#A78BFA)'
+          )+';color:#fff;font-size:9px;">图</div>'
+        +'<div><div class="pname">'+displayName+'</div><div class="ptype">'+descPart+'</div></div>'
+      +'</div></td>'
+      +'<td>'+(p.merchant||'—')+'</td>'
+      +'<td>'+p.stock+'</td><td>'+p.sales+'</td><td>'+p.price+'</td>'
+    +'</tr>';
+  }).join('');
+  document.getElementById('rp-total').textContent='共 '+list.length+' 条';
+  document.getElementById('rp-pg').value=rpPage;
+  document.getElementById('rp-last').value=rpPages;
+  setPagerState('rp',rpPage,rpPages);
+}
+
+function searchRp(){ rpPage=1; renderRoomProducts(); }
+function resetRp(){
+  document.getElementById('rp-name').value='';
+  document.getElementById('rp-id').value='';
+  document.getElementById('rp-merchant').value='';
+  rpPage=1;
+  renderRoomProducts();
+}
+function addRoomGoods(){
+  toast('打开选择商品弹窗（从商品中心选品添加到本直播间）');
+}
+
+/* ==================== 数据统计 ==================== */
+var curTab='month';
+function switchTab(tab){
+  curTab=tab;
   document.getElementById('tab-month').classList.toggle('active',curTab==='month');
   document.getElementById('tab-day').classList.toggle('active',curTab==='day');
-  // 月汇总：选择「月」（年 + 月）
-  // 日汇总：选择「日」（年 + 月 + 日）
-  document.getElementById('data-year').classList.remove('hidden');
+
+  document.getElementById('data-year').parentElement.classList.remove('hidden');
   document.getElementById('data-month').classList.remove('hidden');
   document.getElementById('data-day').classList.toggle('hidden',curTab!=='day');
   renderStats();
 }
+
 function genMonth(){
-  const y=document.getElementById('data-year').value;
-  const mSel=document.getElementById('data-month').value;
-  const arr=[];
-  for(let m=1;m<=12;m++){
-    const has=m>=3&&m<=8;
-    const p=has?Math.floor(60+Math.random()*240):0;
-    const n=has?Math.floor(20+Math.random()*120):0;
-    const a=has?Math.floor(p*(80+Math.random()*120)):0;
-    const e=has?Math.floor(p*(3+Math.random()*5)):0;
-    const c=has?Math.floor(e*(0.4+Math.random()*0.4)):0;
-    const u=has?Math.floor(800+Math.random()*4000):0;
-    const mm=String(m).padStart(2,'0');
-    arr.push({k:`${y}-${mm}`,p,n,a,e,c,u,rate:(p&&e?((c/e)*100).toFixed(1):'0'),dur:has?Math.floor(180+Math.random()*600):0});
+  var y=document.getElementById('data-year').value;
+  var mSel=document.getElementById('data-month').value;
+  var arr=[];
+  for(var m=1;m<=12;m++){
+    var has=m>=3&&m<=8;
+    var p=has?Math.floor(60+Math.random()*240):0;
+    var n=has?Math.floor(20+Math.random()*120):0;
+    var a=has?Math.floor(p*(80+Math.random()*120)):0;
+    var e=has?Math.floor(p*(3+Math.random()*5)):0;
+    var c=has?Math.floor(e*(0.4+Math.random()*0.4)):0;
+    var u=has?Math.floor(800+Math.random()*4000):0;
+    var mm=String(m).padStart(2,'0');
+    arr.push({k:y+'-'+mm,p:p,n:n,a:a,e:e,c:c,u:u,rate:(p&&e?((c/e)*100).toFixed(1):'0'),dur:has?Math.floor(180+Math.random()*600):0});
   }
-  // 月汇总筛选「选择月」
-  const rows = mSel==='all'?arr:arr.filter(r=>r.k.endsWith('-'+mSel));
+  var rows=mSel==='all'?arr:arr.filter(function(r){return r.k.endsWith('-'+mSel);});
   return {arr:rows};
 }
+
 function genDay(){
-  const y=document.getElementById('data-year').value;
-  const mSel=document.getElementById('data-month').value;
-  const mm = mSel==='all' ? '07' : mSel;   // 日汇总需先选月，未选则默认 07 月
-  const dSel=document.getElementById('data-day').value;
-  const arr=[];
-  for(let d=1;d<=30;d++){
-    const has=d>=5&&d<=21;
-    const p=has?Math.floor(2+Math.random()*30):0;
-    const n=has?Math.floor(1+Math.random()*15):0;
-    const a=has?Math.floor(p*(80+Math.random()*120)):0;
-    const e=has?Math.floor(p*(3+Math.random()*5)):0;
-    const c=has?Math.floor(e*(0.4+Math.random()*0.4)):0;
-    const u=has?Math.floor(80+Math.random()*500):0;
-    const dd=String(d).padStart(2,'0');
-    arr.push({k:`${y}-${mm}-${dd}`,p,n,a,e,c,u,rate:(p&&e?((c/e)*100).toFixed(1):'0'),dur:has?Math.floor(180+Math.random()*600):0});
+  var y=document.getElementById('data-year').value;
+  var mSel=document.getElementById('data-month').value;
+  var mm=mSel==='all'?'07':mSel;
+  var dSel=document.getElementById('day')?document.getElementById('data-day').value:'all';
+  var dEl=document.getElementById('data-day');
+  if(dEl) dSel=dEl.value;
+  var arr=[];
+  for(var d=1;d<=30;d++){
+    var has=d>=5&&d<=21;
+    var p=has?Math.floor(2+Math.random()*30):0;
+    var n=has?Math.floor(1+Math.random()*15):0;
+    var a=has?Math.floor(p*(80+Math.random()*120)):0;
+    var e=has?Math.floor(p*(3+Math.random()*5)):0;
+    var c=has?Math.floor(e*(0.4+Math.random()*0.4)):0;
+    var u=has?Math.floor(80+Math.random()*500):0;
+    var dd=String(d).padStart(2,'0');
+    arr.push({k:y+'-'+mm+'-'+dd,p:p,n:n,a:a,e:e,c:c,u:u,rate:(p&&e?((c/e)*100).toFixed(1):'0'),dur:has?Math.floor(180+Math.random()*600):0});
   }
-  // 日汇总筛选「选择日」
-  const rows = dSel==='all'?arr:arr.filter(r=>r.k.endsWith('-'+dSel));
+  var rows=dSel==='all'?arr:arr.filter(function(r){return r.k.endsWith('-'+dSel);});
   return {arr:rows};
 }
+
 function renderStats(){
-  // 骨架屏模拟
-  const head=document.getElementById('stat-head');
-  const body=document.getElementById('stat-body');
-  head.innerHTML=`<tr><th>${curTab==='month'?'月份':'日期'}</th><th>支付订单</th><th>新用户</th><th>支付金额(元)</th><th>挂车曝光</th><th>商品点击</th><th>转化率</th><th>观看人数(UV)</th><th>平均观看时长(s)</th></tr>`;
-  body.innerHTML=Array(6).fill('<tr>'+'<td colspan="9"><div class="skeleton" style="height:16px"></div></td></tr>').join('');
-  setTimeout(()=>{
-    const {arr,sum}=curTab==='month'?genMonth():genDay();
-    if(arr.every(x=>x.p===0)){
-      body.innerHTML=`<tr><td colspan="9"><div class="empty"><div class="ic">无</div><div>所选时间段暂无数据</div></div></td></tr>`;
-      document.getElementById('stat-total').textContent='共 0 条';return;
+  var head=document.getElementById('stat-head');
+  var body=document.getElementById('stat-body');
+  head.innerHTML='<tr><th>'+(curTab==='month'?'月份':'日期')+'</th><th>支付订单</th><th>新用户</th><th>支付金额(元)</th><th>挂车曝光</th><th>商品点击</th><th>转化率</th><th>观看人数(UV)</th><th>平均观看时长(s)</th></tr>';
+
+  // 骨架屏
+  body.innerHTML=Array(6).fill('<tr><td colspan="9"><div class="skeleton" style="height:16px"></div></td></tr>').join('');
+
+  setTimeout(function(){
+    var result=curTab==='month'?genMonth():genDay();
+    var arr=result.arr;
+    if(arr.every(function(x){return x.p===0;})){
+      body.innerHTML='<tr><td colspan="9"><div class="empty"><div class="ic">无</div><div>所选时间段暂无数据</div></div></td></tr>';
+      document.getElementById('stat-total').textContent='共 0 条';
+      return;
     }
-    body.innerHTML=arr.map(r=>`
-      <tr><td>${r.k}</td><td>${r.p}</td><td>${r.n}</td><td>${r.a}</td><td>${r.e}</td><td>${r.c}</td><td>${r.rate}%</td><td>${r.u}</td><td>${r.dur}</td></tr>`).join('');
-    document.getElementById('stat-total').textContent=`共 ${arr.length} 条`;
+    body.innerHTML=arr.map(function(r){
+      return '<tr><td>'+r.k+'</td><td>'+r.p+'</td><td>'+r.n+'</td><td>'+r.a+'</td><td>'+r.e+'</td><td>'+r.c+'</td><td>'+r.rate+'%</td><td>'+r.u+'</td><td>'+r.dur+'</td></tr>';
+    }).join('');
+    document.getElementById('stat-total').textContent='共 '+arr.length+' 条';
   },500);
 }
+
 function exportData(){
-  const {arr}=curTab==='month'?genMonth():genDay();
-  const head=curTab==='month'
-    ? '月份,支付订单,新用户,支付金额,挂车曝光,商品点击,转化率,观看人数,平均观看时长'
-    : '日期,支付订单,新用户,支付金额,挂车曝光,商品点击,转化率,观看人数,平均观看时长';
-  const lines=[head];
-  arr.forEach(r=>lines.push([r.k,r.p,r.n,r.a,r.e,r.c,r.rate+'%',r.u,r.dur].join(',')));
-  const csv='\ufeff'+lines.join('\n');
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download=`直播数据_${curTab==='month'?'月汇总':'日汇总'}.csv`;
+  var result=curTab==='month'?genMonth():genDay();
+  var arr=result.arr;
+  var head=curTab==='month'
+    ?'月份,支付订单,新用户,支付金额,挂车曝光,商品点击,转化率,观看人数,平均观看时长'
+    :'日期,支付订单,新用户,支付金额,挂车曝光,商品点击,转化率,观看人数,平均观看时长';
+  var lines=[head];
+  arr.forEach(function(r){
+    lines.push([r.k,r.p,r.n,r.a,r.e,r.c,r.rate+'%',r.u,r.dur].join(','));
+  });
+  var csv='\ufeff'+lines.join('\n');
+  var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='直播数据_'+(curTab==='month'?'月汇总':'日汇总')+'.csv';
   document.body.appendChild(a);a.click();document.body.removeChild(a);
   URL.revokeObjectURL(url);
   toast('已导出 Excel（CSV）文件');
 }
 
-/* ---------------- 初始化 ---------------- */
+/* ==================== 初始化 ==================== */
 navigate();
 </script>
 </body>
