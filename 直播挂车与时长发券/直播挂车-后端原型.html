@@ -254,11 +254,9 @@
     <!-- ★ 直播管理（展开高亮）★ -->
     <div class="sidebar-group" id="sg-live">
       <div class="sidebar-group-title" onclick="toggleGroup(this)"><span class="arrow">▾</span>直播管理</div>
-      <div class="sidebar-group-body">
+        <div class="sidebar-group-body">
         <div class="sidebar-item" data-goto="live-product"><span class="ico">📺</span>直播商品</div>
         <div class="sidebar-item active" data-goto="live-room"><span class="ico">🎙️</span>直播间管理</div>
-        <div class="sidebar-item"><span class="ico">🛒</span>直播间商品总览</div>
-        <div class="sidebar-item"><span class="ico">📋</span>直播间总订单</div>
         <div class="sidebar-item" data-goto="live-data"><span class="ico">📊</span>直播数据统计</div>
       </div>
     </div>
@@ -344,13 +342,6 @@
         <h1 id="rp-title">直播间商品列表</h1>
         <p>查看和管理指定直播间的挂车商品</p>
       </div>
-      <!-- 子标签页（参考截图2） -->
-      <div class="subtabs">
-        <div class="subtab" onclick="goBackRoom()">页面总览</div>
-        <div class="subtab" onclick="goLiveProduct()">直播商品</div>
-        <div class="subtab">直播设置</div>
-        <div class="subtab active subtab-pill">商品列表</div>
-      </div>
       <div class="content">
         <div class="room-breadcrumb"><a onclick="goBackRoom()">← 返回直播间管理</a></div>
         <div class="toolbar">
@@ -362,7 +353,7 @@
           <div style="flex:1"></div>
           <button class="btn btn-danger" onclick="searchRp()" style="border-radius:6px">搜索</button>
           <button class="btn btn-ghost" onclick="resetRp()">重置</button>
-          <button class="btn btn-danger-outline" onclick="addRoomGoods()" style="border-radius:6px">＋ 添加本直播间商品</button>
+          <button class="btn btn-danger" onclick="syncRoomProducts()" style="border-radius:6px">同步直播间商品</button>
         </div>
         <div class="card">
           <table>
@@ -844,8 +835,12 @@ function resetRp(){
   rpPage=1;
   renderRoomProducts();
 }
-function addRoomGoods(){
-  toast('打开选择商品弹窗（从商品中心选品添加到本直播间）');
+function syncRoomProducts(){
+  toast('正在从火山引擎同步直播间商品…');
+  setTimeout(function(){
+    renderRoomProducts();
+    toast('同步完成，已更新「'+(currentRoomId||'')+'」的直播商品列表');
+  },1000);
 }
 
 /* ==================== 数据统计 ==================== */
