@@ -175,8 +175,26 @@
         </div>
         <div class="toolbar">
           <select class="select" id="data-year"><option>2026</option><option>2025</option></select>
-          <select class="select hidden" id="data-month">
-            <option>2026-07</option><option>2026-06</option><option>2026-05</option>
+          <select class="select" id="data-month">
+            <option value="all">全部月份</option>
+            <option value="01">01月</option><option value="02">02月</option><option value="03">03月</option>
+            <option value="04">04月</option><option value="05">05月</option><option value="06">06月</option>
+            <option value="07">07月</option><option value="08">08月</option><option value="09">09月</option>
+            <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+          </select>
+          <select class="select hidden" id="data-day">
+            <option value="all">全部日期</option>
+            <option value="01">01日</option><option value="02">02日</option><option value="03">03日</option>
+            <option value="04">04日</option><option value="05">05日</option><option value="06">06日</option>
+            <option value="07">07日</option><option value="08">08日</option><option value="09">09日</option>
+            <option value="10">10日</option><option value="11">11日</option><option value="12">12日</option>
+            <option value="13">13日</option><option value="14">14日</option><option value="15">15日</option>
+            <option value="16">16日</option><option value="17">17日</option><option value="18">18日</option>
+            <option value="19">19日</option><option value="20">20日</option><option value="21">21日</option>
+            <option value="22">22日</option><option value="23">23日</option><option value="24">24日</option>
+            <option value="25">25日</option><option value="26">26日</option><option value="27">27日</option>
+            <option value="28">28日</option><option value="29">29日</option><option value="30">30日</option>
+            <option value="31">31日</option>
           </select>
           <button class="btn btn-ghost" onclick="renderStats()">查询</button>
           <div class="spacer" style="flex:1"></div>
@@ -481,12 +499,17 @@ document.getElementById('tab-day').onclick=()=>{curTab='day';switchTab();};
 function switchTab(){
   document.getElementById('tab-month').classList.toggle('active',curTab==='month');
   document.getElementById('tab-day').classList.toggle('active',curTab==='day');
-  document.getElementById('data-year').classList.toggle('hidden',curTab!=='month');
-  document.getElementById('data-month').classList.toggle('hidden',curTab!=='day');
+  // 月汇总：选择「月」（年 + 月）
+  // 日汇总：选择「日」（年 + 月 + 日）
+  document.getElementById('data-year').classList.remove('hidden');
+  document.getElementById('data-month').classList.remove('hidden');
+  document.getElementById('data-day').classList.toggle('hidden',curTab!=='day');
   renderStats();
 }
 function genMonth(){
-  const arr=[];let po=0,nu=0,amt=0,exp=0,clk=0,uv=0;
+  const y=document.getElementById('data-year').value;
+  const mSel=document.getElementById('data-month').value;
+  const arr=[];
   for(let m=1;m<=12;m++){
     const has=m>=3&&m<=8;
     const p=has?Math.floor(60+Math.random()*240):0;
@@ -495,25 +518,33 @@ function genMonth(){
     const e=has?Math.floor(p*(3+Math.random()*5)):0;
     const c=has?Math.floor(e*(0.4+Math.random()*0.4)):0;
     const u=has?Math.floor(800+Math.random()*4000):0;
-    po+=p;nu+=n;amt+=a;exp+=e;clk+=c;uv+=u;
-    arr.push({k:`2026-${String(m).padStart(2,'0')}`,p,n,a,e,c,u,rate:(p?((c/e)*100).toFixed(1):'0'),dur:has?Math.floor(180+Math.random()*600):0});
+    const mm=String(m).padStart(2,'0');
+    arr.push({k:`${y}-${mm}`,p,n,a,e,c,u,rate:(p&&e?((c/e)*100).toFixed(1):'0'),dur:has?Math.floor(180+Math.random()*600):0});
   }
-  return {arr,sum:{po,nu,amt,exp,clk,uv}};
+  // 月汇总筛选「选择月」
+  const rows = mSel==='all'?arr:arr.filter(r=>r.k.endsWith('-'+mSel));
+  return {arr:rows};
 }
 function genDay(){
-  const arr=[];let po=0,nu=0,amt=0,exp=0,clk=0,uv=0;
+  const y=document.getElementById('data-year').value;
+  const mSel=document.getElementById('data-month').value;
+  const mm = mSel==='all' ? '07' : mSel;   // 日汇总需先选月，未选则默认 07 月
+  const dSel=document.getElementById('data-day').value;
+  const arr=[];
   for(let d=1;d<=30;d++){
     const has=d>=5&&d<=21;
     const p=has?Math.floor(2+Math.random()*30):0;
     const n=has?Math.floor(1+Math.random()*15):0;
     const a=has?Math.floor(p*(80+Math.random()*120)):0;
-    const e=has?Math.floor(p*(3+Math.random()*5)):(d===1?0:0);
+    const e=has?Math.floor(p*(3+Math.random()*5)):0;
     const c=has?Math.floor(e*(0.4+Math.random()*0.4)):0;
     const u=has?Math.floor(80+Math.random()*500):0;
-    po+=p;nu+=n;amt+=a;exp+=e;clk+=c;uv+=u;
-    arr.push({k:`2026-07-${String(d).padStart(2,'0')}`,p,n,a,e,c,u,rate:(p?((c/e)*100).toFixed(1):'0'),dur:has?Math.floor(180+Math.random()*600):0});
+    const dd=String(d).padStart(2,'0');
+    arr.push({k:`${y}-${mm}-${dd}`,p,n,a,e,c,u,rate:(p&&e?((c/e)*100).toFixed(1):'0'),dur:has?Math.floor(180+Math.random()*600):0});
   }
-  return {arr,sum:{po,nu,amt,exp,clk,uv}};
+  // 日汇总筛选「选择日」
+  const rows = dSel==='all'?arr:arr.filter(r=>r.k.endsWith('-'+dSel));
+  return {arr:rows};
 }
 function renderStats(){
   // 骨架屏模拟
