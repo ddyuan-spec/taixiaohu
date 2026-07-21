@@ -153,7 +153,7 @@
   <h2 id="c">C. 业务流程与架构</h2>
 
   <h3>业务流程图（主流程 + 分支）</h3>
-  <p><img src="PRD配图/图1-业务流程图.png" alt="业务流程图（横向钉钉流程图风格）" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+  <p><img src="https://raw.githubusercontent.com/ddyuan-spec/taixiaohu/main/%E7%9B%B4%E6%92%AD%E6%8C%82%E8%BD%A6%E4%B8%8E%E6%97%B6%E9%95%BF%E5%8F%91%E5%88%B8/PRD%E9%85%8D%E5%9B%BE/图1-业务流程图.png" alt="业务流程图（横向钉钉流程图风格）" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
   <div class="note" style="font-size:12px">上图为主流程横向视图，菱形为判断节点，灰色分支为未登录/达限领的异常处理；主流程核心：进入 → 登录判断 → 观看 → 挂车点击 → 时长上报 → 用户离开 → T+1 批处理 → 限领判断 → 登录后通知 → 去使用 → 商品列表核销。</div>
 
   <h4>异常 / 分支流程</h4>
@@ -168,7 +168,7 @@
   </table>
 
   <h3>信息架构（前端展示层 / 后端配置层 / 数据层 / 外部系统）</h3>
-  <p><img src="PRD配图/图2-信息架构图.png" alt="信息架构图（四层列式）" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+  <p><img src="https://raw.githubusercontent.com/ddyuan-spec/taixiaohu/main/%E7%9B%B4%E6%92%AD%E6%8C%82%E8%BD%A6%E4%B8%8E%E6%97%B6%E9%95%BF%E5%8F%91%E5%88%B8/PRD%E9%85%8D%E5%9B%BE/图2-信息架构图.png" alt="信息架构图（四层列式）" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
   <div class="note" style="font-size:12px">四层结构：前端展示层（直播 H5 + App/小程序感知）、后端配置层（直播间/主播/挂车/数据看板，发券规则复用 A4）、数据层（本需求持有的 4 张表）、外部/关联系统（火山引擎、优惠券体系、商品中心）。</div>
 
   <h3>状态机与状态流转规则</h3>
@@ -206,7 +206,7 @@
   </table>
 
   <h3>系统间数据流转图</h3>
-  <p><img src="PRD配图/图3-数据流转图.png" alt="系统间数据流转图（横向）" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+  <p><img src="https://raw.githubusercontent.com/ddyuan-spec/taixiaohu/main/%E7%9B%B4%E6%92%AD%E6%8C%82%E8%BD%A6%E4%B8%8E%E6%97%B6%E9%95%BF%E5%8F%91%E5%88%B8/PRD%E9%85%8D%E5%9B%BE/图3-数据流转图.png" alt="系统间数据流转图（横向）" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
   <div class="note" style="font-size:12px"><b>数据流转：</b>① 商品/挂车由我方后台同步到火山直播 → ② 火山下发直播流+挂车到用户端 → ③ 用户点击挂车跳转当前环境商品详情页（交易域旁路）→ ④ 火山 SDK 心跳上报观看时长到我方数据层 → ⑤ T+1 批处理按累计时长调优惠券体系发券 API → ⑥ 生成券实例进入用户券包 → ⑦ 用户登录 App/小程序触发弹窗+红点通知，去使用跳商品列表（闭环）。</div>
 
   <!-- ============ D ============ -->
@@ -270,11 +270,11 @@
 <div class="two-col">
   <div>
     <p><b>图 D-1：L1 直播观看页（已登录态）</b></p>
-    <p><img src="PRD配图/截图-客户端-L1观看页-已登录.png" alt="L1 直播观看页（已登录）" style="border:1px solid #e5e2ef;border-radius:12px"></p>
+    <p><img src="https://raw.githubusercontent.com/ddyuan-spec/taixiaohu/main/%E7%9B%B4%E6%92%AD%E6%8C%82%E8%BD%A6%E4%B8%8E%E6%97%B6%E9%95%BF%E5%8F%91%E5%88%B8/PRD%E9%85%8D%E5%9B%BE/截图-客户端-L1观看页-已登录.png" alt="L1 直播观看页（已登录）" style="border:1px solid #e5e2ef;border-radius:12px"></p>
   </div>
   <div>
     <p><b>图 D-2：L1 直播观看页（未登录遮罩）</b></p>
-    <p><img src="PRD配图/截图-客户端-L1未登录遮罩.png" alt="L1 未登录遮罩" style="border:1px solid #e5e2ef;border-radius:12px"></p>
+    <p><img src="https://raw.githubusercontent.com/ddyuan-spec/taixiaohu/main/%E7%9B%B4%E6%92%AD%E6%8C%82%E8%BD%A6%E4%B8%8E%E6%97%B6%E9%95%BF%E5%8F%91%E5%88%B8/PRD%E9%85%8D%E5%9B%BE/截图-客户端-L1未登录遮罩.png" alt="L1 未登录遮罩" style="border:1px solid #e5e2ef;border-radius:12px"></p>
   </div>
 </div>
 
@@ -328,11 +328,11 @@
 <div class="two-col">
   <div>
     <p><b>图 D-3：L5 获券通知弹窗</b></p>
-    <p><img src="PRD配图/截图-客户端-L5获券弹窗.png" alt="L5 获券通知弹窗" style="border:1px solid #e5e2ef;border-radius:12px"></p>
+    <p><img src="https://raw.githubusercontent.com/ddyuan-spec/taixiaohu/main/%E7%9B%B4%E6%92%AD%E6%8C%82%E8%BD%A6%E4%B8%8E%E6%97%B6%E9%95%BF%E5%8F%91%E5%88%B8/PRD%E9%85%8D%E5%9B%BE/截图-客户端-L5获券弹窗.png" alt="L5 获券通知弹窗" style="border:1px solid #e5e2ef;border-radius:12px"></p>
   </div>
   <div>
     <p><b>图 D-4：L6 消息中心（券到账记录+红点）</b></p>
-    <p><img src="PRD配图/截图-客户端-L6消息中心.png" alt="L6 消息中心" style="border:1px solid #e5e2ef;border-radius:12px"></p>
+    <p><img src="https://raw.githubusercontent.com/ddyuan-spec/taixiaohu/main/%E7%9B%B4%E6%92%AD%E6%8C%82%E8%BD%A6%E4%B8%8E%E6%97%B6%E9%95%BF%E5%8F%91%E5%88%B8/PRD%E9%85%8D%E5%9B%BE/截图-客户端-L6消息中心.png" alt="L6 消息中心" style="border:1px solid #e5e2ef;border-radius:12px"></p>
   </div>
 </div>
 
@@ -380,9 +380,9 @@
 
 <h4>界面设计（原型图）</h4>
 <p><b>图 D-5：直播间列表</b></p>
-<p><img src="PRD配图/截图-后台-直播列表.png" alt="直播间列表" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+<p><img src="https://raw.githubusercontent.com/ddyuan-spec/taixiaohu/main/%E7%9B%B4%E6%92%AD%E6%8C%82%E8%BD%A6%E4%B8%8E%E6%97%B6%E9%95%BF%E5%8F%91%E5%88%B8/PRD%E9%85%8D%E5%9B%BE/截图-后台-直播列表.png" alt="直播间列表" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
 <p><b>图 D-6：新建/编辑直播弹窗</b></p>
-<p><img src="PRD配图/截图-后台-新建直播弹窗.png" alt="新建直播弹窗" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+<p><img src="https://raw.githubusercontent.com/ddyuan-spec/taixiaohu/main/%E7%9B%B4%E6%92%AD%E6%8C%82%E8%BD%A6%E4%B8%8E%E6%97%B6%E9%95%BF%E5%8F%91%E5%88%B8/PRD%E9%85%8D%E5%9B%BE/截图-后台-新建直播弹窗.png" alt="新建直播弹窗" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
 
 <h4>交互说明</h4>
 <table>
@@ -448,9 +448,9 @@
 
 <h4>界面设计（原型图）</h4>
 <p><b>图 D-7：主播管理</b></p>
-<p><img src="PRD配图/截图-后台-主播管理.png" alt="主播管理" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+<p><img src="https://raw.githubusercontent.com/ddyuan-spec/taixiaohu/main/%E7%9B%B4%E6%92%AD%E6%8C%82%E8%BD%A6%E4%B8%8E%E6%97%B6%E9%95%BF%E5%8F%91%E5%88%B8/PRD%E9%85%8D%E5%9B%BE/截图-后台-主播管理.png" alt="主播管理" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
 <p><b>图 D-8：新增/编辑主播弹窗</b></p>
-<p><img src="PRD配图/截图-后台-新增主播弹窗.png" alt="新增主播弹窗" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+<p><img src="https://raw.githubusercontent.com/ddyuan-spec/taixiaohu/main/%E7%9B%B4%E6%92%AD%E6%8C%82%E8%BD%A6%E4%B8%8E%E6%97%B6%E9%95%BF%E5%8F%91%E5%88%B8/PRD%E9%85%8D%E5%9B%BE/截图-后台-新增主播弹窗.png" alt="新增主播弹窗" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
 
 <h4>交互说明</h4>
 <table>
@@ -499,7 +499,7 @@
 
 <h4>界面设计（原型图）</h4>
 <p><b>图 D-9：直播间详情 · 挂车配置</b></p>
-<p><img src="PRD配图/截图-后台-直播间详情挂车配置.png" alt="直播间详情挂车配置" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+<p><img src="https://raw.githubusercontent.com/ddyuan-spec/taixiaohu/main/%E7%9B%B4%E6%92%AD%E6%8C%82%E8%BD%A6%E4%B8%8E%E6%97%B6%E9%95%BF%E5%8F%91%E5%88%B8/PRD%E9%85%8D%E5%9B%BE/截图-后台-直播间详情挂车配置.png" alt="直播间详情挂车配置" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
 
 <h4>交互说明</h4>
 <table>
@@ -556,7 +556,7 @@
 
 <h4>界面设计（原型图）</h4>
 <p><b>图 D-10：直播数据看板</b></p>
-<p><img src="PRD配图/截图-后台-直播数据看板.png" alt="直播数据看板" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+<p><img src="https://raw.githubusercontent.com/ddyuan-spec/taixiaohu/main/%E7%9B%B4%E6%92%AD%E6%8C%82%E8%BD%A6%E4%B8%8E%E6%97%B6%E9%95%BF%E5%8F%91%E5%88%B8/PRD%E9%85%8D%E5%9B%BE/截图-后台-直播数据看板.png" alt="直播数据看板" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
 
 <h4>交互说明</h4>
 <table>
