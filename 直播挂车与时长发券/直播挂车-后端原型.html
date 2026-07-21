@@ -20,13 +20,11 @@
   .topbar .spacer{flex:1;}
   .topbar .user{display:flex;align-items:center;gap:8px;color:var(--sub);}
   .avatar{width:30px;height:30px;border-radius:50%;background:#dfe6f3;display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:700;}
-  .layout{display:flex;min-height:calc(100vh - 56px);}
-  .sidebar{width:210px;background:#fff;border-right:1px solid var(--border);padding:12px 0;}
-  .menu-group{font-size:12px;color:var(--sub);padding:12px 20px 6px;}
-  .menu-item{padding:10px 20px;display:flex;align-items:center;gap:10px;cursor:pointer;color:var(--text);border-left:3px solid transparent;}
-  .menu-item:hover{background:#f6f8fc;}
-  .menu-item.active{background:#eef3ff;border-left-color:var(--primary);color:var(--primary);font-weight:600;}
-  .menu-item .ic{width:16px;height:16px;display:inline-block;}
+  .layout{display:block;min-height:calc(100vh - 110px);}
+  .pagenav{display:flex;background:#fff;border-bottom:1px solid var(--border);padding:0 20px;}
+  .pagenav-item{padding:15px 18px;cursor:pointer;color:var(--sub);font-size:14px;font-weight:600;border-bottom:2px solid transparent;text-decoration:none;line-height:1;}
+  .pagenav-item:hover{color:var(--text);}
+  .pagenav-item.active{color:var(--primary);border-bottom-color:var(--primary);}
   .content{flex:1;padding:20px 24px;overflow:auto;}
   .page-title{font-size:18px;font-weight:700;margin-bottom:4px;}
   .page-desc{color:var(--sub);font-size:13px;margin-bottom:16px;}
@@ -100,14 +98,12 @@
     <div class="spacer"></div>
     <div class="user"><span class="avatar">运</span>直播运营（demo）</div>
   </header>
+  <nav class="pagenav">
+    <a class="pagenav-item active" data-page="live-product" href="#live-product">直播商品</a>
+    <a class="pagenav-item" data-page="live-room" href="#live-room">直播间管理</a>
+    <a class="pagenav-item" data-page="live-data" href="#live-data">直播数据统计</a>
+  </nav>
   <div class="layout">
-    <aside class="sidebar">
-      <div class="menu-group">营销应用</div>
-      <div class="menu-item active" data-page="live-product"><span class="ic">▦</span>直播商品</div>
-      <div class="menu-item" data-page="live-room"><span class="ic">▣</span>直播间管理</div>
-      <div class="menu-item" data-page="live-data"><span class="ic">▤</span>直播数据统计</div>
-    </aside>
-
     <main class="content">
       <!-- ===== 直播商品 ===== -->
       <section id="live-product">
@@ -301,18 +297,18 @@ function setPagerState(prefix,page,pages){
   next.style.opacity=atEnd?'.4':'';next.style.pointerEvents=atEnd?'none':'';
 }
 
-/* ---------------- 菜单切换 ---------------- */
-document.querySelectorAll('.menu-item').forEach(it=>{
-  it.onclick=()=>{
-    document.querySelectorAll('.menu-item').forEach(x=>x.classList.remove('active'));
-    it.classList.add('active');
-    const p=it.dataset.page;
-    ['live-product','live-room','live-data'].forEach(id=>document.getElementById(id).classList.toggle('hidden',id!==p));
-    if(p==='live-product') renderLiveProducts();
-    if(p==='live-room') renderLiveRooms();
-    if(p==='live-data') renderStats();
-  };
-});
+/* ---------------- 页面跳转（hash 路由，替代侧边栏） ---------------- */
+function navigate(){
+  const valid=['live-product','live-room','live-data'];
+  let p=decodeURIComponent(location.hash.replace('#',''));
+  if(!valid.includes(p))p='live-product';
+  ['live-product','live-room','live-data'].forEach(id=>document.getElementById(id).classList.toggle('hidden',id!==p));
+  document.querySelectorAll('.pagenav-item').forEach(a=>a.classList.toggle('active',a.dataset.page===p));
+  if(p==='live-product') renderLiveProducts();
+  if(p==='live-room') renderLiveRooms();
+  if(p==='live-data') renderStats();
+}
+window.addEventListener('hashchange',navigate);
 
 /* ---------------- 分页按钮 ---------------- */
 document.getElementById('lp-prev').onclick=()=>{if(lpPage>1){lpPage--;renderLiveProducts();}};
@@ -589,7 +585,7 @@ function exportData(){
 }
 
 /* ---------------- 初始化 ---------------- */
-renderLiveProducts();
+navigate();
 </script>
 </body>
 </html>
