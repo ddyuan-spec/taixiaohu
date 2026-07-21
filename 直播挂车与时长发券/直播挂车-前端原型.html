@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎直播小黄车 · 用户端原型</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;-webkit-tap-highlight-color:transparent;}
+  body{background:#e9ecf2;display:flex;justify-content:center;padding:24px;gap:28px;flex-wrap:wrap;}
+  .cart-ic{width:26px;height:26px;}
+  /* 控制面板 */
+  .panel{width:300px;align-self:flex-start;background:#fff;border:1px solid #e6e9ef;border-radius:12px;padding:18px;box-shadow:0 4px 16px rgba(20,30,60,.08);}
+  .panel h3{font-size:15px;margin-bottom:12px;}
+  .panel .grp{margin-bottom:16px;}
+  .panel label{font-size:12px;color:#8a93a5;display:block;margin-bottom:6px;}
+  .seg{display:flex;border:1px solid #e6e9ef;border-radius:8px;overflow:hidden;}
+  .seg button{flex:1;border:none;background:#fff;padding:8px 0;cursor:pointer;font-size:13px;color:#1f2733;}
+  .seg button.active{background:#2f6fed;color:#fff;}
+  .states{display:flex;flex-wrap:wrap;gap:8px;}
+  .states button{border:1px solid #e6e9ef;background:#fff;border-radius:18px;padding:6px 12px;font-size:12px;cursor:pointer;color:#1f2733;}
+  .states button.active{background:#fff3df;border-color:#f5a623;color:#d98a12;}
+  .panel .tip{font-size:12px;color:#8a93a5;line-height:1.6;background:#f6f8fc;padding:10px;border-radius:8px;}
+  /* 手机 */
+  .phone{width:375px;height:780px;background:#111;border-radius:38px;padding:10px;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;flex:0 0 auto;}
+  .screen{width:100%;height:100%;background:#000;border-radius:28px;overflow:hidden;position:relative;}
+  .statusbar{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;color:#fff;font-size:12px;position:absolute;top:0;left:0;right:0;z-index:6;}
+  /* 观看页 */
+  #live{position:absolute;inset:0;background:linear-gradient(160deg,#1a2230,#0d1117);}
+  .video{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#5a6478;font-size:13px;}
+  .video .play{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:22px;}
+  .top-bar{position:absolute;top:40px;left:12px;right:12px;display:flex;align-items:center;gap:8px;z-index:5;}
+  .anchor{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.35);padding:4px 10px 4px 4px;border-radius:20px;}
+  .anchor .a-av{width:30px;height:30px;border-radius:50%;background:#f5a623;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+  .anchor .a-name{color:#fff;font-size:13px;font-weight:600;}
+  .anchor .follow{background:#f5414f;color:#fff;font-size:11px;padding:2px 8px;border-radius:12px;}
+  .live-tag{background:rgba(245,65,79,.9);color:#fff;font-size:11px;padding:3px 8px;border-radius:6px;font-weight:700;}
+  .close-x{margin-left:auto;color:#fff;font-size:18px;background:rgba(0,0,0,.3);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  /* 小黄车浮层 */
+  .fab{position:absolute;right:14px;bottom:120px;z-index:7;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;}
+  .fab .circle{width:52px;height:52px;border-radius:50%;background:#ffd000;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 4px 12px rgba(255,208,0,.5);}
+  .fab .badge{position:absolute;top:-4px;right:-4px;background:#f5414f;color:#fff;font-size:11px;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;font-weight:700;}
+  .fab .fab-txt{color:#ffd000;font-size:11px;font-weight:700;}
+  .fab.hidden{display:none;}
+  /* 底部抽屉 */
+  .sheet-mask{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:10;opacity:0;pointer-events:none;transition:.25s;}
+  .sheet-mask.show{opacity:1;pointer-events:auto;}
+  .sheet{position:absolute;left:0;right:0;bottom:0;height:62%;background:#f6f7f9;border-radius:16px 16px 0 0;z-index:11;transform:translateY(100%);transition:transform .28s ease;display:flex;flex-direction:column;}
+  .sheet.show{transform:translateY(0);}
+  .sheet-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #eceef2;}
+  .sheet-head .t{font-weight:700;font-size:15px;}
+  .sheet-head .x{border:none;background:none;font-size:20px;color:#8a93a5;cursor:pointer;}
+  .sheet-body{flex:1;overflow:auto;padding:12px 14px;}
+  .prod{display:flex;gap:10px;background:#fff;border-radius:10px;padding:10px;margin-bottom:10px;position:relative;}
+  .prod .pic{width:72px;height:72px;border-radius:8px;background:#eef1f6;display:flex;align-items:center;justify-content:center;color:#b8c0d0;font-size:11px;flex:0 0 auto;}
+  .prod .idx{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.55);color:#fff;font-size:11px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .prod .info{flex:1;min-width:0;}
+  .prod .nm{font-size:14px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .prod .atag{display:inline-block;background:#fff3df;color:#d98a12;font-size:11px;padding:1px 6px;border-radius:4px;margin-top:4px;}
+  .prod .pr{color:#f5414f;font-weight:700;font-size:15px;margin-top:6px;}
+  .prod .pr .old{color:#b8c0d0;font-size:11px;font-weight:400;text-decoration:line-through;margin-left:6px;}
+  .prod .go{position:absolute;right:10px;bottom:10px;background:#f5414f;color:#fff;font-size:12px;padding:5px 12px;border-radius:16px;}
+  .prod.down{opacity:.5;}
+  .prod.down .go{background:#b8c0d0;}
+  .empty{text-align:center;color:#8a93a5;padding:50px 20px;}
+  .empty .e-ic{font-size:42px;opacity:.4;}
+  .fail{text-align:center;color:#8a93a5;padding:50px 20px;}
+  .fail button{margin-top:12px;border:1px solid #2f6fed;color:#2f6fed;background:#fff;border-radius:18px;padding:6px 16px;cursor:pointer;}
+  /* 跳转确认 sheet */
+  .confirm-mask{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:12;opacity:0;pointer-events:none;transition:.2s;}
+  .confirm-mask.show{opacity:1;pointer-events:auto;}
+  .confirm{position:absolute;left:0;right:0;bottom:0;background:#fff;z-index:13;border-radius:16px 16px 0 0;transform:translateY(100%);transition:transform .25s ease;padding:20px 18px 26px;}
+  .confirm.show{transform:translateY(0);}
+  .confirm .ct{font-weight:700;font-size:16px;margin-bottom:6px;}
+  .confirm .cd{color:#8a93a5;font-size:13px;line-height:1.6;margin-bottom:18px;}
+  .confirm .row{display:flex;gap:10px;margin-bottom:12px;}
+  .confirm .row .pic{width:56px;height:56px;border-radius:8px;background:#eef1f6;display:flex;align-items:center;justify-content:center;color:#b8c0d0;font-size:10px;}
+  .confirm .row .ct2{font-weight:600;font-size:14px;}
+  .confirm .row .cp{color:#f5414f;font-weight:700;margin-top:4px;}
+  .confirm .btns{display:flex;gap:12px;margin-top:14px;}
+  .confirm .btns button{flex:1;padding:12px 0;border-radius:24px;font-size:15px;font-weight:600;cursor:pointer;border:none;}
+  .confirm .cancel{background:#f0f2f5;color:#1f2733;}
+  .confirm .ok{background:#f5414f;color:#fff;}
+  /* 商品详情页 L3 */
+  #detail{position:absolute;inset:0;background:#fff;transform:translateX(100%);transition:transform .3s ease;z-index:20;display:flex;flex-direction:column;}
+  #detail.show{transform:translateX(0);}
+  .d-top{display:flex;align-items:center;padding:12px 14px;gap:10px;border-bottom:1px solid #f0f2f5;}
+  .d-back{border:none;background:none;font-size:20px;cursor:pointer;color:#1f2733;}
+  .d-title{font-weight:600;}
+  .d-scroll{flex:1;overflow:auto;}
+  .d-banner{height:300px;background:linear-gradient(135deg,#ffd9d9,#fff0f0);display:flex;align-items:center;justify-content:center;color:#c98;font-size:14px;}
+  .d-info{padding:14px 16px;}
+  .d-nm{font-size:18px;font-weight:700;line-height:1.4;}
+  .d-price{color:#f5414f;font-weight:700;font-size:24px;margin-top:8px;}
+  .d-price .old{color:#b8c0d0;font-size:13px;font-weight:400;text-decoration:line-through;margin-left:8px;}
+  .d-coupon{margin-top:12px;border:1px dashed #f5a623;color:#d98a12;font-size:13px;padding:8px 12px;border-radius:8px;display:inline-block;}
+  .d-anchor{display:flex;align-items:center;gap:10px;margin-top:16px;padding:12px;background:#f6f8fc;border-radius:10px;}
+  .d-anchor .da{width:40px;height:40px;border-radius:50%;background:#f5a623;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
+  .d-anchor .dn{font-weight:600;}
+  .d-anchor .df{color:#8a93a5;font-size:12px;}
+  .d-anchor .dfb{margin-left:auto;background:#fff;border:1px solid #f5414f;color:#f5414f;font-size:12px;padding:5px 12px;border-radius:16px;}
+  .d-bottom{display:flex;gap:12px;padding:12px 16px;border-top:1px solid #f0f2f5;}
+  .d-bottom button{flex:1;padding:13px 0;border-radius:24px;border:none;font-size:16px;font-weight:700;cursor:pointer;}
+  .d-bottom .cart{background:#ffd000;color:#5a4a00;}
+  .d-bottom .buy{background:#f5414f;color:#fff;}
+  .toast{position:absolute;top:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;padding:9px 16px;border-radius:8px;font-size:13px;opacity:0;transition:.25s;z-index:30;white-space:nowrap;}
+  .toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+  <!-- 控制面板（演示用） -->
+  <div class="panel">
+    <h3>演示控制台</h3>
+    <div class="grp">
+      <label>终端环境（三端共享交互，跳转目标不同）</label>
+      <div class="seg" id="env-seg">
+        <button data-env="wx" class="active">微信小程序</button>
+        <button data-env="app">App</button>
+        <button data-env="h5">H5</button>
+      </div>
+    </div>
+    <div class="grp">
+      <label>抽屉 / 角标状态</label>
+      <div class="states" id="state-seg">
+        <button data-st="normal" class="active">有挂车</button>
+        <button data-st="empty">空态</button>
+        <button data-st="fail">加载失败</button>
+      </div>
+    </div>
+    <div class="tip">
+      操作指引：<br>
+      1. 点击右下角「小黄车」浮层展开商品抽屉；<br>
+      2. 点击商品卡片或「去看看」弹出跳转确认；<br>
+      3. 点「立即前往」进入商品详情页（L3）；<br>
+      4. 切换上方终端可查看不同跳转目标文案。
+    </div>
+  </div>
+
+  <!-- 手机 -->
+  <div class="phone">
+    <div class="screen">
+      <div class="statusbar"><span id="clock">20:30</span><span>●●● 5G ▮</span></div>
+
+      <!-- 观看页 -->
+      <div id="live">
+        <div class="video"><div class="play">▶</div></div>
+        <div class="top-bar">
+          <div class="anchor">
+            <div class="a-av">虎</div>
+            <div class="a-name">小虎姐</div>
+            <div class="follow">+关注</div>
+          </div>
+          <div class="live-tag">● 直播中</div>
+          <div class="close-x">×</div>
+        </div>
+
+        <!-- 小黄车浮层 -->
+        <div class="fab" id="fab" onclick="openSheet()">
+          <div class="circle">
+            <svg class="cart-ic" viewBox="0 0 24 24" fill="none"><path d="M3 4h2l2.4 11.2A2 2 0 0 0 9.36 17H17.5a2 2 0 0 0 1.95-1.57L21 8H6.2" stroke="#5a4a00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="1.4" fill="#5a4a00"/><circle cx="18" cy="20" r="1.4" fill="#5a4a00"/></svg>
+            <span class="badge" id="fab-badge">5</span>
+          </div>
+          <div class="fab-txt">购物车</div>
+        </div>
+      </div>
+
+      <!-- 商品抽屉 -->
+      <div class="sheet-mask" id="sheet-mask" onclick="closeSheet()"></div>
+      <div class="sheet" id="sheet">
+        <div class="sheet-head"><div class="t" id="sheet-t">直播商品 5</div><button class="x" onclick="closeSheet()">×</button></div>
+        <div class="sheet-body" id="sheet-body"></div>
+      </div>
+
+      <!-- 跳转确认 -->
+      <div class="confirm-mask" id="confirm-mask" onclick="closeConfirm()"></div>
+      <div class="confirm" id="confirm">
+        <div class="ct">前往商品详情</div>
+        <div class="cd" id="confirm-desc"></div>
+        <div class="row">
+          <div class="pic">图</div>
+          <div><div class="ct2" id="cf-nm"></div><div class="cp" id="cf-pr"></div></div>
+        </div>
+        <div class="btns">
+          <button class="cancel" onclick="closeConfirm()">取消</button>
+          <button class="ok" onclick="doJump()">立即前往</button>
+        </div>
+      </div>
+
+      <!-- 商品详情页 L3 -->
+      <div id="detail">
+        <div class="d-top"><button class="d-back" onclick="closeDetail()">‹</button><span class="d-title">商品详情</span></div>
+        <div class="d-scroll">
+          <div class="d-banner">商品主图 / 视频</div>
+          <div class="d-info">
+            <div class="d-nm" id="d-nm"></div>
+            <div class="d-price" id="d-pr"></div>
+            <div class="d-coupon" style="cursor:pointer" onclick="getCoupon(this)">领券立减 ¥20 · 满 199 可用</div>
+            <div class="d-anchor">
+              <div class="da">虎</div>
+              <div><div class="dn">小虎姐</div><div class="df">直播讲解中 · 点击进入直播间</div></div>
+              <button class="dfb" onclick="enterLive()">进直播间</button>
+            </div>
+          </div>
+        </div>
+        <div class="d-bottom"><button class="cart" onclick="buyCart()">加入购物车</button><button class="buy" onclick="buyNow()">立即购买</button></div>
+      </div>
+
+      <div class="toast" id="toast"></div>
+    </div>
+  </div>
+
+<script>
+/* mock 挂车商品（复用后端 cartMap R8001） */
+const cartList=[
+  {id:'P10001',name:'泰小虎·胶原蛋白肽饮 海洋鱼胶原',tag:'直播专享',price:'¥129',old:'¥159',down:false},
+  {id:'P10002',name:'有机冷压初榨橄榄油 500ml 物理压榨',tag:'限时',price:'¥89',old:'¥109',down:false},
+  {id:'P10004',name:'冻干草莓脆 无添加零食',tag:'',price:'¥39',old:'',down:false},
+  {id:'P10006',name:'低GI全麦欧包 6枚 早餐代餐',tag:'直播专享',price:'¥45',old:'',down:false},
+  {id:'P20001',name:'玻尿酸精华水 120ml 补水保湿',tag:'',price:'¥199',old:'¥259',down:true},
+];
+const envText={wx:'将跳转至「商城小程序」商品详情页',app:'将跳转至「商城 App」商品详情页',h5:'将跳转至 H5 商品落地页（purchase_channel=h5）'};
+let env='wx';
+let curState='normal';
+let pending=null;
+
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1800);}
+
+/* 环境切换 */
+document.querySelectorAll('#env-seg button').forEach(b=>{
+  b.onclick=()=>{document.querySelectorAll('#env-seg button').forEach(x=>x.classList.remove('active'));b.classList.add('active');env=b.dataset.env;toast(envText[env]);};
+});
+/* 状态切换 */
+document.querySelectorAll('#state-seg button').forEach(b=>{
+  b.onclick=()=>{document.querySelectorAll('#state-seg button').forEach(x=>x.classList.remove('active'));b.classList.add('active');curState=b.dataset.st;closeSheet();closeConfirm();renderFab();renderSheet();};
+});
+
+function renderFab(){
+  const fab=document.getElementById('fab');
+  const badge=document.getElementById('fab-badge');
+  if(curState==='empty'){fab.classList.add('hidden');}
+  else if(curState==='fail'){fab.classList.add('hidden');}
+  else{fab.classList.remove('hidden');badge.textContent=cartList.length;}
+}
+
+function renderSheet(){
+  const body=document.getElementById('sheet-body');
+  const t=document.getElementById('sheet-t');
+  if(curState==='empty'){
+    t.textContent='直播商品 0';
+    body.innerHTML=`<div class="empty"><div class="e-ic">空</div><div style="margin-top:10px;font-weight:600;color:#1f2733">该直播间暂未挂车商品</div><div style="margin-top:6px;font-size:13px">主播讲解商品后，这里会展示可购买的健康好物</div></div>`;
+    return;
+  }
+  if(curState==='fail'){
+    t.textContent='直播商品';
+    body.innerHTML=`<div class="fail"><div class="e-ic">失败</div><div style="margin-top:10px">挂车商品加载失败</div><button onclick="retrySheet()">点击重试</button></div>`;
+    return;
+  }
+  t.textContent='直播商品 '+cartList.length;
+  body.innerHTML=cartList.map((c,i)=>`
+    <div class="prod ${c.down?'down':''}" onclick="onCard('${c.id}')">
+      <span class="idx">${i+1}</span>
+      <div class="pic">图</div>
+      <div class="info">
+        <div class="nm">${c.name}</div>
+        ${c.tag?`<span class="atag">${c.tag}</span>`:''}
+        <div class="pr">${c.price}${c.old?`<span class="old">${c.old}</span>`:''}</div>
+      </div>
+      <div class="go">${c.down?'已下架':'去看看'}</div>
+    </div>`).join('');
+}
+function retrySheet(){toast('重新请求挂车列表…');setTimeout(()=>{curState='normal';document.querySelectorAll('#state-seg button').forEach(x=>x.classList.toggle('active',x.dataset.st==='normal'));renderFab();renderSheet();},600);}
+
+function openSheet(){
+  if(curState==='fail'){renderSheet();document.getElementById('sheet-mask').classList.add('show');document.getElementById('sheet').classList.add('show');return;}
+  document.getElementById('sheet-mask').classList.add('show');
+  document.getElementById('sheet').classList.add('show');
+}
+function closeSheet(){document.getElementById('sheet-mask').classList.remove('show');document.getElementById('sheet').classList.remove('show');}
+
+function onCard(id){
+  const c=cartList.find(x=>x.id===id);
+  if(c.down){toast('该商品已下架');return;}
+  pending=c;
+  document.getElementById('cf-nm').textContent=c.name;
+  document.getElementById('cf-pr').textContent=c.price;
+  document.getElementById('confirm-desc').textContent=envText[env];
+  document.getElementById('confirm-mask').classList.add('show');
+  document.getElementById('confirm').classList.add('show');
+}
+function closeConfirm(){document.getElementById('confirm-mask').classList.remove('show');document.getElementById('confirm').classList.remove('show');}
+function doJump(){
+  closeConfirm();closeSheet();
+  document.getElementById('d-nm').textContent=pending.name;
+  document.getElementById('d-pr').innerHTML=`${pending.price}${pending.old?`<span class="old">${pending.old}</span>`:''}`;
+  document.getElementById('detail').classList.add('show');
+  toast('已跳转（原型模拟）');
+}
+function closeDetail(){document.getElementById('detail').classList.remove('show');}
+function buyCart(){toast('已加入购物车（原型模拟）');}
+function buyNow(){toast('正在创建订单…（原型模拟）');}
+function enterLive(){toast('返回直播间（原型模拟）');closeDetail();}
+function getCoupon(el){if(el.dataset.got)return;el.dataset.got='1';el.textContent='已领取 · 领券立减 ¥20';el.style.background='#e6f7ef';el.style.color='#1fab6b';el.style.borderColor='#1fab6b';toast('优惠券已领取');}
+
+/* 初始化 */
+renderFab();renderSheet();
+</script>
+</body>
+</html>
