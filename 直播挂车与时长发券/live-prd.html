@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎 · 直播挂车与时长发券 — PRD v1.4.1</title>
+<style>
+  :root{
+    --c:#7c5cff; --c-d:#534AB7; --c-l:#EEEDFE; --ink:#2a2f3a; --mut:#6b6f7a;
+    --teal:#0F6E56; --teal-l:#E1F5EE; --amber:#BA7517; --amber-l:#FAEEDA;
+    --pink:#993556; --pink-l:#FBEAF0; --blue:#185FA5; --blue-l:#E6F1FB;
+    --red:#b42318; --red-l:#fef2f2; --grey:#8a8f9a; --grey-l:#f1f2f5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:#faf9fd;line-height:1.65}
+  .banner{background:linear-gradient(135deg,#7c5cff,#534AB7);color:#fff;padding:30px 40px}
+  .banner h1{margin:0 0 6px;font-size:23px;font-weight:700}
+  .banner p{margin:0;opacity:.92;font-size:13px}
+  .wrap{max-width:1200px;margin:0 auto;padding:24px 30px 80px}
+  h2{font-size:19px;margin:38px 0 14px;padding:10px 14px;background:var(--c-l);border-radius:10px;color:var(--c-d)}
+  h3{font-size:15px;margin:24px 0 8px;color:var(--c-d);padding-left:10px;border-left:3px solid var(--c)}
+  h4{font-size:13.5px;margin:16px 0 6px;color:#3a3f4a}
+  p,li{font-size:13.5px;color:#3a3f4a}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12.5px;background:#fff}
+  th,td{border:1px solid #e5e2ef;padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--c-l);color:var(--c-d);font-weight:600;white-space:nowrap}
+  code{background:#f0edfb;padding:1px 6px;border-radius:5px;font-size:12px;color:var(--c-d)}
+  .meta{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 4px}
+  .meta span{background:var(--c-l);color:var(--c-d);border:1px solid #d9d3f7;padding:4px 12px;border-radius:20px;font-size:12px}
+  .note{background:#fff7e6;border:1px solid #ffe0a3;border-radius:10px;padding:12px 16px;font-size:13px;margin:12px 0}
+  .note b{color:#b35e00}
+  .rel{background:var(--c-l);border:1px solid #c9bff5;border-radius:10px;padding:12px 16px;font-size:13px;margin:12px 0}
+  .rel b{color:var(--c-d)}
+  .danger{background:var(--red-l);border:1px solid #fecaca;border-radius:10px;padding:12px 16px;font-size:13px;margin:12px 0;color:var(--red)}
+  .danger b{color:var(--red)}
+  .card{border:1px solid #e5e2ef;border-radius:12px;padding:14px 16px;background:#fff;margin:10px 0}
+  .tag{display:inline-block;background:var(--c);color:#fff;border-radius:5px;padding:1px 8px;font-size:11px;margin-right:4px}
+  .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .flow .step{background:#fff;border:1px solid #d9d3f7;border-left:4px solid var(--c);border-radius:8px;padding:9px 13px;font-size:13px;margin:5px 0}
+  .flow .step.act{border-left-color:var(--teal);border-color:#a9d8c8;background:var(--teal-l)}
+  .flow .step.dec{border-left-color:var(--amber);border-color:#e6cf9a;background:var(--amber-l)}
+  .flow .arrow{color:var(--c-d);font-size:15px;line-height:18px;height:18px;text-align:center}
+  .ac{background:var(--blue-l);border:1px solid #b9d6f0;border-radius:10px;padding:10px 14px;font-size:12.5px;margin:8px 0}
+  .ac b{color:var(--blue)}
+  .footer{text-align:center;color:var(--mut);font-size:12px;margin-top:50px}
+  .toc{background:#fff;border:1px solid #e5e2ef;border-radius:12px;padding:16px 22px;font-size:13px}
+  .toc a{color:var(--c-d);text-decoration:none}
+  .toc ol{margin:6px 0;padding-left:22px}
+  .two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+  .two-col img{width:100%;max-width:100%;border:1px solid #e5e2ef;border-radius:12px}
+  .two-col p:first-child{margin-top:0;font-size:12.5px;color:#3a3f4a}
+</style>
+</head>
+<body>
+<div class="banner">
+  <h1>泰小虎 · 直播挂车与时长发券 — 产品需求文档（PRD）</h1>
+  <p>版本 v1.4.1 · 状态：待评审 · 2026-07-17 · 关联需求：优惠券体系（发券引擎）· 接入：火山引擎企业直播</p>
+</div>
+<div class="wrap">
+
+  <div class="meta">
+    <span>类型：新需求（独立分块）</span>
+    <span>发券梯度：单阈值（沿用优惠券体系 A4）</span>
+    <span>发券时机：T+1 批处理（非实时）</span>
+    <span>端：独立 H5 + 微信小程序 + App</span>
+  </div>
+
+  <div class="toc">
+    <b>目录</b>
+    <ol>
+      <li><a href="#a">A. 文档基本信息</a></li>
+      <li><a href="#b">B. 项目背景与目标</a></li>
+      <li><a href="#c">C. 业务流程与架构</a></li>
+      <li><a href="#d">D. 功能需求详情</a></li>
+      <li><a href="#e">E. 验收标准</a></li>
+      <li><a href="#f">F. 埋点需求</a></li>
+      <li><a href="#g">G. 非功能性需求</a></li>
+      <li><a href="#h">H. 关键边界设计检查清单</a></li>
+      <li><a href="#i">I. 文档维护与变更规范</a></li>
+    </ol>
+  </div>
+
+  <div class="note"><b>钉钉文档格式说明：</b>本 PRD 以标准 HTML 文档结构（标题、表格、列表、图片）编写，可直接复制到钉钉文档。C 板块流程/架构/数据图、D 板块界面截图均使用 <b>PNG 图片</b>而非 CSS/HTML 图表，避免粘贴后样式丢失。涉及原型的位置已用括号标注本地原型路径；待全部确认后统一替换为 GitHub Pages 线上链接。D 板块严格按界面设计（截图）、交互说明、业务逻辑、边界条件、数据来源五段式撰写。</div>
+
+  <!-- ============ A ============ -->
+  <h2 id="a">A. 文档基本信息</h2>
+  <table>
+    <tr><th style="width:140px">项目名称</th><td>泰小虎 · 直播挂车与时长发券</td></tr>
+    <tr><th>创建时间</th><td>2026-07-15（需求框架 v0.3 起点）；PRD 初稿 2026-07-17</td></tr>
+    <tr><th>负责人</th><td>PM：袁中天、刘航 ｜ 技术 Owner：江世华 ｜ 测试：xx（待定）</td></tr>
+    <tr><th>文档状态</th><td>待评审</td></tr>
+    <tr><th>关联需求</th><td>优惠券体系（调用其发券引擎 A4「发券活动配置」的「直播观看时长发券」触发源）；商品域「健康好物」库（挂车商品来源）</td></tr>
+    <tr><th>接入系统</th><td>火山引擎企业直播（直播流 + 观播 SDK + 场次/直播 ID）</td></tr>
+  </table>
+
+  <h3>历史修订记录</h3>
+  <table>
+    <tr><th style="width:70px">版本号</th><th style="width:90px">修订日期</th><th style="width:80px">修订人</th><th>修订内容简述</th><th style="width:70px">状态</th></tr>
+    <tr><td>v0.3</td><td>2026-07-15</td><td>袁中天</td><td>需求框架：确认场次=火山 live_id、T+1 批处理发券、未登录直跳登录、复用优惠券体系 A4 等关键决策</td><td>已对齐</td></tr>
+    <tr><td>v1.0</td><td>2026-07-17</td><td>袁中天</td><td>整合需求框架 v0.3 与架构图，按 PRD 规范 A~I 补全功能需求详情、验收标准、埋点需求、非功能性需求、边界自检、维护规范；定稿发券梯度=单阈值（沿用 A4）</td><td>已归档</td></tr>
+    <tr><td>v1.1</td><td>2026-07-17</td><td>袁中天</td><td>B 补 KPI 量化草案值；D 终端 1&2 明确关联 L-客户端合并原型；F 埋点对齐《泰小虎埋点事件管理》v2.0（23 事件）——用户端可感知行为改为复用现状事件、仅保留 3 个直播特有新增、后台操作单列不进 App 埋点表</td><td>待评审</td></tr>
+    <tr><td>v1.2</td><td>2026-07-17</td><td>袁中天</td><td>F 板块按用户最新《泰小虎埋点表 v2.3》复核重写：基线改 v2.3（含划线删除项）；删除对不存在的 login_complete 引用，登录信号改为复用友盟自带埋点；复用事件只引用 v2.3 保留（非划线）属性、purchase_* 不再引用已删 recommend_id；新增事件按 v2.3 标准列格式定义（3 个：live_watch_heartbeat / live_watch_end / coupon_issue_trigger）；挂车商品卡曝光本期不埋</td><td>待评审</td></tr>
+    <tr><td>v1.3</td><td>2026-07-17</td><td>袁中天</td><td>C 板块业务/信息/数据三类图全部改为图片（PNG）插入：业务流程图重绘为横向钉钉流程图样式，信息架构图按四层列式重绘，数据流转图按模板重绘；D 板块涉及原型处括号补本地原型链接；文档版本号整体更新为 v1.3</td><td>待评审</td></tr>
+    <tr><td>v1.4</td><td>2026-07-17</td><td>袁中天</td><td>D 功能需求详情按参考模板重构：补充所有终端界面截图（后台/客户端共 10 张）、每个元素级交互说明、业务逻辑/计算公式、字段级数据来源、更完整的边界条件；修正版本号说明</td><td>待评审</td></tr>
+    <tr><td>v1.4.1</td><td>2026-07-17</td><td>袁中天</td><td>D.2「涉及终端明细」改为参考模板三列格式（影响对象 / 影响说明 / 应对措施），内容按终端细化并包含原型链接；页面最大宽度由 1040px 调整为 1200px；信息架构图与全文中「健康好物库」统一改为「商品中心」</td><td>待评审</td></tr>
+    <tr><td>v1.4.2</td><td>2026-07-21</td><td>袁中天</td><td>同步平台端后台原型（直播挂车-后端原型.html）全部迭代改动至 §D：① 后台导航由左侧侧边栏改为顶部水平导航+页面跳转（hash 路由）；② 直播商品池推送状态以火山引擎返回为准（未推送→推送、已推送→更新重推），删除取消推送/推送中/重试；③ 直播间管理新增「同步直播间」按钮、列表补封面/直播ID/挂车数、操作列改「查看挂车商品」并删除「查看日志」；④ 挂车商品列表改「同步/同步全部商品」、表格增「销售合计」；⑤ 直播数据看板移除 KPI 汇总卡仅保留查询+表格，月汇总选月/日汇总选日。</td><td>待评审</td></tr>
+  </table>
+
+  <!-- ============ B ============ -->
+  <h2 id="b">B. 项目背景与目标</h2>
+  <h3>业务背景（痛点分析）</h3>
+  <p>在数字人能力上线之前，需先具备<b>独立直播 H5 页面</b>以承载直播带货场景。当前痛点：</p>
+  <ul>
+    <li><b>转化断点</b>：直播场景下用户看到商品却缺乏顺畅的购买路径，直播间与商品交易域未打通，观看行为无法直接转化为下单。</li>
+    <li><b>激励缺失</b>：用户观看直播的时长未被沉淀为可运营的营销资产，缺少"看直播得福利"的正向激励，复看与停留时长偏低。</li>
+    <li><b>能力割裂</b>：直播底层能力（火山引擎）与泰小虎自有的商品、券体系未联动，商品卡与发券流程需由我方自研控制以统一体验。</li>
+  </ul>
+  <p>具体场景：用户在 App/小程序看到一场"科学减重专场"直播，边看边对主播推荐的健康好物产生兴趣，但无法直接下单；看完直播也无任何后续触达，观看时长被白白浪费。</p>
+
+  <h3>项目目标</h3>
+  <div class="grid2">
+    <div class="card"><h4>业务目标</h4>
+      <ul>
+        <li>打通"直播间 → 商品详情页 → 下单"转化链路，提升直播带货转化。</li>
+        <li>将观看时长沉淀为可运营资产，通过发券激励提升用户停留与复看。</li>
+        <li>以最小成本复用火山直播能力 + 优惠券体系，不自建发券引擎。</li>
+      </ul>
+    </div>
+    <div class="card"><h4>用户目标</h4>
+      <ul>
+        <li>边看直播边买：在直播间直接看到商品卡并跳转购买。</li>
+        <li>看直播得福利：观看达到时长即获得优惠券，感知明确。</li>
+        <li>无打扰：未达时长、未登录期间不被打扰，券到账后登录自然感知。</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>衡量指标（KPI）</h3>
+  <table>
+    <tr><th style="width:170px">指标</th><th>说明 / 口径</th><th style="width:130px">目标（草案）</th></tr>
+    <tr><td>直播观看人数（UV）</td><td>进入直播 H5 的去重用户数（已登录态）</td><td>单场 ≥ 2,000</td></tr>
+    <tr><td>人均观看时长</td><td>单次连续观看时长中位数（T+1 累计口径）</td><td>中位数 ≥ 6 分钟</td></tr>
+    <tr><td>达阈值人数占比</td><td>单次连续观看 ≥ 发券阈值的 UV / 直播观看 UV</td><td>≥ 35%</td></tr>
+    <tr><td>挂车点击率</td><td>挂车商品卡点击 UV / 直播观看 UV</td><td>≥ 15%</td></tr>
+    <tr><td>发券触达率</td><td>达阈值并成功发券人数 / 达阈值人数</td><td>≈ 100%（静默）</td></tr>
+    <tr><td>获券通知点击率</td><td>点击"去使用" UV / 通知弹窗展示 UV</td><td>≥ 25%</td></tr>
+    <tr><td>券核销率</td><td>核销券数 / 发放券数（券逻辑在优惠券体系）</td><td>≥ 12%</td></tr>
+    <tr><td>挂车成交转化率</td><td>H5 落地页确认购买 UV / 挂车点击 UV</td><td>≥ 8%</td></tr>
+  </table>
+  <div class="note"><b>说明：</b>以上目标为 PM 依据同类健康导购直播首期经验给出的<b>草案值（待评审复核）</b>，供运营确认或调整；发券触达率因走静默批处理，正常应逼近 100%。本需求侧负责把数据采集与展示能力（数据看板 A4）建好，使全部指标可观测。</div>
+
+  <!-- ============ C ============ -->
+  <h2 id="c">C. 业务流程与架构</h2>
+
+  <h3>业务流程图（主流程 + 分支）</h3>
+  <p><img src="PRD配图/图1-业务流程图.png" alt="业务流程图（横向钉钉流程图风格）" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+  <div class="note" style="font-size:12px">上图为主流程横向视图，菱形为判断节点，灰色分支为未登录/达限领的异常处理；主流程核心：进入 → 登录判断 → 观看 → 挂车点击 → 时长上报 → 用户离开 → T+1 批处理 → 限领判断 → 登录后通知 → 去使用 → 商品列表核销。</div>
+
+  <h4>异常 / 分支流程</h4>
+  <table>
+    <tr><th style="width:40px">编号</th><th style="width:140px">触发场景</th><th>处理路径 / 规则</th></tr>
+    <tr><td>E1</td><td>未登录进入直播</td><td>直跳登录页；未登录期间不计时、不发券；登录成功回到观看页从头计时。</td></tr>
+    <tr><td>E2</td><td>弱网 / 火山回调丢失</td><td>因发券为 T+1 批处理（非实时），无需"断网即退出"的实时发券兜底；弱网/回调丢失仅导致该时段时长缺失（数据采集层通用问题），不影响 T+1 对已沉淀累计时长的判定。</td></tr>
+    <tr><td>E3</td><td>中途退出再进</td><td>同一 live_id 下观看时长<b>从 0 重置</b>；需<b>单次连续</b>观看达阈值才发券（不累计）。</td></tr>
+    <tr><td>E4</td><td>发券 API 调用失败</td><td>幂等重试（以触发记录为幂等键防重）；仍失败记日志供排查；不发券不通知。</td></tr>
+    <tr><td>E5</td><td>达限领上限</td><td>本场静默不再发券；已发张数来自触发记录本场计数。</td></tr>
+    <tr><td>E6</td><td>券过期未用</td><td>券过期属优惠券体系职责，本需求仅记录触发，不持有券实例状态。</td></tr>
+  </table>
+
+  <h3>信息架构（前端展示层 / 后端配置层 / 数据层 / 外部系统）</h3>
+  <p><img src="PRD配图/图2-信息架构图.png" alt="信息架构图（四层列式）" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+  <div class="note" style="font-size:12px">四层结构：前端展示层（直播 H5 + App/小程序感知）、后端配置层（直播间/主播/挂车/数据看板，发券规则复用 A4）、数据层（本需求持有的 4 张表）、外部/关联系统（火山引擎、优惠券体系、商品中心）。</div>
+
+  <h3>状态机与状态流转规则</h3>
+  <p style="color:var(--mut);font-size:12.5px">本需求仅持有「直播场次 / 观看记录 / 发券触发记录」三类实体；券实例状态在优惠券体系内。</p>
+
+  <h4>实体 A：直播场次（live session）</h4>
+  <table>
+    <tr><th style="width:100px">起始状态</th><th style="width:150px">触发动作 (Action)</th><th style="width:90px">目标状态</th><th>业务规则 / 前置条件</th></tr>
+    <tr><td>未开始</td><td>运营创建场次并开播</td><td>直播中</td><td>火山侧创建直播（live_id 由火山 CreateActivityAPIV2 返回），H5 可进入观看；时长采集与发券仅直播中有效。</td></tr>
+    <tr><td>直播中</td><td>运营结束直播</td><td>已结束</td><td>停止时长采集，不再发券；本场已触发记录保留。</td></tr>
+    <tr><td>已结束</td><td>生成回放</td><td>回放中</td><td>回放不触发发券（时长发券仅直播中有效）。</td></tr>
+    <tr><td>直播中</td><td>运营紧急中止</td><td>已结束</td><td>同"结束直播"；已发券不受影响。</td></tr>
+  </table>
+
+  <h4>实体 B：观看记录（watch record，per user per live）</h4>
+  <table>
+    <tr><th style="width:100px">起始状态</th><th style="width:150px">触发动作 (Action)</th><th style="width:90px">目标状态</th><th>业务规则 / 前置条件</th></tr>
+    <tr><td>未观看</td><td>用户进入且已登录</td><td>观看中</td><td>开始计时（每次从 0；中途退出重置）；未登录不进入此态。</td></tr>
+    <tr><td>观看中</td><td>用户退出 / 切后台</td><td>暂停(退出)</td><td>停止计时；本次时长<b>清零</b>（E3 重置策略，不累计）。</td></tr>
+    <tr><td>暂停(退出)</td><td>用户再次进入</td><td>观看中</td><td>重新从 0 计时（E3）。</td></tr>
+    <tr><td>观看中</td><td>直播结束</td><td>已结束(待结算)</td><td>本场时长停止并沉淀，<b>待 T+1 批处理结算</b>。</td></tr>
+    <tr><td>已结束(待结算)</td><td>T+1 批处理读累计时长</td><td>已结算</td><td>由发券触发记录（实体 C）承接：达阈值发券，未达标记"时长不足未发"。</td></tr>
+  </table>
+
+  <h4>实体 C：发券触发记录（issue_trigger_log，T+1 结算生成）</h4>
+  <table>
+    <tr><th style="width:100px">起始状态</th><th style="width:150px">触发动作 (Action)</th><th style="width:90px">目标状态</th><th>业务规则 / 前置条件</th></tr>
+    <tr><td>未结算</td><td>T+1 批处理：达阈值且本场未达限领</td><td>已触发(成功)</td><td>调优惠券体系发券 API 成功；以 user_id+live_id 为幂等键（单阈值无梯度维度）。</td></tr>
+    <tr><td>未结算</td><td>T+1 批处理：达阈值但本场已达限领</td><td>已上限(不发)</td><td>静默跳过，不再发（用户无感知）。</td></tr>
+    <tr><td>未结算</td><td>T+1 批处理：未达阈值</td><td>未发(时长不足)</td><td>本场累计时长不足，标记未发，本场不再结算。</td></tr>
+    <tr><td>未结算</td><td>T+1 批处理：API 调用失败</td><td>失败(待重试)</td><td>幂等重试；仍失败记日志，不发券不通知。</td></tr>
+    <tr><td>已触发(成功)</td><td>用户登录 App/小程序</td><td>已通知</td><td>登录成功第一个页面即弹窗 + 消息中心红点；同一批券只通知一次（去重）。</td></tr>
+    <tr><td>失败(待重试)</td><td>重试成功</td><td>已触发(成功)</td><td>幂等保证，不重复发券。</td></tr>
+    <tr><td>已上限(不发)/未发</td><td>—</td><td>终态</td><td>本场不再发券。</td></tr>
+  </table>
+
+  <h3>系统间数据流转图</h3>
+  <p><img src="PRD配图/图3-数据流转图.png" alt="系统间数据流转图（横向）" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+  <div class="note" style="font-size:12px"><b>数据流转：</b>① 商品/挂车由我方后台同步到火山直播 → ② 火山下发直播流+挂车到用户端 → ③ 用户点击挂车跳转当前环境商品详情页（交易域旁路）→ ④ 火山 SDK 心跳上报观看时长到我方数据层 → ⑤ T+1 批处理按累计时长调优惠券体系发券 API → ⑥ 生成券实例进入用户券包 → ⑦ 用户登录 App/小程序触发弹窗+红点通知，去使用跳商品列表（闭环）。</div>
+
+  <!-- ============ D ============ -->
+  <h2 id="d">D. 功能需求详情</h2>
+
+<h3>D.1 需求影响范围</h3>
+<div class="card">
+  <ul>
+    <li><b>不冲击老版本 / 老数据</b>：本需求为独立分块，新增独立直播 H5 + 接入火山引擎 + 调用优惠券体系发券 API；不修改既有交易域、用户域核心逻辑。</li>
+    <li><b>不新建发券引擎</b>：发券规则（时长阈值、限领、有效期、券模板）全部复用优惠券体系 A4，本需求仅做触发与展示，不持有券实例/券模板/商品底价。</li>
+    <li><b>新增数据表</b>：直播场次表、观看记录表、发券触发记录、挂车关系表、主播表（均属本需求数据层）。</li>
+    <li><b>影响现有功能</b>：App/小程序"消息中心"需新增"券到账"记录类型与红点；登录后首屏需支持获券弹窗（不影响既有登录流程）。</li>
+    <li><b>权限影响</b>：平台后台新增"APP直播"菜单及「直播间管理」「主播管理」「挂车配置」「直播数据看板」子权限；运营角色需单独授权。</li>
+  </ul>
+</div>
+
+<h3>D.2 涉及终端明细（按功能模块）</h3>
+<table>
+  <tr><th style="width:160px">影响对象</th><th style="min-width:380px">影响说明</th><th style="width:300px">应对措施</th></tr>
+  <tr>
+    <td>直播 H5 观看页（用户端）</td>
+    <td>新增直播观看入口；未登录用户点击商品/互动/获券时必须先登录；观看中按后台配置展示挂车商品、点赞、评论、分享等互动能力。</td>
+    <td>由 <code>live-client.html</code> 承载（观看页/登录页/商城落地页）；播放器接入火山观播 SDK；未登录态统一跳转登录后返回原页面。</td>
+  </tr>
+  <tr>
+    <td>App / 小程序 · 获券通知</td>
+    <td>登录后首屏需新增「获券通知」弹窗；消息中心需新增「券到账」类型记录与红点提示；「去使用」需跳转可核销的商品列表。</td>
+    <td>由 <code>live-client.html</code> 承载（获券弹窗/消息中心）；消息中心通过现有通知通道新增类型，不改造底层推送；弹窗由服务端「未读获券记录」触发。</td>
+  </tr>
+  <tr>
+    <td>平台后台 · 直播间管理</td>
+    <td>新增直播间创建、编辑、基础信息管理、挂车上限 N、开播/停播/回放控制；直播数据与第三方火山 ActivityId 关联。</td>
+    <td>由 <code>live-platform.html</code> 承载；直播基础字段落本地「直播场次表」，状态通过火山 UpdateActivityStatusAPI 同步。</td>
+  </tr>
+  <tr>
+    <td>平台后台 · 主播管理</td>
+    <td>新增主播增删改查、启用/禁用/违规状态、搜索能力；删除主播时需校验是否关联未结束直播。</td>
+    <td>由 <code>live-platform.html</code> 承载；主播信息落本地「主播表」，与直播间通过主播 ID 关联；关联未结束直播时禁止删除并提示。</td>
+  </tr>
+  <tr>
+    <td>平台后台 · 挂车选品配置</td>
+    <td>新增从「商品中心」选品挂到直播间的入口，挂车数量受直播间「挂车上限 N」限制；支持移除/调整顺序。</td>
+    <td>由 <code>live-platform.html</code> 承载；挂车关系落本地「挂车关系表」；选品数据从商品中心接口只读获取。</td>
+  </tr>
+  <tr>
+    <td>平台后台 · 直播数据看板</td>
+    <td>新增直播观看人数、人均时长、发券转化、挂车点击/成交转化、明细导出等数据展示。</td>
+    <td>由 <code>live-dashboard.html</code> 承载；数据来源于火山 SDK 心跳、本需求发券触发记录、商城订单域；T+1 离线聚合后展示。</td>
+  </tr>
+  <tr>
+    <td>优惠券体系 A4（复用）</td>
+    <td>发券活动配置、券模板、券实例、核销、限领/周期规则已在 A4 体系内建设；本需求仅作为新的触发源接入。</td>
+    <td>复用 A4 能力，不单独建设；本需求通过调用 A4 发券 API 完成 T+1 批处理发券，券包展示/核销逻辑沿用既有端表现。</td>
+  </tr>
+</table>
+
+<h3>D.3 终端 1：直播 H5 观看页（用户端）</h3>
+<div class="note"><b>原型参考：</b><code>live-client.html</code>——包含 L1 直播观看页、L4 登录引导页、L3 商品落地页。以下界面描述以截图为准。</div>
+
+<h4>界面设计（原型图）</h4>
+<div class="two-col">
+  <div>
+    <p><b>图 D-1：L1 直播观看页（已登录态）</b></p>
+    <p><img src="PRD配图/截图-客户端-L1观看页-已登录.png" alt="L1 直播观看页（已登录）" style="border:1px solid #e5e2ef;border-radius:12px"></p>
+  </div>
+  <div>
+    <p><b>图 D-2：L1 直播观看页（未登录遮罩）</b></p>
+    <p><img src="PRD配图/截图-客户端-L1未登录遮罩.png" alt="L1 未登录遮罩" style="border:1px solid #e5e2ef;border-radius:12px"></p>
+  </div>
+</div>
+
+<h4>交互说明</h4>
+<table>
+  <tr><th style="width:120px">元素</th><th style="width:120px">手势</th><th style="width:160px">触发前</th><th style="width:160px">触发后</th><th>异常/反馈</th></tr>
+  <tr><td>挂车商品卡</td><td>点击</td><td>商品卡片展示图/名/价/标签</td><td>从底部弹出半屏商品确认 Sheet</td><td>商品已下架则 toast「商品已下架」</td></tr>
+  <tr><td>商品确认 Sheet</td><td>点击「立即前往」</td><td>Sheet 显示商品图、名、价格、当前环境目标</td><td>按当前环境跳转：App→App 商品详情，小程序→小程序商品详情，浏览器→H5 商品详情</td><td>环境识别失败兜底 H5；跳转失败 toast「跳转失败，请重试」</td></tr>
+  <tr><td>商品确认 Sheet</td><td>点击「取消」/点遮罩</td><td>Sheet 展开</td><td>Sheet 下滑收起</td><td>—</td></tr>
+  <tr><td>挂车商品区</td><td>左右滑动</td><td>展示前 3 个商品</td><td>横向滚动查看后续商品</td><td>仅 3 个商品时不可滑动</td></tr>
+  <tr><td>未登录遮罩</td><td>点击「去登录」</td><td>全屏遮罩显示锁图标+提示</td><td>跳转 L4 登录页</td><td>登录成功后返回观看页，观看时长从 0 开始</td></tr>
+  <tr><td>点赞/分享/评论图标</td><td>点击</td><td>图标默认态</td><td>点赞：图标高亮+1；评论：拉起键盘；分享：调用系统分享面板</td><td>未登录点赞：弹登录引导</td></tr>
+  <tr><td>播放器</td><td>点击</td><td>播放器正常播放</td><td>暂停/播放切换</td><td>直播结束显示结束封面</td></tr>
+</table>
+
+<h4>业务逻辑 / 计算规则</h4>
+<ul>
+  <li><b>文本截断规则：</b>直播标题最多 17 字，超长用「…」截断；主播简介最多 30 字，超长用「…」截断；商品名称在卡片内最多 2 行，超出用「…」截断。</li>
+  <li><b>价格显示：</b>商品卡显示「直播价 ¥XX<small>划线价 ¥XX</small>」，划线价来自商品库，直播价 = 商品库当前活动价（无活动则取销售价）。</li>
+  <li><b>观看时长计算：</b>以火山观播 SDK 心跳回调为基准，每次心跳上报 <code>duration_delta</code>（秒）；本次观看时长 = Σ(duration_delta)，有效心跳需满足 2s ≤ 间隔 ≤ 120s。</li>
+  <li><b>发券判定：</b>单次连续观看时长 ≥ A4 配置的阈值（秒）时，该用户/本场次进入 T+1 发券候选集。</li>
+  <li><b>中途退出重置：</b>用户退出观看页或切后台 > 5s，视为本次观看结束，再次进入时长从 0 重新累计。</li>
+  <li><b>挂车商品上限：</b>单个直播间最多挂载 N 个商品，N 由后台「挂车上限」配置，默认 10。</li>
+</ul>
+
+<h4>边界条件（极端场景）</h4>
+<table>
+  <tr><th style="width:140px">场景</th><th>处理规则</th></tr>
+  <tr><td>未登录</td><td>显示全屏遮罩，点击「去登录」跳转；未登录期间不计时、不发券、不累计。</td></tr>
+  <tr><td>弱网/火山回调丢失</td><td>仅丢失该时段时长，不影响 T+1 对已沉淀时长的判定。</td></tr>
+  <tr><td>心跳间隔异常</td><td>duration_delta < 2s 或 > 120s 视为异常，丢弃该心跳。</td></tr>
+  <tr><td>切后台</td><td>切后台即停止计时，返回后重新从 0 开始。</td></tr>
+  <tr><td>直播结束</td><td>停止计时，本次观看时长沉淀，待 T+1 结算。</td></tr>
+  <tr><td>商品下架/售罄</td><td>点击时 toast「商品已下架」，不跳转。</td></tr>
+</table>
+
+<h4>数据来源</h4>
+<table>
+  <tr><th style="width:140px">字段/数据</th><th>来源</th><th>说明</th></tr>
+  <tr><td>直播流/视频画面</td><td>火山引擎观播 SDK（第三方）</td><td>通过 SDK 嵌入 H5 播放</td></tr>
+  <tr><td>观看时长/心跳</td><td>火山观播 SDK 回调（第三方）</td><td>SDK 按固定频率回调心跳</td></tr>
+  <tr><td>商品名称/价格/图</td><td>商品域「商品中心」（第三方）</td><td>通过商品 ID 拉取</td></tr>
+  <tr><td>用户登录态 / UserId</td><td>泰小虎统一登录态（本地存储 + 接口校验）</td><td>未登录跳转登录</td></tr>
+  <tr><td>观看记录</td><td>本需求数据层</td><td>每次进入/退出写一条记录</td></tr>
+</table>
+
+<h3>D.4 终端 2：App / 小程序 获券通知（感知侧）</h3>
+<div class="note"><b>原型参考：</b><code>live-client.html</code>——L5 获券通知弹窗、L6 消息中心。</div>
+
+<h4>界面设计（原型图）</h4>
+<div class="two-col">
+  <div>
+    <p><b>图 D-3：L5 获券通知弹窗</b></p>
+    <p><img src="PRD配图/截图-客户端-L5获券弹窗.png" alt="L5 获券通知弹窗" style="border:1px solid #e5e2ef;border-radius:12px"></p>
+  </div>
+  <div>
+    <p><b>图 D-4：L6 消息中心（券到账记录+红点）</b></p>
+    <p><img src="PRD配图/截图-客户端-L6消息中心.png" alt="L6 消息中心" style="border:1px solid #e5e2ef;border-radius:12px"></p>
+  </div>
+</div>
+
+<h4>交互说明</h4>
+<table>
+  <tr><th style="width:120px">元素</th><th style="width:120px">手势</th><th style="width:160px">触发前</th><th style="width:160px">触发后</th><th>异常/反馈</th></tr>
+  <tr><td>获券弹窗</td><td>自动弹出</td><td>用户登录成功进入第一个页面</td><td>居中弹窗展示券张数/券列表/「去使用」/「稍后再说」</td><td>无未通知券时不弹；同一批券只弹一次</td></tr>
+  <tr><td>「去使用」</td><td>点击</td><td>弹窗展示</td><td>关闭弹窗，跳转商品列表页（非「我的优惠券」）</td><td>商品列表为空时显示空态</td></tr>
+  <tr><td>「稍后再说」</td><td>点击</td><td>弹窗展示</td><td>关闭弹窗，保留消息中心红点</td><td>—</td></tr>
+  <tr><td>消息中心券记录</td><td>点击</td><td>列表展示券到账记录</td><td>跳转商品列表页</td><td>已过期券显示「已过期」标签</td></tr>
+  <tr><td>红点</td><td>—</td><td>存在未读通知</td><td>用户进入消息中心或点击「全部已读」后消失</td><td>—</td></tr>
+</table>
+
+<h4>业务逻辑 / 计算规则</h4>
+<ul>
+  <li><b>弹窗触发条件：</b>友盟登录成功回调后，首个页面 <code>page_view</code> 触发时，检查本需求「发券触发记录」中该用户存在未通知且 result=issued 的记录；若存在则弹出。</li>
+  <li><b>去重规则：</b>以 user_id + 批次号（batch_id，T+1 批处理生成）为维度，同一批次券只通知一次。</li>
+  <li><b>消息中心未读数：</b>未读数 = 未通知(result=issued) + 已通知但未点开的记录数；点开任意券记录或点击「全部已读」后清零。</li>
+  <li><b>「去使用」目标：</b>跳转「商品列表页」——该列表由优惠券体系根据券可用商品范围生成，本需求不持有商品列表。</li>
+</ul>
+
+<h4>边界条件</h4>
+<table>
+  <tr><th style="width:140px">场景</th><th>处理规则</th></tr>
+  <tr><td>无未通知券</td><td>登录后不弹窗，无红点。</td></tr>
+  <tr><td>登录后首屏不是直播页</td><td>无论进入首页、个人中心还是商品页，均弹窗。</td></tr>
+  <tr><td>多账号切换</td><td>以当前登录 user_id 为准，不同账号数据隔离。</td></tr>
+  <tr><td>券已过期</td><td>弹窗仍展示，但点击「去使用」进入商品列表时过滤掉过期券。</td></tr>
+</table>
+
+<h4>数据来源</h4>
+<table>
+  <tr><th style="width:140px">字段/数据</th><th>来源</th><th>说明</th></tr>
+  <tr><td>登录成功信号</td><td>友盟自带埋点 / 泰小虎登录 SDK</td><td>用于触发弹窗检查</td></tr>
+  <tr><td>发券结果</td><td>本需求「发券触发记录」表</td><td>result=issued 且未通知</td></tr>
+  <tr><td>券名称/金额/有效期</td><td>优惠券体系（第三方）</td><td>通过券批次 ID 反查</td></tr>
+  <tr><td>未读状态</td><td>本需求「用户通知记录」表</td><td>记录用户是否已读/已点</td></tr>
+</table>
+
+<!-- 平台端后台原型导航 -->
+<div class="note" style="font-size:12px"><b>平台端后台原型导航：</b>后台三模块（直播商品 / 直播间管理 / 直播数据统计）采用<b>顶部水平导航</b>，点击切换对应页面（hash 路由页面跳转，支持浏览器前进/后退与 URL 深链），<b>不使用左侧侧边栏</b>。原型文件：<code>直播挂车-后端原型.html</code>（平台端）、<code>直播挂车-前端原型.html</code>（用户端）。</div>
+
+<h3>D.5 终端 3：平台后台 · 直播间管理</h3>
+<div class="note"><b>原型参考：</b><code>直播挂车-后端原型.html</code>（平台端后台，顶部导航三页面）——直播间列表、新建/编辑直播弹窗、查看挂车商品抽屉。</div>
+
+<h4>界面设计（原型图）</h4>
+<p><b>图 D-5：直播间列表</b></p>
+<p><img src="PRD配图/截图-后台-直播列表.png" alt="直播间列表" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+<p><b>图 D-6：新建/编辑直播弹窗</b></p>
+<p><img src="PRD配图/截图-后台-新建直播弹窗.png" alt="新建直播弹窗" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+
+<h4>交互说明</h4>
+<table>
+  <tr><th style="width:120px">元素</th><th style="width:120px">手势</th><th style="width:160px">触发前</th><th style="width:160px">触发后</th><th>异常/反馈</th></tr>
+  <tr><td>「+ 新建直播」</td><td>点击</td><td>列表页</td><td>打开「新建直播」弹窗，字段为空</td><td>无权限时按钮置灰/隐藏</td></tr>
+  <tr><td>「编辑」</td><td>点击</td><td>列表操作列</td><td>打开弹窗并回填当前直播数据，标题为「编辑直播基础信息」</td><td>直播中/已结束仅部分字段可编辑</td></tr>
+  <tr><td>「进入直播间」</td><td>点击</td><td>列表操作列</td><td>跳转直播间详情页（挂车配置页）</td><td>—</td></tr>
+  <tr><td>「查看挂车商品」</td><td>点击</td><td>列表操作列</td><td>右侧抽屉打开该直播间商品列表（商品编号/信息/类别/排序/销量/销量台/销售合计），见 D.8.5</td><td>—</td></tr>
+  <tr><td>「同步直播间」</td><td>点击</td><td>直播间列表页</td><td>调用火山引擎接口拉取最新直播间与挂车商品，刷新列表及挂车数</td><td>拉取中按钮 loading；失败 toast 具体原因</td></tr>
+  <tr><td>功能多选 chips</td><td>点击</td><td>未选中/选中态</td><td>切换选中/取消选中</td><td>至少保留一项，最后一项不可取消</td></tr>
+  <tr><td>封面上传区</td><td>点击</td><td>显示「+ 上传」占位</td><td>唤起系统文件选择，选择后预览并校验尺寸</td><td>尺寸/格式/大小不符：提示具体规格</td></tr>
+  <tr><td>「开始直播」/「停止推流」</td><td>点击</td><td>操作列显示对应按钮</td><td>调火山 UpdateActivityStatusAPI，成功更新状态；失败气泡提示「更改失败，失败原因【xxxxx】」</td><td>连续点击需防抖，防止重复请求</td></tr>
+</table>
+
+<h4>业务逻辑 / 计算规则</h4>
+<ul>
+  <li><b>列表字段：</b>直播间 ID、封面图、直播信息（标题/副标题/状态/时间）、主播昵称、挂车商品数、操作（查看挂车商品 / 进入直播间）。</li>
+  <li><b>列表排序：</b>按「开播时间」倒序，同时间按创建时间倒序。</li>
+  <li><b>分页：</b>默认 10 条/页，支持 10/20/50 条切换。</li>
+  <li><b>数据唯一性：</b>同一自然日、同一主播、同一开播时间不可重复创建直播（防重）。</li>
+  <li><b>新建直播字段校验：</b>
+    <ul>
+      <li>直播标题：必填，1–17 字；</li>
+      <li>直播副标题：必填，1–30 字；</li>
+      <li>主播：必填，从主播表下拉单选；</li>
+      <li>主播简介：必填，1–100 字；</li>
+      <li>开播时间：必填，必须晚于当前时间；</li>
+      <li>结束时间：必填，必须晚于开播时间；</li>
+      <li>挂车上限 N：必填，1–50 整数；</li>
+      <li>是否推荐：复选框；</li>
+      <li>直播功能：至少勾选 1 项（点赞/评论/商品货架/回放/分享/客服）；</li>
+      <li>封面图：四张至少上传 1 张（横屏封面图/竖屏封面图必须上传）；背景图 1080×1920 ≤2M（JPG/PNG），分享卡 800×640 ≤1M（JPG/PNG），竖屏封面 1125×2250 ≤2M（JPG/PNG），横屏封面 1920×1080 ≤2M（JPG/PNG）。</li>
+    </ul>
+  </li>
+  <li><b>场次 ID 生成：</b>提交时调用火山 CreateActivityAPIV2，成功后返回 live_id，我方存入「直播场次表」；失败时列表不新增。</li>
+  <li><b>状态流转：</b>未开始 → 直播中（运营点击开始直播/火山自动开播）→ 已结束（运营点击停止推流/到达结束时间）→ 回放中（生成回放）。</li>
+  <li><b>再次开播：</b>已结束直播点击「再次开启直播」时，带 OldId 复制配置调火山 CreateActivityAPIV2，返回新 live_id，历史场次计数 +1。</li>
+</ul>
+
+<h4>边界条件</h4>
+<table>
+  <tr><th style="width:140px">场景</th><th>处理规则</th></tr>
+  <tr><td>火山接口失败</td><td>气泡提示「更改失败，失败原因【接口返回信息】」，状态不变。</td></tr>
+  <tr><td>开播时间早于当前时间</td><td>表单校验失败，提示「开播时间必须晚于当前时间」。</td></tr>
+  <tr><td>主播未选择</td><td>提示「请选择主播」。</td></tr>
+  <tr><td>图片规格不符</td><td>提示具体错误，如「横屏封面图需 1920×1080，大小不超过 2M」。</td></tr>
+  <tr><td>删除直播间</td><td>仅「未开始」状态可删除；直播中/已结束不可删除。</td></tr>
+  <tr><td>重复提交</td><td>提交按钮 loading，接口返回前不可再次点击。</td></tr>
+</table>
+
+<h4>数据来源</h4>
+<table>
+  <tr><th style="width:140px">字段/数据</th><th>来源</th><th>说明</th></tr>
+  <tr><td>直播标题/副标题/时间/功能/上限</td><td>平台后台表单 → 本需求直播场次表</td><td>运营录入</td></tr>
+  <tr><td>主播</td><td>本需求主播表</td><td>下拉选择</td></tr>
+  <tr><td>封面图</td><td>对象存储（OSS/S3）</td><td>上传后返回 URL</td></tr>
+  <tr><td>live_id / 状态</td><td>火山引擎 CreateActivityAPIV2 / UpdateActivityStatusAPI（第三方）</td><td>创建/开关播时返回</td></tr>
+  <tr><td>在线人数</td><td>火山直播数据接口（第三方）</td><td>详情页展示</td></tr>
+</table>
+
+<h3>D.6 终端 4：平台后台 · 主播管理</h3>
+<div class="note"><b>原型参考：</b><code>直播挂车-后端原型.html</code>（平台端后台）。</div>
+
+<h4>界面设计（原型图）</h4>
+<p><b>图 D-7：主播管理</b></p>
+<p><img src="PRD配图/截图-后台-主播管理.png" alt="主播管理" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+<p><b>图 D-8：新增/编辑主播弹窗</b></p>
+<p><img src="PRD配图/截图-后台-新增主播弹窗.png" alt="新增主播弹窗" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+
+<h4>交互说明</h4>
+<table>
+  <tr><th style="width:120px">元素</th><th style="width:120px">手势</th><th style="width:160px">触发前</th><th style="width:160px">触发后</th><th>异常/反馈</th></tr>
+  <tr><td>「主播管理」Tab</td><td>点击</td><td>直播间视图</td><td>切换到主播管理视图，列表、筛选、状态 Tab 重置为默认</td><td>—</td></tr>
+  <tr><td>「+ 新增主播」</td><td>点击</td><td>主播管理列表</td><td>打开弹窗，标题「新增主播」</td><td>无权限时隐藏</td></tr>
+  <tr><td>「编辑」</td><td>点击</td><td>操作列</td><td>打开弹窗回填数据，标题「编辑主播」</td><td>—</td></tr>
+  <tr><td>「启用/禁用」</td><td>点击</td><td>状态标签为当前状态</td><td>二次确认后切换状态；禁用后不可被新建直播选择</td><td>操作中接口失败则状态不变</td></tr>
+  <tr><td>「删除」</td><td>点击</td><td>操作列</td><td>二次确认后删除；若有关联未开始/直播中场次则禁止删除</td><td>提示「该主播有关联直播，无法删除」</td></tr>
+</table>
+
+<h4>业务逻辑 / 计算规则</h4>
+<ul>
+  <li><b>列表字段：</b>主播信息（头像/昵称/ID/手机号）、主播简介、状态、操作。</li>
+  <li><b>列表排序：</b>按创建时间倒序。</li>
+  <li><b>状态 Tab：</b>全部 / 启用 / 禁用 / 违规禁用。</li>
+  <li><b>新增/编辑字段校验：</b>
+    <ul>
+      <li>手机号：必填，1 开头 11 位数字；</li>
+      <li>昵称：必填，1–20 字；</li>
+      <li>主播简介：必填，1–200 字。</li>
+    </ul>
+  </li>
+  <li><b>唯一性：</b>手机号全局唯一；昵称在启用状态下唯一（禁用的可重复注册）。</li>
+  <li><b>删除校验：</b>主播存在关联且状态为「未开始」或「直播中」的场次时，不可删除；已结束/回放中可删除（不影响历史数据）。</li>
+</ul>
+
+<h4>边界条件</h4>
+<table>
+  <tr><th style="width:140px">场景</th><th>处理规则</th></tr>
+  <tr><td>手机号重复</td><td>提示「手机号已存在」。</td></tr>
+  <tr><td>禁用主播被直播引用</td><td>不影响已创建直播，但新建直播时下拉列表不再显示该主播。</td></tr>
+  <tr><td>违规禁用</td><td>运营手动标记，需填写违规原因；违规主播不可恢复为启用。</td></tr>
+</table>
+
+<h4>数据来源</h4>
+<table>
+  <tr><th style="width:140px">字段/数据</th><th>来源</th><th>说明</th></tr>
+  <tr><td>主播昵称/手机号/简介</td><td>平台后台表单 → 本需求主播表</td><td>运营录入</td></tr>
+  <tr><td>主播头像</td><td>默认头像（无单独上传）</td><td>如后续支持上传，走对象存储</td></tr>
+  <tr><td>关联直播场次</td><td>本需求直播场次表</td><td>删除校验用</td></tr>
+</table>
+
+<h3>D.7 终端 5：平台后台 · 挂车选品配置</h3>
+<div class="note"><b>原型参考：</b><code>直播挂车-后端原型.html</code>（平台端后台）——查看挂车商品抽屉、挂车配置。</div>
+
+<h4>界面设计（原型图）</h4>
+<p><b>图 D-9：直播间详情 · 挂车配置</b></p>
+<p><img src="PRD配图/截图-后台-直播间详情挂车配置.png" alt="直播间详情挂车配置" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+
+<h4>交互说明</h4>
+<table>
+  <tr><th style="width:120px">元素</th><th style="width:120px">手势</th><th style="width:160px">触发前</th><th style="width:160px">触发后</th><th>异常/反馈</th></tr>
+  <tr><td>商品库「+」</td><td>点击</td><td>商品展示在商品库网格</td><td>商品加入右侧「已挂车」列表，并更新顺序</td><td>已达上限 N 时「+」置灰，toast「本场最多挂 N 个商品」</td></tr>
+  <tr><td>「移除」</td><td>点击</td><td>商品在已挂车列表</td><td>从已挂车列表移除，商品库「+」恢复可选</td><td>—</td></tr>
+  <tr><td>上下箭头</td><td>点击</td><td>商品在当前顺序</td><td>与相邻商品交换顺序</td><td>第一项不可上移，末项不可下移</td></tr>
+  <tr><td>商品标签</td><td>点击</td><td>标签展示「直播专享」等</td><td>弹出标签选择浮层，切换标签</td><td>—</td></tr>
+  <tr><td>环境切换按钮</td><td>点击</td><td>微信/App/浏览器</td><td>右侧手机预览区显示对应环境目标提示</td><td>仅预览效果，不影响配置</td></tr>
+  <tr><td>「保存配置」</td><td>点击</td><td>配置有变更</td><td>保存挂车关系到本需求数据层，成功后 toast「保存成功」</td><td>未达上限也可保存；超限不可保存</td></tr>
+</table>
+
+<h4>业务逻辑 / 计算规则</h4>
+<ul>
+  <li><b>已挂车上限：</b>已挂车数量 ≤ 该直播间配置的 N；超出时前端即时拦截，不允许加入。</li>
+  <li><b>商品唯一性：</b>同一商品在同一直播间不可重复挂车。</li>
+  <li><b>展示顺序：</b>已挂车列表按 order 字段从 1 开始递增；前端支持上下调整，后端保存最终顺序。</li>
+  <li><b>商品标签：</b>从预设标签池选择（直播专享/热销/新品/限时），每个商品可选 0–1 个标签。</li>
+  <li><b>商品库来源：</b>只展示「商品中心」中状态为「在售」的商品。</li>
+  <li><b>同步到火山：</b>点击「同步到火山直播」后，将当前挂车商品列表按火山接口格式推送；成功 toast「已同步」，失败 toast 具体原因。</li>
+</ul>
+
+<h4>边界条件</h4>
+<table>
+  <tr><th style="width:140px">场景</th><th>处理规则</th></tr>
+  <tr><td>超出挂车上限</td><td>点击商品库「+」时 toast「本场最多挂 N 个商品」，不加入。</td></tr>
+  <tr><td>商品库为空</td><td>显示空态「暂无在售商品」。</td></tr>
+  <tr><td>直播中修改挂车</td><td>允许修改，但需用户二次确认「直播中修改会实时影响用户端」。</td></tr>
+  <tr><td>火山同步失败</td><td>挂车关系仍保存到我方，但提示「同步到火山失败，失败原因【xx】」。</td></tr>
+</table>
+
+<h4>数据来源</h4>
+<table>
+  <tr><th style="width:140px">字段/数据</th><th>来源</th><th>说明</th></tr>
+  <tr><td>商品库商品</td><td>商品域「商品中心」（第三方）</td><td>状态=在售</td></tr>
+  <tr><td>已挂车关系</td><td>本需求挂车关系表</td><td>live_id + goods_id + order + tag</td></tr>
+  <tr><td>上限 N</td><td>本需求直播场次表</td><td>直播间配置</td></tr>
+  <tr><td>火山挂车同步</td><td>火山引擎接口（第三方）</td><td>将商品列表推送到直播间</td></tr>
+</table>
+
+<h4>查看挂车商品列表（只读抽屉，原型新增）</h4>
+<div class="note" style="font-size:12px">运营在直播间列表点击「查看挂车商品」打开右侧抽屉，查看该直播间已挂载的商品（从火山同步），无需进入详情配置页。</div>
+<table>
+  <tr><th style="width:120px">元素</th><th style="width:120px">手势</th><th style="width:160px">触发前</th><th style="width:160px">触发后</th><th>异常/反馈</th></tr>
+  <tr><td>商品名称/编号搜索、类别筛选</td><td>输入/选择</td><td>商品列表</td><td>按条件过滤列表</td><td>—</td></tr>
+  <tr><td>「同步」</td><td>点击</td><td>抽屉工具栏</td><td>调用火山引擎接口拉取该直播间最新商品数据，刷新列表</td><td>失败时 toast 具体原因</td></tr>
+  <tr><td>「同步全部商品」</td><td>点击</td><td>抽屉工具栏</td><td>全量拉取火山该直播间商品，刷新列表</td><td>失败时 toast 具体原因</td></tr>
+  <tr><td>表格列</td><td>—</td><td>—</td><td>商品编号 / 商品信息（图+名）/ 类别 / 排序（可编辑）/ 销量 / 销量台 / 销售合计（销量×单价）</td><td>—</td></tr>
+  <tr><td>空状态</td><td>—</td><td>该直播间无挂车商品</td><td>提示「点击『同步』拉取火山引擎商品数据」</td><td>—</td></tr>
+</table>
+
+<h3>D.8 终端 6：平台后台 · 直播数据看板</h3>
+<div class="note"><b>原型参考：</b><code>直播挂车-后端原型.html</code>（平台端后台）——直播数据统计页（查询+表格，KPI 汇总卡已移除）。</div>
+
+<h4>界面设计（原型图）</h4>
+<p><b>图 D-10：直播数据看板</b></p>
+<p><img src="PRD配图/截图-后台-直播数据看板.png" alt="直播数据看板" style="max-width:100%;border:1px solid #e5e2ef;border-radius:12px"></p>
+
+<h4>交互说明</h4>
+<table>
+  <tr><th style="width:120px">元素</th><th style="width:120px">手势</th><th style="width:160px">触发前</th><th style="width:160px">触发后</th><th>异常/反馈</th></tr>
+  <tr><td>月份/日期筛选</td><td>选择后点击「查询」</td><td>月汇总选「月」（年+月）、日汇总选「日」（年+月+日）</td><td>刷新数据表格</td><td>无数据时显示空态</td></tr>
+  <tr><td>近 7/30/90 天</td><td>点击</td><td>默认近 7 天</td><td>时间范围自动切换并刷新</td><td>—</td></tr>
+  <tr><td>「导出报表」</td><td>点击</td><td>列表有数据</td><td>下载当前筛选条件下的 Excel 报表</td><td>无数据时提示「暂无数据可导出」</td></tr>
+  <tr><td>明细表行</td><td>点击</td><td>列表展示</td><td>跳转该直播间详情页（可选）</td><td>—</td></tr>
+</table>
+
+<h4>业务逻辑 / 计算规则</h4>
+<ul>
+  <li><b>KPI 卡：</b>原型后台实现上已移除顶部 KPI 汇总卡，仅保留「查询工具栏 + 数据表格」的简洁形态（趋势图、漏斗、明细表作为可选深入分析维度保留）；若需 KPI 汇总可在表格上方增配，本期不默认展示。</li>
+  <li><b>趋势图：</b>双 Y 轴。柱状图 = 每日观看人数；折线图 = 每日发券数。</li>
+  <li><b>转化漏斗：</b>观看人数 → 达发券阈值人数 → 成功发券人数 → 已核销人数，逐级展示转化率。</li>
+  <li><b>明细表：</b>直播标题、状态、观看人数、峰值在线、场均时长、发券数、核销数、挂车点击、发券转化。</li>
+  <li><b>数据口径：</b>全部按 T+1 批处理后的沉淀数据展示，不展示实时数据。</li>
+</ul>
+
+<h4>边界条件</h4>
+<table>
+  <tr><th style="width:140px">场景</th><th>处理规则</th></tr>
+  <tr><td>无数据</td><td>数据表格显示「暂无数据」；趋势图、漏斗（若展示）显示空态。</td></tr>
+  <tr><td>时间范围跨月</td><td>按自然日聚合，X 轴显示 MM-DD。</td></tr>
+  <tr><td>筛选单场直播</td><td>趋势图只显示该直播开播前后 7 天数据。</td></tr>
+</table>
+
+<h4>数据来源</h4>
+<table>
+  <tr><th style="width:140px">字段/数据</th><th>来源</th><th>说明</th></tr>
+  <tr><td>观看人数/时长</td><td>本需求观看记录表</td><td>按 user_id 去重/求中位数</td></tr>
+  <tr><td>发券数</td><td>本需求发券触发记录表</td><td>result=issued</td></tr>
+  <tr><td>核销数/券状态</td><td>优惠券体系（第三方）</td><td>通过券批次/券实例反查</td></tr>
+  <tr><td>挂车点击</td><td>埋点 / 本需求点击记录表</td><td>可复用 purchase_link_click</td></tr>
+</table>
+
+<h3>D.8.5 平台后台 · 直播商品池（选品推送至直播间）</h3>
+<div class="note"><b>原型参考：</b><code>直播挂车-后端原型.html</code>（平台端后台）顶部「直播商品」页面。</div>
+<h4>列表字段</h4>
+<ul>
+  <li>商品编号、商品信息（图+名）、商家、库存、销量、价格、推送状态、操作。</li>
+</ul>
+<h4>推送状态与操作逻辑</h4>
+<ul>
+  <li><b>状态来源：</b>推送状态<b>以火山引擎返回为准</b>——火山返回成功即「推送成功」，返回失败即「推送失败」，平台不做中间态臆测。</li>
+  <li><b>未推送：</b>操作列显示「推送」，点击调用火山接口推送该商品至直播间。</li>
+  <li><b>已推送（成功/失败）：</b>操作列显示「更新」，点击重新调火山接口推送（失败后点击「更新」继续推）。</li>
+  <li>删除「取消推送」「推送中」「重试」等中间态操作。</li>
+</ul>
+<h4>数据来源</h4>
+<table>
+  <tr><th style="width:140px">字段/数据</th><th>来源</th><th>说明</th></tr>
+  <tr><td>商品基础信息</td><td>商品域「商品中心」（第三方）</td><td>只读获取</td></tr>
+  <tr><td>推送状态</td><td>火山引擎接口返回</td><td>成功/失败</td></tr>
+  <tr><td>推送关系</td><td>本需求挂车关系表</td><td>live_id + goods_id</td></tr>
+</table>
+
+<h3>D.9 终端 7：发券规则配置（复用优惠券体系 A4）</h3>
+<div class="danger"><b>边界声明：</b>本需求不建设发券规则配置页。发券活动（关联直播 + 观看时长阈值·秒 + 关联券模板 + 发放上限 + 单用户限领 + 活动周期）由优惠券体系 A4「发券活动配置」的「直播观看时长发券」触发源统一配置。本需求 T+1 批处理按 A4 生效的活动判定发券。<b>本期为单阈值（沿用 A4 现状），不支持多梯度。</b></div>
+
+<table>
+  <tr><th style="width:140px">配置项</th><th>说明</th><th>数据来源</th></tr>
+  <tr><td>触发源</td><td>选择「直播观看时长发券」</td><td>优惠券体系 A4</td></tr>
+  <tr><td>时长阈值</td><td>正整数，单位秒，例如 300（5 分钟）</td><td>运营在 A4 配置</td></tr>
+  <tr><td>关联直播间</td><td>选择本需求创建的直播间（多选）</td><td>本需求直播场次表 → A4 可选</td></tr>
+  <tr><td>单用户限领</td><td>每个用户每场/活动期间最多 N 张</td><td>运营在 A4 配置</td></tr>
+  <tr><td>券模板/有效期</td><td>选择优惠券体系已有券模板</td><td>优惠券体系</td></tr>
+</table>
+<!-- ============ E ============ -->
+  <h2 id="e">E. 验收标准</h2>
+  <p style="color:var(--mut);font-size:12.5px">以下采用 Given（前提）→ When（操作）→ Then（结果）描述关键场景。</p>
+
+  <div class="ac"><b>AC-1 未登录进入直播</b><br>Given 用户未登录进入直播 H5 ｜ When 页面加载完成 ｜ Then 直接跳转登录页，期间不采集观看时长、不发券；登录成功后回到观看页从头计时。</div>
+  <div class="ac"><b>AC-2 单次连续达阈值发券</b><br>Given 用户已登录且某 live_id 正在直播 ｜ When 单次连续观看时长 ≥ A4 配置阈值 ｜ Then T+1 批处理静默调发券 API 成功，写触发记录（已触发），H5 无浮层。</div>
+  <div class="ac"><b>AC-3 中途退出重置</b><br>Given 用户已观看 8 分钟（阈值 10 分钟） ｜ When 中途退出后再进入 ｜ Then 观看时长从 0 重置，需重新连续观看达阈值才发券（不累计）。</div>
+  <div class="ac"><b>AC-4 达限领上限静默跳过</b><br>Given 该用户该 live_id 已达限领 N 张 ｜ When T+1 批处理判定 ｜ Then 静默跳过，不重复发券，无用户感知。</div>
+  <div class="ac"><b>AC-5 登录后获券弹窗</b><br>Given 用户在前序场次已静默获券 ｜ When 用户登录 App/小程序成功进入第一个页面 ｜ Then 弹出"获得 X 张优惠券"弹窗 + 消息中心红点；同一批券仅通知一次。</div>
+  <div class="ac"><b>AC-6 去使用跳转</b><br>Given 获券弹窗展示 ｜ When 用户点击"去使用" ｜ Then 直接跳转商品列表页（非我的优惠券）。</div>
+  <div class="ac"><b>AC-7 后台创建直播间</b><br>Given 运营在后台新建直播并开播 ｜ When 提交 ｜ Then 后台调火山 CreateActivityAPIV2 返回 live_id，列表新增该直播间（状态=未开始/直播中），场次ID 由火山返回。</div>
+  <div class="ac"><b>AC-8 挂车超上限</b><br>Given 某直播间已挂 N 个商品 ｜ When 运营尝试再挂第 N+1 个 ｜ Then 提示"本场最多挂 N 个商品"，保存失败。</div>
+  <div class="ac"><b>AC-9 火山控制失败提示</b><br>Given 后台详情页点击"开播/停播" ｜ When 火山接口返回失败 ｜ Then 气泡提示「更改失败，失败原因【接口返回信息】」，状态不变。</div>
+  <div class="ac"><b>AC-10 发券 API 失败重试</b><br>Given T+1 批处理调发券 API 失败 ｜ When 重试仍失败 ｜ Then 触发记录标记"失败(待重试)"并记日志，不发券不通知，幂等键防重。</div>
+
+  <!-- ============ F ============ -->
+  <h2 id="f">F. 埋点需求</h2>
+  <div class="note"><b>对齐说明：</b>本表以《泰小虎埋点事件管理》<b>v2.3（现网最新，含划线删除项与新增项）</b>为基线。原则：<b>用户端可感知行为一律复用 v2.3 现状通用事件</b>（page_view / popup_view / popup_close / button_click / purchase_link_click / purchase_confirm），仅通过参数区分直播场景，<b>不另造重复事件</b>；只有直播特有、v2.3 确实没有的能力才新增。注意 v2.3 已对多事件做删除线（如 <code>profile_complete</code>/<code>report_upload</code>/<code>retention_return</code> 整事件删除，<code>purchase_link_click</code>/<code>purchase_confirm</code> 删除 <code>recommend_id</code> 等），本需求复用事件时<b>只引用 v2.3 保留（非划线）属性</b>。上报参数中 <code>user_id</code> 为泰小虎跨端 UserId，<code>live_id</code> 为火山场次ID。完整字段格式以 v2.3 的 23 列标准结构（事件编号/项目/所属层/平台/模块/事件英文名/事件显示名/事件类型/属性英文变量名/属性显示名/数据类型/属性说明/触发时机/创建人/创建时间/备注/必填性/示例值/关联指标/上报时机/去重规则/校验规则/状态/测试进度）为准，下表按核心列呈现。</div>
+
+  <h4>① 复用现状事件（v2.3 已存在，本需求仅补直播场景参数，不新增事件）</h4>
+  <div style="overflow-x:auto">
+  <table>
+    <tr><th style="width:150px">复用事件（v2.3）</th><th style="width:150px">v2.3 编号/层/模块</th><th style="width:170px">本需求触发场景</th><th>复用属性（v2.3 保留，非划线）</th><th style="width:200px">需补充的直播场景参数</th></tr>
+    <tr><td>page_view</td><td>#2 / L1 / common</td><td>进入直播观看 H5 / 商城落地页 / 消息中心</td><td>page_name、page_path、source_page、stay_duration</td><td>page_name 新增枚举 <code>live_watch_h5</code> / <code>mall_landing_h5</code> / <code>message_center</code>；观看页补 <code>live_id</code></td></tr>
+    <tr><td>button_click</td><td>#4 / L1 / common</td><td>弹窗「去使用」、挂车商品卡点击</td><td>page_name、button_name、button_type</td><td>button_name=<code>coupon_use</code> / <code>live_cart_click</code>；补 <code>live_id</code>、<code>goods_id</code></td></tr>
+    <tr><td>popup_view</td><td>#5 / L1 / popup</td><td>登录后「获得 X 张优惠券」弹窗曝光</td><td>popup_instance_id、popup_name、popup_type、trigger_source</td><td>popup_name=<code>coupon_notify</code>；补 <code>live_id</code>、<code>coupon_count</code>、<code>batch_id</code></td></tr>
+    <tr><td>popup_close</td><td>#6 / L1 / popup</td><td>获券弹窗关闭</td><td>popup_instance_id、popup_name、close_method、stay_duration、user_choice</td><td>popup_name=<code>coupon_notify</code>；close_type（去使用/关闭/X）</td></tr>
+    <tr><td>purchase_link_click</td><td>#19 / L3 / purchase</td><td>挂车商品点击跳转内部 H5 落地页</td><td>click_id（v2.3 改为 message_id 用于归因）、source、product_id、product_name、purchase_channel、dialogue_id</td><td>补 <code>live_id</code>；source=<code>service_live</code>（v2.3 枚举含 service_live）<br><span style="color:var(--danger)">注：v2.3 已删除 recommend_id，不引用</span></td></tr>
+    <tr><td>purchase_confirm</td><td>#20 / L3 / purchase</td><td>H5 落地页「确认购买」</td><td>order_id、click_id（message_id）、product_id、product_name、product_price、quantity、source_page、dialogue_id</td><td>补 <code>live_id</code>；source_page=<code>product_detail_h5</code><br><span style="color:var(--danger)">注：v2.3 已删除 recommend_id，不引用</span></td></tr>
+  </table>
+  </div>
+  <div class="note" style="font-size:12px"><b>登录信号说明：</b>v2.3 中<b>无 login_complete 事件</b>——App 的登录/登出直接复用<b>友盟（Umeng）自带埋点</b>，本需求不新增登录事件。「登录成功即在第一个页面弹券」的触发判定 = 友盟登录成功回调后，首个页面（直播观看 H5 <code>page_view</code>，page_name=<code>live_watch_h5</code>）展示获券弹窗（<code>popup_view</code> / <code>popup_close</code>）。</div>
+
+  <h4>② 本需求新增事件（v2.3 无，按 v2.3 标准列格式定义，需并入埋点事件表 v2.x）</h4>
+  <div style="overflow-x:auto">
+  <table>
+    <tr><th style="width:90px">事件编号<br><span style="font-weight:400;color:var(--mut)">待 v2.3 排定</span></th><th style="width:80px">所属层</th><th style="width:90px">平台</th><th style="width:80px">模块</th><th style="width:170px">事件英文名 / 显示名</th><th style="width:80px">事件类型</th><th style="width:200px">属性（英文 / 显示名 / 类型 / 必填）</th><th style="width:160px">触发时机</th><th style="width:160px">上报时机</th><th style="width:170px">去重规则</th><th style="width:190px">校验规则</th><th style="width:80px">状态</th></tr>
+    <tr><td>新增-1</td><td>L2</td><td>数据层 / 服务端</td><td>live</td><td>live_watch_heartbeat<br>观看时长心跳</td><td>心跳回调</td><td>user_id / 用户ID / string / 必填<br>live_id / 火山场次ID / string / 必填<br>heartbeat_seq / 心跳序号 / number / 必填<br>duration_delta / 累计时长增量(秒) / number / 必填<br>ts / 心跳时间 / datetime / 必填</td><td>火山观播 SDK 心跳回调（实时）</td><td>每次心跳即时上报数据层</td><td>user_id + live_id + heartbeat_seq 幂等</td><td>duration_delta ≥ 0；heartbeat_seq 递增；间隔异常（<2s 或 >120s）丢弃</td><td>待评审</td></tr>
+    <tr><td>新增-2</td><td>L2</td><td>Android / iOS</td><td>live</td><td>live_watch_end<br>单次观看结束</td><td>离开</td><td>user_id / 用户ID / string / 必填<br>live_id / 火山场次ID / string / 必填<br>watch_duration / 本次观看时长(秒) / number / 必填<br>exit_type / 退出方式 / string / 必填（normal / background）<br>ts / 结束时间 / datetime / 必填</td><td>用户退出观看页 / 切后台（onPause）</td><td>退出或切后台时一次性上报</td><td>同一 session + live_id 仅一次</td><td>watch_duration ≥ 0；exit_type ∈ {normal, background}</td><td>待评审</td></tr>
+    <tr><td>新增-3</td><td>L3</td><td>数据层 / 服务端</td><td>coupon</td><td>coupon_issue_trigger<br>发券触发结果</td><td>接口返回结果</td><td>user_id / 用户ID / string / 必填<br>live_id / 火山场次ID / string / 必填<br>rule_id / 发券规则ID / string / 必填<br>result / 结果 / string / 必填（issued / skipped / failed）<br>coupon_batch_id / 券批次ID / string / 条件必填（issued 时必填）<br>ts / 触发时间 / datetime / 必填</td><td>T+1 批处理发券判定（达阈值 / 跳过 / 失败）</td><td>批处理每用户每规则结果上报</td><td>user_id + live_id + rule_id 每批次仅一次</td><td>result ∈ {issued, skipped, failed}；result=issued 时 coupon_batch_id 必填</td><td>待评审</td></tr>
+  </table>
+  </div>
+  <div class="note" style="font-size:12px">说明：<b>live_watch_heartbeat</b>（发券口径核心）与 <b>coupon_issue_trigger</b> 属服务端/数据层事件，用于发券时长口径与批处理监控，非 App 前端全埋点；<b>live_watch_end</b> 为前端补充单次观看时长，便于 A4 看板时长分布分析。挂车商品卡「曝光」本期<b>不单独埋点</b>（仅依赖 <code>purchase_link_click</code> 点击），如需后续监测可再评估复用 <code>recommend_view</code>。</div>
+
+  <h4>③ 平台后台操作（后台操作日志，不进 App 客户端埋点表）</h4>
+  <div class="note" style="font-size:12px">直播间创建/编辑/开播/停播、主播增改/状态变更、挂车配置保存等，属<b>平台后台运营操作</b>，《泰小虎埋点事件管理》v2.3 为 <b>App(Android/iOS) 客户端埋点</b>范畴，二者不混表。后台操作建议走<b>后台操作日志</b>（operator、action、live_id/anchor_id、ts）留痕，如需纳入数据分析平台，另立后台埋点表，不占用 App 事件编号。</div>
+
+  <!-- ============ G ============ -->
+  <h2 id="g">G. 非功能性需求</h2>
+  <table>
+    <tr><th style="width:120px">维度</th><th>要求</th></tr>
+    <tr><td>性能</td><td>观看时长心跳上报轻量、可高并发写入数据层；T+1 批处理需支持全量观看记录扫描，设批处理窗口与失败重试；直播流低延迟播放（依赖火山）。</td></tr>
+    <tr><td>兼容性</td><td>用户端支持微信小程序、App（iOS / Android）、独立 H5 浏览器；环境识别失败兜底 H5 商品详情页；后台适配主流桌面浏览器。</td></tr>
+    <tr><td>安全</td><td>泰小虎 UserId 透传需防篡改（签名/校验）；观看时长防刷（心跳间隔异常丢弃）；发券幂等（user_id+live_id 幂等键）；后台操作需权限校验。</td></tr>
+    <tr><td>埋点要求</td><td>关键转化链路（进入→观看→挂车点击→发券触发→通知→去使用）全埋点，参数含 user_id/live_id 以便归因。</td></tr>
+    <tr><td>可用性</td><td>发券为 T+1 批处理，弱网/火山回调丢失不影响已沉淀时长判定，无需实时发券兜底。</td></tr>
+  </table>
+
+  <!-- ============ H ============ -->
+  <h2 id="h">H. 关键边界设计检查清单</h2>
+  <p style="color:var(--mut);font-size:12.5px">PM 撰写前自检表，逐项确认如下（✔ 已覆盖）：</p>
+  <table>
+    <tr><th style="width:200px">自检项</th><th>结论 / 处理</th></tr>
+    <tr><td>✔ 网络与异常状态</td><td>弱网/断网/服务器 500：发券 T+1 无需实时兜底（E2）；火山回调丢失仅缺该时段时长；后台控制失败气泡提示（AC-9）。</td></tr>
+    <tr><td>✔ 登录与游客态</td><td>未登录直跳登录、期间不计时不发券（E1/AC-1）；登录成功回观看页从头计时；登录后首屏弹获券（AC-5）。</td></tr>
+    <tr><td>✔ 极限值与空状态</td><td>挂车空状态（无商品提示）、直播间列表空态、直播名称≤17字、副标题≤30字、封面图规格校验、挂车上限 N 提示（AC-8）。</td></tr>
+    <tr><td>✔ 版本兼容性</td><td>新功能独立 H5 + 接入火山，老版本 App/小程序不受影响；UserId 字段跨端兼容；新消息类型需老版本兼容或兜底。</td></tr>
+    <tr><td>✔ 逆向流 / 退款</td><td>券退款/退货/过期由优惠券体系负责，本需求仅记录触发、不持有券实例（E6）；未登录不发券、未达阈值不发券，无逆向发券。</td></tr>
+    <tr><td>✔ 高并发与防重</td><td>发券幂等键（user_id+live_id）防重复发；心跳间隔异常丢弃防刷时长；表单/控制操作防重复提交。</td></tr>
+  </table>
+
+  <!-- ============ I ============ -->
+  <h2 id="i">I. 文档维护与变更规范</h2>
+  <h3>版本号规范</h3>
+  <ul>
+    <li>大迭代：V1.0 / V2.0（重大功能增删）。</li>
+    <li>小修改：V1.1 / V1.2（字段调整、文案、边界补充），历史修订记录写明修改人/时间/原因。</li>
+    <li>本文档当前为 v1.4.1（待评审）。</li>
+  </ul>
+  <h3>变更周知</h3>
+  <div class="rel">
+    <p style="margin:0">定稿后任何需求变更，须在文档中<b>高亮标出变更内容</b>，并主动 <b>@ 开发（江世华）</b> 与 <b>@ 测试（xx）</b>，同步至产品组内评审群；跨需求变更（如优惠券体系 A4 触发源增强）须同步对应需求负责人。</p>
+  </div>
+
+  <div class="danger"><b>核心边界（再次强调）：</b>本需求不持有券实例、券模板、商品底价等数据，全部由优惠券体系（关联需求）管理。本需求只记录"观看时长"与"发券触发日志"，并通过接口调用优惠券体系。发券规则（含本期单阈值）由优惠券体系 A4 配置，本需求不单独建设。</div>
+
+  <div class="footer">泰小虎 · 直播挂车与时长发券 — PRD v1.4.1（待评审）· 本文件为独立需求分块，仅通过"关联需求"说明与优惠券体系的关系</div>
+</div>
+</body>
+</html>
