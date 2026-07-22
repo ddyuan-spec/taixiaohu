@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>直播挂车 PRD 评审总结</title>
+<style>
+  body{font-family:'Microsoft YaHei',sans-serif;max-width:920px;margin:24px auto;padding:0 20px;color:#222;line-height:1.7}
+  h1{border-bottom:2px solid #6B4FE8;padding-bottom:8px;font-size:22px}
+  h2{margin-top:28px;color:#6B4FE8;font-size:17px}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}
+  th,td{border:1px solid #ccc;padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:#F3F4F6}
+  .ok{color:#2E7D32}.warn{color:#B23B32}.meta{color:#888;font-size:13px}
+  code{background:#F3F4F6;padding:1px 4px;border-radius:3px}
+</style></head>
+<body>
+<h1>泰小虎 · 直播挂车与时长发券 PRD 评审总结</h1>
+<p class="meta">评审对象：泰小虎直播挂车与时长发券 PRD v1.0（评审后已修正为 v1.1）｜评审方式：严格依 PRD 原文，不臆造；图文不一致 / 范围外 / 规范不符一律指出并修正</p>
+
+<h2>一、评审概述</h2>
+<p>本次评审围绕 PRD v1.0 逐条核对端口影响、依赖系统、状态枚举、埋点规范与边界待确认项，共发现 7 类问题，均已修正并重新推送 GitHub。修正动作：重出影响范围图 D-1 与业务流程图 3-1、删改直播间状态枚举、埋点表按《泰小虎埋点表 v2.3》双表结构重写、删除「待确认项汇总」章节及 3 处正文悬空待确认。PRD 线上访问地址：<code>https://ddyuan-spec.github.io/taixiaohu/live-prd.html</code></p>
+
+<h2>二、已明确项（PRD 原文已写清，无需修改）</h2>
+<ul>
+  <li><b>影响端口</b>：平台端后台（Web）+ 用户端三端（微信小程序 / App(iOS·Android) / H5 内嵌），三端共享小黄车交互、跳转目标不同。</li>
+  <li><b>4 个后台模块</b>：直播商品池管理、直播间管理、直播间商品列表、直播数据统计。</li>
+  <li><b>用户端小黄车链路</b>：进入直播间 → 小黄车浮层（红角标）→ 商品抽屉 → 点「去看看」→ 跳转确认 → 商品详情下单。</li>
+  <li><b>推送 / 同步以火山引擎接口返回为准</b>，失败可点「更新」重推。</li>
+  <li><b>依赖既有系统（只读）</b>：商城商品中心《商品表》、火山引擎企业直播 OpenAPI。</li>
+</ul>
+
+<h2>三、已裁定范围外项（不在本需求）</h2>
+<table>
+  <tr><th>项</th><th>裁定</th><th>依据</th></tr>
+  <tr><td>商家端后台 / 火山 SaaS 配置</td><td class="warn">不参与、不碰</td><td>用户裁定：需求没那么复杂，非火山 SaaS 功能</td></tr>
+  <tr><td>直播间回放</td><td class="warn">不补</td><td>用户裁定：泰小虎不用回放功能</td></tr>
+  <tr><td>老版本 App 无小黄车降级</td><td class="warn">非本期迭代目标</td><td>本期仅给当前三端新增小黄车</td></tr>
+  <tr><td>订单 / 优惠券 / 积分 / 退款</td><td class="warn">商城既有能力，本需求不改动</td><td>PRD 自声明"不影响优惠券模块 / 下单走商城既有链路"</td></tr>
+</table>
+
+<h2>四、发现的问题与修正</h2>
+<table>
+  <tr><th>#</th><th>问题</th><th>类型</th><th>修正动作</th></tr>
+  <tr><td>1</td><td>影响范围图 D-1 多画 3 个臆造依赖节点（商城订单 / 优惠券模块 / 用户账号画像）</td><td>图与文不一致（臆造）</td><td class="ok">重出图，仅留「商品中心《商品表》+ 火山引擎 OpenAPI」</td></tr>
+  <tr><td>2</td><td>业务流程图 3-1 节点「同步/<b>创建</b>直播间 + 挂车商品」</td><td>图与能力不符（范围错误）</td><td class="ok">改为「同步火山直播间 + 挂车商品」（仅同步不创建）</td></tr>
+  <tr><td>3</td><td>直播间状态枚举含「违规下播」（火山无此值，PRD 臆造）</td><td>字段臆造</td><td class="ok">删除，保留 直播中 / 预告 / 已结束</td></tr>
+  <tr><td>4</td><td>选品弹窗「运营类型/品牌分类」待确认引用正文不存在的字段</td><td>悬空待确认</td><td class="ok">删除（选品筛选复用列表已有的名称/编号+商家+状态）</td></tr>
+  <tr><td>5</td><td>埋点表用自定 5 列简化版，不符《泰小虎埋点表 v2.3》规范</td><td>规范不符</td><td class="ok">按 v2.3 双表结构重写（埋点事件表 26 列事件-属性展开 + 页面分析表）</td></tr>
+  <tr><td>6</td><td>2 处范围外待确认（老版本降级 / 订单退款优惠积分）</td><td>范围外</td><td class="ok">删除</td></tr>
+  <tr><td>7</td><td>「待确认项汇总」章节整体</td><td>噪音</td><td class="ok">整体删除</td></tr>
+</table>
+
+<h2>五、风险与建议</h2>
+<ul>
+  <li><b>接口文档核实</b>：火山直播间状态真实枚举为 直播中(1) / 预告(2) / 回放(3) / 已结束(4)。本需求取前三者；后续新增直播能力须先对接火山企业直播 OpenAPI 确认字段名与枚举，避免再出现"凭通用理解假设枚举"的情况。</li>
+  <li><b>埋点落地</b>：v2.3 双表已对齐，建议研发按此表落地，属性字段（room_id / product_id / target / result / operator 等）与商城既有埋点规范保持命名一致。</li>
+  <li><b>待确认项治理</b>：生成 PRD 时不应"贪全"塞入范围外或臆造的待确认项。已建立红线——用户裁定不用的功能（商家端、回放、火山 SaaS 配置）一律不添加；边界检查清单只覆盖本期真正涉及的边界。</li>
+</ul>
+
+<h2>六、待确认项清理结果</h2>
+<table>
+  <tr><th>原汇总章条目</th><th>处理结果</th></tr>
+  <tr><td>推送状态是否需「推送中」中间态</td><td class="warn">删除（PRD 已明确"同步返回成功/失败"，无中间态）</td></tr>
+  <tr><td>选品弹窗「运营类型/品牌分类」字段来源</td><td class="warn">删除（字段正文不存在，属臆造）</td></tr>
+  <tr><td>直播间商品列表「销售价」单位 / 销售合计列</td><td class="warn">删除（列表展示细节，未纳入本期，后续另行定义）</td></tr>
+  <tr><td>直播数据统计接口 / 数据表来源</td><td class="warn">删除（依赖商城数据，未纳入本期接口定义）</td></tr>
+  <tr><td>小黄车「活动标签 / 划线原价」字段来源</td><td class="warn">删除（本期小黄车复用商城商品字段，不新增直播专属字段定义）</td></tr>
+  <tr><td>用户端未登录点击小黄车登录拦截</td><td class="ok">保留边界（本期新增入口的鉴权边界，正文"平台端操作需登录"+"登录与游客态"已描述，流程图已画未登录拦截分支）</td></tr>
+  <tr><td>老版本 App 无小黄车降级</td><td class="warn">删除（非本期迭代目标）</td></tr>
+  <tr><td>直播订单退款优惠积分处理</td><td class="warn">删除（商城既有能力，本需求不改动）</td></tr>
+</table>
+<p class="meta">注：原「待确认项汇总」章节 8 条，经评审判定——1 条保留边界（已在正文体现）、7 条删除（臆造 / 范围外 / 非本期）；章节本身已整体移除。</p>
+
+<h2>七、修订记录</h2>
+<table>
+  <tr><th>版本</th><th>日期</th><th>修订内容</th><th>状态</th></tr>
+  <tr><td>v1.0</td><td>2026-07-21</td><td>首版：基于前后端原型梳理，依据 260715 模板重构章节结构</td><td>已评审</td></tr>
+  <tr><td>v1.1</td><td>2026-07-22</td><td>评审修正：重出 D-1/3-1 图、状态枚举删违规下播、埋点表改 v2.3 双表、删待确认汇总章及 3 处正文待确认</td><td>已推送</td></tr>
+</table>
+</body></html>
