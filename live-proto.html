@@ -103,6 +103,9 @@
   .action-link.danger{color:#dc2626}
   .action-link.danger:hover{color:#b91c1c}
 
+  /* 状态标签补充 */
+  .status-off{display:inline-block;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:500;white-space:nowrap;background:#f3f4f6;color:#6b7280}
+
   /* 分页（对齐截图-A1底部） */
   .pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid #e5e7eb;font-size:12.5px;color:#6b7280}
   .pagination .pages{display:flex;gap:4px}
@@ -222,184 +225,16 @@
   <div class="toolbar-row">
     <div class="toolbar-left"></div>
     <div class="toolbar-right">
-      <button class="btn btn-default btn-icon" title="刷新直播间列表" onclick="showToast('正在刷新直播间列表…')">🔄</button>
       <button class="btn btn-primary" onclick="document.getElementById('modal-add').classList.add('show')">＋ 添加商品</button>
-      <button class="btn btn-success" onclick="document.getElementById('modal-sync').classList.add('show')">同步到直播间 ▶</button>
-    </div>
-  </div>
+      <button class="btn btn-success" id="btn-push" onclick="var b=this,n=document.getElementById('sync-count').textContent;b.disabled=true;b.textContent='同步中…';setTimeout(function(){b.closest('.modal-overlay').classList.remove('show');b.disabled=false;b.textContent='确认推送';if(parseInt(n)>1&&Math.random()>.5){alert('推送完成
 
-  <!-- 数据表格 -->
-  <div class="table-card">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th class="col-chk"><input type="checkbox"></th>
-          <th class="col-id">商品编号</th>
-          <th class="col-info">商品信息</th>
-          <th class="col-source">来源商家</th>
-          <th class="col-stock">库存</th>
-          <th class="col-price">售卖价</th>
-          <th class="col-status">推送状态</th>
-          <th class="col-time">最后同步时间</th>
-          <th class="col-action">操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- 行1：已同步 -->
-        <tr>
-          <td class="col-chk"><input type="checkbox" checked></td>
-          <td class="col-id">557</td>
-          <td class="col-info">
-            <div class="prod-info">
-              <img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23ede9fe' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%237c3aed' font-size='10'%E3%80%90%E5%9B%BE%EF%BC%91%E3%80%91%3C/text%3E%3C/svg%3E" alt="">
-              <div><div class="prod-name">适乐肤5500ml高纯烟酰胺复合乳液</div><div class="prod-cat">食品保健 · 实妆商品</div></div>
-            </div>
-          </td>
-          <td class="col-source">广西牛奶食品有限公司</td>
-          <td class="col-stock">8717</td>
-          <td class="col-price price">¥189.00</td>
-          <td class="col-status"><span class="status status-synced">已同步</span></td>
-          <td class="col-time">2026-07-22 17:30</td>
-          <td class="col-action"><a class="action-link">更新</a></td>
-        </tr>
-        <!-- 行2：待同步 -->
-        <tr>
-          <td class="col-chk"><input type="checkbox"></td>
-          <td class="col-id">561</td>
-          <td class="col-info">
-            <div class="prod-info">
-              <img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23ede9fe' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%237c3aed' font-size='10'%E3%80%90%E5%9B%BE%EF%BC%92%E3%80%91%3C/text%3E%3C/svg%3E" alt="">
-              <div><div class="prod-name">添然膳复合益生菌冻干粉（30条装）</div><div class="prod-cat">食品保健 · 实妆商品</div></div>
-            </div>
-          </td>
-          <td class="col-source">榛魅家官方自营</td>
-          <td class="col-stock">15820</td>
-          <td class="col-price price">¥1095.00</td>
-          <td class="col-status"><span class="status status-synced">已同步</span></td>
-          <td class="col-time">2026-07-22 16:42</td>
-          <td class="col-action"><a class="action-link">更新</a></td>
-        </tr>
-        <!-- 行3：已同步 -->
-        <tr>
-          <td class="col-chk"><input type="checkbox" checked></td>
-          <td class="col-id">572</td>
-          <td class="col-info">
-            <div class="prod-info">
-              <img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23ede9fe' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%237c3aed' font-size='10'%E3%80%90%E5%9B%BE%EF%BC%93%E3%80%91%3C/text%3E%3C/svg%3E" alt="">
-              <div><div class="prod-name">基础版保湿霜</div><div class="prod-cat">食品保健 · 实妆商品</div></div>
-            </div>
-          </td>
-          <td class="col-source">榛魅家官方自营</td>
-          <td class="col-stock">0</td>
-          <td class="col-price price">¥38.00</td>
-          <td class="col-status"><span class="status status-synced">已同步</span></td>
-          <td class="col-time">2026-07-22 16:45</td>
-          <td class="col-action"><a class="action-link">更新</a></td>
-        </tr>
-        <!-- 行4：同步失败 -->
-        <tr>
-          <td class="col-chk"><input type="checkbox"></td>
-          <td class="col-id">574</td>
-          <td class="col-info">
-            <div class="prod-info">
-              <img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23ede9fe' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%237c3aed' font-size='10'%E3%80%90%E5%9B%BE%EF%BC%94%E3%80%91%3C/text%3E%3C/svg%3E" alt="">
-              <div><div class="prod-name">雅乐宝蜜桃粉</div><div class="prod-cat">食品保健 · 实妆商品</div></div>
-            </div>
-          </td>
-          <td class="col-source">邢台美盛业有限公司</td>
-          <td class="col-stock">17083</td>
-          <td class="col-price price">¥230.00</td>
-          <td class="col-status"><span class="status status-fail">同步失败</span></td>
-          <td class="col-time">2026-07-22 15:20</td>
-          <td class="col-action"><a class="action-link">更新</a><a class="action-link danger">移出</a></td>
-        </tr>
-        <!-- 行5：冷却中 -->
-        <tr>
-          <td class="col-chk"><input type="checkbox"></td>
-          <td class="col-id">575</td>
-          <td class="col-info">
-            <div class="prod-info">
-              <img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23ede9fe' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%237c3aed' font-size='10'%E3%80%90%E5%9B%BE%EF%BC%95%E3%80%91%3C/text%3E%3C/svg%3E" alt="">
-              <div><div class="prod-name">基肽致颜弹光面膜凝露</div><div class="prod-cat">食品保健 · 实妆商品</div></div>
-            </div>
-          </td>
-          <td class="col-source">无锡家丰健康科技有限公司</td>
-          <td class="col-stock">0</td>
-          <td class="col-price price">¥108.00</td>
-          <td class="col-status"><span class="status status-fail">同步失败</span></td>
-          <td class="col-time">2026-07-22 18:15</td>
-          <td class="col-action"><a class="action-link">更新</a><a class="action-link danger">移出</a></td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="pagination">
-      <div>共 <b>151</b> 条 &nbsp; 10条/页</div>
-      <div class="pages">
-        <span class="pg active">1</span>
-        <span class="pg">2</span>
-        <span class="pg">3</span>
-        <span class="pg">4</span>
-        <span class="pg">5</span>
-        <span class="pg">...</span>
-        <span class="pg">16</span>
-      </div>
-      <div class="jump">跳至 <input type="text" value="1"> 页</div>
-    </div>
-  </div><!-- /table-card -->
+成功：'+(parseInt(n)-1)+' 个
+失败：1 个
 
-</div><!-- /page-wrap -->
-</div><!-- /main -->
+  ✗ #575 基肽致颜弹光面膜凝露 — 冷却中，推送失败请稍后再试')}else{alert('推送完成
 
-
-<!-- ==================== 弹窗A：同步到直播间 ==================== -->
-<div class="modal-overlay" id="modal-sync">
-  <div class="modal" style="width:600px">
-    <div class="modal-hd">
-      <h3>同步到直播间</h3>
-      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('show')">×</button>
-    </div>
-    <div class="modal-bd">
-      <div class="tip tip-succ">✅ 已选择 <b id="sync-count">2</b> 个商品，将推送到目标直播间</div>
-
-      <div class="form-group">
-        <label>目标直播间 <span class="req">★</span></label>
-        <div style="display:flex;gap:8px;align-items:flex-start">
-          <select style="width:calc(100% - 88px);flex:1">
-            <option value="">请选择目标直播间</option>
-            <option value="act_001" selected>【进行中】泰小虎健康好物专场 #001</option>
-            <option value="act_002">【已结束】夏日清凉护肤季</option>
-            <option value="act_003">【未开始】新品首发直播</option>
-          </select>
-          <button class="btn btn-default btn-sm" title="从直播后台实时拉取最新直播间信息" onclick="showToast('正在同步直播间信息…')">🔄 同步直播间信息</button>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>已选商品（<span id="sel-count">2</span>）</label>
-        <div class="selected-list">
-          <div class="selected-item">
-            <img class="si-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect fill='%23ede9fe' width='36' height='36' rx='4'/%3E%3Ctext x='18' y='22' text-anchor='middle' fill='%237c3aed' font-size='8'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt="">
-            <span class="si-name">#557 适乐肤5500ml高纯烟酰胺复合乳液</span>
-            <span class="si-remove" onclick="var i=this.closest('.selected-item'),l=i.parentNode;i.remove();var n=l.querySelectorAll('.selected-item').length;document.getElementById('sel-count').textContent=n;document.getElementById('sync-count').textContent=n;">×</span>
-          </div>
-          <div class="selected-item">
-            <img class="si-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect fill='%23ede9fe' width='36' height='36' rx='4'/%3E%3Ctext x='18' y='22' text-anchor='middle' fill='%237c3aed' font-size='8'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt="">
-            <span class="si-name">#572 基础版保湿霜</span>
-            <span class="si-remove" onclick="var i=this.closest('.selected-item'),l=i.parentNode;i.remove();var n=l.querySelectorAll('.selected-item').length;document.getElementById('sel-count').textContent=n;document.getElementById('sync-count').textContent=n;">×</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="tip tip-warn">
-        ⚠️ 推送规则：<br>
-        • 字段全自动填充（有则带、无则不传用默认值），无需手动填写<br>
-        • 允许同一商品重复推送，每次新增一个独立商品卡片<br>
-        • 冷却限制：同一商品同一直播间 1 分钟内最多 3 次
-      </div>
-    </div>
-    <div class="modal-ft">
-      <button class="btn btn-default" onclick="this.closest('.modal-overlay').classList.remove('show')">取消</button>
-      <button class="btn btn-success" onclick="var n=document.getElementById('sync-count').textContent;this.closest('.modal-overlay').classList.remove('show');if(parseInt(n)>1&&Math.random()>.5){alert('⚠️ 推送部分失败！\n\n失败：1 个\n  ✗ #575 基肽致颜弹光面膜凝露 — 冷却中，推送失败请稍后再试\n\n成功：'+(parseInt(n)-1)+' 个')}else{alert('✅ 推送成功！\n成功：'+n+' 个\n失败：0 个')}">确认推送</button>
+成功：'+n+' 个
+失败：0 个')}},900)">确认推送</button>
     </div>
   </div>
 </div>
@@ -452,8 +287,22 @@
               <td class="col-status"><span class="status status-synced">已上架</span></td>
               <td><span style="color:#dc2626;font-size:12px;font-weight:500">❌ 未入池</span></td>
             </tr>
+            <tr style="opacity:.55;background:#f9fafb">
+              <td class="col-chk"><input type="checkbox" disabled></td>
+              <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">清润护手霜</div><div class="prod-cat">所有商品</div></div></div></td>
+              <td class="col-price price">¥39.00</td>
+              <td class="col-status"><span class="status status-off">已下架</span></td>
+              <td><span style="color:#9ca3af;font-size:12px">已下架 · 禁选</span></td>
+            </tr>
           </tbody>
         </table>
+      </div>
+      <div class="pagination">
+        <span>共 128 条</span>
+        <div class="pages">
+          <span class="pg active">1</span><span class="pg">2</span><span class="pg">3</span><span class="pg">…</span><span class="pg">7</span>
+        </div>
+        <div class="jump"><span>20 条/页</span><select style="height:28px;border:1px solid #d1d5db;border-radius:4px;font-size:12px"><option>20 条/页</option><option>50 条/页</option><option>100 条/页</option></select></div>
       </div>
     </div>
     <div class="modal-ft">
