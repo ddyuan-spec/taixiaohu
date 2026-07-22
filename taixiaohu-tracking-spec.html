@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>泰小虎埋点规范 v2.3（友盟+ 事件表）</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;margin:0;background:#f5f7fa;color:#1f2d3d}
+header{background:linear-gradient(120deg,#2b5876,#4e4376);color:#fff;padding:32px 24px}
+header h1{margin:0 0 8px;font-size:24px}
+header p{margin:4px 0;opacity:.92;font-size:14px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px}
+.stats{display:flex;gap:16px;flex-wrap:wrap;margin:20px 0}
+.stat{flex:1;min-width:160px;background:#fff;border-radius:12px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.stat .n{font-size:30px;font-weight:700;color:#2b5876}
+.stat .l{font-size:13px;color:#7a869a;margin-top:4px}
+.warn{background:#fff7e6;border:1px solid #ffd591;border-radius:10px;padding:14px 18px;margin:16px 0;font-size:13px;line-height:1.7}
+.warn b{color:#d46b08}
+.toc{background:#fff;border-radius:12px;padding:16px 20px;margin:16px 0;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.toc a{margin-right:18px;color:#2b5876;text-decoration:none;font-size:14px}
+.toc a:hover{text-decoration:underline}
+.layer-h{margin-top:32px;border-left:5px solid #4e4376;padding-left:12px;color:#2b5876}
+.event{background:#fff;border-radius:12px;padding:18px 20px;margin:14px 0;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.event-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.event-head .en{font-size:17px;font-weight:700;color:#2b5876}
+.event-head .cn{font-size:15px;color:#1f2d3d}
+.tags{margin:10px 0}
+.tag{display:inline-block;font-size:12px;padding:2px 10px;border-radius:20px;margin-right:6px;background:#eef1f6;color:#5a6b87}
+.tag-plat{background:#e6f7ff;color:#096dd9}
+.tag-mod{background:#f9f0ff;color:#722ed1}
+.tag-type{background:#f6ffed;color:#389e0d}
+.tag-status{background:#fff7e6;color:#d46b08}
+.trigger{font-size:13px;margin:8px 0;color:#3a4a5c}
+.prop-title{font-size:13px;font-weight:600;color:#7a869a;margin:10px 0 6px}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px}
+.props th{background:#f0f3f8;text-align:left;padding:7px 10px;color:#5a6b87;font-weight:600;border-bottom:2px solid #dde3ec}
+.props td{padding:7px 10px;border-bottom:1px solid #eef1f6;vertical-align:top}
+.props tr:hover td{background:#fafbfd}
+code{background:#f3f5f9;padding:1px 6px;border-radius:4px;font-size:12px;color:#c0341d}
+.no-prop{font-size:13px;color:#9aa5b5;margin:4px 0}
+.note{font-size:12px;color:#9aa5b5;margin-top:8px}
+.schema-tbl th,.schema-tbl td{padding:7px 10px;border-bottom:1px solid #eef1f6;font-size:13px;text-align:left}
+.schema-tbl th{background:#f0f3f8;color:#5a6b87}
+footer{text-align:center;color:#9aa5b5;font-size:12px;padding:30px}
+</style></head>
+<body>
+<header>
+  <h1>泰小虎埋点规范 v2.3</h1>
+  <p>友盟+ 事件表（事件-属性展开规范）· 共 30 个事件（L1 16 / L2 9 / L3 5）</p>
+  <p>权威源文件：《泰小虎埋点表v2.3》· 本文档为 PRD §五【埋点需求】链接引用的只读全文</p>
+</header>
+<div class="wrap">
+  <div class="stats">
+    <div class="stat"><div class="n">30</div><div class="l">事件总数</div></div>
+    <div class="stat"><div class="n">16</div><div class="l">L1 基础层</div></div>
+    <div class="stat"><div class="n">9</div><div class="l">L2 业务层</div></div>
+    <div class="stat"><div class="n">5</div><div class="l">L3 转化/留存层</div></div>
+  </div>
+
+  <div class="warn">
+    <b>友盟+ 平台约束：</b>自定义事件属性一旦创建<b>不能删 / 改名 / 改类型，只能新增</b> → 采用「整体重导」策略；
+    引用埋点参数一律使用友盟后台<b>中文名</b>（如「步骤序号」而非 step_index）。
+    PRD 编写时事件与属性<b>只能从本文档既有目录选取，禁止凭空编造</b>；新事件须走埋点评审，不在 PRD 内新增定义。
+  </div>
+
+  <div class="toc">
+    <a href="#L1">L1 基础层</a><a href="#L2">L2 业务层</a><a href="#L3">L3 转化/留存层</a><a href="#pages">页面枚举</a><a href="#schema">字段 schema</a>
+  </div>
+
+  <h2 class="layer-h" id="L1">L1 基础层（16 事件）</h2>
+<div class="event">
+  <div class="event-head">
+    <code class="en">app_launch</code>
+    <span class="cn">App启动</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">common</span><span class="tag tag-type">启动</span><span class="tag tag-status">已完成</span></div>
+  <div class="trigger"><b>触发时机：</b>App冷启动或热启动（从后台恢复）</div>
+  <div class="prop-title">属性（2）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>launch_type</code></td><td>启动类型</td><td>string</td><td class="req-yes">必填</td><td>启动类型：cold(冷启动) / hot(热启动)</td></tr><tr><td><code>launch_duration</code></td><td>冷启动耗时</td><td>number</td><td class="req-yes">条件必填</td><td>冷启动耗时（毫秒）。起点：进程入口；终点：首页首帧完成且主线程可交互。仅launch_type=cold上报</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">page_view</code>
+    <span class="cn">页面浏览</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">common</span><span class="tag tag-type">浏览</span><span class="tag tag-status">已完成</span></div>
+  <div class="trigger"><b>触发时机：</b>页面加载完成时触发</div>
+  <div class="prop-title">属性（4）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>page_name</code></td><td>页面名称</td><td>string</td><td class="req-yes">必填</td><td>页面名称（统一命名规范）</td></tr><tr><td><code>page_path</code></td><td>页面路径</td><td>string</td><td class="req-yes">必填</td><td>页面路径（路由地址）</td></tr><tr><td><code>source_page</code></td><td>来源页面</td><td>string</td><td class="req-no">选填</td><td>来源页面（上一页page_name）</td></tr><tr><td><code>stay_duration</code></td><td>停留时长</td><td>number</td><td class="req-no">选填</td><td>页面停留时长（毫秒）；SDK在页面离开时完成本次页面记录并上报，异常终止时可缺失</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">tab_switch</code>
+    <span class="cn">Tab切换</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">navigation</span><span class="tag tag-type">点击</span><span class="tag tag-status">已完成</span></div>
+  <div class="trigger"><b>触发时机：</b>点击首页顶部“健康/泰小虎/服务”Tab切换内容</div>
+  <div class="prop-title">属性（2）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>from_tab</code></td><td>来源Tab</td><td>string</td><td class="req-yes">必填</td><td>来源Tab名称</td></tr><tr><td><code>to_tab</code></td><td>目标Tab</td><td>string</td><td class="req-yes">必填</td><td>目标Tab名称</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">button_click</code>
+    <span class="cn">按钮点击</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">common</span><span class="tag tag-type">点击</span><span class="tag tag-status">已完成</span></div>
+  <div class="trigger"><b>触发时机：</b>点击页面内的可交互按钮</div>
+  <div class="prop-title">属性（3）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>page_name</code></td><td>页面名称</td><td>string</td><td class="req-yes">必填</td><td>按钮所在页面</td></tr><tr><td><code>button_name</code></td><td>按钮名称</td><td>string</td><td class="req-yes">必填</td><td>按钮名称（统一命名规范）</td></tr><tr><td><code>button_type</code></td><td>按钮类型</td><td>string</td><td class="req-no">选填</td><td>按钮类型</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">popup_view</code>
+    <span class="cn">弹窗曝光</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">popup</span><span class="tag tag-type">曝光</span><span class="tag tag-status">已完成</span></div>
+  <div class="trigger"><b>触发时机：</b>弹窗/浮层展示时触发</div>
+  <div class="prop-title">属性（4）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>popup_instance_id</code></td><td>弹窗实例ID</td><td>string</td><td class="req-yes">必填</td><td>单次弹窗实例ID，用于与popup_close精确配对</td></tr><tr><td><code>popup_name</code></td><td>弹窗名称</td><td>string</td><td class="req-yes">必填</td><td>弹窗名称</td></tr><tr><td><code>popup_type</code></td><td>弹窗类型</td><td>string</td><td class="req-yes">必填</td><td>弹窗类型</td></tr><tr><td><code>trigger_source</code></td><td>触发来源</td><td>string</td><td class="req-no">选填</td><td>弹窗触发来源</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">popup_close</code>
+    <span class="cn">弹窗关闭</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">popup</span><span class="tag tag-type">点击</span><span class="tag tag-status">已完成</span></div>
+  <div class="trigger"><b>触发时机：</b>弹窗关闭时触发（点击关闭按钮/遮罩/返回键）</div>
+  <div class="prop-title">属性（5）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>popup_instance_id</code></td><td>弹窗实例ID</td><td>string</td><td class="req-yes">必填</td><td>单次弹窗实例ID，必须与popup_view一致</td></tr><tr><td><code>popup_name</code></td><td>弹窗名称</td><td>string</td><td class="req-yes">必填</td><td>弹窗名称（同 popup_view）</td></tr><tr><td><code>close_method</code></td><td>关闭方式</td><td>string</td><td class="req-yes">必填</td><td>关闭方式</td></tr><tr><td><code>stay_duration</code></td><td>停留时长</td><td>number</td><td class="req-no">选填</td><td>弹窗停留时长（毫秒）</td></tr><tr><td><code>user_choice</code></td><td>用户选择</td><td>string</td><td class="req-no">选填</td><td>用户选择（仅选择类弹窗）</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">scan_entry</code>
+    <span class="cn">智能识别入口</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">scan</span><span class="tag tag-type">点击</span><span class="tag tag-status">已完成</span></div>
+  <div class="trigger"><b>触发时机：</b>点击智能识别入口（对话页卡片/悬浮球）</div>
+  <div class="prop-title">属性（3）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>scan_id，改为message_id</code></td><td>信息ID</td><td>string</td><td class="req-yes">必填</td><td>单次识别任务的信息ID，用于关联scan_complete</td></tr><tr><td><code>entry_source</code></td><td>入口来源</td><td>string</td><td class="req-yes">必填</td><td>入口来源</td></tr><tr><td><code>scan_type</code></td><td>识别类型</td><td>string</td><td class="req-yes">必填</td><td>识别类型</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">quick_question_view</code>
+    <span class="cn">开屏问题曝光</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">dialogue</span><span class="tag tag-type">曝光</span><span class="tag tag-status">无需处理</span></div>
+  <div class="trigger"><b>触发时机：</b>对话页顶部开屏问题列表渲染完成并可见时触发</div>
+  <div class="prop-title">属性（3）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>exposure_id</code></td><td>曝光ID</td><td>string</td><td class="req-yes">必填</td><td>本次问题列表曝光ID，用于与点击精确归因</td></tr><tr><td><code>question_ids</code></td><td>问题ID列表</td><td>string</td><td class="req-yes">必填</td><td>本次展示的问题ID列表（分号分隔，后台随机选取）</td></tr><tr><td><code>display_count</code></td><td>展示数量</td><td>number</td><td class="req-yes">必填</td><td>本次展示的问题数量</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">closed_order_delete_click</code>
+    <span class="cn">已关闭订单删除按钮点击</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">H5/Server</span><span class="tag tag-mod">order</span><span class="tag tag-type">点击</span><span class="tag tag-status">已完成</span></div>
+  <div class="trigger"><b>触发时机：</b>用户点击「删除订单」按钮</div>
+  <div class="prop-title">属性（1）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>order_id</code></td><td>订单ID</td><td>string</td><td class="req-yes">必填</td><td>已关闭订单唯一ID</td></tr></tbody></table>
+  <div class="note">已关闭订单删除功能</div>
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">closed_order_add_cart_click</code>
+    <span class="cn">已关闭订单加购按钮点击</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">H5/Server</span><span class="tag tag-mod">order</span><span class="tag tag-type">点击</span><span class="tag tag-status">已完成</span></div>
+  <div class="trigger"><b>触发时机：</b>用户点击「再次购买」按钮</div>
+  <div class="prop-title">属性（1）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>order_id</code></td><td>订单ID</td><td>string</td><td class="req-yes">必填</td><td>已关闭订单唯一ID</td></tr></tbody></table>
+  <div class="note">已关闭订单删除功能</div>
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">closed_order_add_cart_result</code>
+    <span class="cn">已关闭订单加购结果</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">H5/Server</span><span class="tag tag-mod">order</span><span class="tag tag-type">接口返回结果</span><span class="tag tag-status">无需处理</span></div>
+  <div class="trigger"><b>触发时机：</b>加购接口返回结果</div>
+  <div class="prop-title">属性（3）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>order_id</code></td><td>订单ID</td><td>string</td><td class="req-yes">必填</td><td>已关闭订单唯一ID</td></tr><tr><td><code>operation_result</code></td><td>操作结果</td><td>string</td><td class="req-yes">必填</td><td>加购结果：成功/部分成功/失败</td></tr><tr><td><code>fail_reason</code></td><td>失败原因</td><td>string</td><td class="req-no">选填</td><td>失败原因描述（仅失败时填写）</td></tr></tbody></table>
+  <div class="note">已关闭订单删除功能</div>
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">poster_more_entry_click</code>
+    <span class="cn">更多海报入口点击</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">H5/Server</span><span class="tag tag-mod">share_poster</span><span class="tag tag-type">点击</span><span class="tag tag-status"></span></div>
+  <div class="trigger"><b>触发时机：</b>白名单用户点击分享弹窗「更多海报」按钮</div>
+  <div class="prop-title">属性（1）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>user_id</code></td><td>用户ID</td><td>string</td><td class="req-yes">必填</td><td>白名单用户ID</td></tr></tbody></table>
+  <div class="note">TOP300海报分享功能</div>
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">poster_template_enable_click</code>
+    <span class="cn">通用海报启用点击</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">H5/Server</span><span class="tag tag-mod">share_poster</span><span class="tag tag-type">点击</span><span class="tag tag-status"></span></div>
+  <div class="trigger"><b>触发时机：</b>用户点击通用海报「启用」按钮</div>
+  <div class="prop-title">属性（1）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>template_id</code></td><td>模板ID</td><td>string</td><td class="req-yes">必填</td><td>通用海报模板ID</td></tr></tbody></table>
+  <div class="note">TOP300海报分享功能</div>
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">custom_poster_upload_success</code>
+    <span class="cn">自定义海报上传成功</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">H5/Server</span><span class="tag tag-mod">share_poster</span><span class="tag tag-type">接口返回结果</span><span class="tag tag-status"></span></div>
+  <div class="trigger"><b>触发时机：</b>用户上传自定义图片成功</div>
+  <div class="prop-title">属性（1）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>user_id</code></td><td>用户ID</td><td>string</td><td class="req-yes">必填</td><td>上传海报的用户ID</td></tr></tbody></table>
+  <div class="note">TOP300海报分享功能</div>
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">custom_poster_enable_click</code>
+    <span class="cn">自定义海报启用点击</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">H5/Server</span><span class="tag tag-mod">share_poster</span><span class="tag tag-type">点击</span><span class="tag tag-status"></span></div>
+  <div class="trigger"><b>触发时机：</b>用户点击自定义海报「启用」按钮</div>
+  <div class="prop-title">属性（1）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>user_id</code></td><td>用户ID</td><td>string</td><td class="req-yes">必填</td><td>启用自定义海报的用户ID</td></tr></tbody></table>
+  <div class="note">TOP300海报分享功能</div>
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">poster_switch_success</code>
+    <span class="cn">海报切换成功</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">H5/Server</span><span class="tag tag-mod">share_poster</span><span class="tag tag-type">接口返回结果</span><span class="tag tag-status"></span></div>
+  <div class="trigger"><b>触发时机：</b>启用操作接口返回成功</div>
+  <div class="prop-title">属性（2）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>poster_type</code></td><td>海报类型</td><td>string</td><td class="req-yes">必填</td><td>切换后的海报类型</td></tr><tr><td><code>poster_id</code></td><td>海报ID</td><td>string</td><td class="req-yes">必填</td><td>切换后的海报ID</td></tr></tbody></table>
+  <div class="note">TOP300海报分享功能</div>
+</div><h2 class="layer-h" id="L2">L2 业务层（9 事件）</h2>
+<div class="event">
+  <div class="event-head">
+    <code class="en">profile_submit</code>
+    <span class="cn">提交健康档案（首次建档）</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">profile</span><span class="tag tag-type">提交</span><span class="tag tag-status">已完成</span></div>
+  <div class="trigger"><b>触发时机：</b>仅首次建档 ：用户完成6步引导式健康档案的某一步并提交</div>
+  <div class="prop-title">属性（4）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>step_index</code></td><td>步骤序号</td><td>number</td><td class="req-yes">必填</td><td>步骤序号（1-6）</td></tr><tr><td><code>step_name</code></td><td>步骤名称</td><td>string</td><td class="req-yes">必填</td><td>步骤名称</td></tr><tr><td><code>profile_fields</code></td><td>档案字段列表</td><td>string</td><td class="req-no">选填</td><td>本步骤已填字段名列表（分号分隔；只传字段名，不传健康数据值）</td></tr><tr><td><code>completion_rate</code></td><td>完成度</td><td>number</td><td class="req-yes">必填</td><td>档案整体完成度（百分比）</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">profile_update</code>
+    <span class="cn">更新健康档案（编辑/补填）</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">profile</span><span class="tag tag-type">提交</span><span class="tag tag-status">无需处理</span></div>
+  <div class="trigger"><b>触发时机：</b>用户 非首次 编辑/补填健康档案时提交（手动修改、AI引导补填、对话中补充、识别结果录入、记忆补充）</div>
+  <div class="prop-title">属性（7）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>edit_section</code></td><td>编辑区域</td><td>string</td><td class="req-yes">必填</td><td>编辑区域（对应档案分区，非步骤）</td></tr><tr><td><code>member_ids</code></td><td>记忆画像ID</td><td>string</td><td class="req-no">选填</td><td>本次编辑的字段涉及多昵称档案更新（多member id时，使用‖进行分割）</td></tr><tr><td><code>edited_fields</code></td><td>编辑字段列表</td><td>string</td><td class="req-yes">必填</td><td>本次编辑的字段名列表（分号分隔；不得传字段值）,如果存在多个menber_id时，需要使用||进行分割</td></tr><tr><td><code>record_id</code></td><td>更新字段</td><td>string</td><td class="req-no">选填</td><td>本次编辑的字段名列表（分号分隔；不得传字段值）</td></tr><tr><td><code>update_source</code></td><td>更新来源</td><td>string</td><td class="req-yes">必填</td><td>档案更新来源</td></tr><tr><td><code>new_field_count</code></td><td>新增字段数</td><td>number</td><td class="req-yes">必填</td><td>本次由空值变为有值的字段数量</td></tr><tr><td><code>field_count_after</code></td><td>更新后已填字段数</td><td>number</td><td class="req-yes">必填</td><td>编辑后该 member_id 的已填字段总数（用于追踪档案完整度变化曲线）</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">quick_question_click</code>
+    <span class="cn">开屏问题点击</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">dialogue</span><span class="tag tag-type">点击</span><span class="tag tag-status">无需处理</span></div>
+  <div class="trigger"><b>触发时机：</b>用户点击对话页顶部的某个开屏问题</div>
+  <div class="prop-title">属性（4）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>exposure_id</code></td><td>曝光ID</td><td>string</td><td class="req-yes">必填</td><td>对应quick_question_view的曝光ID</td></tr><tr><td><code>question_id</code></td><td>问题ID</td><td>string</td><td class="req-yes">必填</td><td>用户点击的问题ID</td></tr><tr><td><code>question_text</code></td><td>问题文案</td><td>string</td><td class="req-yes">必填</td><td>问题文案（用于后台对照）</td></tr><tr><td><code>click_position</code></td><td>点击位置</td><td>number</td><td class="req-yes">必填</td><td>问题在本次展示列表中的位置（1/2/3）</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">dialogue_send</code>
+    <span class="cn">发起AI对话</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">dialogue</span><span class="tag tag-type">发送</span><span class="tag tag-status">已完成</span></div>
+  <div class="trigger"><b>触发时机：</b>用户在对话页发送一条消息</div>
+  <div class="prop-title">属性（7）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>dialogue_id</code></td><td>对话ID</td><td>string</td><td class="req-yes">必填</td><td>对话ID，唯一标识一次对话会话</td></tr><tr><td><code>message_id</code></td><td>消息ID</td><td>string</td><td class="req-yes">必填</td><td>用户消息ID，用于与Coze单条消息日志关联</td></tr><tr><td><code>message_type</code></td><td>消息类型</td><td>string</td><td class="req-yes">必填</td><td>消息类型</td></tr><tr><td><code>is_first_message</code></td><td>是否首条消息</td><td>boolean</td><td class="req-yes">必填</td><td>是否本次对话的首条消息</td></tr><tr><td><code>help_type</code></td><td>帮助类型</td><td>string</td><td class="req-no">选填</td><td>用户选择的帮助类型</td></tr><tr><td><code>quick_question_id</code></td><td>快捷问题ID</td><td>string</td><td class="req-no">选填</td><td>若本次对话由开屏问题触发，传问题ID；手动输入为空</td></tr><tr><td><code>trigger_type</code></td><td>触发类型</td><td>string</td><td class="req-yes">必填</td><td>对话触发方式</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">product_detail_view</code>
+    <span class="cn">查看产品详情</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">H5</span><span class="tag tag-mod">product</span><span class="tag tag-type">浏览</span><span class="tag tag-status">无需处理</span></div>
+  <div class="trigger"><b>触发时机：</b>图2所示H5商品详情页核心内容加载成功并可见</div>
+  <div class="prop-title">属性（5）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>click_id</code></td><td>点击ID</td><td>string</td><td class="req-yes">必填</td><td>来源purchase_link_click的点击ID，从App透传到H5</td></tr><tr><td><code>product_id</code></td><td>产品ID</td><td>string</td><td class="req-yes">必填</td><td>产品ID</td></tr><tr><td><code>product_name</code></td><td>产品名称</td><td>string</td><td class="req-yes">必填</td><td>产品名称</td></tr><tr><td><code>source</code></td><td>来源</td><td>string</td><td class="req-yes">必填</td><td>来源</td></tr><tr><td><code>recommend_id</code></td><td>推荐批次ID</td><td>string</td><td class="req-no">选填</td><td>推荐批次ID（来源为recommend时填写）</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">recommend_view</code>
+    <span class="cn">推荐结果曝光</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">recommend</span><span class="tag tag-type">曝光</span><span class="tag tag-status">已完成</span></div>
+  <div class="trigger"><b>触发时机：</b>AI推荐结果展示给用户</div>
+  <div class="prop-title">属性（5）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>message_id</code></td><td>推荐批次ID</td><td>string</td><td class="req-yes">必填</td><td>推荐批次ID</td></tr><tr><td><code>recommend_source</code></td><td>推荐来源</td><td>string</td><td class="req-yes">必填</td><td>推荐来源</td></tr><tr><td><code>dialogue_id</code></td><td>对话ID</td><td>string</td><td class="req-yes">条件必填</td><td>来源对话ID；recommend_source=dialogue时必填</td></tr><tr><td><code>recommend_count</code></td><td>推荐产品数</td><td>number</td><td class="req-yes">必填</td><td>推荐产品数量</td></tr><tr><td><code>product_ids</code></td><td>产品ID列表</td><td>string</td><td class="req-yes">必填</td><td>推荐产品ID列表（分号分隔）</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">report_upload</code>
+    <span class="cn">上传体检报告</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">profile</span><span class="tag tag-type">接口返回结果</span><span class="tag tag-status">无需处理</span></div>
+  <div class="trigger"><b>触发时机：</b>用户发起上传后，单次上传任务返回成功或失败结果</div>
+  <div class="prop-title">属性（7）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>upload_id</code></td><td>上传任务ID</td><td>string</td><td class="req-yes">必填</td><td>单次上传任务ID</td></tr><tr><td><code>report_type</code></td><td>报告类型</td><td>string</td><td class="req-yes">必填</td><td>报告类型</td></tr><tr><td><code>upload_source</code></td><td>上传来源</td><td>string</td><td class="req-yes">必填</td><td>上传入口来源</td></tr><tr><td><code>file_type</code></td><td>文件类型</td><td>string</td><td class="req-yes">必填</td><td>文件类型</td></tr><tr><td><code>file_size</code></td><td>文件大小</td><td>number</td><td class="req-no">选填</td><td>文件大小（KB）</td></tr><tr><td><code>upload_result</code></td><td>上传结果</td><td>string</td><td class="req-yes">必填</td><td>上传结果</td></tr><tr><td><code>fail_reason</code></td><td>失败原因</td><td>string</td><td class="req-no">选填</td><td>失败原因（仅fail时填写）</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">scan_complete</code>
+    <span class="cn">完成图片识别</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">scan</span><span class="tag tag-type">接口返回结果</span><span class="tag tag-status">无需处理</span></div>
+  <div class="trigger"><b>触发时机：</b>相机/相册识别流程进入终态：成功、失败、超时、用户取消或相机权限被拒绝</div>
+  <div class="prop-title">属性（7）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>scan_id</code></td><td>识别任务ID</td><td>string</td><td class="req-yes">必填</td><td>单次识别任务ID，必须与scan_entry一致</td></tr><tr><td><code>scan_type</code></td><td>识别类型</td><td>string</td><td class="req-yes">必填</td><td>识别类型</td></tr><tr><td><code>scan_result</code></td><td>识别结果</td><td>string</td><td class="req-yes">必填</td><td>识别结果</td></tr><tr><td><code>result_count</code></td><td>结果数量</td><td>number</td><td class="req-no">选填</td><td>识别结果数量（成功时）</td></tr><tr><td><code>scan_duration</code></td><td>识别耗时</td><td>number</td><td class="req-yes">必填</td><td>从scan_entry到流程终态的耗时（毫秒）</td></tr><tr><td><code>error_code</code></td><td>错误码</td><td>string</td><td class="req-yes">条件必填</td><td>失败或超时时的错误码</td></tr><tr><td><code>failure_stage</code></td><td>失败阶段</td><td>string</td><td class="req-yes">条件必填</td><td>未成功时所处阶段；cancel可选，其他失败结果必填</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">feedback_click</code>
+    <span class="cn">点击对话反馈</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">feedback</span><span class="tag tag-type">点击</span><span class="tag tag-status">已完成</span></div>
+  <div class="trigger"><b>触发时机：</b>用户点击AI回复下方的反馈按钮</div>
+  <div class="prop-title">属性（4）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>dialogue_id</code></td><td>对话ID</td><td>string</td><td class="req-yes">必填</td><td>对话ID</td></tr><tr><td><code>message_id</code></td><td>消息ID</td><td>string</td><td class="req-yes">必填</td><td>消息ID（AI回复的消息标识）</td></tr><tr><td><code>feedback_type</code></td><td>反馈类型</td><td>string</td><td class="req-yes">必填</td><td>反馈类型</td></tr><tr><td><code>feedback_action</code></td><td>反馈动作</td><td>string</td><td class="req-yes">必填</td><td>本次操作：select(选择) / cancel(取消)</td></tr></tbody></table>
+  
+</div><h2 class="layer-h" id="L3">L3 转化/留存层（5 事件）</h2>
+<div class="event">
+  <div class="event-head">
+    <code class="en">purchase_link_click</code>
+    <span class="cn">点击查看商品</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">purchase</span><span class="tag tag-type">点击</span><span class="tag tag-status">已完成</span></div>
+  <div class="trigger"><b>触发时机：</b>用户点击对话推荐卡片的“查看”或其他商品入口，准备打开H5商品详情</div>
+  <div class="prop-title">属性（7）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>click_id改为message_id，用于归因</code></td><td>点击ID</td><td>string</td><td class="req-yes">必填</td><td>单次跳转ID，写入H5 URL并贯穿订单归因</td></tr><tr><td><code>source</code></td><td>来源</td><td>string</td><td class="req-yes">必填</td><td>入口来源：dialogue_recommend / service_goods / service_live / quick_question</td></tr><tr><td><code>product_id</code></td><td>产品ID</td><td>string</td><td class="req-yes">必填</td><td>产品ID</td></tr><tr><td><code>product_name</code></td><td>产品名称</td><td>string</td><td class="req-yes">必填</td><td>产品名称</td></tr><tr><td><code>purchase_channel</code></td><td>购买渠道</td><td>string</td><td class="req-yes">必填</td><td>购买渠道</td></tr><tr><td><code>recommend_id</code></td><td>推荐批次ID</td><td>string</td><td class="req-no">选填</td><td>推荐批次ID（来源推荐时填写）</td></tr><tr><td><code>dialogue_id</code></td><td>会话ID</td><td>string</td><td class="req-no">选填</td><td>关联对话ID（来源对话时填写）</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">purchase_confirm</code>
+    <span class="cn">订单创建成功</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">H5/Server</span><span class="tag tag-mod">purchase</span><span class="tag tag-type">接口返回结果</span><span class="tag tag-status">已完成</span></div>
+  <div class="trigger"><b>触发时机：</b>H5提交订单后，业务服务端返回订单创建成功</div>
+  <div class="prop-title">属性（9）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>order_id</code></td><td>订单ID</td><td>string</td><td class="req-yes">必填</td><td>业务订单唯一ID</td></tr><tr><td><code>click_id改为message_id，用于归因</code></td><td>点击ID</td><td>string</td><td class="req-yes">必填</td><td>来源purchase_link_click的跳转ID</td></tr><tr><td><code>product_id</code></td><td>产品ID</td><td>string</td><td class="req-yes">必填</td><td>产品 ID</td></tr><tr><td><code>product_name</code></td><td>产品名称</td><td>string</td><td class="req-yes">必填</td><td>产品名称</td></tr><tr><td><code>product_price</code></td><td>产品价格</td><td>number</td><td class="req-yes">必填</td><td>产品价格（元）</td></tr><tr><td><code>quantity</code></td><td>购买数量</td><td>number</td><td class="req-yes">必填</td><td>购买数量</td></tr><tr><td><code>source_page</code></td><td>来源页面</td><td>string</td><td class="req-yes">必填</td><td>来源页面类型</td></tr><tr><td><code>recommend_id</code></td><td>推荐批次ID</td><td>string</td><td class="req-no">选填</td><td>来源推荐批次 ID（从 App 带入 H5 URL 参数）</td></tr><tr><td><code>dialogue_id</code></td><td>对话ID</td><td>string</td><td class="req-no">选填</td><td>来源对话 ID（从 App 带入 H5 URL 参数）</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">profile_complete</code>
+    <span class="cn">完整建档完成</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">profile</span><span class="tag tag-type">接口返回结果</span><span class="tag tag-status">无需处理</span></div>
+  <div class="trigger"><b>触发时机：</b>用户档案完整度 首次 达到100%时触发（无论首次6步建档还是后续补填）</div>
+  <div class="prop-title">属性（5）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>complete_source</code></td><td>完成来源</td><td>string</td><td class="req-yes">必填</td><td>完成来源</td></tr><tr><td><code>guide_duration</code></td><td>引导总耗时</td><td>number</td><td class="req-no">选填</td><td>首次建档引导总耗时（毫秒）。起点：步骤1首次可见；终点：步骤6提交成功并达到100%</td></tr><tr><td><code>completion_rate</code></td><td>完成度</td><td>number</td><td class="req-yes">必填</td><td>完成度（完整建档=100）</td></tr><tr><td><code>field_count</code></td><td>已填字段总数</td><td>number</td><td class="req-yes">必填</td><td>已填字段总数</td></tr><tr><td><code>has_report</code></td><td>是否上传报告</td><td>boolean</td><td class="req-yes">必填</td><td>是否上传体检报告</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">feedback_submit</code>
+    <span class="cn">提交差评反馈</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">feedback</span><span class="tag tag-type">提交</span><span class="tag tag-status">已完成</span></div>
+  <div class="trigger"><b>触发时机：</b>用户提交差评反馈表单（选原因+填文字）</div>
+  <div class="prop-title">属性（4）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>dialogue_id</code></td><td>对话ID</td><td>string</td><td class="req-yes">必填</td><td>对话ID</td></tr><tr><td><code>message_id</code></td><td>消息ID</td><td>string</td><td class="req-yes">必填</td><td>消息ID</td></tr><tr><td><code>feedback_reasons</code></td><td>反馈原因列表</td><td>string</td><td class="req-yes">必填</td><td>反馈原因列表（分号分隔）</td></tr><tr><td><code>has_feedback_text</code></td><td>是否填写文字反馈</td><td>boolean</td><td class="req-yes">必填</td><td>是否填写文字反馈；原文不得上报友盟，应存入受控业务数据库</td></tr></tbody></table>
+  
+</div>
+<div class="event">
+  <div class="event-head">
+    <code class="en">retention_return</code>
+    <span class="cn">复访对话</span>
+  </div>
+  <div class="tags"><span class="tag tag-plat">Android/iOS</span><span class="tag tag-mod">retention</span><span class="tag tag-type">服务端派生</span><span class="tag tag-status">无需处理</span></div>
+  <div class="trigger"><b>触发时机：</b>用户在首次对话日后的第1/7/30个自然日再次发起首条消息，由服务端派生</div>
+  <div class="prop-title">属性（4）</div>
+  <table class="props"><thead><tr><th>属性英文名</th><th>属性显示名(友盟中文)</th><th>类型</th><th>必填性</th><th>说明</th></tr></thead><tbody><tr><td><code>return_typeg改为dialogue_id</code></td><td>回访类型</td><td>string</td><td class="req-yes">必填</td><td>回访类型</td></tr><tr><td><code>cohort_date</code></td><td>队列日期</td><td>string</td><td class="req-yes">必填</td><td>用户首次发起对话的自然日（队列日期）</td></tr><tr><td><code>return_date</code></td><td>回访日期</td><td>string</td><td class="req-yes">必填</td><td>本次回访自然日</td></tr><tr><td><code>return_date</code></td><td>回访日期</td><td>string</td><td class="req-yes">必填</td><td>本次回访自然日</td></tr></tbody></table>
+  
+</div>
+
+  <h2 class="layer-h" id="pages">页面枚举（page_name）</h2>
+  <table class="schema-tbl"><thead><tr><th>page_name</th><th>页面路径</th><th>页面名称</th></tr></thead><tbody><tr><td><code>tai_chat</code></td><td>app://tai-chat</td><td>泰小虎首页/智能对话页</td></tr><tr><td><code>health</code></td><td>app://health</td><td>健康Tab内容页/健康档案页</td></tr><tr><td><code>service</code></td><td>app://service</td><td>服务Tab内容页</td></tr><tr><td><code>profile_onboarding</code></td><td>app://profile/onboarding</td><td>首次建档/新手引导页</td></tr><tr><td><code>product_detail_h5</code></td><td>h5://product/detail</td><td>商品详情页</td></tr></tbody></table>
+
+  <h2 class="layer-h" id="schema">埋点规范字段 schema（事件表列说明）</h2>
+  <table class="schema-tbl"><thead><tr><th>列</th><th>含义</th></tr></thead><tbody>
+    <tr><td>事件编号</td><td>同一事件的多行属性共用同一编号</td></tr>
+    <tr><td>所属层</td><td>L1 启动/浏览/基础交互；L2 业务核心（建档/对话/识别/推荐）；L3 转化/留存/反馈</td></tr>
+    <tr><td>平台</td><td>Android / iOS / H5 / H5-Server / Server</td></tr>
+    <tr><td>模块</td><td>common / navigation / popup / scan / dialogue / profile / recommend / product / purchase / feedback / retention / order / share_poster</td></tr>
+    <tr><td>事件英文名</td><td>snake_case，友盟事件 ID，全局唯一，创建后不可改名</td></tr>
+    <tr><td>事件类型</td><td>启动 / 浏览 / 点击 / 曝光 / 提交 / 发送 / 接口返回结果 / 服务端派生</td></tr>
+    <tr><td>属性英文变量名</td><td>snake_case，友盟自定义属性 ID，创建后不可删/改名/改类型，只能新增</td></tr>
+    <tr><td>属性显示名</td><td>友盟后台中文名</td></tr>
+    <tr><td>数据类型</td><td>string / number</td></tr>
+    <tr><td>必填性</td><td>必填 / 条件必填 / 选填</td></tr>
+    <tr><td>触发时机</td><td>前端 / 服务端触发条件</td></tr>
+    <tr><td>去重规则 / 校验规则</td><td>去重口径 / 取值校验（枚举∈SET）</td></tr>
+  </tbody></table>
+
+  <footer>泰小虎埋点规范 v2.3 · 由《泰小虎埋点表v2.3》生成 · 仅供 PRD 引用查阅</footer>
+</div>
+</body></html>
