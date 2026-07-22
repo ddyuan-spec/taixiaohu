@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400">
+<title>直播挂车 — 平台端原型</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,'PingFang SC','Microsoft YaHei','Helvetica Neue',Arial,sans-serif;background:#f3f4f6;color:#1f2937;font-size:13px;line-height:1.6;display:flex;min-height:100vh}
+
+  /* ===== 顶栏（靛蓝紫，对齐截图-A1/A2）===== */
+  .topbar{height:48px;background:#4F46E5;display:flex;align-items:center;padding:0 24px;position:fixed;top:0;left:0;right:0;z-index:100;flex-shrink:0}
+  .topbar .brand{color:#fff;font-weight:700;font-size:15px;letter-spacing:.5px}
+  .topbar .brand-sub{color:#c7d2fe;font-size:12px;margin-left:8px;font-weight:400}
+  .topbar .right{margin-left:auto;display:flex;align-items:center;gap:10px;color:#e0e7ff;font-size:12.5px}
+  .topbar .avatar{width:28px;height:28px;border-radius:50%;background:#a5b4fc;display:flex;align-items:center;justify-content:center;color:#4338ca;font-weight:700;font-size:11px}
+
+  /* ===== 左侧菜单（对齐截图-A1左侧栏）===== */
+  .sidebar{width:186px;background:#f9fafb;border-right:1px solid #e5e7eb;position:fixed;top:48px;left:0;bottom:0;z-index:90;overflow-y:auto;padding-top:16px;flex-shrink:0}
+  .sidebar-group{padding:0 14px;margin-bottom:20px}
+  .sidebar-label{font-size:11px;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:0 10px;margin-bottom:6px}
+  .sidebar-item{display:block;padding:8px 12px;border-radius:6px;font-size:13px;color:#4b5563;text-decoration:none;cursor:pointer;transition:.15s;margin-bottom:2px}
+  .sidebar-item:hover{background:#eef2ff;color:#4f46e5}
+  .sidebar-item.active{background:#eef2ff;color:#4f46e5;font-weight:600}
+
+  /* ===== 主内容区 ===== */
+  .main{margin-left:186px;margin-top:48px;flex:1;min-width:0}
+  .page-wrap{max-width:1280px;margin:0 auto;padding:20px 28px}
+
+  /* ===== 面包屑 ===== */
+  .breadcrumb{font-size:12.5px;color:#6b7280;margin-bottom:14px}
+  .breadcrumb a{color:#6b7280;text-decoration:none}
+  .breadcrumb a:hover{color:#4f46e5}
+  .breadcrumb span{color:#9ca3af;margin:0 6px}
+
+  /* ===== 页面标题行 ===== */
+  .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px}
+  .page-header h1{font-size:19px;font-weight:700;color:#111827}
+  .page-header h1 .sub{font-size:13px;color:#6b7280;font-weight:400;margin-left:10px}
+
+  /* ===== 按钮（靛蓝主色）===== */
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 18px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:.15s;white-space:nowrap}
+  .btn-primary{background:#4F46E5;color:#fff;border-color:#4F46E5}
+  .btn-primary:hover{background:#4338ca}
+  .btn-default{background:#fff;color:#374151;border-color:#d1d5db}
+  .btn-default:hover{border-color:#9ca3af;background:#f9fafb}
+  .btn-success{background:#22c55e;color:#fff;border-color:#22c55e}
+  .btn-success:hover{background:#16a34a}
+  .btn-sm{padding:5px 13px;font-size:12px}
+  .btn-icon{width:32px;padding:0;justify-content:center}
+
+  /* ===== 筛选区（白色卡片，对齐截图-A1筛选条）===== */
+  .filter-bar{background:#fff;border-radius:8px;padding:16px 20px;margin-bottom:16px;border:1px solid #e5e7eb;display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end}
+  .filter-group{display:flex;flex-direction:column;gap:5px}
+  .filter-group label{font-size:12px;color:#6b7280;font-weight:500}
+  .filter-group input,.filter-group select{padding:7px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;width:180px;outline:none;transition:border-color .15s;background:#fff}
+  .filter-group input:focus,.filter-group select:focus{border-color:#4F46E5;box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+  .filter-group .search-btn{padding:7px 20px;background:#fff;border:1px solid #d1d5db;border-radius:6px;font-size:13px;cursor:pointer;color:#374151}
+  .filter-group .search-btn:hover{border-color:#9ca3af}
+
+  /* 筛选栏操作按钮靠右 */
+  .filter-actions{margin-left:auto;display:flex;gap:8px;align-items:flex-end}
+
+  /* ===== 工具栏行（筛选栏下方、表格上方，对齐真实后台）===== */
+  .toolbar-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:0 2px}
+  .toolbar-right{display:flex;gap:10px;align-items:center}
+
+  /* ===== 表格卡片（精确对齐截图-A1表格风格）===== */
+  .table-card{background:#fff;border-radius:8px;border:1px solid #e5e7eb;overflow:hidden}
+  .data-table{width:100%;border-collapse:collapse;table-layout:fixed}
+  .data-table thead th{background:#f9fafb;padding:11px 14px;text-align:left;font-size:12.5px;font-weight:600;color:#4b5563;border-bottom:1px solid #e5e7eb;white-space:nowrap;overflow:hidden}
+  .data-table tbody td{padding:10px 14px;border-bottom:1px solid #f3f4f6;font-size:13px;vertical-align:middle;color:#374151;overflow:hidden}
+  .data-table tbody tr:hover{background:#f9fafb}
+  .data-table tbody tr:last-child td{border-bottom:none}
+  .col-chk{width:42px;text-align:center}
+  .col-chk input{width:16px;height:16px;cursor:pointer;accent-color:#4F46E5}
+  .col-id{width:60px}
+  .col-info{min-width:220px}
+  .col-source{width:140px}
+  .col-stock{width:60px;text-align:center}
+  .col-price{width:90px}
+  .col-status{width:100px}
+  .col-time{width:140px}
+  .col-action{width:130px;text-align:left}
+
+  /* 商品信息单元格 */
+  .prod-info{display:flex;align-items:center;gap:10px}
+  .prod-img{width:48px;height:48px;border-radius:6px;border:1px solid #e5e7eb;object-fit:cover;background:#f3f4f6;flex-shrink:0}
+  .prod-name{font-weight:500;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .prod-cat{font-size:11.5px;color:#9ca3af;margin-top:2px}
+
+  /* 价格 */
+  .price{color:#dc2626;font-weight:600}
+
+  /* 状态标签（仅两种：已同步 / 同步失败） */
+  .status{display:inline-block;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:500;white-space:nowrap}
+  .status-synced{background:#dcfce7;color:#166534}
+  .status-fail{background:#fee2e2;color:#991b1b}
+
+  /* 操作链接（靛蓝色，对齐截图-A1操作列） */
+  .action-link{color:#4F46E5;cursor:pointer;font-size:12.5px;margin-right:12px;text-decoration:none;font-weight:500;white-space:nowrap}
+  .action-link:hover{text-decoration:underline;color:#4338ca}
+  .action-link.danger{color:#dc2626}
+  .action-link.danger:hover{color:#b91c1c}
+
+  /* 分页（对齐截图-A1底部） */
+  .pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid #e5e7eb;font-size:12.5px;color:#6b7280}
+  .pagination .pages{display:flex;gap:4px}
+  .pagination .pg{min-width:30px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #e5e7eb;border-radius:4px;cursor:pointer;color:#374151}
+  .pagination .pg.active{background:#4F46E5;color:#fff;border-color:#4F46E5}
+  .pagination .pg:hover:not(.active){border-color:#9ca3af}
+  .pagination .jump{display:flex;align-items:center;gap:4px}
+  .pagination .jump input{width:42px;height:28px;border:1px solid #d1d5db;border-radius:4px;text-align:center;font-size:12px}
+
+  /* ===== 弹窗遮罩 ===== */
+  .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center}
+  .modal-overlay.show{display:flex}
+  .modal{background:#fff;border-radius:10px;width:580px;max-height:82vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.18)}
+  .modal-hd{padding:18px 24px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between}
+  .modal-hd h3{font-size:16px;font-weight:700;color:#111827}
+  .modal-close{width:28px;height:28px;border-radius:50%;border:none;background:#f3f4f6;cursor:pointer;font-size:17px;color:#6b7280;display:flex;align-items:center;justify-content:center}
+  .modal-close:hover{background:#e5e7eb}
+  .modal-bd{padding:22px 24px}
+  .modal-ft{padding:14px 24px;border-top:1px solid #e5e7eb;display:flex;justify-content:flex-end;gap:10px}
+
+  /* 弹窗表单 */
+  .form-group{margin-bottom:16px}
+  .form-group label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px}
+  .form-group label .req{color:#dc2626;margin-left:2px}
+  .form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;outline:none;background:#fff}
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#4F46E5;box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+
+  /* 已选商品列表 */
+  .selected-list{border:1px solid #e5e7eb;border-radius:8px;max-height:200px;overflow-y:auto;background:#fafafa}
+  .selected-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #f3f4f6}
+  .selected-item:last-child{border-bottom:none}
+  .selected-item .si-img{width:36px;height:36px;border-radius:6px;border:1px solid #e5e7eb;object-fit:cover}
+  .selected-item .si-name{flex:1;font-size:13px;font-weight:500;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .selected-item .si-remove{color:#9ca3af;cursor:pointer;font-size:18px;line-height:1;flex-shrink:0}
+  .selected-item .si-remove:hover{color:#dc2626}
+
+  /* 提示信息 */
+  .tip{background:#eff6ff;border-left:3px solid #4F46E5;padding:10px 14px;border-radius:0 6px 6px 0;font-size:12.5px;color:#1e40af;margin-bottom:16px;line-height:1.7}
+  .tip-warn{background:#fffbeb;border-left-color:#f59e0b;color:#92400e}
+  .tip-succ{background:#f0fdf4;border-left-color:#22c55e;color:#166534}
+</style>
+</head>
+<body>
+
+<!-- ==================== 顶栏 ==================== -->
+<div class="topbar">
+  <div><span class="brand">泰小虎后台</span><span class="brand-sub">平台管理端 · 直播管理</span></div>
+  <div class="right"><span>运营管理员</span><div class="avatar">管</div></div>
+</div>
+
+<!-- ==================== 左侧菜单 ==================== -->
+<div class="sidebar">
+  <div class="sidebar-group">
+    <div class="sidebar-label">直播管理</div>
+    <a class="sidebar-item">直播间管理</a>
+    <a class="sidebar-item">直播数据统计</a>
+  </div>
+  <div class="sidebar-group">
+    <div class="sidebar-label">商品中心</div>
+    <a class="sidebar-item active">直播商品</a>
+    <a class="sidebar-item">商品列表</a>
+    <a class="sidebar-item">商品分类</a>
+    <a class="sidebar-item">品牌管理</a>
+  </div>
+  <div class="sidebar-group">
+    <div class="sidebar-label">营销中心</div>
+    <a class="sidebar-item">优惠券管理</a>
+    <a class="sidebar-item">活动配置</a>
+  </div>
+  <div class="sidebar-group">
+    <div class="sidebar-label">运营</div>
+    <a class="sidebar-item">用户管理</a>
+    <a class="sidebar-item">数据看板</a>
+  </div>
+</div>
+
+
+<!-- ==================== 主内容：屏幕1 — 直播商品列表页 ==================== -->
+<div class="main">
+<div class="page-wrap">
+
+  <!-- 面包屑 -->
+  <div class="breadcrumb">
+    <a href="#">平台管理</a><span>/</span> 直播管理<span>/</span> <b>直播商品</b>
+  </div>
+
+  <!-- 页面标题 -->
+  <div class="page-header">
+    <h1>直播商品 <span class="sub">将商品推送至直播间展示</span></h1>
+  </div>
+
+  <!-- 筛选条件 -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label>商品名称</label>
+      <input type="text" placeholder="输入商品名称搜索">
+    </div>
+    <div class="filter-group">
+      <label>商品编号</label>
+      <input type="text" placeholder="输入商品编号">
+    </div>
+    <div class="filter-group">
+      <label>推送状态</label>
+      <select>
+        <option value="">全部</option>
+        <option value="synced">已同步</option>
+        <option value="fail">同步失败</option>
+      </select>
+    </div>
+    <div class="filter-actions">
+      <button class="btn btn-primary btn-sm" onclick="showToast('查询完成')">查询</button>
+      <button class="btn btn-default btn-sm" onclick="var fb=this.closest('.filter-bar');fb.querySelectorAll('input').forEach(function(i){i.value=''});fb.querySelectorAll('select').forEach(function(s){s.selectedIndex=0});showToast('已重置筛选条件')">重置</button>
+    </div>
+  </div>
+
+  <!-- 功能按钮行（筛选栏下方、表格上方，对齐真实后台布局） -->
+  <div class="toolbar-row">
+    <div class="toolbar-left"></div>
+    <div class="toolbar-right">
+      <button class="btn btn-default btn-icon" title="刷新直播间列表" onclick="showToast('正在刷新直播间列表…')">🔄</button>
+      <button class="btn btn-primary" onclick="document.getElementById('modal-add').classList.add('show')">＋ 添加商品</button>
+      <button class="btn btn-success" onclick="document.getElementById('modal-sync').classList.add('show')">同步到直播间 ▶</button>
+    </div>
+  </div>
+
+  <!-- 数据表格 -->
+  <div class="table-card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th class="col-chk"><input type="checkbox"></th>
+          <th class="col-id">商品编号</th>
+          <th class="col-info">商品信息</th>
+          <th class="col-source">来源商家</th>
+          <th class="col-stock">库存</th>
+          <th class="col-price">售卖价</th>
+          <th class="col-status">推送状态</th>
+          <th class="col-time">最后同步时间</th>
+          <th class="col-action">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 行1：已同步 -->
+        <tr>
+          <td class="col-chk"><input type="checkbox" checked></td>
+          <td class="col-id">557</td>
+          <td class="col-info">
+            <div class="prod-info">
+              <img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23ede9fe' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%237c3aed' font-size='10'%E3%80%90%E5%9B%BE%EF%BC%91%E3%80%91%3C/text%3E%3C/svg%3E" alt="">
+              <div><div class="prod-name">适乐肤5500ml高纯烟酰胺复合乳液</div><div class="prod-cat">食品保健 · 实妆商品</div></div>
+            </div>
+          </td>
+          <td class="col-source">广西牛奶食品有限公司</td>
+          <td class="col-stock">8717</td>
+          <td class="col-price price">¥189.00</td>
+          <td class="col-status"><span class="status status-synced">已同步</span></td>
+          <td class="col-time">2026-07-22 17:30</td>
+          <td class="col-action"><a class="action-link">更新</a></td>
+        </tr>
+        <!-- 行2：待同步 -->
+        <tr>
+          <td class="col-chk"><input type="checkbox"></td>
+          <td class="col-id">561</td>
+          <td class="col-info">
+            <div class="prod-info">
+              <img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23ede9fe' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%237c3aed' font-size='10'%E3%80%90%E5%9B%BE%EF%BC%92%E3%80%91%3C/text%3E%3C/svg%3E" alt="">
+              <div><div class="prod-name">添然膳复合益生菌冻干粉（30条装）</div><div class="prod-cat">食品保健 · 实妆商品</div></div>
+            </div>
+          </td>
+          <td class="col-source">榛魅家官方自营</td>
+          <td class="col-stock">15820</td>
+          <td class="col-price price">¥1095.00</td>
+          <td class="col-status"><span class="status status-synced">已同步</span></td>
+          <td class="col-time">2026-07-22 16:42</td>
+          <td class="col-action"><a class="action-link">更新</a></td>
+        </tr>
+        <!-- 行3：已同步 -->
+        <tr>
+          <td class="col-chk"><input type="checkbox" checked></td>
+          <td class="col-id">572</td>
+          <td class="col-info">
+            <div class="prod-info">
+              <img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23ede9fe' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%237c3aed' font-size='10'%E3%80%90%E5%9B%BE%EF%BC%93%E3%80%91%3C/text%3E%3C/svg%3E" alt="">
+              <div><div class="prod-name">基础版保湿霜</div><div class="prod-cat">食品保健 · 实妆商品</div></div>
+            </div>
+          </td>
+          <td class="col-source">榛魅家官方自营</td>
+          <td class="col-stock">0</td>
+          <td class="col-price price">¥38.00</td>
+          <td class="col-status"><span class="status status-synced">已同步</span></td>
+          <td class="col-time">2026-07-22 16:45</td>
+          <td class="col-action"><a class="action-link">更新</a></td>
+        </tr>
+        <!-- 行4：同步失败 -->
+        <tr>
+          <td class="col-chk"><input type="checkbox"></td>
+          <td class="col-id">574</td>
+          <td class="col-info">
+            <div class="prod-info">
+              <img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23ede9fe' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%237c3aed' font-size='10'%E3%80%90%E5%9B%BE%EF%BC%94%E3%80%91%3C/text%3E%3C/svg%3E" alt="">
+              <div><div class="prod-name">雅乐宝蜜桃粉</div><div class="prod-cat">食品保健 · 实妆商品</div></div>
+            </div>
+          </td>
+          <td class="col-source">邢台美盛业有限公司</td>
+          <td class="col-stock">17083</td>
+          <td class="col-price price">¥230.00</td>
+          <td class="col-status"><span class="status status-fail">同步失败</span></td>
+          <td class="col-time">2026-07-22 15:20</td>
+          <td class="col-action"><a class="action-link">更新</a><a class="action-link danger">移出</a></td>
+        </tr>
+        <!-- 行5：冷却中 -->
+        <tr>
+          <td class="col-chk"><input type="checkbox"></td>
+          <td class="col-id">575</td>
+          <td class="col-info">
+            <div class="prod-info">
+              <img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23ede9fe' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%237c3aed' font-size='10'%E3%80%90%E5%9B%BE%EF%BC%95%E3%80%91%3C/text%3E%3C/svg%3E" alt="">
+              <div><div class="prod-name">基肽致颜弹光面膜凝露</div><div class="prod-cat">食品保健 · 实妆商品</div></div>
+            </div>
+          </td>
+          <td class="col-source">无锡家丰健康科技有限公司</td>
+          <td class="col-stock">0</td>
+          <td class="col-price price">¥108.00</td>
+          <td class="col-status"><span class="status status-fail">同步失败</span></td>
+          <td class="col-time">2026-07-22 18:15</td>
+          <td class="col-action"><a class="action-link">更新</a><a class="action-link danger">移出</a></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="pagination">
+      <div>共 <b>151</b> 条 &nbsp; 10条/页</div>
+      <div class="pages">
+        <span class="pg active">1</span>
+        <span class="pg">2</span>
+        <span class="pg">3</span>
+        <span class="pg">4</span>
+        <span class="pg">5</span>
+        <span class="pg">...</span>
+        <span class="pg">16</span>
+      </div>
+      <div class="jump">跳至 <input type="text" value="1"> 页</div>
+    </div>
+  </div><!-- /table-card -->
+
+</div><!-- /page-wrap -->
+</div><!-- /main -->
+
+
+<!-- ==================== 弹窗A：同步到直播间 ==================== -->
+<div class="modal-overlay" id="modal-sync">
+  <div class="modal" style="width:600px">
+    <div class="modal-hd">
+      <h3>同步到直播间</h3>
+      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('show')">×</button>
+    </div>
+    <div class="modal-bd">
+      <div class="tip tip-succ">✅ 已选择 <b id="sync-count">2</b> 个商品，将推送到目标直播间</div>
+
+      <div class="form-group">
+        <label>目标直播间 <span class="req">★</span></label>
+        <div style="display:flex;gap:8px;align-items:flex-start">
+          <select style="width:calc(100% - 88px);flex:1">
+            <option value="">请选择目标直播间</option>
+            <option value="act_001" selected>【进行中】泰小虎健康好物专场 #001</option>
+            <option value="act_002">【已结束】夏日清凉护肤季</option>
+            <option value="act_003">【未开始】新品首发直播</option>
+          </select>
+          <button class="btn btn-default btn-sm" title="从直播后台实时拉取最新直播间信息" onclick="showToast('正在同步直播间信息…')">🔄 同步直播间信息</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>已选商品（<span id="sel-count">2</span>）</label>
+        <div class="selected-list">
+          <div class="selected-item">
+            <img class="si-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect fill='%23ede9fe' width='36' height='36' rx='4'/%3E%3Ctext x='18' y='22' text-anchor='middle' fill='%237c3aed' font-size='8'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt="">
+            <span class="si-name">#557 适乐肤5500ml高纯烟酰胺复合乳液</span>
+            <span class="si-remove" onclick="var i=this.closest('.selected-item'),l=i.parentNode;i.remove();var n=l.querySelectorAll('.selected-item').length;document.getElementById('sel-count').textContent=n;document.getElementById('sync-count').textContent=n;">×</span>
+          </div>
+          <div class="selected-item">
+            <img class="si-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect fill='%23ede9fe' width='36' height='36' rx='4'/%3E%3Ctext x='18' y='22' text-anchor='middle' fill='%237c3aed' font-size='8'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt="">
+            <span class="si-name">#572 基础版保湿霜</span>
+            <span class="si-remove" onclick="var i=this.closest('.selected-item'),l=i.parentNode;i.remove();var n=l.querySelectorAll('.selected-item').length;document.getElementById('sel-count').textContent=n;document.getElementById('sync-count').textContent=n;">×</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip tip-warn">
+        ⚠️ 推送规则：<br>
+        • 字段全自动填充（有则带、无则不传用默认值），无需手动填写<br>
+        • 允许同一商品重复推送，每次新增一个独立商品卡片<br>
+        • 冷却限制：同一商品同一直播间 1 分钟内最多 3 次
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-default" onclick="this.closest('.modal-overlay').classList.remove('show')">取消</button>
+      <button class="btn btn-success" onclick="var n=document.getElementById('sync-count').textContent;this.closest('.modal-overlay').classList.remove('show');if(parseInt(n)>1&&Math.random()>.5){alert('⚠️ 推送部分失败！\n\n失败：1 个\n  ✗ #575 基肽致颜弹光面膜凝露 — 冷却中，推送失败请稍后再试\n\n成功：'+(parseInt(n)-1)+' 个')}else{alert('✅ 推送成功！\n成功：'+n+' 个\n失败：0 个')}">确认推送</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ==================== 弹窗B：添加商品入池 ==================== -->
+<div class="modal-overlay" id="modal-add">
+  <div class="modal" style="width:720px">
+    <div class="modal-hd">
+      <h3>添加商品到直播商品列表</h3>
+      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('show')">×</button>
+    </div>
+    <div class="modal-bd">
+      <div class="filter-bar" style="margin-bottom:12px">
+        <div class="filter-group"><label>商品名称</label><input type="text" placeholder="搜索商品名称" style="width:220px"></div>
+        <div class="filter-group"><label>商品品类</label><select style="width:160px"><option>全部</option><option>食品保健</option><option>个护清洁</option></select></div>
+        <div class="filter-group"><label>&nbsp;</label><button class="search-btn">搜索</button></div>
+      </div>
+
+      <div class="table-card" style="max-height:320px">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th class="col-chk"><input type="checkbox"></th>
+              <th>商品信息</th>
+              <th class="col-price">售卖价</th>
+              <th class="col-status">商品状态</th>
+              <th style="width:90px">已在池？</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-chk"><input type="checkbox"></td>
+              <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">AI补骨胶囊</div><div class="prod-cat">所有商品</div></div></div></td>
+              <td class="col-price price">¥89.00</td>
+              <td class="col-status"><span class="status status-synced">已上架</span></td>
+              <td><span style="color:#dc2626;font-size:12px;font-weight:500">❌ 未入池</span></td>
+            </tr>
+            <tr>
+              <td class="col-chk"><input type="checkbox"></td>
+              <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">荻雅升级胶囊</div><div class="prod-cat">所有商品</div></div></div></td>
+              <td class="col-price price">¥1095.00</td>
+              <td class="col-status"><span class="status status-synced">已上架</span></td>
+              <td><span style="color:#16a34a;font-size:12px;font-weight:500">✅ 已在池</span></td>
+            </tr>
+            <tr>
+              <td class="col-chk"><input type="checkbox"></td>
+              <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">SVP纳米面膜</div><div class="prod-cat">所有商品</div></div></div></td>
+              <td class="col-price price">¥1099.00</td>
+              <td class="col-status"><span class="status status-synced">已上架</span></td>
+              <td><span style="color:#dc2626;font-size:12px;font-weight:500">❌ 未入池</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-default" onclick="this.closest('.modal-overlay').classList.remove('show')">取消</button>
+      <button class="btn btn-primary" onclick="this.closest('.modal-overlay').classList.remove('show');alert('✅ 已添加 2 个商品到直播商品列表（仅入池）')">添加到列表（入池）</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;top:64px;left:50%;transform:translateX(-50%);background:rgba(31,41,55,.92);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;z-index:999;opacity:0;transition:opacity .25s;pointer-events:none"></div>
+<script>
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.opacity='1';clearTimeout(t._tm);t._tm=setTimeout(function(){t.style.opacity='0';},1600);}
+</script>
+</body>
+</html>
