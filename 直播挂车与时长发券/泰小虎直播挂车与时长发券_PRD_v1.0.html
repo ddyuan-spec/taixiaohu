@@ -353,47 +353,12 @@
 </table>
 <h3>埋点需求（按《泰小虎埋点表 v2.3》双表规范输出）</h3>
 <p>埋点不允许口头同步，必须按 v2.3 规范以双表（埋点事件表 + 页面分析表）输出。下列事件基于本需求转化链路定义，属性字段与商城既有埋点规范对齐。</p>
-<table>
-  <thead><tr>
-    <th>事件编号</th><th>项目(必填)</th><th>所属层</th><th>平台(必填)</th><th>模块(必填)</th>
-    <th>事件英文名(必填)</th><th>事件显示名(必填)</th><th>事件类型(必填)</th>
-    <th>属性英文变量名</th><th>属性显示名</th><th>数据类型</th><th>属性说明</th>
-    <th>触发时机</th><th>创建人</th><th>创建时间</th><th>备注</th>
-    <th>必填性</th><th>示例值</th><th>关联指标</th><th>上报时机</th>
-    <th>去重规则</th><th>校验规则</th><th></th><th></th><th>状态</th><th>测试进度</th>
-  </tr></thead>
-  <tbody>
-<tr><td>1</td><td>泰小虎</td><td>L2</td><td>微信小程序 / App(iOS·Android) / H5</td><td>live_cart</td><td>cart_icon_show</td><td>小黄车浮层曝光</td><td>曝光</td><td>room_id</td><td>直播间ID</td><td>string</td><td>直播间唯一标识</td><td>直播间内小黄车浮层展示时</td><td>@产品负责人</td><td>2026-07-22</td><td></td><td>必填</td><td>r_123</td><td>小黄车曝光UV、直播观看UV</td><td>事件触发即时上报</td><td>同一 session 内同事件可重复上报；曝光按曝光时长去重</td><td>room_id 必填且取值合法（cart_icon_show 事件）</td><td></td><td></td><td>待开发</td><td>未开始</td></tr>
-<tr><td>1</td><td>泰小虎</td><td>L2</td><td>微信小程序 / App(iOS·Android) / H5</td><td>live_cart</td><td>cart_icon_show</td><td>小黄车浮层曝光</td><td>曝光</td><td>env</td><td>环境</td><td>string</td><td>prod/pre</td><td>直播间内小黄车浮层展示时</td><td>@产品负责人</td><td>2026-07-22</td><td></td><td>必填</td><td>prod</td><td>小黄车曝光UV、直播观看UV</td><td>事件触发即时上报</td><td>同一 session 内同事件可重复上报；曝光按曝光时长去重</td><td>env 必填</td><td></td><td></td><td>待开发</td><td>未开始</td></tr>
-<tr><td>2</td><td>泰小虎</td><td>L2</td><td>微信小程序 / App(iOS·Android) / H5</td><td>live_cart</td><td>cart_product_show</td><td>商品卡片曝光</td><td>曝光</td><td>room_id</td><td>直播间ID</td><td>string</td><td>直播间唯一标识</td><td>商品抽屉展开、商品卡片进入视口时</td><td>@产品负责人</td><td>2026-07-22</td><td></td><td>必填</td><td>r_123</td><td>商品卡片曝光UV</td><td>事件触发即时上报</td><td>同一 session 内同事件可重复上报；曝光按曝光时长去重</td><td>room_id 必填且取值合法（cart_product_show 事件）</td><td></td><td></td><td>待开发</td><td>未开始</td></tr>
-<tr><td>2</td><td>泰小虎</td><td>L2</td><td>微信小程序 / App(iOS·Android) / H5</td><td>live_cart</td><td>cart_product_show</td><td>商品卡片曝光</td><td>曝光</td><td>product_id</td><td>商品ID</td><td>string</td><td>挂车商品唯一标识</td><td>商品抽屉展开、商品卡片进入视口时</td><td>@产品负责人</td><td>2026-07-22</td><td></td><td>必填</td><td>p_123</td><td>商品卡片曝光UV</td><td>事件触发即时上报</td><td>同一 session 内同事件可重复上报；曝光按曝光时长去重</td><td>product_id 必填且取值合法（cart_product_show 事件）</td><td></td><td></td><td>待开发</td><td>未开始</td></tr>
-<tr><td>2</td><td>泰小虎</td><td>L2</td><td>微信小程序 / App(iOS·Android) / H5</td><td>live_cart</td><td>cart_product_show</td><td>商品卡片曝光</td><td>曝光</td><td>env</td><td>环境</td><td>string</td><td>prod/pre</td><td>商品抽屉展开、商品卡片进入视口时</td><td>@产品负责人</td><td>2026-07-22</td><td></td><td>必填</td><td>prod</td><td>商品卡片曝光UV</td><td>事件触发即时上报</td><td>同一 session 内同事件可重复上报；曝光按曝光时长去重</td><td>env 必填</td><td></td><td></td><td>待开发</td><td>未开始</td></tr>
-<tr><td>3</td><td>泰小虎</td><td>L2</td><td>微信小程序 / App(iOS·Android) / H5</td><td>live_cart</td><td>cart_product_click</td><td>商品点击</td><td>点击</td><td>room_id</td><td>直播间ID</td><td>string</td><td>直播间唯一标识</td><td>点击商品卡片「去看看」时</td><td>@产品负责人</td><td>2026-07-22</td><td></td><td>必填</td><td>r_123</td><td>商品点击UV、跳转转化率</td><td>事件触发即时上报</td><td>同一 session 内同事件可重复上报；曝光按曝光时长去重</td><td>room_id 必填且取值合法（cart_product_click 事件）</td><td></td><td></td><td>待开发</td><td>未开始</td></tr>
-<tr><td>3</td><td>泰小虎</td><td>L2</td><td>微信小程序 / App(iOS·Android) / H5</td><td>live_cart</td><td>cart_product_click</td><td>商品点击</td><td>点击</td><td>product_id</td><td>商品ID</td><td>string</td><td>挂车商品唯一标识</td><td>点击商品卡片「去看看」时</td><td>@产品负责人</td><td>2026-07-22</td><td></td><td>必填</td><td>p_123</td><td>商品点击UV、跳转转化率</td><td>事件触发即时上报</td><td>同一 session 内同事件可重复上报；曝光按曝光时长去重</td><td>product_id 必填且取值合法（cart_product_click 事件）</td><td></td><td></td><td>待开发</td><td>未开始</td></tr>
-<tr><td>3</td><td>泰小虎</td><td>L2</td><td>微信小程序 / App(iOS·Android) / H5</td><td>live_cart</td><td>cart_product_click</td><td>商品点击</td><td>点击</td><td>env</td><td>环境</td><td>string</td><td>prod/pre</td><td>点击商品卡片「去看看」时</td><td>@产品负责人</td><td>2026-07-22</td><td></td><td>必填</td><td>prod</td><td>商品点击UV、跳转转化率</td><td>事件触发即时上报</td><td>同一 session 内同事件可重复上报；曝光按曝光时长去重</td><td>env 必填</td><td></td><td></td><td>待开发</td><td>未开始</td></tr>
-<tr><td>4</td><td>泰小虎</td><td>L2</td><td>微信小程序 / App(iOS·Android) / H5</td><td>live_cart</td><td>cart_jump_confirm</td><td>跳转确认点击</td><td>点击</td><td>room_id</td><td>直播间ID</td><td>string</td><td>直播间唯一标识</td><td>跳转确认弹窗点击「立即前往」时</td><td>@产品负责人</td><td>2026-07-22</td><td></td><td>必填</td><td>r_123</td><td>跳转转化率</td><td>事件触发即时上报</td><td>同一 session 内同事件可重复上报；曝光按曝光时长去重</td><td>room_id 必填且取值合法（cart_jump_confirm 事件）</td><td></td><td></td><td>待开发</td><td>未开始</td></tr>
-<tr><td>4</td><td>泰小虎</td><td>L2</td><td>微信小程序 / App(iOS·Android) / H5</td><td>live_cart</td><td>cart_jump_confirm</td><td>跳转确认点击</td><td>点击</td><td>product_id</td><td>商品ID</td><td>string</td><td>挂车商品唯一标识</td><td>跳转确认弹窗点击「立即前往」时</td><td>@产品负责人</td><td>2026-07-22</td><td></td><td>必填</td><td>p_123</td><td>跳转转化率</td><td>事件触发即时上报</td><td>同一 session 内同事件可重复上报；曝光按曝光时长去重</td><td>product_id 必填且取值合法（cart_jump_confirm 事件）</td><td></td><td></td><td>待开发</td><td>未开始</td></tr>
-<tr><td>4</td><td>泰小虎</td><td>L2</td><td>微信小程序 / App(iOS·Android) / H5</td><td>live_cart</td><td>cart_jump_confirm</td><td>跳转确认点击</td><td>点击</td><td>env</td><td>环境</td><td>string</td><td>prod/pre</td><td>跳转确认弹窗点击「立即前往」时</td><td>@产品负责人</td><td>2026-07-22</td><td></td><td>必填</td><td>prod</td><td>跳转转化率</td><td>事件触发即时上报</td><td>同一 session 内同事件可重复上报；曝光按曝光时长去重</td><td>env 必填</td><td></td><td></td><td>待开发</td><td>未开始</td></tr>
-<tr><td>4</td><td>泰小虎</td><td>L2</td><td>微信小程序 / App(iOS·Android) / H5</td><td>live_cart</td><td>cart_jump_confirm</td><td>跳转确认点击</td><td>点击</td><td>target</td><td>跳转终端</td><td>string</td><td>wechat/app/h5</td><td>跳转确认弹窗点击「立即前往」时</td><td>@产品负责人</td><td>2026-07-22</td><td></td><td>必填</td><td>app</td><td>跳转转化率</td><td>事件触发即时上报</td><td>同一 session 内同事件可重复上报；曝光按曝光时长去重</td><td>target 必填且取值合法（cart_jump_confirm 事件）</td><td></td><td></td><td>待开发</td><td>未开始</td></tr>
-<tr><td>5</td><td>泰小虎</td><td>L2</td><td>后台 Web(平台端)</td><td>live_admin</td><td>live_product_push</td><td>直播商品推送</td><td>点击</td><td>product_id</td><td>商品ID</td><td>string</td><td>直播商品池商品唯一标识</td><td>点击「推送」/「更新」按钮时</td><td>@产品负责人</td><td>2026-07-22</td><td></td><td>必填</td><td>p_123</td><td>直播商品推送成功率</td><td>事件触发即时上报</td><td>同一 session 内同事件可重复上报；曝光按曝光时长去重</td><td>product_id 必填且取值合法（live_product_push 事件）</td><td></td><td></td><td>待开发</td><td>未开始</td></tr>
-<tr><td>5</td><td>泰小虎</td><td>L2</td><td>后台 Web(平台端)</td><td>live_admin</td><td>live_product_push</td><td>直播商品推送</td><td>点击</td><td>result</td><td>推送结果</td><td>string</td><td>成功/失败</td><td>点击「推送」/「更新」按钮时</td><td>@产品负责人</td><td>2026-07-22</td><td></td><td>必填</td><td>成功</td><td>直播商品推送成功率</td><td>事件触发即时上报</td><td>同一 session 内同事件可重复上报；曝光按曝光时长去重</td><td>result 必填且取值合法（live_product_push 事件）</td><td></td><td></td><td>待开发</td><td>未开始</td></tr>
-<tr><td>6</td><td>泰小虎</td><td>L2</td><td>后台 Web(平台端)</td><td>live_admin</td><td>live_room_sync</td><td>直播间同步</td><td>点击</td><td>operator</td><td>操作人</td><td>string</td><td>工号/账号</td><td>点击「同步直播间」按钮时</td><td>@产品负责人</td><td>2026-07-22</td><td></td><td>必填</td><td>u_001</td><td>直播间同步次数</td><td>事件触发即时上报</td><td>同一 session 内同事件可重复上报；曝光按曝光时长去重</td><td>operator 必填且取值合法（live_room_sync 事件）</td><td></td><td></td><td>待开发</td><td>未开始</td></tr>
-  </tbody>
-</table>
-
-<h4>页面分析表（v2.3 规范）</h4>
-<table>
-  <thead><tr><th>项目</th><th>平台</th><th>page_name</th><th>页面路径/逻辑路由</th><th>页面名称</th><th>页面截图</th><th>统计口径</th><th>备注</th></tr></thead>
-  <tbody>
-    <tr><td>泰小虎</td><td>微信小程序 / App(iOS·Android) / H5</td><td>live_room_view</td><td>live://room/:id</td><td>直播间观看页</td><td></td><td>小黄车浮层曝光(cart_icon_show)</td><td>三端共享交互</td></tr>
-    <tr><td>泰小虎</td><td>微信小程序 / App(iOS·Android) / H5</td><td>live_cart_sheet</td><td>live://room/:id/cart</td><td>商品抽屉</td><td></td><td>商品卡片曝光/点击</td><td></td></tr>
-    <tr><td>泰小虎</td><td>微信小程序 / App(iOS·Android) / H5</td><td>live_cart_confirm</td><td>live://room/:id/jump</td><td>跳转确认</td><td></td><td>跳转确认点击</td><td></td></tr>
-    <tr><td>泰小虎</td><td>后台 Web(平台端)</td><td>admin_live_product</td><td>/admin/live/product</td><td>直播商品池管理</td><td></td><td>推送操作(live_product_push)</td><td></td></tr>
-    <tr><td>泰小虎</td><td>后台 Web(平台端)</td><td>admin_live_room</td><td>/admin/live/room</td><td>直播间管理</td><td></td><td>同步操作(live_room_sync)</td><td></td></tr>
-    <tr><td>泰小虎</td><td>后台 Web(平台端)</td><td>admin_live_room_product</td><td>/admin/live/room/:id/products</td><td>直播间商品列表</td><td></td><td>只读展示</td><td>平台端只读</td></tr>
-    <tr><td>泰小虎</td><td>后台 Web(平台端)</td><td>admin_live_stats</td><td>/admin/live/stats</td><td>直播数据统计</td><td></td><td>数据导出</td><td></td></tr>
-  </tbody>
-</table><h2>六、 验收标准</h2>
+<div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;background:#fafaff;margin:12px 0;">
+  <p style="margin:6px 0;color:#374151;">埋点表内容较宽（双表共 26 列 + 页面分析表），已从本 PRD 拆出为独立文档，便于横向浏览：</p>
+  <p style="margin:12px 0;"><a href="https://ddyuan-spec.github.io/taixiaohu/live-tracking.html" style="display:inline-block;background:#6B4FE8;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600;">📊 打开《泰小虎直播挂车埋点表（v2.3 双表）》独立文档</a></p>
+  <p style="margin:6px 0;font-size:13px;color:#6b7280;">线上地址：<a href="https://ddyuan-spec.github.io/taixiaohu/live-tracking.html" style="color:#6B4FE8;word-break:break-all;">https://ddyuan-spec.github.io/taixiaohu/live-tracking.html</a></p>
+  <p style="margin:6px 0;font-size:13px;color:#6b7280;">本地文件：泰小虎直播挂车与时长发券_埋点表.html（与本文档同目录）</p>
+</div><h2>六、 验收标准</h2>
 <p>必须站在测试（QA）的角度，写出关键场景的验收标准 (AC)，推荐采用 Given → When → Then 逻辑描述。</p>
 <table>
   <thead><tr><th>编号</th><th>场景</th><th>Given（前提）</th><th>When（操作）</th><th>Then（结果）</th></tr></thead>
