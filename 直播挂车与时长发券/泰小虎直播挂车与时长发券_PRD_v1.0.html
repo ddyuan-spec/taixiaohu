@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎直播挂车与时长发券 PRD v1.0（依据 PRD 输出规范 260715 模板）</title>
+<style>
+  :root{--primary:#6B4FE8;--text:#111827;--sub:#6b7280;--border:#e5e7eb;--bg:#f7f8fa;}
+  *{box-sizing:border-box;}
+  body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0;}
+  .wrap{max-width:980px;margin:0 auto;background:#fff;padding:48px 56px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+  h1{font-size:28px;margin:0 0 6px;color:var(--primary);}
+  h2{font-size:21px;margin:38px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--primary);color:#1f1147;}
+  h3{font-size:17px;margin:26px 0 10px;color:#2d1a5e;}
+  h4{font-size:14.5px;margin:18px 0 8px;color:#374151;background:#f3f0ff;padding:6px 12px;border-left:4px solid var(--primary);}
+  h5{font-size:13.5px;margin:14px 0 6px;color:#7c3aed;font-weight:700;}
+  p{margin:8px 0;}
+  .meta{color:var(--sub);font-size:14px;margin-bottom:24px;}
+  table{border-collapse:collapse;width:100%;margin:10px 0 16px;font-size:13.5px;}
+  th,td{border:1px solid var(--border);padding:8px 11px;text-align:left;vertical-align:top;}
+  th{background:#f3f4f6;color:#374151;font-weight:600;}
+  code{background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12.5px;color:#b91c1c;}
+  .fig{margin:18px 0;text-align:center;}
+  .fig img{max-width:100%;border:1px solid var(--border);border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+  .cap{font-size:12.5px;color:var(--sub);margin-top:6px;}
+  .note{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;padding:10px 14px;border-radius:8px;font-size:13px;margin:12px 0;}
+  .todo{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;padding:10px 14px;border-radius:8px;font-size:13px;margin:12px 0;}
+  .kv{display:grid;grid-template-columns:130px 1fr;gap:6px 14px;font-size:14px;margin:10px 0;}
+  .kv b{color:#374151;}
+  ul{margin:8px 0;padding-left:22px;}
+  li{margin:4px 0;}
+  .tag{display:inline-block;background:#eef2ff;color:#4338ca;padding:1px 9px;border-radius:14px;font-size:12px;font-weight:600;}
+  .pagebreak{page-break-before:always;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>泰小虎 · 直播挂车与时长发券 PRD</h1>
+<div class="meta">文档结构依据《产品需求文档（PRD）输出规范与标准示例（修订于260715）》模板 · 平台端直播商品/直播间管理/直播数据统计 · 用户端直播间小黄车</div>
+
+<!-- ============ 一、文档基本信息 ============ -->
+<h2>一、 文档基本信息</h2>
+<table>
+  <thead><tr><th>字段</th><th>内容说明</th><th>示例</th></tr></thead>
+  <tbody>
+    <tr><td>项目名称</td><td>当前迭代或项目的标准名称</td><td>泰小虎直播挂车与时长发券（直播带货能力）</td></tr>
+    <tr><td>创建时间</td><td>文档首次创建的日期</td><td>2026-07-21</td></tr>
+    <tr><td>负责人</td><td>PM、迭代开发 owner、测试负责人</td><td>PM: @产品负责人 / Tech: @研发负责人 / QA: @测试负责人</td></tr>
+    <tr><td>文档状态</td><td>草稿 / 评审中 / 已定稿 / 变更中</td><td>评审稿</td></tr>
+  </tbody>
+</table>
+
+<h3>历史修订记录</h3>
+<table>
+  <thead><tr><th>版本号</th><th>修订日期</th><th>修订人</th><th>修订内容简述</th><th>状态</th></tr></thead>
+  <tbody>
+    <tr><td>v1.0</td><td>2026-07-21</td><td>@产品负责人</td><td>首版：基于现有前后端原型梳理直播挂车与时长发券需求；按《PRD输出规范(260715)》模板重构章节结构（§四 按页面拆解、补齐业务流程图/影响范围图/状态机/埋点表/验收标准/边界检查清单）</td><td>评审稿</td></tr>
+  </tbody>
+</table>
+
+<!-- ============ 二、项目背景与目标 ============ -->
+<h2>二、 项目背景与目标</h2>
+<p><b>业务背景：</b>泰小虎定位为「智能健康导购助手」，已具备商城商品与优惠券能力。在直播带货场景下，平台运营希望：① 将商城商品池中的健康好物推送至直播间进行讲解售卖；② 实时掌握各直播间的挂车商品与转化数据；③ 用户在观看直播时可通过「小黄车」浏览并跳转下单，提升健康好物转化。</p>
+<p>现状痛点：直播商品与挂车依赖火山引擎企业直播后台，平台缺少统一的管理与同步入口；用户端缺少顺滑的「看直播→点小黄车→下单」链路。拒绝空洞描述——当前运营需手工在火山后台维护挂车、且无法在平台侧闭环查看转化数据，是明确的运营效率痛点。</p>
+
+<h3>项目目标</h3>
+<table>
+  <thead><tr><th>目标维度</th><th>目标说明</th></tr></thead>
+  <tbody>
+    <tr><td>业务目标</td><td>平台运营可在后台统一维护直播商品池、同步火山直播间与挂车商品、查看直播转化数据</td></tr>
+    <tr><td>用户目标</td><td>观众在直播间内通过小黄车一键浏览商品并跳转购买，路径短、体验顺</td></tr>
+    <tr><td>数据目标</td><td>沉淀直播带来的支付订单、新用户与转化数据，支撑运营复盘</td></tr>
+  </tbody>
+</table>
+
+<h3>衡量指标 (KPI)</h3>
+<table>
+  <thead><tr><th>指标</th><th>说明</th><th>来源</th></tr></thead>
+  <tbody>
+    <tr><td>直播支付订单数</td><td>由直播间小黄车引导下单的支付订单</td><td>直播数据统计（月/日汇总）</td></tr>
+    <tr><td>挂车曝光 / 商品点击</td><td>小黄车商品曝光与点击次数</td><td>埋点</td></tr>
+    <tr><td>转化率</td><td>商品点击 ÷ 挂车曝光 × 100%</td><td>直播数据统计计算字段</td></tr>
+    <tr><td>直播新增用户</td><td>经直播间进入并完成首单/首登的新用户</td><td>直播数据统计</td></tr>
+  </tbody>
+</table>
+
+<!-- ============ 三、业务流程与架构 ============ -->
+<h2>三、 业务流程与架构</h2>
+
+<h3>1. 业务流程图</h3>
+<p><b>平台端主流程：</b>商城商品中心选品 → 加入直播商品池 → 推送至火山引擎直播间 → 同步火山直播间与挂车 → 查看直播数据统计。</p>
+<p><b>用户端主流程：</b>进入直播间观看 → 点击小黄车浮层 → 展开商品抽屉 → 点击商品「去看看」→ 跳转确认 → 进入商品详情下单。</p>
+<div class="fig"><img src="PRD配图/flow_business.png"><div class="cap">图3-1 直播带货主业务流程图（紫色=平台端后台，绿色=用户端，红色=异常/分支，菱形=判断节点；含推送失败重推、未登录拦截两条异常分支）</div></div>
+
+<h3>2. 信息架构</h3>
+<table>
+  <thead><tr><th>层级</th><th>对应模块</th></tr></thead>
+  <tbody>
+    <tr><td>前端展示层（用户端）</td><td>直播间观看页 → 小黄车浮层 → 商品抽屉 → 跳转确认 → 商品详情(L3)</td></tr>
+    <tr><td>后端配置层（平台端后台）</td><td>直播商品池管理 / 直播间管理 / 直播间商品列表 / 直播数据统计</td></tr>
+    <tr><td>数据层 / 第三方</td><td>商城商品中心《商品表》；火山引擎企业直播 OpenAPI（直播间、挂车商品、推送）</td></tr>
+  </tbody>
+</table>
+
+<h3>3. 状态机与状态流转规则</h3>
+<p class="note">凡涉及状态变化的实体必须提供状态流转表（起始状态 + 触发动作 + 前置/后置条件 = 目标状态）。</p>
+<p><b>3.1 直播商品推送状态流转</b></p>
+<table>
+  <thead><tr><th>起始状态</th><th>触发动作 (Action)</th><th>前置/后置条件</th><th>目标状态</th></tr></thead>
+  <tbody>
+    <tr><td>未推送</td><td>点击「推送」</td><td>商品已在直播商品池</td><td>推送成功 / 推送失败（以火山引擎返回为准）</td></tr>
+    <tr><td>推送成功</td><td>商品资料变更后点击「更新」</td><td>先到商城更新商品资料</td><td>推送成功（重新推送同步）</td></tr>
+    <tr><td>推送失败</td><td>点击「更新」</td><td>火山引擎返回异常后重试</td><td>推送成功 / 推送失败</td></tr>
+  </tbody>
+</table>
+<p class="note">⚠️ 待确认 @研发负责人：推送状态是否需「推送中」中间态？当前原型以火山引擎返回为准（同步返回成功/失败），无中间态。</p>
+<p><b>3.2 直播间直播状态</b>（只读展示，平台端不开放修改）</p>
+<table>
+  <thead><tr><th>状态</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>直播中</td><td>正在开播，可挂车</td></tr>
+    <tr><td>预告</td><td>已创建未开播</td></tr>
+    <tr><td>已结束</td><td>直播已结束</td></tr>
+    <tr><td>违规下播</td><td>被平台处置下播</td></tr>
+  </tbody>
+</table>
+
+<!-- ============ 四、功能需求详情 ============ -->
+<h2 class="pagebreak">四、 功能需求详情</h2>
+<p><b>需求影响范围：</b>新增直播带货能力；不影响既有商城商品/优惠券模块（仅读取商品中心数据）。用户端小黄车为观看直播场景新增入口，不影响商城主流程。</p>
+<p><b>涉及终端明细：</b><span class="tag">后台 Web</span> 直播商品池/直播间管理/商品列表/数据统计；<span class="tag">用户端</span> 微信小程序 / App / H5 内嵌（小黄车三端共享交互，跳转目标不同）。</p>
+
+<div class="fig"><img src="PRD配图/flow_impact.png"><div class="cap">图4-1 需求影响范围图（① 本次新增/改动模块 ② 依赖的既有系统·只读调用 ③ 不受影响模块；箭头表示依赖/调用关系）</div></div>
+
+<!-- 页面1 -->
+<h3>1. 页面：直播商品池管理（平台端后台）</h3>
+<h4>1.1 页面原型与交互示意</h4>
+<div class="fig"><img src="PRD配图/px_backend_live_product.png"><div class="cap">图4-1-1 平台端-直播商品池管理列表（含新增/搜索筛选/分页/推送状态）</div></div>
+<p>页面构成：列表区含「＋新增 / 查询 / 刷新」工具栏；列表字段含商品编号、商品信息（图+名+类目）、商家、库存、销量、销售价、推送状态；操作列含「移除 / 推送|更新」；支持分页（5 条/页）。</p>
+
+<h4>1.2 详细逻辑规则</h4>
+<h5>界面与展示规则</h5>
+<p><b>列表字段明细表：</b></p>
+<table>
+  <thead><tr><th>字段名称</th><th>需求说明</th><th>备注</th></tr></thead>
+  <tbody>
+    <tr><td>商品编号</td><td>商品唯一编号</td><td>取《商品表》商品ID</td></tr>
+    <tr><td>商品信息</td><td>商品主图+名称+类目</td><td>取《商品表》</td></tr>
+    <tr><td>商家</td><td>所属店铺</td><td>取《商品表》shop字段</td></tr>
+    <tr><td>库存</td><td>当前库存</td><td>取《商品表》</td></tr>
+    <tr><td>销量</td><td>累计销量</td><td>取《商品表》</td></tr>
+    <tr><td>销售价</td><td>售价</td><td>取《商品表》，展示为 ¥xxx</td></tr>
+    <tr><td>推送状态</td><td>未推送/推送成功/推送失败</td><td>来自火山引擎返回</td></tr>
+  </tbody>
+</table>
+<p>排序：默认按加入时间倒序；分页：5 条/页；数据唯一判断：商品编号唯一，重复加入自动跳过。</p>
+<p><b>功能按钮权限表：</b></p>
+<table>
+  <thead><tr><th>按钮</th><th>功能说明</th><th>显示位置</th><th>权限</th></tr></thead>
+  <tbody>
+    <tr><td>＋新增</td><td>从商品中心选品加入商品池</td><td>列表上方工具栏</td><td>直播运营</td></tr>
+    <tr><td>查询</td><td>按名称/编号+商家+状态筛选</td><td>工具栏</td><td>直播运营</td></tr>
+    <tr><td>移除</td><td>从商品池移除商品</td><td>操作列</td><td>直播运营</td></tr>
+    <tr><td>推送/更新</td><td>推送至火山 / 失败重推</td><td>操作列</td><td>直播运营</td></tr>
+  </tbody>
+</table>
+<p><b>查询条件规格表：</b></p>
+<table>
+  <thead><tr><th>查询条件</th><th>控件类型</th><th>选项来源</th><th>查询行为</th></tr></thead>
+  <tbody>
+    <tr><td>商品名称 / 商品编号</td><td>输入框</td><td>手动输入</td><td>模糊匹配名称或精确匹配编号</td></tr>
+    <tr><td>商家</td><td>下拉</td><td>固定：全部商家/泰小虎健康旗舰店/优鲜生活馆/本草堂</td><td>精确匹配</td></tr>
+    <tr><td>推送状态</td><td>下拉</td><td>未推送/推送成功/推送失败</td><td>精确匹配</td></tr>
+  </tbody>
+</table>
+<p><b>数据来源：</b>列表字段取《商品中心·商品表》；推送状态调火山引擎接口返回。计算公式：无。</p>
+
+<h5>业务逻辑与边界条件</h5>
+<p><b>按钮：＋新增（打开选品弹窗）</b><br>功能说明：从系统商品中心批量选品加入直播商品池。逐步逻辑：</p>
+<ul>
+  <li>点击「＋新增」→ 弹出「选择商品」弹窗（含已选计数、查询、商品中心列表含复选框）。</li>
+  <li>勾选商品 → 实时更新「已选择 N 项」；支持「清空」。</li>
+  <li>点击「批量选择并加入」→ 校验：未勾选→提示「请先选择商品」；否则逐个加入商品池，重复项自动跳过。</li>
+  <li>异常分支：加入失败→toast 提示；成功→关闭弹窗并刷新列表，toast「已加入 N 个商品」。</li>
+</ul>
+<p class="note">⚠️ 待确认 @干系人：选品弹窗中的「运营类型（积分商品/非积分商品）」「品牌分类」字段来源与筛选口径以商品中心哪个字段为准。</p>
+<p><b>按钮：推送 / 更新（推送至火山引擎）</b><br>功能说明：将商品推送/重新推送至直播间；状态以火山引擎返回为准。逐步逻辑：</p>
+<ul>
+  <li>未推送 → 显示「推送」；已推送(成功/失败) → 显示「更新」。</li>
+  <li>点击 → 调火山引擎推送接口 → 等待返回。</li>
+  <li>返回成功 → 状态置「推送成功」；返回失败 → 状态置「推送失败」，可再次点击「更新」重推。</li>
+  <li>异常分支：接口超时 → 提示「推送失败（火山引擎返回异常）」，状态保持失败可重试。</li>
+</ul>
+<p><b>按钮：移除</b><br>功能说明：从直播商品池移除商品。逐步逻辑：点击 → 二次确认弹窗「确认从直播商品池移除『商品名』？」→ 确认后删除并刷新列表。</p>
+<p><b>边界条件（极端场景）：</b></p>
+<ul>
+  <li>推送接口超时/返回异常 → 状态保持「推送失败」，可点「更新」重推，不静默成功。</li>
+  <li>重复加入同一商品 → 自动跳过，不重复入库（商品编号唯一）。</li>
+  <li>移除需二次确认，避免误删；移除后若该商品已推送至直播间，⚠️待确认 @研发负责人：是否同步下发移除。</li>
+  <li>批量选品上限 ⚠️ 待确认 @干系人（单次加入数量限制）。</li>
+</ul>
+
+<!-- 页面2 -->
+<h3>2. 页面：直播间管理（平台端后台）</h3>
+<h4>2.1 页面原型与交互示意</h4>
+<div class="fig"><img src="PRD配图/px_backend_live_room.png"><div class="cap">图4-2-1 平台端-直播间管理列表（搜索/刷新/同步直播间/商品列表）</div></div>
+<p>页面构成：列表区含「查询 / 刷新 / 同步直播间（红）」工具栏；列表字段含直播间ID、标题（含封面）、主播、直播状态、开播/结束时间、挂车商品数；操作列含红色「商品列表」按钮（页面跳转）。</p>
+
+<h4>2.2 详细逻辑规则</h4>
+<h5>界面与展示规则</h5>
+<p><b>列表字段明细表：</b></p>
+<table>
+  <thead><tr><th>字段名称</th><th>需求说明</th><th>备注</th></tr></thead>
+  <tbody>
+    <tr><td>直播间 ID</td><td>火山引擎直播间编号</td><td>数字型，如 1037</td></tr>
+    <tr><td>直播间标题</td><td>直播间名称</td><td>含封面缩略图</td></tr>
+    <tr><td>主播名称</td><td>主播</td><td>来自火山</td></tr>
+    <tr><td>直播状态</td><td>直播中/预告/已结束/违规下播</td><td>来自火山</td></tr>
+    <tr><td>开播时间 / 结束时间</td><td>起止时间</td><td>来自火山</td></tr>
+    <tr><td>挂车商品数</td><td>该直播间关联商品数</td><td>同步后展示</td></tr>
+  </tbody>
+</table>
+<p>排序：默认按开播时间倒序；分页：4 条/页。平台端为只读展示，不开放修改栏目。</p>
+<p><b>功能按钮权限表：</b></p>
+<table>
+  <thead><tr><th>按钮</th><th>功能说明</th><th>显示位置</th><th>权限</th></tr></thead>
+  <tbody>
+    <tr><td>查询 / 刷新</td><td>筛选/刷新列表</td><td>工具栏</td><td>直播运营</td></tr>
+    <tr><td>同步直播间</td><td>从火山引擎拉取直播间与商品</td><td>工具栏（红）</td><td>直播运营</td></tr>
+    <tr><td>商品列表</td><td>跳转该直播间挂车商品页</td><td>操作列（红）</td><td>直播运营</td></tr>
+  </tbody>
+</table>
+
+<h5>业务逻辑与边界条件</h5>
+<p><b>按钮：同步直播间</b><br>功能说明：调用火山 OpenAPI 拉取最新直播间与挂车数据。逐步逻辑：点击 → toast「正在同步火山引擎直播间与商品信息…」→ 调用火山 OpenAPI → 更新列表（直播中直播间挂车数刷新）→ toast「同步完成：已获取 N 个直播间」。数据来源：火山引擎企业直播 OpenAPI。</p>
+<p><b>按钮：商品列表（页面跳转）</b><br>功能说明：跳转到该直播间的挂车商品列表页（独立页面，非抽屉）。逐步逻辑：点击 → 记录当前直播间 ID → hash 路由跳转 <code>#room-products</code> → 页面标题显示「{直播间标题}的直播商品」。</p>
+<p><b>边界条件（极端场景）：</b></p>
+<ul>
+  <li>同步直播间过程中防重复点击（前端防重），避免并发拉取。</li>
+  <li>平台端为只读展示，不开放修改栏目（符合火山后台权限边界）。</li>
+  <li>火山无直播间数据 → 列表空态，提示「暂无匹配的直播间」。</li>
+  <li>商品列表跳转前若直播间已不存在 → ⚠️ 待确认 @研发负责人：兜底提示。</li>
+</ul>
+
+<!-- 页面3 -->
+<h3>3. 页面：直播间商品列表（平台端后台）</h3>
+<h4>3.1 页面原型与交互示意</h4>
+<div class="fig"><img src="PRD配图/px_backend_room_products.png"><div class="cap">图4-3-1 平台端-直播间商品列表页（搜索/重置/同步直播间商品 + 商品表）</div></div>
+<p>页面构成：面包屑返回 + 标题「XX的直播商品」；工具栏含「搜索 / 重置 / 同步直播间商品（红）」；列表字段含商品编号、商品信息（图+名+类目）、店家、库存、销量、销售价；分页 10 条/页（可选 20/50）。</p>
+
+<h4>3.2 详细逻辑规则</h4>
+<h5>界面与展示规则</h5>
+<p><b>列表字段明细表：</b></p>
+<table>
+  <thead><tr><th>字段名称</th><th>需求说明</th><th>备注</th></tr></thead>
+  <tbody>
+    <tr><td>商品编号</td><td>商品编号</td><td>取火山挂车商品</td></tr>
+    <tr><td>商品信息</td><td>商品图+名称+类目描述</td><td>—</td></tr>
+    <tr><td>店家</td><td>店铺</td><td>—</td></tr>
+    <tr><td>库存</td><td>库存</td><td>—</td></tr>
+    <tr><td>销量</td><td>销量</td><td>—</td></tr>
+    <tr><td>销售价</td><td>售价</td><td>⚠️待确认 @干系人：价格单位与展示格式</td></tr>
+  </tbody>
+</table>
+<p>分页：10 条/页（可选 20/50）。计算公式：<b>销售合计 = 销量 × 销售价</b>（⚠️ 待确认 @干系人：是否需在列表展示销售合计列）。</p>
+<p><b>功能按钮权限表：</b></p>
+<table>
+  <thead><tr><th>按钮</th><th>功能说明</th><th>显示位置</th><th>权限</th></tr></thead>
+  <tbody>
+    <tr><td>搜索 / 重置</td><td>按名称/编号/店家筛选</td><td>工具栏</td><td>直播运营</td></tr>
+    <tr><td>同步直播间商品</td><td>从火山同步该直播间商品</td><td>工具栏（红）</td><td>直播运营</td></tr>
+  </tbody>
+</table>
+<p class="note">说明：本页<b>无「添加本直播间商品」按钮</b>，商品来源仅为火山引擎同步（与截图一致）。</p>
+
+<h5>业务逻辑与边界条件</h5>
+<p><b>按钮：同步直播间商品</b><br>功能说明：从火山引擎同步当前直播间的挂车商品。逐步逻辑：点击 → toast「正在从火山引擎同步直播间商品…」→ 调用接口 → 刷新列表 → toast「同步完成」。</p>
+<p><b>边界条件（极端场景）：</b></p>
+<ul>
+  <li>该直播间无挂车商品 → 列表空态「当前直播间暂无挂车商品」。</li>
+  <li>搜索无匹配 → 空态提示；重置恢复全部。</li>
+  <li>同步失败 → toast 提示，保留上一次数据，不清空列表。</li>
+</ul>
+
+<!-- 页面4 -->
+<h3 class="pagebreak">4. 页面：直播数据统计（平台端后台）</h3>
+<h4>4.1 页面原型与交互示意</h4>
+<div class="fig"><img src="PRD配图/px_backend_live_data.png"><div class="cap">图4-4-1 平台端-直播数据统计（月汇总/日汇总切换 + 筛选 + 导出）</div></div>
+<p>页面构成：顶部「月汇总 / 日汇总」切换；月汇总选「年+月」、日汇总选「年+月+日」；列表含月份/日期、支付订单、新用户、支付金额、挂车曝光、商品点击、转化率、观看人数、平均观看时长；支持「导出」。</p>
+
+<h4>4.2 详细逻辑规则</h4>
+<h5>界面与展示规则</h5>
+<p><b>列表字段明细表：</b></p>
+<table>
+  <thead><tr><th>字段</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>月份/日期</td><td>统计维度</td></tr>
+    <tr><td>支付订单</td><td>直播带来的支付订单数</td></tr>
+    <tr><td>新用户</td><td>直播带来的新用户数</td></tr>
+    <tr><td>支付金额(元)</td><td>支付总额</td></tr>
+    <tr><td>挂车曝光</td><td>小黄车曝光次数</td></tr>
+    <tr><td>商品点击</td><td>商品点击次数</td></tr>
+    <tr><td>转化率</td><td>商品点击÷挂车曝光×100%</td></tr>
+    <tr><td>观看人数(UV)</td><td>观看人数</td></tr>
+    <tr><td>平均观看时长(s)</td><td>平均观看秒数</td></tr>
+  </tbody>
+</table>
+<p><b>筛选规则：</b>月汇总 → 选「年+月」；日汇总 → 选「年+月+日」。<br>
+<b>计算公式：</b>转化率 = 商品点击 ÷ 挂车曝光 × 100%（保留 1 位小数）；支付金额=Σ各订单金额。<br>
+<b>数据来源：</b>⚠️ 待确认 @数据负责人：统计接口/数据表来源（埋点汇总 or 订单表关联直播间来源标识）。<br>
+<b>导出：</b>点击「导出」→ 下载 CSV（含 BOM，Excel 可直接打开）。</p>
+
+<h5>业务逻辑与边界条件</h5>
+<ul>
+  <li>所选时间段无数据 → 空态「所选时间段暂无数据」。</li>
+  <li>导出数据量大 → ⚠️ 待确认 @数据负责人：是否分页/异步导出，避免超时。</li>
+  <li>未选月份 → 月汇总默认展示全部月份；日汇总未选日 → 默认展示全月每日。</li>
+</ul>
+
+<!-- 页面5 -->
+<h3 class="pagebreak">5. 页面：用户端直播间小黄车</h3>
+<h4>5.1 页面原型与交互示意</h4>
+<p>涉及终端：<span class="tag">微信小程序</span> <span class="tag">App</span> <span class="tag">H5 内嵌</span> 三端共享交互，跳转目标不同（小程序→商城小程序详情页；App→商城App详情页；H5→H5商品落地页）。</p>
+<div class="fig"><img src="PRD配图/px_frontend_watch.png"><div class="cap">图5-1-1 用户端-直播间观看页（右下角小黄车浮层+红色角标）</div></div>
+<div class="fig"><img src="PRD配图/px_frontend_sheet.png"><div class="cap">图5-1-2 用户端-商品抽屉（商品卡片+活动标签+价格+去看看）</div></div>
+<div class="fig"><img src="PRD配图/px_frontend_confirm.png"><div class="cap">图5-1-3 用户端-跳转确认弹窗（按终端显示不同跳转目标文案）</div></div>
+<div class="fig"><img src="PRD配图/px_frontend_detail.png"><div class="cap">图5-1-4 用户端-商品详情页 L3（优惠券/主播/加入购物车/立即购买）</div></div>
+
+<h4>5.2 详细逻辑规则</h4>
+<h5>界面与展示规则</h5>
+<p><b>入口浮层（小黄车）：</b>直播间内右下角固定浮层，展示红色角标（挂车商品数）。显示逻辑：有挂车→显示浮层+角标数；空态/加载失败→隐藏浮层。交互：点击浮层 → 展开底部商品抽屉。</p>
+<p><b>商品抽屉列表字段：</b>商品图 / 序号 / 名称 / 活动标签(直播专享/限时) / 价格(含划线原价) / «去看看»按钮。</p>
+<p><b>跳转确认 → 商品详情(L3)：</b>点击商品卡片或「去看看」→ 弹出跳转确认（文案随终端变化：微信→商城小程序 / App→商城App / H5→H5落地页）→ 点「立即前往」→ 进入商品详情页(L3)。详情页操作：领券（可点击领取，领取后状态变更）、进直播间（返回直播间）、加入购物车、立即购买。数据来源：挂车商品取火山引擎直播间挂车接口；商品详情与下单走商城既有链路。</p>
+<p class="note">⚠️ 待确认 @干系人：小黄车商品的「活动标签（直播专享/限时）」与「划线原价」字段来源（商城商品字段 or 直播间单独配置）。</p>
+
+<h5>业务逻辑与边界条件</h5>
+<ul>
+  <li>空态：无挂车商品 → 隐藏浮层，展开后显示「该直播间暂未挂车商品」。</li>
+  <li>加载失败：显示「挂车商品加载失败」+ 重试按钮，点击重试恢复。</li>
+  <li>已下架商品：卡片置灰、按钮显示「已下架」、点击提示「该商品已下架」。</li>
+  <li>终端切换：微信/App/H5 跳转目标文案不同，需与对应终端商城详情页打通。</li>
+</ul>
+
+<!-- ============ 五、非功能性需求 ============ -->
+<h2 class="pagebreak">五、 非功能性需求</h2>
+<table>
+  <thead><tr><th>类别</th><th>要求</th></tr></thead>
+  <tbody>
+    <tr><td>性能</td><td>列表页加载 &lt; 1.5s；同步直播间接口超时 10s 内给出反馈</td></tr>
+    <tr><td>兼容性</td><td>用户端三端（微信小程序/iOS·Android App/H5）交互一致；后台 Chrome/Edge 最新版</td></tr>
+    <tr><td>安全</td><td>推送/同步等写操作需登录鉴权；接口防重放</td></tr>
+    <tr><td>埋点</td><td>关键转化链路（曝光→点击→跳转）必须埋点，参数含 room_id 与 env</td></tr>
+  </tbody>
+</table>
+<h3>埋点需求（表格规范输出）</h3>
+<p>埋点不允许口头同步，必须以表格规范输出，包含：所属终端、所在页面、事件名称、触发时机、上报参数。</p>
+<table>
+  <thead><tr><th>所属终端</th><th>所在页面</th><th>事件名称</th><th>触发时机</th><th>上报参数</th></tr></thead>
+  <tbody>
+    <tr><td>用户端(三端)</td><td>直播间观看页</td><td>cart_icon_show</td><td>小黄车浮层展示</td><td>room_id, env</td></tr>
+    <tr><td>用户端</td><td>商品抽屉</td><td>cart_product_show</td><td>商品卡片曝光</td><td>room_id, product_id, env</td></tr>
+    <tr><td>用户端</td><td>商品抽屉</td><td>cart_product_click</td><td>点击商品「去看看」</td><td>room_id, product_id, env</td></tr>
+    <tr><td>用户端</td><td>跳转确认</td><td>cart_jump_confirm</td><td>点击「立即前往」</td><td>room_id, product_id, env, target</td></tr>
+    <tr><td>平台端</td><td>直播商品池</td><td>live_product_push</td><td>点击推送/更新</td><td>product_id, result(成功/失败)</td></tr>
+    <tr><td>平台端</td><td>直播间管理</td><td>live_room_sync</td><td>点击同步直播间</td><td>operator</td></tr>
+  </tbody>
+</table>
+
+<!-- ============ 六、验收标准 ============ -->
+<h2>六、 验收标准</h2>
+<p>必须站在测试（QA）的角度，写出关键场景的验收标准 (AC)，推荐采用 Given → When → Then 逻辑描述。</p>
+<table>
+  <thead><tr><th>编号</th><th>场景</th><th>Given（前提）</th><th>When（操作）</th><th>Then（结果）</th></tr></thead>
+  <tbody>
+    <tr><td>AC1</td><td>推送商品</td><td>商品在池中且未推送</td><td>点击「推送」</td><td>状态变为成功或失败（以火山返回为准），失败可点「更新」重推</td></tr>
+    <tr><td>AC2</td><td>同步直播间</td><td>已登录直播运营</td><td>点「同步直播间」</td><td>列表刷新，展示同步后的直播间与挂车数</td></tr>
+    <tr><td>AC3</td><td>商品列表跳转</td><td>直播间列表有数据</td><td>点「商品列表」</td><td>跳转到该直播间商品列表页，标题为「{标题}的直播商品」</td></tr>
+    <tr><td>AC4</td><td>小黄车空态</td><td>直播间无挂车商品</td><td>进入直播间</td><td>小黄车浮层隐藏；展开后显示空态文案</td></tr>
+    <tr><td>AC5</td><td>跳转购买</td><td>商品未下架</td><td>点商品「去看看」→「立即前往」</td><td>进入对应终端的商品详情页</td></tr>
+    <tr><td>AC6</td><td>数据统计导出</td><td>已有统计数据</td><td>点「导出」</td><td>下载 CSV，Excel 可正常打开</td></tr>
+  </tbody>
+</table>
+
+<!-- ============ 七、关键边界设计检查清单 ============ -->
+<h2>七、 关键边界设计检查清单（PM 撰写前自检表）</h2>
+<table>
+  <thead><tr><th>检查项</th><th>自检结果</th></tr></thead>
+  <tbody>
+    <tr><td>网络与异常（弱网/断网/500）</td><td>同步/推送失败给出 toast 提示，列表保持原状，支持重试 ✅</td></tr>
+    <tr><td>登录与游客态</td><td>平台端操作需登录；⚠️待确认 @干系人：用户端未登录点击小黄车是否拦截登录</td></tr>
+    <tr><td>极限值与空状态</td><td>空直播间→空态文案；已下架→置灰；价格/角标展示上限已处理 ✅</td></tr>
+    <tr><td>版本兼容性</td><td>⚠️待确认 @干系人：老版本 App 无小黄车时的降级表现</td></tr>
+    <tr><td>逆向流/退款</td><td>⚠️待确认 @干系人：直播订单退款时优惠券/积分处理（复用商城规则）</td></tr>
+    <tr><td>高并发与防重</td><td>推送/同步按钮建议前端防重（避免重复点击）✅</td></tr>
+  </tbody>
+</table>
+
+<!-- ============ 八、文档维护与变更规范 ============ -->
+<h2>八、 文档维护与变更规范</h2>
+<ul>
+  <li>版本号规范：大迭代 V1.0/V2.0；开发期间小修改 V1.1/V1.2，并在历史记录中写明修改人、修改时间、修改原因。</li>
+  <li>变更周知：评审定稿后，若发生需求变更，PM 必须在 PRD 文档中将修改的地方用高亮颜色（如黄色或红色）标出，并主动 @ 对应的开发和测试。</li>
+  <li>本次为 v1.0 首版，基于现有前后端原型梳理，并依据《PRD输出规范(260715)》模板重构章节结构；待确认项见下方汇总。</li>
+</ul>
+
+<!-- ============ 九、待确认汇总 ============ -->
+<h2>九、 待确认项汇总（⚠️ 已标注，未臆造）</h2>
+<div class="todo">
+  <p>以下为本次 PRD 中标注的待确认项，需在评审中由对应干系人确认：</p>
+  <ul>
+    <li>推送状态是否需「推送中」中间态（@研发负责人）</li>
+    <li>选品弹窗「运营类型/品牌分类」字段来源与口径（@干系人）</li>
+    <li>直播间商品列表「销售价」单位/格式、是否展示「销售合计」列（@干系人）</li>
+    <li>直播数据统计接口/数据表来源（@数据负责人）</li>
+    <li>小黄车「活动标签/划线原价」字段来源（@干系人）</li>
+    <li>用户端未登录点击小黄车的登录拦截策略（@干系人）</li>
+    <li>老版本 App 无小黄车的降级表现（@干系人）</li>
+    <li>直播订单退款时优惠券/积分处理（@干系人，复用商城规则）</li>
+  </ul>
+</div>
+
+</div>
+</body>
+</html>
