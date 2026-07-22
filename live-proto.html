@@ -226,15 +226,7 @@
     <div class="toolbar-left"></div>
     <div class="toolbar-right">
       <button class="btn btn-primary" onclick="document.getElementById('modal-add').classList.add('show')">＋ 添加商品</button>
-      <button class="btn btn-success" id="btn-push" onclick="var b=this,n=document.getElementById('sync-count').textContent;b.disabled=true;b.textContent='同步中…';setTimeout(function(){b.closest('.modal-overlay').classList.remove('show');b.disabled=false;b.textContent='确认推送';if(parseInt(n)>1&&Math.random()>.5){alert('推送完成
-
-成功：'+(parseInt(n)-1)+' 个
-失败：1 个
-
-  ✗ #575 基肽致颜弹光面膜凝露 — 冷却中，推送失败请稍后再试')}else{alert('推送完成
-
-成功：'+n+' 个
-失败：0 个')}},900)">确认推送</button>
+      <button class="btn btn-success" id="btn-push" onclick="var cb=document.querySelectorAll('tbody .col-chk input:checked');if(cb.length===0){showToast('请先勾选要推送的商品');return}document.getElementById('sync-count').textContent=cb.length;document.getElementById('sync-count-2').textContent=cb.length;document.getElementById('modal-sync').classList.add('show')">确认推送</button>
     </div>
   </div>
 </div>
@@ -308,6 +300,61 @@
     <div class="modal-ft">
       <button class="btn btn-default" onclick="this.closest('.modal-overlay').classList.remove('show')">取消</button>
       <button class="btn btn-primary" onclick="this.closest('.modal-overlay').classList.remove('show');alert('✅ 已添加 2 个商品到直播商品列表（仅入池）')">添加到列表（入池）</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 弹窗C：同步到直播间 ==================== -->
+<div class="modal-overlay" id="modal-sync">
+  <div class="modal" style="width:580px">
+    <div class="modal-hd">
+      <h3>同步到直播间</h3>
+      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('show')">×</button>
+    </div>
+    <div class="modal-bd">
+      <div class="tip tip-succ">✅ 已选择 <b id="sync-count">2</b> 个商品，将推送到目标直播间</div>
+
+      <div class="form-group">
+        <label>目标直播间 <span class="req">★</span></label>
+        <div style="display:flex;gap:8px">
+          <select style="flex:1;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;background:#fff;outline:none">
+            <option value="">请选择直播间</option>
+            <option value="001" selected>泰小虎健康好物专场 #001</option>
+            <option value="091">石康源护肤体验专场 #091</option>
+            <option value="042">云康源的护肤季 #042</option>
+            <option value="088">品鉴发直播 #088</option>
+          </select>
+          <button class="btn btn-default btn-sm" onclick="showToast('直播间列表已更新')" title="同步直播间信息">🔄 同步直播间信息</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>已选商品（<span id="sync-count-2">2</span>）</label>
+        <div class="selected-list">
+          <div class="selected-item">
+            <img class="si-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect fill='%23f3f4f6' width='36' height='36' rx='4'/%3E%3Ctext x='18' y='23' text-anchor='middle' fill='%239ca3af' font-size='9'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt="">
+            <span class="si-name">#557 适乐肤高纯烟酰胺乳液</span>
+            <span class="si-remove" onclick="this.closest('.selected-item').remove();var c=document.querySelectorAll('.selected-item').length;document.getElementById('sync-count').textContent=c;document.getElementById('sync-count-2').textContent=c;if(c===0)document.getElementById('sync-list-empty').style.display='block'">×</span>
+          </div>
+          <div class="selected-item" style="border-bottom:none">
+            <img class="si-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect fill='%23f3f4f6' width='36' height='36' rx='4'/%3E%3Ctext x='18' y='23' text-anchor='middle' fill='%239ca3af' font-size='9'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt="">
+            <span class="si-name">#572 基础版保湿霜</span>
+            <span class="si-remove" onclick="this.closest('.selected-item').remove();var c=document.querySelectorAll('.selected-item').length;document.getElementById('sync-count').textContent=c;document.getElementById('sync-count-2').textContent=c;if(c===0)document.getElementById('sync-list-empty').style.display='block'">×</span>
+          </div>
+        </div>
+        <div id="sync-list-empty" style="display:none;color:#dc2626;font-size:12px;margin-top:6px">⚠️ 请至少保留 1 个商品</div>
+      </div>
+
+      <div class="tip tip-warn">
+        ⚠️ 推送规则：<br>
+        · 字段全自动填充（有则带 / 无则默认）<br>
+        · 允许同商品重复推送（每次新增卡片）<br>
+        · 冷却限制：同一商品同一直播间 1 分钟内最多推送 3 次
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-default" onclick="this.closest('.modal-overlay').classList.remove('show')">取消</button>
+      <button class="btn btn-success" id="btn-sync-push" onclick="var b=this,n=document.getElementById('sync-count').textContent;b.disabled=true;b.textContent='推送中…';setTimeout(function(){b.closest('.modal-overlay').classList.remove('show');b.disabled=false;b.textContent='确认推送';if(parseInt(n)>1&&Math.random()>.5){alert('推送完成\n\n成功：'+(parseInt(n)-1)+' 个\n失败：1 个\n\n  ✗ #575 基肽致颜弹光面膜凝露 — 冷却中，推送失败请稍后再试')}else{alert('推送完成\n\n成功：'+n+' 个\n失败：0 个')}},1200)">确认推送</button>
     </div>
   </div>
 </div>
