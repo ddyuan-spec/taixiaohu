@@ -74,9 +74,8 @@
   .data-table tbody tr:last-child td{border-bottom:none}
   .col-chk{width:42px;text-align:center}
   .col-chk input{width:16px;height:16px;cursor:pointer;accent-color:#4F46E5}
-  .col-id{width:60px}
-  .col-info{min-width:220px}
-  .col-source{width:140px}
+  .col-info{min-width:240px}
+  .col-liststatus{width:90px}
   .col-stock{width:60px;text-align:center}
   .col-price{width:90px}
   .col-status{width:100px}
@@ -204,10 +203,6 @@
       <input type="text" placeholder="输入商品名称搜索">
     </div>
     <div class="filter-group">
-      <label>商品编号</label>
-      <input type="text" placeholder="输入商品编号">
-    </div>
-    <div class="filter-group">
       <label>推送状态</label>
       <select>
         <option value="">全部</option>
@@ -237,10 +232,9 @@
         <tr>
           <th class="col-chk"><input type="checkbox" id="chk-all" onclick="var c=this.checked;document.querySelectorAll('tbody .col-chk input:not([disabled])').forEach(function(i){i.checked=c})"></th>
           <th>商品信息</th>
-          <th class="col-id">编号</th>
-          <th class="col-source">来源</th>
           <th class="col-stock">库存</th>
           <th class="col-price">售卖价</th>
+          <th class="col-liststatus">上架状态</th>
           <th class="col-status">推送状态</th>
           <th class="col-time">最后同步时间</th>
           <th class="col-action">操作</th>
@@ -250,10 +244,9 @@
         <tr>
           <td class="col-chk"><input type="checkbox" checked></td>
           <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">#557 适乐肤高纯烟酰胺乳液</div><div class="prod-cat">个护清洁</div></div></div></td>
-          <td>557</td>
-          <td>广西牛奶食品</td>
           <td style="text-align:center">8717</td>
           <td class="price">¥189.00</td>
+          <td class="col-liststatus"><span class="status status-synced">上架</span></td>
           <td><span class="status status-synced">已同步</span></td>
           <td>07-22 17:30</td>
           <td><a class="action-link">更新</a><a class="action-link danger">移出</a></td>
@@ -261,10 +254,9 @@
         <tr>
           <td class="col-chk"><input type="checkbox" checked></td>
           <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">#561 添然膳复合益生菌冻干粉</div><div class="prod-cat">食品保健</div></div></div></td>
-          <td>561</td>
-          <td>榛魅家官方自营</td>
           <td style="text-align:center">15820</td>
           <td class="price">¥1095.00</td>
+          <td class="col-liststatus"><span class="status status-synced">上架</span></td>
           <td><span class="status status-synced">已同步</span></td>
           <td>07-22 16:42</td>
           <td><a class="action-link">更新</a><a class="action-link danger">移出</a></td>
@@ -272,10 +264,9 @@
         <tr>
           <td class="col-chk"><input type="checkbox"></td>
           <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">#574 雅乐宝蜜桃粉</div><div class="prod-cat">食品保健</div></div></div></td>
-          <td>574</td>
-          <td>邢台美盛业</td>
           <td style="text-align:center">17083</td>
           <td class="price">¥230.00</td>
+          <td class="col-liststatus"><span class="status-off">下架</span></td>
           <td><span class="status status-fail">同步失败</span></td>
           <td>07-22 15:20</td>
           <td><a class="action-link">更新</a><a class="action-link danger">移出</a></td>
@@ -283,10 +274,9 @@
         <tr>
           <td class="col-chk"><input type="checkbox"></td>
           <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">#575 基肽致颜弹光面膜凝露</div><div class="prod-cat">个护清洁</div></div></div></td>
-          <td>575</td>
-          <td>无锡家丰健康</td>
           <td style="text-align:center">0</td>
           <td class="price">¥108.00</td>
+          <td class="col-liststatus"><span class="status status-synced">上架</span></td>
           <td><span class="status status-fail">同步失败</span></td>
           <td>07-22 18:15</td>
           <td><a class="action-link">更新</a><a class="action-link danger">移出</a></td>
