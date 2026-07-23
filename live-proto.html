@@ -226,17 +226,89 @@
     <div class="toolbar-left"></div>
     <div class="toolbar-right">
       <button class="btn btn-primary" onclick="document.getElementById('modal-add').classList.add('show')">＋ 添加商品</button>
-      <button class="btn btn-success" id="btn-push" onclick="var cb=document.querySelectorAll('tbody .col-chk input:checked');if(cb.length===0){showToast('请先勾选要推送的商品');return}document.getElementById('sync-count').textContent=cb.length;document.getElementById('sync-count-2').textContent=cb.length;document.getElementById('modal-sync').classList.add('show')">确认推送</button>
+      <button class="btn btn-success" id="btn-push" onclick="var cb=document.querySelectorAll('tbody .col-chk input:checked');if(cb.length===0){showToast('请先勾选要推送的商品');return}document.getElementById('sync-count').textContent=cb.length;document.getElementById('sync-count-2').textContent=cb.length;document.getElementById('modal-sync').classList.add('show')">同步直播间</button>
+    </div>
+  </div>
+
+  <!-- 主数据表格 -->
+  <div class="table-card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th class="col-chk"><input type="checkbox" id="chk-all" onclick="var c=this.checked;document.querySelectorAll('tbody .col-chk input:not([disabled])').forEach(function(i){i.checked=c})"></th>
+          <th>商品信息</th>
+          <th class="col-id">编号</th>
+          <th class="col-source">来源</th>
+          <th class="col-stock">库存</th>
+          <th class="col-price">售卖价</th>
+          <th class="col-status">推送状态</th>
+          <th class="col-time">最后同步时间</th>
+          <th class="col-action">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-chk"><input type="checkbox" checked></td>
+          <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">#557 适乐肤高纯烟酰胺乳液</div><div class="prod-cat">个护清洁</div></div></div></td>
+          <td>557</td>
+          <td>广西牛奶食品</td>
+          <td style="text-align:center">8717</td>
+          <td class="price">¥189.00</td>
+          <td><span class="status status-synced">已同步</span></td>
+          <td>07-22 17:30</td>
+          <td><a class="action-link">更新</a><a class="action-link danger">移出</a></td>
+        </tr>
+        <tr>
+          <td class="col-chk"><input type="checkbox" checked></td>
+          <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">#561 添然膳复合益生菌冻干粉</div><div class="prod-cat">食品保健</div></div></div></td>
+          <td>561</td>
+          <td>榛魅家官方自营</td>
+          <td style="text-align:center">15820</td>
+          <td class="price">¥1095.00</td>
+          <td><span class="status status-synced">已同步</span></td>
+          <td>07-22 16:42</td>
+          <td><a class="action-link">更新</a><a class="action-link danger">移出</a></td>
+        </tr>
+        <tr>
+          <td class="col-chk"><input type="checkbox"></td>
+          <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">#574 雅乐宝蜜桃粉</div><div class="prod-cat">食品保健</div></div></div></td>
+          <td>574</td>
+          <td>邢台美盛业</td>
+          <td style="text-align:center">17083</td>
+          <td class="price">¥230.00</td>
+          <td><span class="status status-fail">同步失败</span></td>
+          <td>07-22 15:20</td>
+          <td><a class="action-link">更新</a><a class="action-link danger">移出</a></td>
+        </tr>
+        <tr>
+          <td class="col-chk"><input type="checkbox"></td>
+          <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">#575 基肽致颜弹光面膜凝露</div><div class="prod-cat">个护清洁</div></div></div></td>
+          <td>575</td>
+          <td>无锡家丰健康</td>
+          <td style="text-align:center">0</td>
+          <td class="price">¥108.00</td>
+          <td><span class="status status-fail">同步失败</span></td>
+          <td>07-22 18:15</td>
+          <td><a class="action-link">更新</a><a class="action-link danger">移出</a></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="pagination">
+      <span>共 151 条</span>
+      <div class="pages">
+        <span class="pg active">1</span><span class="pg">2</span><span class="pg">3</span><span class="pg">4</span><span class="pg">5</span><span class="pg">…</span><span class="pg">16</span>
+      </div>
+      <div class="jump"><span>10 条/页</span><select style="height:28px;border:1px solid #d1d5db;border-radius:4px;font-size:12px"><option>10 条/页</option><option>20 条/页</option><option>50 条/页</option></select></div>
     </div>
   </div>
 </div>
 
 
-<!-- ==================== 弹窗B：添加商品入池 ==================== -->
+<!-- ==================== 弹窗B：添加商品 ==================== -->
 <div class="modal-overlay" id="modal-add">
   <div class="modal" style="width:720px">
     <div class="modal-hd">
-      <h3>添加商品到直播商品列表</h3>
+      <h3>添加商品</h3>
       <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('show')">×</button>
     </div>
     <div class="modal-bd">
@@ -254,7 +326,6 @@
               <th>商品信息</th>
               <th class="col-price">售卖价</th>
               <th class="col-status">商品状态</th>
-              <th style="width:90px">已在池？</th>
             </tr>
           </thead>
           <tbody>
@@ -263,28 +334,24 @@
               <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">AI补骨胶囊</div><div class="prod-cat">所有商品</div></div></div></td>
               <td class="col-price price">¥89.00</td>
               <td class="col-status"><span class="status status-synced">已上架</span></td>
-              <td><span style="color:#dc2626;font-size:12px;font-weight:500">❌ 未入池</span></td>
             </tr>
             <tr>
               <td class="col-chk"><input type="checkbox"></td>
               <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">荻雅升级胶囊</div><div class="prod-cat">所有商品</div></div></div></td>
               <td class="col-price price">¥1095.00</td>
               <td class="col-status"><span class="status status-synced">已上架</span></td>
-              <td><span style="color:#16a34a;font-size:12px;font-weight:500">✅ 已在池</span></td>
             </tr>
             <tr>
               <td class="col-chk"><input type="checkbox"></td>
               <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">SVP纳米面膜</div><div class="prod-cat">所有商品</div></div></div></td>
               <td class="col-price price">¥1099.00</td>
               <td class="col-status"><span class="status status-synced">已上架</span></td>
-              <td><span style="color:#dc2626;font-size:12px;font-weight:500">❌ 未入池</span></td>
             </tr>
             <tr style="opacity:.55;background:#f9fafb">
               <td class="col-chk"><input type="checkbox" disabled></td>
               <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">清润护手霜</div><div class="prod-cat">所有商品</div></div></div></td>
               <td class="col-price price">¥39.00</td>
               <td class="col-status"><span class="status status-off">已下架</span></td>
-              <td><span style="color:#9ca3af;font-size:12px">已下架 · 禁选</span></td>
             </tr>
           </tbody>
         </table>
@@ -299,7 +366,7 @@
     </div>
     <div class="modal-ft">
       <button class="btn btn-default" onclick="this.closest('.modal-overlay').classList.remove('show')">取消</button>
-      <button class="btn btn-primary" onclick="this.closest('.modal-overlay').classList.remove('show');alert('✅ 已添加 2 个商品到直播商品列表（仅入池）')">添加到列表（入池）</button>
+      <button class="btn btn-primary" onclick="this.closest('.modal-overlay').classList.remove('show');alert('✅ 已添加 2 个商品')">添加到列表</button>
     </div>
   </div>
 </div>
@@ -354,7 +421,7 @@
     </div>
     <div class="modal-ft">
       <button class="btn btn-default" onclick="this.closest('.modal-overlay').classList.remove('show')">取消</button>
-      <button class="btn btn-success" id="btn-sync-push" onclick="var b=this,n=document.getElementById('sync-count').textContent;b.disabled=true;b.textContent='推送中…';setTimeout(function(){b.closest('.modal-overlay').classList.remove('show');b.disabled=false;b.textContent='确认推送';if(parseInt(n)>1&&Math.random()>.5){alert('推送完成\n\n成功：'+(parseInt(n)-1)+' 个\n失败：1 个\n\n  ✗ #575 基肽致颜弹光面膜凝露 — 冷却中，推送失败请稍后再试')}else{alert('推送完成\n\n成功：'+n+' 个\n失败：0 个')}},1200)">确认推送</button>
+      <button class="btn btn-success" id="btn-sync-push" onclick="var b=this,n=document.getElementById('sync-count').textContent;b.disabled=true;b.textContent='推送中…';setTimeout(function(){b.closest('.modal-overlay').classList.remove('show');b.disabled=false;b.textContent='同步直播间';if(parseInt(n)>1&&Math.random()>.5){alert('推送完成\n\n成功：'+(parseInt(n)-1)+' 个\n失败：1 个\n\n  ✗ #575 基肽致颜弹光面膜凝露 — 冷却中，推送失败请稍后再试')}else{alert('推送完成\n\n成功：'+n+' 个\n失败：0 个')}},1200)">同步直播间</button>
     </div>
   </div>
 </div>
