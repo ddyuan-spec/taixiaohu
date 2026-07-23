@@ -46,6 +46,7 @@
   .btn-default:hover{border-color:#9ca3af;background:#f9fafb}
   .btn-success{background:#22c55e;color:#fff;border-color:#22c55e}
   .btn-success:hover{background:#16a34a}
+  .btn-success:disabled{background:#9ca3af;border-color:#9ca3af;cursor:not-allowed}
   .btn-sm{padding:5px 13px;font-size:12px}
   .btn-icon{width:32px;padding:0;justify-content:center}
 
@@ -75,9 +76,9 @@
   .col-chk{width:42px;text-align:center}
   .col-chk input{width:16px;height:16px;cursor:pointer;accent-color:#4F46E5}
   .col-info{min-width:240px}
-  .col-liststatus{width:90px}
   .col-stock{width:60px;text-align:center}
   .col-price{width:90px}
+  .col-liststatus{width:90px}
   .col-status{width:100px}
   .col-time{width:140px}
   .col-action{width:130px;text-align:left}
@@ -91,7 +92,7 @@
   /* 价格 */
   .price{color:#dc2626;font-weight:600}
 
-  /* 状态标签（仅两种：已同步 / 同步失败） */
+  /* 状态标签（仅两种：已同步 / 同步失败；未推送为 —） */
   .status{display:inline-block;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:500;white-space:nowrap}
   .status-synced{background:#dcfce7;color:#166534}
   .status-fail{background:#fee2e2;color:#991b1b}
@@ -113,6 +114,7 @@
   .pagination .pg:hover:not(.active){border-color:#9ca3af}
   .pagination .jump{display:flex;align-items:center;gap:4px}
   .pagination .jump input{width:42px;height:28px;border:1px solid #d1d5db;border-radius:4px;text-align:center;font-size:12px}
+  .page-hint{font-size:11px;color:#9ca3af;padding:0 20px 12px}
 
   /* ===== 弹窗遮罩 ===== */
   .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center}
@@ -221,7 +223,7 @@
     <div class="toolbar-left"></div>
     <div class="toolbar-right">
       <button class="btn btn-primary" onclick="document.getElementById('modal-add').classList.add('show')">＋ 添加商品</button>
-      <button class="btn btn-success" id="btn-push" onclick="var cb=document.querySelectorAll('tbody .col-chk input:checked');if(cb.length===0){showToast('请先勾选要推送的商品');return}document.getElementById('sync-count').textContent=cb.length;document.getElementById('sync-count-2').textContent=cb.length;document.getElementById('modal-sync').classList.add('show')">同步直播间</button>
+      <button class="btn btn-success" id="btn-push" onclick="openSync()">同步直播间</button>
     </div>
   </div>
 
@@ -230,7 +232,7 @@
     <table class="data-table">
       <thead>
         <tr>
-          <th class="col-chk"><input type="checkbox" id="chk-all" onclick="var c=this.checked;document.querySelectorAll('tbody .col-chk input:not([disabled])').forEach(function(i){i.checked=c})"></th>
+          <th class="col-chk"><input type="checkbox" id="chk-all" onclick="onHeaderCheck(this)"></th>
           <th>商品信息</th>
           <th class="col-stock">库存</th>
           <th class="col-price">售卖价</th>
@@ -240,56 +242,10 @@
           <th class="col-action">操作</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td class="col-chk"><input type="checkbox" checked></td>
-          <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">#557 适乐肤高纯烟酰胺乳液</div><div class="prod-cat">个护清洁</div></div></div></td>
-          <td style="text-align:center">8717</td>
-          <td class="price">¥189.00</td>
-          <td class="col-liststatus"><span class="status status-synced">上架</span></td>
-          <td><span class="status status-synced">已同步</span></td>
-          <td>07-22 17:30</td>
-          <td><a class="action-link">更新</a><a class="action-link danger">移出</a></td>
-        </tr>
-        <tr>
-          <td class="col-chk"><input type="checkbox" checked></td>
-          <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">#561 添然膳复合益生菌冻干粉</div><div class="prod-cat">食品保健</div></div></div></td>
-          <td style="text-align:center">15820</td>
-          <td class="price">¥1095.00</td>
-          <td class="col-liststatus"><span class="status status-synced">上架</span></td>
-          <td><span class="status status-synced">已同步</span></td>
-          <td>07-22 16:42</td>
-          <td><a class="action-link">更新</a><a class="action-link danger">移出</a></td>
-        </tr>
-        <tr>
-          <td class="col-chk"><input type="checkbox"></td>
-          <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">#574 雅乐宝蜜桃粉</div><div class="prod-cat">食品保健</div></div></div></td>
-          <td style="text-align:center">17083</td>
-          <td class="price">¥230.00</td>
-          <td class="col-liststatus"><span class="status-off">下架</span></td>
-          <td><span class="status status-fail">同步失败</span></td>
-          <td>07-22 15:20</td>
-          <td><a class="action-link">更新</a><a class="action-link danger">移出</a></td>
-        </tr>
-        <tr>
-          <td class="col-chk"><input type="checkbox"></td>
-          <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">#575 基肽致颜弹光面膜凝露</div><div class="prod-cat">个护清洁</div></div></div></td>
-          <td style="text-align:center">0</td>
-          <td class="price">¥108.00</td>
-          <td class="col-liststatus"><span class="status status-synced">上架</span></td>
-          <td><span class="status status-fail">同步失败</span></td>
-          <td>07-22 18:15</td>
-          <td><a class="action-link">更新</a><a class="action-link danger">移出</a></td>
-        </tr>
-      </tbody>
+      <tbody id="list-body"></tbody>
     </table>
-    <div class="pagination">
-      <span>共 151 条</span>
-      <div class="pages">
-        <span class="pg active">1</span><span class="pg">2</span><span class="pg">3</span><span class="pg">4</span><span class="pg">5</span><span class="pg">…</span><span class="pg">16</span>
-      </div>
-      <div class="jump"><span>10 条/页</span><select style="height:28px;border:1px solid #d1d5db;border-radius:4px;font-size:12px"><option>10 条/页</option><option>20 条/页</option><option>50 条/页</option></select></div>
-    </div>
+    <div class="pagination" id="pager"></div>
+    <div class="page-hint">提示：勾选不支持跨页，切换页面后已勾选内容将清空</div>
   </div>
 </div>
 
@@ -341,7 +297,7 @@
               <td class="col-chk"><input type="checkbox" disabled></td>
               <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">清润护手霜</div><div class="prod-cat">所有商品</div></div></div></td>
               <td class="col-price price">¥39.00</td>
-              <td class="col-status"><span class="status status-off">已下架</span></td>
+              <td class="col-status"><span class="status-off">已下架</span></td>
             </tr>
           </tbody>
         </table>
@@ -369,7 +325,7 @@
       <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('show')">×</button>
     </div>
     <div class="modal-bd">
-      <div class="tip tip-succ">✅ 已选择 <b id="sync-count">2</b> 个商品，将推送到目标直播间</div>
+      <div class="tip tip-succ">✅ 已选择 <b id="sync-count">0</b> 个商品，将推送到目标直播间</div>
 
       <div class="form-group">
         <label>目标直播间 <span class="req">★</span></label>
@@ -386,19 +342,8 @@
       </div>
 
       <div class="form-group">
-        <label>已选商品（<span id="sync-count-2">2</span>）</label>
-        <div class="selected-list">
-          <div class="selected-item">
-            <img class="si-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect fill='%23f3f4f6' width='36' height='36' rx='4'/%3E%3Ctext x='18' y='23' text-anchor='middle' fill='%239ca3af' font-size='9'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt="">
-            <span class="si-name">#557 适乐肤高纯烟酰胺乳液</span>
-            <span class="si-remove" onclick="this.closest('.selected-item').remove();var c=document.querySelectorAll('.selected-item').length;document.getElementById('sync-count').textContent=c;document.getElementById('sync-count-2').textContent=c;if(c===0)document.getElementById('sync-list-empty').style.display='block'">×</span>
-          </div>
-          <div class="selected-item" style="border-bottom:none">
-            <img class="si-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect fill='%23f3f4f6' width='36' height='36' rx='4'/%3E%3Ctext x='18' y='23' text-anchor='middle' fill='%239ca3af' font-size='9'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt="">
-            <span class="si-name">#572 基础版保湿霜</span>
-            <span class="si-remove" onclick="this.closest('.selected-item').remove();var c=document.querySelectorAll('.selected-item').length;document.getElementById('sync-count').textContent=c;document.getElementById('sync-count-2').textContent=c;if(c===0)document.getElementById('sync-list-empty').style.display='block'">×</span>
-          </div>
-        </div>
+        <label>已选商品（<span id="sync-count-2">0</span>）</label>
+        <div class="selected-list" id="sync-selected-list"></div>
         <div id="sync-list-empty" style="display:none;color:#dc2626;font-size:12px;margin-top:6px">⚠️ 请至少保留 1 个商品</div>
       </div>
 
@@ -418,7 +363,144 @@
 
 <div id="toast" style="position:fixed;top:64px;left:50%;transform:translateX(-50%);background:rgba(31,41,55,.92);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;z-index:999;opacity:0;transition:opacity .25s;pointer-events:none"></div>
 <script>
-function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.opacity='1';clearTimeout(t._tm);t._tm=setTimeout(function(){t.style.opacity='0';},1600);}
+var IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E";
+var IMG36 = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect fill='%23f3f4f6' width='36' height='36' rx='4'/%3E%3Ctext x='18' y='23' text-anchor='middle' fill='%239ca3af' font-size='9'%E5%9B%BE%3C/text%3E%3C/svg%3E";
+
+var PRODUCTS = [
+  {id:557, name:'适乐肤高纯烟酰胺乳液',   cat:'个护清洁', stock:8717,  price:189.00,  listed:true,  status:'已同步',   syncTime:'07-22 17:30'},
+  {id:561, name:'添然膳复合益生菌冻干粉', cat:'食品保健', stock:15820, price:1095.00, listed:true,  status:'已同步',   syncTime:'07-22 16:42'},
+  {id:574, name:'雅乐宝蜜桃粉',           cat:'食品保健', stock:17083, price:230.00,  listed:false, status:'同步失败', syncTime:'07-22 15:20'},
+  {id:575, name:'基肽致颜弹光面膜凝露',   cat:'个护清洁', stock:0,     price:108.00,  listed:true,  status:'同步失败', syncTime:'07-22 18:15'},
+  {id:580, name:'番茄红素软胶囊',         cat:'食品保健', stock:6420,  price:158.00,  listed:true,  status:'已同步',   syncTime:'07-21 09:12'},
+  {id:583, name:'烟酰胺身体乳',           cat:'个护清洁', stock:3200,  price:79.00,   listed:true,  status:'—',        syncTime:'—'},
+  {id:590, name:'深海鱼油软胶囊',         cat:'食品保健', stock:9800,  price:268.00,  listed:true,  status:'已同步',   syncTime:'07-20 14:05'},
+  {id:596, name:'氨基酸洁面慕斯',         cat:'个护清洁', stock:5400,  price:69.00,   listed:true,  status:'同步失败', syncTime:'07-22 11:40'},
+  {id:601, name:'胶原蛋白饮',             cat:'食品保健', stock:2300,  price:199.00,  listed:false, status:'—',        syncTime:'—'},
+  {id:608, name:'玻尿酸保湿精华',         cat:'个护清洁', stock:7600,  price:159.00,  listed:true,  status:'已同步',   syncTime:'07-22 10:22'},
+  {id:612, name:'左旋肉碱茶',             cat:'食品保健', stock:4100,  price:128.00,  listed:true,  status:'同步失败', syncTime:'07-19 20:15'},
+  {id:620, name:'积雪草修护霜',           cat:'个护清洁', stock:880,   price:99.00,   listed:true,  status:'已同步',   syncTime:'07-22 08:50'},
+  {id:625, name:'维生素C咀嚼片',          cat:'食品保健', stock:12000, price:89.00,   listed:true,  status:'—',        syncTime:'—'},
+  {id:631, name:'神经酰胺面霜',           cat:'个护清洁', stock:3500,  price:139.00,  listed:true,  status:'已同步',   syncTime:'07-21 16:30'}
+];
+
+var PAGE_SIZE = 10;
+var currentPage = 1;
+var selectedIds = new Set(); // 仅记录当前页勾选，切页即清空（无跨页勾选）
+
+function statusCell(st){
+  if(st==='已同步')   return '<span class="status status-synced">已同步</span>';
+  if(st==='同步失败') return '<span class="status status-fail">同步失败</span>';
+  return '<span style="color:#9ca3af">—</span>';
+}
+function listedCell(b){
+  return b ? '<span class="status status-synced">上架</span>' : '<span class="status-off">下架</span>';
+}
+function priceCell(p){ return '<span class="price">¥'+p.toFixed(2)+'</span>'; }
+function totalPages(){ return Math.max(1, Math.ceil(PRODUCTS.length/PAGE_SIZE)); }
+
+function renderList(){
+  var body = document.getElementById('list-body');
+  var start = (currentPage-1)*PAGE_SIZE;
+  var slice = PRODUCTS.slice(start, start+PAGE_SIZE);
+  var html = '';
+  slice.forEach(function(p){
+    var disabled = !p.listed ? 'disabled' : '';
+    var checked  = selectedIds.has(p.id) ? 'checked' : '';
+    html += '<tr>'+
+      '<td class="col-chk"><input type="checkbox" data-id="'+p.id+'" '+disabled+' '+checked+' onchange="onRowCheck(this)"></td>'+
+      '<td><div class="prod-info"><img class="prod-img" src="'+IMG+'" alt=""><div><div class="prod-name">#'+p.id+' '+p.name+'</div><div class="prod-cat">'+p.cat+'</div></div></div></td>'+
+      '<td style="text-align:center">'+p.stock+'</td>'+
+      '<td class="price">'+priceCell(p.price)+'</td>'+
+      '<td class="col-liststatus">'+listedCell(p.listed)+'</td>'+
+      '<td>'+statusCell(p.status)+'</td>'+
+      '<td>'+p.syncTime+'</td>'+
+      '<td><a class="action-link">更新</a><a class="action-link danger">移出</a></td>'+
+    '</tr>';
+  });
+  body.innerHTML = html;
+  updateHeaderCheck();
+}
+
+function onRowCheck(el){
+  var id = parseInt(el.getAttribute('data-id'));
+  if(el.checked) selectedIds.add(id); else selectedIds.delete(id);
+  updateHeaderCheck();
+}
+
+function onHeaderCheck(el){
+  var checked = el.checked;
+  document.querySelectorAll('#list-body .col-chk input:not([disabled])').forEach(function(b){
+    b.checked = checked;
+    var id = parseInt(b.getAttribute('data-id'));
+    if(checked) selectedIds.add(id); else selectedIds.delete(id);
+  });
+}
+
+function updateHeaderCheck(){
+  var boxes = document.querySelectorAll('#list-body .col-chk input:not([disabled])');
+  var all = boxes.length>0 && Array.prototype.every.call(boxes, function(b){return b.checked;});
+  document.getElementById('chk-all').checked = all;
+}
+
+function renderPager(){
+  var tp = totalPages();
+  var html = '<span>共 '+PRODUCTS.length+' 条</span><div class="pages">';
+  for(var i=1;i<=tp;i++){
+    html += '<span class="pg'+(i===currentPage?' active':'')+'" onclick="goPage('+i+')">'+i+'</span>';
+  }
+  html += '</div><div class="jump"><span>'+PAGE_SIZE+' 条/页</span><select style="height:28px;border:1px solid #d1d5db;border-radius:4px;font-size:12px"><option>'+PAGE_SIZE+' 条/页</option><option>20 条/页</option><option>50 条/页</option></select></div>';
+  document.getElementById('pager').innerHTML = html;
+}
+
+function goPage(p){
+  if(p===currentPage) return;
+  selectedIds.clear();          // 跨页勾选失效：切换页面清空勾选
+  currentPage = p;
+  renderList();
+  renderPager();
+}
+
+function openSync(){
+  if(selectedIds.size===0){ showToast('请先勾选要推送的商品'); return; }
+  renderSyncList();
+  document.getElementById('modal-sync').classList.add('show');
+}
+
+function renderSyncList(){
+  var list = document.getElementById('sync-selected-list');
+  var html = '';
+  selectedIds.forEach(function(id){
+    var p = PRODUCTS.find(function(x){return x.id===id;});
+    if(!p) return;
+    html += '<div class="selected-item" data-id="'+p.id+'">'+
+      '<img class="si-img" src="'+IMG36+'" alt="">'+
+      '<span class="si-name">#'+p.id+' '+p.name+'</span>'+
+      '<span class="si-remove" onclick="removeSel('+p.id+')">×</span></div>';
+  });
+  list.innerHTML = html;
+  var n = selectedIds.size;
+  document.getElementById('sync-count').textContent = n;
+  document.getElementById('sync-count-2').textContent = n;
+  document.getElementById('sync-list-empty').style.display = (n===0 ? 'block':'none');
+  document.getElementById('btn-sync-push').disabled = (n===0);
+}
+
+function removeSel(id){
+  selectedIds.delete(id);
+  var cb = document.querySelector('#list-body input[data-id="'+id+'"]');
+  if(cb) cb.checked = false;   // 弹窗内删除 = 同步取消列表勾选（同页内双向联动）
+  updateHeaderCheck();
+  renderSyncList();
+}
+
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._tm);t._tm=setTimeout(function(){t.style.opacity='0';},1600);
+}
+
+renderList();
+renderPager();
 </script>
 </body>
 </html>
