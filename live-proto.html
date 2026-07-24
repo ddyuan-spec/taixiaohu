@@ -330,15 +330,33 @@
       <div class="form-group">
         <label>目标直播间 <span class="req">★</span></label>
         <div style="display:flex;gap:8px">
-          <select style="flex:1;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;background:#fff;outline:none">
+          <select id="sync-room" style="flex:1;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;background:#fff;outline:none" onchange="onRoomChange()">
             <option value="">请选择直播间</option>
             <option value="001" selected>泰小虎健康好物专场 #001</option>
             <option value="091">石康源护肤体验专场 #091</option>
             <option value="042">云康源的护肤季 #042</option>
             <option value="088">品鉴发直播 #088</option>
           </select>
-          <button class="btn btn-default btn-sm" onclick="showToast('直播间列表已更新')" title="同步直播间信息">🔄 同步直播间信息</button>
+          <button class="btn btn-default btn-sm" onclick="showToast('直播间列表已更新')" title="刷新直播间列表">🔄 刷新直播间</button>
         </div>
+      </div>
+
+      <div class="form-group">
+        <label>获取直播间商品卡片 <span class="req">★</span></label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn btn-default btn-sm" id="btn-fetch-cards" onclick="fetchCards()">📥 获取商品卡片</button>
+          <span id="fetch-status" style="font-size:12px;color:#6b7280"></span>
+        </div>
+        <div id="fetch-result" style="display:none;margin-top:12px">
+          <div style="margin-bottom:10px">
+            <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:5px">目标推送菜单 <span style="color:#dc2626">★</span></label>
+            <select id="target-menu" style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;background:#fff;outline:none" onchange="onMenuSelect()">
+              <option value="">请选择要推送的菜单</option>
+            </select>
+          </div>
+          <div class="tip tip-succ" style="margin:10px 0 0">✅ 已获取直播间商品卡片菜单，请选择目标菜单后点击「同步直播间」推送（仅推送到所选菜单，不会推所有菜单）</div>
+        </div>
+        <div class="tip tip-warn" style="margin-top:10px">⚠️ 推送前必须先「获取商品卡片」并选择目标菜单（ProductConfigs.Id），否则无法推送</div>
       </div>
 
       <div class="form-group">
@@ -356,7 +374,7 @@
     </div>
     <div class="modal-ft">
       <button class="btn btn-default" onclick="this.closest('.modal-overlay').classList.remove('show')">取消</button>
-      <button class="btn btn-success" id="btn-sync-push" onclick="var b=this,n=document.getElementById('sync-count').textContent;b.disabled=true;b.textContent='推送中…';setTimeout(function(){b.closest('.modal-overlay').classList.remove('show');b.disabled=false;b.textContent='同步直播间';if(parseInt(n)>1&&Math.random()>.5){alert('推送完成\n\n成功：'+(parseInt(n)-1)+' 个\n失败：1 个\n\n  ✗ #575 基肽致颜弹光面膜凝露 — 冷却中，推送失败请稍后再试')}else{alert('推送完成\n\n成功：'+n+' 个\n失败：0 个')}},1200)">同步直播间</button>
+      <button class="btn btn-success" id="btn-sync-push" disabled onclick="var b=this,n=document.getElementById('sync-count').textContent;var dd=document.getElementById('target-menu');var mn=dd.options[dd.selectedIndex]?dd.options[dd.selectedIndex].text:'';b.disabled=true;b.textContent='推送中…';setTimeout(function(){b.closest('.modal-overlay').classList.remove('show');b.disabled=false;b.textContent='同步直播间';if(parseInt(n)>1&&Math.random()>.5){alert('推送完成（目标菜单：'+mn+'）\n\n成功：'+(parseInt(n)-1)+' 个\n失败：1 个\n\n  ✗ #575 基肽致颜弹光面膜凝露 — 冷却中，推送失败请稍后再试')}else{alert('推送完成（目标菜单：'+mn+'）\n\n成功：'+n+' 个\n失败：0 个')}},1200)">同步直播间</button>
     </div>
   </div>
 </div>
@@ -386,6 +404,8 @@ var PRODUCTS = [
 var PAGE_SIZE = 10;
 var currentPage = 1;
 var selectedIds = new Set(); // 仅记录当前页勾选，切页即清空（无跨页勾选）
+var fetchedMenus = [];       // 获取商品卡片后返回的菜单列表（一个直播间可有多张商品卡片菜单）
+var selectedMenuId = null;   // 用户在下拉中选择的目标推送菜单ID
 
 function statusCell(st){
   if(st==='已同步')   return '<span class="status status-synced">已同步</span>';
@@ -462,8 +482,75 @@ function goPage(p){
 
 function openSync(){
   if(selectedIds.size===0){ showToast('请先勾选要推送的商品'); return; }
+  fetchedMenus = [];
+  selectedMenuId = null;
+  document.getElementById('fetch-result').style.display = 'none';
+  document.getElementById('fetch-status').textContent = '';
+  document.getElementById('target-menu').innerHTML = '<option value="">请选择要推送的菜单</option>';
   renderSyncList();
   document.getElementById('modal-sync').classList.add('show');
+}
+
+function onRoomChange(){
+  fetchedMenus = [];
+  selectedMenuId = null;
+  document.getElementById('fetch-result').style.display = 'none';
+  document.getElementById('fetch-status').textContent = '';
+  document.getElementById('target-menu').innerHTML = '<option value="">请选择要推送的菜单</option>';
+  renderSyncList();
+}
+
+// 不同直播间返回的商品卡片菜单（模拟 GetActivityProducts / GetActivityMenus 返回，单个直播间可有多张）
+var MENUS_BY_ROOM = {
+  '001': [
+    {id:780, name:'主推商品', enabled:true},
+    {id:815, name:'福利商品', enabled:true}
+  ],
+  '091': [
+    {id:801, name:'今日主推', enabled:true}
+  ],
+  '042': [
+    {id:905, name:'护肤专区', enabled:true},
+    {id:910, name:'爆款专区', enabled:true},
+    {id:918, name:'会员专享', enabled:false}
+  ],
+  '088': [
+    {id:704, name:'主推商品', enabled:true}
+  ]
+};
+
+function fetchCards(){
+  var sel = document.getElementById('sync-room');
+  if(!sel.value){ showToast('请先选择目标直播间'); return; }
+  var btn = document.getElementById('btn-fetch-cards');
+  var st = document.getElementById('fetch-status');
+  btn.disabled = true;
+  st.textContent = '获取中…';
+  document.getElementById('fetch-result').style.display = 'none';
+  setTimeout(function(){
+    fetchedMenus = (MENUS_BY_ROOM[sel.value] || []).slice();
+    // 渲染下拉：仅启用的菜单可选，未启用置灰
+    var dd = document.getElementById('target-menu');
+    var ddHtml = '<option value="">请选择要推送的菜单</option>';
+    fetchedMenus.forEach(function(m){
+      var dis = m.enabled ? '' : ' disabled';
+      var tag = m.enabled ? '' : '（未启用）';
+      ddHtml += '<option value="'+m.id+'"'+dis+'>'+m.name+' #'+m.id+tag+'</option>';
+    });
+    dd.innerHTML = ddHtml;
+    selectedMenuId = null;     // 重置为未选择
+    document.getElementById('fetch-result').style.display = 'block';
+    st.textContent = '已获取 '+fetchedMenus.length+' 个菜单';
+    btn.disabled = false;
+    renderSyncList();
+    showToast('已获取直播间商品卡片菜单');
+  }, 900);
+}
+
+// 下拉切换目标菜单
+function onMenuSelect(){
+  selectedMenuId = parseInt(document.getElementById('target-menu').value) || null;
+  renderSyncList();
 }
 
 function renderSyncList(){
@@ -482,7 +569,7 @@ function renderSyncList(){
   document.getElementById('sync-count').textContent = n;
   document.getElementById('sync-count-2').textContent = n;
   document.getElementById('sync-list-empty').style.display = (n===0 ? 'block':'none');
-  document.getElementById('btn-sync-push').disabled = (n===0);
+  document.getElementById('btn-sync-push').disabled = (n===0 || fetchedMenus.length===0 || !selectedMenuId);
 }
 
 function removeSel(id){
