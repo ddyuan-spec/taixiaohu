@@ -366,9 +366,9 @@
     <tr><th>《商品表》字段</th><th>卡片字段</th><th>API 参数</th><th>类型/约束</th><th>填充方式</th><th>取值/默认</th></tr>
     <tr><td>商品主图</td><td>商品图</td><td><code>IntroduceImage</code></td><td>String / 含协议头 URL</td><td><span class="badge b-green">系统携带</span></td><td>取《商品表》主图 URL</td></tr>
     <tr><td>商品名称</td><td>商品名称</td><td><code>Title</code></td><td>String / 1-100 字符 <b class="req">★必填</b></td><td><span class="badge b-green">系统携带</span></td><td>取《商品表》名称</td></tr>
-    <tr><td>销售价</td><td>售卖价</td><td><code>Highlight</code></td><td>String / 1-20 字符</td><td><span class="badge b-green">系统携带</span></td><td>取《商品表》，如 ¥15</td></tr>
-    <tr><td>划线价</td><td>参考价</td><td><code>Strikethrough</code></td><td>String / 1-8 字符</td><td><span class="badge b-green">系统携带</span></td><td>取《商品表》</td></tr>
-    <tr><td>卖点描述</td><td>卖点标签</td><td><code>SellingPointTag</code></td><td>String / 最多3个;分号隔;每点≤6字</td><td><span class="badge b-green">系统携带</span></td><td>取《商品表》</td></tr>
+    <tr><td>销售价</td><td>售卖价</td><td><code>Highlight</code></td><td>String / 1-20 字符</td><td><span class="badge b-green">系统携带</span></td><td>取《商品表》同一商品<b>最低价格</b>，格式如 ¥15</td></tr>
+    <tr><td>划线价</td><td>参考价</td><td><code>Strikethrough</code></td><td>String / 1-8 字符</td><td><span class="badge b-green">系统携带</span></td><td>取《商品表》同一商品<b>最高价格</b></td></tr>
+    <tr><td>卖点描述</td><td>卖点标签</td><td><code>SellingPointTag</code></td><td>String / 最多3个;分号隔;每点建议≤6字</td><td><span class="badge b-green">系统携带</span></td><td>取《商品表》<br><span style="font-size:11.5px;color:#d97706">⚠️ 关联需求：商品中心「新增/编辑商品」页面的卖点描述输入提示需改为「最多3个;分号分隔;每点≤6字」，与直播 API SellingPointTag 约束对齐（接口硬限3个+分号，每点6字为建议值）。</span></td></tr>
     <tr><td>商品详情 App H5 路由</td><td>跳转链接</td><td><code>RedirectUrl</code></td><td>String / 含协议头 URL</td><td><span class="badge b-blue">系统自动获取</span></td><td>推送时复用<b>商品中心「商品详情」接口</b>，按商品 ID 查得其 App H5 路由并填入</td></tr>
     <tr><td>—（系统固定）</td><td>上架</td><td><code>EnableStatus</code></td><td>Integer / 0-1</td><td><span class="badge b-blue">固定传 1</span></td><td>显式传 <b>1（上架）</b>，覆盖 API 默认 0</td></tr>
     <tr><td>—（系统固定）</td><td>下单消息</td><td><code>IsOrderMsgEnable</code></td><td>Integer / 0-1</td><td><span class="badge b-blue">固定传 1</span></td><td>显式传 <b>1（开启）</b>，覆盖 API 默认 0</td></tr>
@@ -526,7 +526,7 @@
   <tr><td>复选框</td><td>行选择控件，供批量同步；支持单选/表头全选</td><td>不参与排序</td></tr>
   <tr><td>商品信息</td><td>商品主图 + 商品名称 + 品类；取《商品表》，不可编辑</td><td>名称超长省略号，悬浮显示全称</td></tr>
   <tr><td>库存</td><td>取《商品表》库存字段；后端返回</td><td>为 0 时正常展示 0（不拦截推送，见边界条件）</td></tr>
-  <tr><td>售卖价</td><td>取《商品表》销售价；后端返回</td><td>红色展示，格式 ¥xx.xx</td></tr>
+  <tr><td>售卖价</td><td>取《商品表》同一商品最低价格；后端返回</td><td>红色展示，格式 ¥xx.xx（同一商品存在多价格时取最低）</td></tr>
   <tr><td>上架状态</td><td>取《商品表》上下架状态；枚举：上架 / 下架</td><td>上架=绿标、下架=灰标；下架商品不可勾选推送</td></tr>
   <tr><td>推送状态</td><td>该商品最后一次推送结果；入池未推送过显示「—」</td><td>枚举：已同步 / 同步失败（仅两种，未推送为「—」空值）</td></tr>
   <tr><td>最后同步时间</td><td>最近一次推送成功/失败的时间戳</td><td>从未推送显示「—」</td></tr>
@@ -798,7 +798,7 @@
   <tr><th style="width:130px">字段名称</th><th>需求说明</th><th>备注</th></tr>
   <tr><td>复选框</td><td>选择待添加商品；已存在则禁选</td><td>—</td></tr>
   <tr><td>商品信息</td><td>主图 + 名称 + 品类；取《商品表》</td><td>—</td></tr>
-  <tr><td>售卖价</td><td>取《商品表》销售价</td><td>红色 ¥</td></tr>
+  <tr><td>售卖价</td><td>取《商品表》同一商品最低价格</td><td>红色 ¥（多价格时取最低）</td></tr>
   <tr><td>商品状态</td><td>取《商品表》上下架状态</td><td>仅允许「已上架」商品添加；「已下架」商品置灰禁选</td></tr>
 </table>
 <ul style="font-size:13px">
