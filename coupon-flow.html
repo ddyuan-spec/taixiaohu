@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎优惠券 · 业务流程图与时序图</title>
+<style>
+  :root{
+    --new:#43a047; --new-bg:#e8f5e9;
+    --old:#1e88e5; --old-bg:#e3f2fd;
+    --ext:#fb8c00; --ext-bg:#fff3e0;
+    --svc:#546e7a; --svc-bg:#eceff1;
+    --extn:#8e24aa; --extn-bg:#f3e5f5;
+    --dead:#9e9e9e; --dead-bg:#f5f5f5;
+    --ink:#263238; --line:#b0bec5;
+  }
+  *{box-sizing:border-box;}
+  body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:#fafafa;color:var(--ink);margin:0;padding:24px 32px 60px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:#607d8b;font-size:13px;margin-bottom:18px;}
+  h2{font-size:17px;margin:34px 0 10px;padding-left:10px;border-left:4px solid #1e88e5;}
+  .card{background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:18px;overflow-x:auto;}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0 4px;font-size:12.5px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .chip{width:14px;height:14px;border-radius:3px;display:inline-block;border:1.5px solid;}
+  .note{font-size:12.5px;color:#78909c;margin-top:8px;line-height:1.7;}
+  svg{display:block;min-width:1000px;width:100%;height:auto;}
+  svg text{font-family:"Microsoft YaHei","PingFang SC",sans-serif;}
+</style>
+</head>
+<body>
+
+<h1>泰小虎优惠券 · 业务流程图与时序图</h1>
+<div class="sub">依据：《优惠券需求梳理.md》（用户线下定稿，2026-07-27）｜ 端口：平台端后台 / 商家端后台 / App / H5 / 小程序 ｜ 周期：制券 → 券管理 → 发券/领券配置 → 发放执行 → 触达 → 领券 → 持券 → 下单核销 → 退券</div>
+
+<div class="legend">
+  <span><i class="chip" style="background:var(--new-bg);border-color:var(--new)"></i>本期新增</span>
+  <span><i class="chip" style="background:var(--old-bg);border-color:var(--old)"></i>已有功能</span>
+  <span><i class="chip" style="background:var(--ext-bg);border-color:var(--ext)"></i>已有·待扩展</span>
+  <span><i class="chip" style="background:var(--svc-bg);border-color:var(--svc)"></i>后端服务能力</span>
+  <span><i class="chip" style="background:var(--extn-bg);border-color:var(--extn)"></i>外部系统</span>
+  <span><i class="chip" style="background:var(--dead-bg);border-color:var(--dead)"></i>规则写死 / 本期不做</span>
+</div>
+
+<!-- ═══════════════════ 一、业务流程图 ═══════════════════ -->
+<h2>一、整体业务流程图（横向泳道 · 制券 → 核销全链路）</h2>
+<div class="card">
+<svg viewBox="0 0 1240 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#546e7a"/></marker>
+    <marker id="arrD" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#90a4ae"/></marker>
+  </defs>
+
+  <!-- 阶段列头 -->
+  <g font-size="12.5" font-weight="bold" fill="#455a64" text-anchor="middle">
+    <text x="240" y="36">① 制券 / 券管理</text>
+    <text x="570" y="36">② 发券 / 领券配置</text>
+    <text x="785" y="36">③ 发放执行 / 触达</text>
+    <text x="965" y="36">④ 领券 / 持券</text>
+    <text x="1148" y="36">⑤ 核销 / 退券</text>
+  </g>
+  <line x1="130" y1="44" x2="1232" y2="44" stroke="#cfd8dc" stroke-width="1"/>
+
+  <!-- 泳道背景与标签 -->
+  <g font-size="13" font-weight="bold" fill="#37474f">
+    <rect x="8" y="56" width="1224" height="160" fill="#fbfdff" stroke="#cfd8dc" rx="6"/>
+    <text x="24" y="128" writing-mode="tb" letter-spacing="3">平台端后台</text>
+    <rect x="8" y="222" width="1224" height="160" fill="#fffdfa" stroke="#cfd8dc" rx="6"/>
+    <text x="24" y="292" writing-mode="tb" letter-spacing="3">商家端后台</text>
+    <rect x="8" y="388" width="1224" height="118" fill="#fafbfc" stroke="#cfd8dc" rx="6"/>
+    <text x="24" y="428" writing-mode="tb" letter-spacing="2">券服务·后端</text>
+    <rect x="8" y="512" width="1224" height="68" fill="#fdfafe" stroke="#cfd8dc" rx="6"/>
+    <text x="24" y="527" writing-mode="tb" letter-spacing="1">火山引擎</text>
+    <rect x="8" y="586" width="1224" height="176" fill="#fbfffb" stroke="#cfd8dc" rx="6"/>
+    <text x="24" y="638" writing-mode="tb" letter-spacing="2">用户端·App/H5/小程序</text>
+  </g>
+
+  <!-- ===== 平台端后台 ===== -->
+  <g font-size="12">
+    <rect x="140" y="112" width="150" height="46" rx="6" fill="var(--new-bg)" stroke="var(--new)" stroke-width="1.5"/>
+    <text x="215" y="131" text-anchor="middle" font-weight="bold">添加券 / 编辑券</text>
+    <text x="215" y="148" text-anchor="middle" fill="#2e7d32" font-size="10.5">新增（现仅商家端有）</text>
+
+    <rect x="318" y="112" width="130" height="46" rx="6" fill="var(--old-bg)" stroke="var(--old)" stroke-width="1.5"/>
+    <text x="383" y="131" text-anchor="middle" font-weight="bold">查看 / 下架券</text>
+    <text x="383" y="148" text-anchor="middle" fill="#1565c0" font-size="10.5">已有功能</text>
+
+    <rect x="478" y="62" width="188" height="46" rx="6" fill="var(--new-bg)" stroke="var(--new)" stroke-width="1.5"/>
+    <text x="572" y="80" text-anchor="middle" font-weight="bold">直播时长发券活动</text>
+    <text x="572" y="97" text-anchor="middle" fill="#2e7d32" font-size="10.5">新增 · 规则写死不做配置</text>
+
+    <rect x="478" y="114" width="188" height="44" rx="6" fill="var(--ext-bg)" stroke="var(--ext)" stroke-width="1.5"/>
+    <text x="572" y="131" text-anchor="middle" font-weight="bold">指定发券</text>
+    <text x="572" y="148" text-anchor="middle" fill="#e65100" font-size="10.5">已有 · 待扩展指定店铺/商品</text>
+
+    <rect x="478" y="164" width="188" height="42" rx="6" fill="var(--new-bg)" stroke="var(--new)" stroke-width="1.5"/>
+    <text x="572" y="181" text-anchor="middle" font-weight="bold">新建领券活动</text>
+    <text x="572" y="197" text-anchor="middle" fill="#2e7d32" font-size="10.5">新增</text>
+
+    <rect x="1064" y="112" width="158" height="46" rx="6" fill="var(--new-bg)" stroke="var(--new)" stroke-width="1.5"/>
+    <text x="1143" y="131" text-anchor="middle" font-weight="bold">数据看板 / 用户券查询</text>
+    <text x="1143" y="148" text-anchor="middle" fill="#2e7d32" font-size="10.5">新增</text>
+  </g>
+
+  <!-- ===== 商家端后台 ===== -->
+  <g font-size="12">
+    <rect x="140" y="276" width="150" height="50" rx="6" fill="var(--ext-bg)" stroke="var(--ext)" stroke-width="1.5"/>
+    <text x="215" y="295" text-anchor="middle" font-weight="bold">添加券</text>
+    <text x="215" y="312" text-anchor="middle" fill="#e65100" font-size="10.5">已有 · 拓展使用限制(首单等)</text>
+
+    <rect x="318" y="278" width="130" height="46" rx="6" fill="var(--old-bg)" stroke="var(--old)" stroke-width="1.5"/>
+    <text x="383" y="297" text-anchor="middle" font-weight="bold">查看 / 下架券</text>
+    <text x="383" y="314" text-anchor="middle" fill="#1565c0" font-size="10.5">已有功能</text>
+
+    <rect x="478" y="248" width="188" height="42" rx="6" fill="var(--new-bg)" stroke="var(--new)" stroke-width="1.5"/>
+    <text x="572" y="265" text-anchor="middle" font-weight="bold">创建发券活动（规则发券）</text>
+    <text x="572" y="281" text-anchor="middle" fill="#2e7d32" font-size="10.5">新增</text>
+
+    <rect x="478" y="296" width="188" height="42" rx="6" fill="var(--new-bg)" stroke="var(--new)" stroke-width="1.5"/>
+    <text x="572" y="313" text-anchor="middle" font-weight="bold">新建领券活动</text>
+    <text x="572" y="329" text-anchor="middle" fill="#2e7d32" font-size="10.5">新增</text>
+
+    <rect x="1064" y="278" width="158" height="46" rx="6" fill="var(--new-bg)" stroke="var(--new)" stroke-width="1.5"/>
+    <text x="1143" y="297" text-anchor="middle" font-weight="bold">数据看板 / 用户券查询</text>
+    <text x="1143" y="314" text-anchor="middle" fill="#2e7d32" font-size="10.5">新增</text>
+  </g>
+
+  <!-- ===== 券服务 ===== -->
+  <g font-size="12">
+    <rect x="200" y="418" width="130" height="46" rx="6" fill="var(--svc-bg)" stroke="var(--svc)" stroke-width="1.5"/>
+    <text x="265" y="437" text-anchor="middle" font-weight="bold">券模板库</text>
+    <text x="265" y="454" text-anchor="middle" fill="#455a64" font-size="10.5">平台券 + 店铺券</text>
+
+    <rect x="690" y="414" width="190" height="52" rx="6" fill="var(--svc-bg)" stroke="var(--svc)" stroke-width="1.5"/>
+    <text x="785" y="433" text-anchor="middle" font-weight="bold">发券引擎</text>
+    <text x="785" y="450" text-anchor="middle" fill="#455a64" font-size="10.5">时长计算·筛选≥X用户·批量发放</text>
+
+    <rect x="908" y="418" width="130" height="46" rx="6" fill="var(--svc-bg)" stroke="var(--svc)" stroke-width="1.5"/>
+    <text x="973" y="437" text-anchor="middle" font-weight="bold">用户券账户</text>
+    <text x="973" y="454" text-anchor="middle" fill="#455a64" font-size="10.5">持券·状态管理</text>
+
+    <rect x="1078" y="418" width="144" height="46" rx="6" fill="var(--svc-bg)" stroke="var(--svc)" stroke-width="1.5"/>
+    <text x="1150" y="437" text-anchor="middle" font-weight="bold">核销 / 返还引擎</text>
+    <text x="1150" y="454" text-anchor="middle" fill="#455a64" font-size="10.5">下单核销·关单返还</text>
+  </g>
+
+  <!-- ===== 火山引擎 ===== -->
+  <g font-size="12">
+    <rect x="656" y="524" width="258" height="46" rx="6" fill="var(--extn-bg)" stroke="var(--extn)" stroke-width="1.5"/>
+    <text x="785" y="543" text-anchor="middle" font-weight="bold">直播进入 / 退出时间 API</text>
+    <text x="785" y="560" text-anchor="middle" fill="#6a1b9a" font-size="10.5">⚠️ 返回字段待确认（doc 1723281）</text>
+  </g>
+
+  <!-- ===== 用户端 ===== -->
+  <g font-size="12">
+    <rect x="690" y="610" width="190" height="46" rx="6" fill="var(--new-bg)" stroke="var(--new)" stroke-width="1.5"/>
+    <text x="785" y="629" text-anchor="middle" font-weight="bold">获券弹窗 / 消息中心</text>
+    <text x="785" y="646" text-anchor="middle" fill="#2e7d32" font-size="10.5">三端新增（消息由后台配置）</text>
+
+    <rect x="908" y="610" width="130" height="46" rx="6" fill="var(--ext-bg)" stroke="var(--ext)" stroke-width="1.5"/>
+    <text x="973" y="629" text-anchor="middle" font-weight="bold">商品详情领券</text>
+    <text x="973" y="646" text-anchor="middle" fill="#e65100" font-size="10.5">App新增·H5/小程序已有</text>
+
+    <rect x="908" y="676" width="130" height="46" rx="6" fill="var(--ext-bg)" stroke="var(--ext)" stroke-width="1.5"/>
+    <text x="973" y="695" text-anchor="middle" font-weight="bold">我的优惠券</text>
+    <text x="973" y="712" text-anchor="middle" fill="#e65100" font-size="10.5">App新增·H5/小程序已有</text>
+
+    <rect x="1078" y="610" width="144" height="46" rx="6" fill="var(--ext-bg)" stroke="var(--ext)" stroke-width="1.5"/>
+    <text x="1150" y="629" text-anchor="middle" font-weight="bold">下单选券 · 核销</text>
+    <text x="1150" y="646" text-anchor="middle" fill="#e65100" font-size="10.5">App新增·H5/小程序已有</text>
+
+    <rect x="1078" y="676" width="144" height="56" rx="6" fill="var(--dead-bg)" stroke="var(--dead)" stroke-width="1.5"/>
+    <text x="1150" y="694" text-anchor="middle" font-weight="bold" fill="#616161">退券规则写死</text>
+    <text x="1150" y="709" text-anchor="middle" fill="#757575" font-size="10.5">仅未支付返还 / 后台关单返还</text>
+    <text x="1150" y="723" text-anchor="middle" fill="#757575" font-size="10.5">已有功能无改动 · 不做售后退券</text>
+  </g>
+
+  <!-- ===== 连线 ===== -->
+  <g stroke="#546e7a" stroke-width="1.6" fill="none" marker-end="url(#arr)">
+    <!-- 制券→券管理 -->
+    <line x1="290" y1="135" x2="314" y2="135"/>
+    <line x1="290" y1="301" x2="314" y2="301"/>
+    <!-- 券管理→发券配置 -->
+    <line x1="448" y1="135" x2="474" y2="135"/>
+    <line x1="448" y1="301" x2="474" y2="290"/>
+    <!-- 平台配置→发券引擎 -->
+    <path d="M 666 85 H 750 V 410"/>
+    <line x1="666" y1="136" x2="700" y2="410" stroke="none"/>
+    <path d="M 666 136 H 720 V 410"/>
+    <!-- 商家发券活动→发券引擎 -->
+    <path d="M 666 269 H 780 V 410"/>
+    <!-- 发券引擎↔火山引擎 -->
+    <line x1="760" y1="466" x2="760" y2="520"/>
+    <!-- 发券引擎→券账户 -->
+    <line x1="880" y1="440" x2="904" y2="440"/>
+    <!-- 券账户→触达 -->
+    <path d="M 950 464 Q 900 540 830 606" stroke-dasharray="none"/>
+    <!-- 触达→领券/持券 -->
+    <line x1="880" y1="633" x2="904" y2="633"/>
+    <!-- 商详领券→我的券 -->
+    <line x1="973" y1="656" x2="973" y2="672"/>
+    <!-- 我的券/商详→下单核销 -->
+    <line x1="1038" y1="633" x2="1074" y2="633"/>
+    <!-- 下单核销→核销引擎 -->
+    <line x1="1150" y1="610" x2="1150" y2="468"/>
+  </g>
+  <g stroke="#90a4ae" stroke-width="1.4" fill="none" marker-end="url(#arrD)" stroke-dasharray="5 4">
+    <!-- 制券→券模板库 -->
+    <path d="M 265 158 V 414"/>
+    <path d="M 265 326 V 414"/>
+    <!-- 模板库→发券引擎 -->
+    <line x1="330" y1="441" x2="686" y2="441"/>
+    <!-- 火山返回 -->
+    <line x1="808" y1="520" x2="808" y2="470"/>
+    <!-- 领券活动→商详领券 -->
+    <path d="M 666 187 H 940 V 240" stroke="none"/>
+    <path d="M 666 187 Q 973 187 973 606" opacity="0.55"/>
+    <!-- 核销/返还→退券规则 -->
+    <line x1="1163" y1="468" x2="1163" y2="672" opacity="0.55"/>
+    <!-- 券账户→数据看板 -->
+    <path d="M 1000 418 Q 1050 340 1090 328" opacity="0.5"/>
+    <path d="M 1005 418 Q 1080 260 1105 162" opacity="0.5"/>
+  </g>
+
+  <!-- 流程序号 -->
+  <g font-size="11" font-weight="bold" fill="#fff">
+    <circle cx="302" cy="124" r="9" fill="#546e7a"/><text x="302" y="128" text-anchor="middle">1</text>
+    <circle cx="462" cy="124" r="9" fill="#546e7a"/><text x="462" y="128" text-anchor="middle">2</text>
+    <circle cx="748" cy="390" r="9" fill="#546e7a"/><text x="748" y="394" text-anchor="middle">3</text>
+    <circle cx="760" cy="496" r="9" fill="#546e7a"/><text x="760" y="500" text-anchor="middle">4</text>
+    <circle cx="892" cy="428" r="9" fill="#546e7a"/><text x="892" y="432" text-anchor="middle">5</text>
+    <circle cx="878" cy="574" r="9" fill="#546e7a"/><text x="878" y="578" text-anchor="middle">6</text>
+    <circle cx="892" cy="622" r="9" fill="#546e7a"/><text x="892" y="626" text-anchor="middle">7</text>
+    <circle cx="1056" cy="622" r="9" fill="#546e7a"/><text x="1056" y="626" text-anchor="middle">8</text>
+    <circle cx="1150" cy="540" r="9" fill="#546e7a"/><text x="1150" y="544" text-anchor="middle">9</text>
+  </g>
+</svg>
+<div class="note">
+  主流程：① 制券（平台端新增制券能力；商家端已有、拓展使用限制）→ ② 券管理（查看/下架，已有）→ ③ 发券/领券配置触发发券引擎（平台端：直播时长发券【写死规则】+ 指定发券【扩展店铺/商品】；商家端：规则发券活动）→ ④ 直播时长发券调用火山引擎拉取直播进入/退出时间，相减得时长，筛选 ≥X 用户列表 → ⑤ 批量发券入用户券账户 → ⑥ 三端触达（获券弹窗/消息中心）→ ⑦ 领券/持券（商详领券、我的优惠券）→ ⑧ 下单选券 → ⑨ 核销；退券不做售后逻辑，仅保留已有的「未支付返还 / 后台关单返还」。虚线为数据/依赖关系（券模板、领券活动供商详展示、看板取数）。
+</div>
+</div>
+
+<!-- ═══════════════════ 二、时序图 A ═══════════════════ -->
+<h2>二、时序图 A：直播时长发券（平台端 · 本期核心新增链路）</h2>
+<div class="card">
+<svg viewBox="0 0 1120 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="sa" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#37474f"/></marker>
+    <marker id="sd" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#78909c"/></marker>
+  </defs>
+
+  <!-- 参与者 -->
+  <g font-size="13" font-weight="bold" text-anchor="middle">
+    <rect x="45" y="20" width="110" height="40" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/><text x="100" y="45">运营</text>
+    <rect x="235" y="20" width="130" height="40" rx="6" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.5"/><text x="300" y="45">平台端后台</text>
+    <rect x="475" y="20" width="130" height="40" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/><text x="540" y="45">券服务</text>
+    <rect x="715" y="20" width="130" height="40" rx="6" fill="#f3e5f5" stroke="#8e24aa" stroke-width="1.5"/><text x="780" y="45">火山引擎</text>
+    <rect x="945" y="20" width="150" height="40" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/><text x="1020" y="45">用户端(三端)</text>
+  </g>
+  <!-- 生命线 -->
+  <g stroke="#b0bec5" stroke-width="1.2" stroke-dasharray="4 4">
+    <line x1="100" y1="60" x2="100" y2="570"/>
+    <line x1="300" y1="60" x2="300" y2="570"/>
+    <line x1="540" y1="60" x2="540" y2="570"/>
+    <line x1="780" y1="60" x2="780" y2="570"/>
+    <line x1="1020" y1="60" x2="1020" y2="570"/>
+  </g>
+
+  <!-- 消息 -->
+  <g font-size="12" fill="#263238">
+    <line x1="100" y1="100" x2="296" y2="100" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/>
+    <text x="198" y="92" text-anchor="middle">1. 创建直播时长发券活动</text>
+    <text x="198" y="116" text-anchor="middle" font-size="10.5" fill="#78909c">选券模板 + 直播时间段 + 时长阈值X（规则写死不做配置）</text>
+
+    <line x1="300" y1="150" x2="536" y2="150" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/>
+    <text x="418" y="142" text-anchor="middle">2. 保存活动（券ID / 时间段 / 阈值X）</text>
+
+    <line x1="540" y1="196" x2="776" y2="196" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/>
+    <text x="658" y="188" text-anchor="middle">3. 拉取时间段内直播进入/退出时间</text>
+    <text x="658" y="212" text-anchor="middle" font-size="10.5" fill="#8e24aa">⚠️ 接口返回字段待确认（volcengine doc 1723281）</text>
+
+    <line x1="780" y1="248" x2="544" y2="248" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#sd)"/>
+    <text x="662" y="240" text-anchor="middle">4. 返回用户观看记录（进入时间 / 退出时间）</text>
+
+    <!-- 自消息 -->
+    <path d="M 540 286 H 640 V 316 H 544" fill="none" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/>
+    <text x="660" y="296" text-anchor="start">5. 计算时长 = 退出 − 进入（累计）</text>
+    <text x="660" y="312" text-anchor="start" font-size="10.5" fill="#78909c">筛选累计时长 ≥ X 的用户列表</text>
+
+    <path d="M 540 348 H 640 V 378 H 544" fill="none" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/>
+    <text x="660" y="358" text-anchor="start">6. 按活动配置批量发券</text>
+    <text x="660" y="374" text-anchor="start" font-size="10.5" fill="#78909c">写入用户券账户（去重 / 限领校验）</text>
+
+    <line x1="540" y1="420" x2="1016" y2="420" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/>
+    <text x="778" y="412" text-anchor="middle">7. 推送获券消息 → 获券弹窗 / 消息中心（后台配置文案）</text>
+
+    <path d="M 1020 456 H 1090 V 486 H 1024" fill="none" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#sd)"/>
+    <text x="1014" y="466" text-anchor="end" font-size="11">8. 「我的优惠券」可见</text>
+
+    <line x1="540" y1="524" x2="304" y2="524" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#sd)"/>
+    <text x="422" y="516" text-anchor="middle">9. 发放结果回流</text>
+    <line x1="300" y1="552" x2="104" y2="552" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#sd)"/>
+    <text x="202" y="544" text-anchor="middle">10. 数据看板 / 用户券查询</text>
+  </g>
+
+  <!-- 激活条 -->
+  <g fill="#cfd8dc" opacity="0.85">
+    <rect x="295" y="96" width="10" height="60"/>
+    <rect x="535" y="146" width="10" height="240"/>
+    <rect x="775" y="192" width="10" height="60"/>
+    <rect x="1015" y="416" width="10" height="76"/>
+  </g>
+</svg>
+<div class="note">
+  本期直播时长发券为<b>写死规则</b>：不提供活动配置化能力，仅实现「取某时间段直播进入/退出时间 → 相减求时长 → 筛选超过 X 的用户列表 → 批量发券」链路。第 3/4 步依赖火山引擎接口，<b>需确认接口能返回哪些数据</b>（进入/退出时间粒度、多次进出是否累计、用户标识与业务账号的映射）。
+</div>
+</div>
+
+<!-- ═══════════════════ 三、时序图 B ═══════════════════ -->
+<h2>三、时序图 B：商详领券 → 下单核销 → 关单返还（用户端三端）</h2>
+<div class="card">
+<svg viewBox="0 0 1040 680" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="sb" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#37474f"/></marker>
+    <marker id="se" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#78909c"/></marker>
+  </defs>
+
+  <g font-size="13" font-weight="bold" text-anchor="middle">
+    <rect x="60" y="20" width="110" height="40" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/><text x="115" y="45">用户</text>
+    <rect x="290" y="20" width="170" height="40" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/><text x="375" y="45">用户端(App/H5/小程序)</text>
+    <rect x="590" y="20" width="120" height="40" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/><text x="650" y="45">券服务</text>
+    <rect x="850" y="20" width="120" height="40" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/><text x="910" y="45">订单服务</text>
+  </g>
+  <g stroke="#b0bec5" stroke-width="1.2" stroke-dasharray="4 4">
+    <line x1="115" y1="60" x2="115" y2="650"/>
+    <line x1="375" y1="60" x2="375" y2="650"/>
+    <line x1="650" y1="60" x2="650" y2="650"/>
+    <line x1="910" y1="60" x2="910" y2="650"/>
+  </g>
+
+  <g font-size="12" fill="#263238">
+    <line x1="115" y1="96" x2="371" y2="96" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/>
+    <text x="243" y="88" text-anchor="middle">1. 打开商品详情页</text>
+
+    <line x1="375" y1="132" x2="646" y2="132" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/>
+    <text x="510" y="124" text-anchor="middle">2. 查询该商品可领券（领券活动）</text>
+
+    <line x1="650" y1="166" x2="379" y2="166" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#se)"/>
+    <text x="514" y="158" text-anchor="middle">3. 返回可领券列表（App 新增 · H5/小程序已有）</text>
+
+    <line x1="115" y1="204" x2="371" y2="204" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/>
+    <text x="243" y="196" text-anchor="middle">4. 点击「领取」</text>
+
+    <line x1="375" y1="240" x2="646" y2="240" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/>
+    <text x="510" y="232" text-anchor="middle">5. 领券请求（库存 / 限领 / 资格校验）</text>
+
+    <line x1="650" y1="276" x2="379" y2="276" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#se)"/>
+    <text x="514" y="268" text-anchor="middle">6. 领取成功 → 获券弹窗，入「我的优惠券」</text>
+
+    <line x1="115" y1="322" x2="371" y2="322" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/>
+    <text x="243" y="314" text-anchor="middle">7. 结算下单（选择优惠券）</text>
+
+    <line x1="375" y1="358" x2="906" y2="358" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/>
+    <text x="640" y="350" text-anchor="middle">8. 创建订单（携带所选券）</text>
+
+    <line x1="910" y1="394" x2="654" y2="394" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/>
+    <text x="782" y="386" text-anchor="middle">9. 校验券有效性 → 核销（锁定→已使用）</text>
+
+    <line x1="650" y1="430" x2="906" y2="430" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#se)"/>
+    <text x="778" y="422" text-anchor="middle">10. 核销成功，返回抵扣金额</text>
+
+    <line x1="910" y1="466" x2="379" y2="466" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#se)"/>
+    <text x="644" y="458" text-anchor="middle">11. 订单创建成功（含优惠明细）</text>
+  </g>
+
+  <!-- alt 返还分支 -->
+  <g>
+    <rect x="80" y="496" width="900" height="140" fill="none" stroke="#90a4ae" stroke-width="1.3" stroke-dasharray="7 4" rx="6"/>
+    <rect x="80" y="496" width="230" height="26" fill="#eceff1" stroke="#90a4ae" stroke-width="1.3"/>
+    <text x="92" y="514" font-size="11.5" font-weight="bold" fill="#546e7a">alt：未支付取消 / 后台关闭订单</text>
+
+    <g font-size="12" fill="#263238">
+      <line x1="910" y1="552" x2="654" y2="552" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/>
+      <text x="782" y="544" text-anchor="middle">12. 触发券返还（已有规则 · 无改动）</text>
+
+      <line x1="650" y1="592" x2="379" y2="592" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#se)"/>
+      <text x="514" y="584" text-anchor="middle">13. 券状态恢复「未使用」，我的优惠券可见</text>
+
+      <text x="530" y="624" text-anchor="middle" font-size="11" fill="#9e9e9e">※ 不做售后退券：已支付订单售后<b>不返还</b>优惠券（规则写死）</text>
+    </g>
+  </g>
+
+  <!-- 激活条 -->
+  <g fill="#cfd8dc" opacity="0.85">
+    <rect x="370" y="92" width="10" height="380"/>
+    <rect x="645" y="128" width="10" height="152"/>
+    <rect x="645" y="390" width="10" height="44"/>
+    <rect x="905" y="354" width="10" height="116"/>
+  </g>
+</svg>
+<div class="note">
+  三端共用同一链路：<b>小程序 / H5 的 2-11 步为已有功能</b>（本期仅新增获券弹窗触达）；<b>App 为全链路新增</b>（商详领券、我的优惠券、下单核销）。返还仅两种既有场景：未支付取消、后台关闭订单——均为已有功能无改动；<b>不做售后退券</b>，规则写死。
+</div>
+</div>
+
+<div class="note" style="margin-top:28px;border-top:1px dashed #cfd8dc;padding-top:14px;">
+  依据文件：《优惠券需求梳理.md》（线下定稿）已归档至本需求文件夹 ｜ 生成时间：2026-07-27 ｜ 本期不做：领券中心（三端）、售后退券、发券活动配置化（直播时长发券写死规则）
+</div>
+
+</body>
+</html>
