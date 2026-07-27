@@ -383,7 +383,7 @@
     <tr><td>商品详情 App H5 路由</td><td>跳转链接</td><td><code>RedirectUrl</code></td><td>String / 含协议头 URL</td><td><span class="badge b-blue">系统自动获取</span></td><td>推送时复用<b>商品中心「商品详情」接口</b>，按商品 ID 查得其 App H5 路由并填入</td></tr>
     <tr><td>—（系统固定）</td><td>上架</td><td><code>EnableStatus</code></td><td>Integer / 0-1</td><td><span class="badge b-blue">固定传 1</span></td><td>显式传 <b>1（上架）</b>，覆盖 API 默认 0（下架商品本就不可勾选推送，见 §4.1）</td></tr>
     <tr><td>—（系统固定）</td><td>下单消息</td><td><code>IsOrderMsgEnable</code></td><td>Integer / 0-1</td><td><span class="badge b-blue">固定传 1</span></td><td>显式传 <b>1（开启）</b>，覆盖 API 默认 0</td></tr>
-    <tr><td>商品简介（待确认）</td><td>商品介绍</td><td><code>Remark</code></td><td>String / 1-15 字</td><td><span class="badge b-green">系统携带（待确认）</span></td><td>取《商品表》简介字段；<span style="font-size:11.5px;color:#d97706">⚠️ 待确认 @干系人：商品中心是否存在「商品简介」字段，若无则本期不传、留空。</span></td></tr>
+    <tr><td>—（火山卡片侧）</td><td>商品介绍</td><td><code>Remark</code></td><td>String / 1-15 字</td><td><span class="badge b-gray">不传</span></td><td>默认空；<b>商品中心无此字段</b>（火山引擎直播卡片自有字段，非商家端字段），本期不映射。</td></tr>
     <tr><td>—</td><td>跳转图</td><td><code>RedirectImage</code></td><td>String / URL</td><td><span class="badge b-gray">不传（默认）</span></td><td>用直播后台菜单级默认图；接口有默认则传默认</td></tr>
     <tr><td>—</td><td>序号</td><td><code>Index</code></td><td>Int / 0-499</td><td><span class="badge b-gray">不传（随机）</span></td><td>用户确认：<b>不传值</b>，由接口默认排序（"推送时间越晚越靠前"由接口默认行为，不在本需求显式控制）</td></tr>
     <tr><td>—</td><td>活动标签</td><td><code>PromotionTagType</code> / <code>PromotionTagUrl</code></td><td>Int / String</td><td><span class="badge b-gray">不传（默认）</span></td><td>商品中心无营销标签字段，默认 0 / 空</td></tr>
@@ -393,7 +393,7 @@
     <tr><td>—</td><td>会员价</td><td><code>MemberPrice</code></td><td>String / ≤20 字</td><td><span class="badge b-gray">不传（默认）</span></td><td>商品中心无会员价字段，默认空</td></tr>
     <tr><td>—</td><td>自定义透传</td><td><code>CustomContent</code></td><td>String / ≤512</td><td><span class="badge b-gray">不传（默认）</span></td><td>默认空</td></tr>
   </table>
-  <p style="font-size:12.5px;color:var(--text2)">统计：<b>共 20 参数</b> = 请求级 3（ProductConfigId 下拉选择 / Action 固定传 1 / ReorderIndex 不传）+ Product 级 17（系统携带 7：名称/图/售卖价/参考价/卖点/跳转路由/简介(待确认) · 固定传 2：上架/下单消息 · 不传默认 8：跳转图/序号/活动标签/提醒/售罄/隐藏价/会员价/自定义）。<b>小程序跳转（MiniAppDirectUrl 等）本期不做</b>；菜单级开关（IsEnable/EnableFloating/DisplayEnable 等）属「菜单配置/启用」接口，单列于 §3.4 与 §3.6。</p>
+  <p style="font-size:12.5px;color:var(--text2)">统计：<b>共 20 参数</b> = 请求级 3（ProductConfigId 下拉选择 / Action 固定传 1 / ReorderIndex 不传）+ Product 级 17（系统携带 6：名称/图/售卖价/参考价/卖点/跳转路由 · 固定传 2：上架/下单消息 · 不传默认 9：简介(Remark)/跳转图/序号/活动标签/提醒/售罄/隐藏价/会员价/自定义）。<b>小程序跳转（MiniAppDirectUrl 等）本期不做</b>；菜单级开关（IsEnable/EnableFloating/DisplayEnable 等）属「菜单配置/启用」接口，单列于 §3.4 与 §3.6。</p>
 </div>
 
 <div class="card">
