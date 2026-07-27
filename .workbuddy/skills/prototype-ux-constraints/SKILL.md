@@ -116,7 +116,7 @@ agent_created: true
 
 人工肉眼 Loop 不可靠：曾两次漏掉"独立页写在 `</main>` 之外 → 点击跳转后整页空白"的致命 bug（用户侧表现为"发券/领券的编辑和新增是空白页"，loop 的"交互完整性/样式正确性"逐条勾选却全过）。**改为用 jsdom 真实执行原型 JS 的自动化冒烟测试作为硬性门禁**：
 
-- 检查器：`references/proto_smoke.js`（已随本 skill 提供，单文件零依赖，需 jsdom；缺失时自动临时安装）。
+- 检查器：`references/proto_smoke.js`（已随本 skill 提供，单文件零依赖，需 jsdom；缺失时自动临时安装）。**后台（平台端/商家端）原型用此脚本。**
 - 运行（在原型所在目录）：
   ```
   NODE_PATH="<jsdom 所在 node_modules>" <managed-node> references/proto_smoke.js <原型.html>
@@ -124,6 +124,11 @@ agent_created: true
   例：
   ```
   NODE_PATH="C:\Users\13364\.workbuddy\binaries\node\workspace/node_modules" "C:\Users\13364\.workbuddy\binaries\node\versions\22.22.2\node.exe" references/proto_smoke.js 平台端后台原型.html
+  ```
+- **C 端（App / 小程序 / H5）原型用 `references/proto_smoke_client.js`**（结构适配 `.phone` 外壳 + `.page` 容器切换，无 `<main>`/view* 独立页）。检查项同源：**[A]** 页面归属 `.phone`、**[B]** `go()` 可达且非空、**[C]** 真实点击捕获 JS 错误、**[D]** onclick 函数定义、**[E]** JS 运行期错误、**[F]** 表单选项去重。
+  例：
+  ```
+  NODE_PATH="C:\Users\13364\.workbuddy\binaries\node\workspace/node_modules" "C:\Users\13364\.workbuddy\binaries\node\versions\22.22.2\node.exe" references/proto_smoke_client.js App端原型.html
   ```
 - 检查项（任一项失败 → 禁止交付，先修复）：
   1. **[A] 视图容器归属 `<main>`**：所有 `view*` 独立页 / 弹窗必须在 `<main>` 内，写在 `</main>` 之外直接判失败（空白页根因）。
