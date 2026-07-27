@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>泰小虎 · 直播挂车 PRD v2.0</title>
+<title>泰小虎 · 直播挂车 PRD v2.2</title>
 <style>
   :root{
     --bg:#f5f7fa;--card:#fff;--text:#1a1a2e;--text2:#555;--border:#e0e4ea;
@@ -116,13 +116,14 @@
 
 <div class="doc-title">
   <h1>泰小虎 · 直播挂车 产品需求文档（PRD）</h1>
-  <div class="meta">版本 V2.0 &nbsp;|&nbsp; 端口：平台端后台 + 直播后台 &nbsp;|&nbsp; 创建日期：2026-07-22 &nbsp;|&nbsp; 文档状态：评审中</div>
+  <div class="meta">版本 V2.2 &nbsp;|&nbsp; 端口：平台端后台 + 直播后台 &nbsp;|&nbsp; 创建日期：2026-07-22 &nbsp;|&nbsp; 文档状态：评审中</div>
   <div class="tags">
     <span>核心：平台端商品 → OpenAPI 推送至直播后台商品卡片</span>
     <span>无手动填字段</span>
     <span>允许重复推送 + 冷却防刷</span>
     <span>更新/删除解耦</span>
     <span>推送前需获取并选定目标菜单（ProductConfigId 必填）</span>
+    <span>Index 固定传 2 + ReorderIndex=true（重复顺延）</span>
   </div>
 </div>
 
@@ -159,17 +160,12 @@
     <tr><th>文档状态</th><td><span class="badge b-orange">评审中</span></td></tr>
   </table>
 
-  <h4>历史修订记录</h4>
+  <h4>修订记录</h4>
   <table>
     <tr><th style="width:70px">版本号</th><th style="width:110px">修订日期</th><th style="width:90px">修订人</th><th>修订内容简述</th><th style="width:80px">状态</th></tr>
     <tr>
-      <td>V1.0</td><td>2026-07-22</td><td>产品</td>
-      <td>首版。基于「按新需求重做」结论重新梳理：明确核心为平台端商品经 OpenAPI 推送至直播后台商品卡片；确定字段映射（15 字段：系统携带 5 / 固定传 1 共 2 / 不传默认 7 / 自动获取 1）、推送逻辑（添加≠推送、允许重复推送、冷却防刷、批量失败处理、更新删除解耦）、端口范围（平台端后台 + 直播后台；商家端/App/H5/小程序/数据统计不涉及）。</td>
-      <td><span class="badge b-orange">评审中</span></td>
-    </tr>
-    <tr>
-      <td>V2.0</td><td>2026-07-24</td><td>产品</td>
-      <td>修订。基于真实推送接口 <code>UpdateSingleActivityProduct</code> 复核：① 新增「获取商品卡片菜单 → 下拉选目标菜单（名称+ID）」前置步骤（菜单ID <code>ProductConfigId</code> 为接口必填，缺失则推送失败）；② 字段映射表由 15 字段扩为 20 参数（补全请求级 ProductConfigId/Action/ReorderIndex、Remark、Index 等，明确不传默认项，不再有遗漏）；③ API 清单新增 GetActivityMenus、UpdateSingleActivityProduct、菜单创建/启用接口；④ 无已启用商品卡片菜单时，技术侧自动创建并启用默认菜单后取 ID；⑤ Index 经与技术确认不传值（由接口默认排序）。流程图、§3.2/3.4/3.5/3.6/3.7、§4.1/4.2 同步更新。</td>
+      <td>V2.2</td><td>2026-07-27</td><td>产品</td>
+      <td>定稿。基于 <code>UpdateSingleActivityProduct</code> 接口：① 菜单ID <code>ProductConfigId</code> 必填，推送前 <code>GetActivityMenus</code> 拉取→弹窗下拉选目标菜单（名称+ID）；② 字段映射 20 参数；③ <b>序号方案：Index 固定传 2 + ReorderIndex=true（重复时已有卡片自动往后顺延）</b>；④ 无已启用菜单时技术侧启用已有菜单（不新建），完全无菜单则阻断推送；⑤ 删除防误删/全量追加逻辑（单卡接口无此风险）。</td>
       <td><span class="badge b-orange">评审中</span></td>
     </tr>
   </table>
@@ -223,7 +219,7 @@
     <marker id="mr" markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto"><polygon points="0 0,10 4,0 8" fill="#d97706"/></marker>
   </defs>
 
-  <text x="360" y="22" text-anchor="middle" font-size="14" font-weight="600" fill="#1e293b">直播挂车 · 业务流程图（V2.0：新增「获取菜单 / 选菜单」前置）</text>
+  <text x="360" y="22" text-anchor="middle" font-size="14" font-weight="600" fill="#1e293b">直播挂车 · 业务流程图（含「获取菜单 / 选菜单」前置）</text>
 
   <!-- 泳道背景 -->
   <rect x="20" y="40" width="350" height="500" rx="10" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="0.7"/>
@@ -288,7 +284,7 @@
   <g transform="translate(404,150)">
     <rect width="150" height="44" rx="7" fill="#dbeafe" stroke="#60a5fa" stroke-width="0.8"/>
     <text x="75" y="18" text-anchor="middle" font-size="11.5" font-weight="500" fill="#1d4ed8">⑥ 组装字段</text>
-    <text x="75" y="33" text-anchor="middle" font-size="9" fill="#64748b">含 ProductConfigId</text>
+    <text x="75" y="33" text-anchor="middle" font-size="9" fill="#64748b">含 ProductConfigId+Index+ReorderIndex</text>
   </g>
   <path d="M479,194 L479,214" stroke="#059669" stroke-width="1.3" marker-end="url(#ma)"/>
 
@@ -349,7 +345,7 @@
   </g>
 </svg>
   </div>
-  <p style="font-size:12.5px;color:var(--text2)">主流程共 9 步（①开始 → ②商品中心 → ③添加入池 → ④直播商品列表页 → ⑤勾选/选直播间/<b>获取菜单/选目标菜单</b> → ⑥后端组字段(含 ProductConfigId) → ⑦API调用链(GetActivityMenus + UpdateSingleActivityProduct) → ⑧推送卡片 → ⑨回写状态 → 结束）；其中 ⑤ 含四个子步（a 勾选 / b 选直播间 / c 获取菜单 / d 选目标菜单）。<b>V2.0 关键变更</b>：推送前必须「获取直播间商品卡片菜单 → 下拉选择目标菜单（名称+ID）」，菜单ID（ProductConfigId）为接口必填项，缺失则推送失败；若直播间无已启用商品卡片菜单，由技术侧启用已有菜单后取 ID；若完全无菜单则阻断推送并提示运营先在直播后台创建。分支 A/B/C 独立于主线、互不影响。异常分支（推送失败）见 ⑨ 回写「同步失败」及 §4.2 批量失败处理。</p>
+  <p style="font-size:12.5px;color:var(--text2)">主流程共 9 步（①开始 → ②商品中心 → ③添加入池 → ④直播商品列表页 → ⑤勾选/选直播间/<b>获取菜单/选目标菜单</b> → ⑥后端组字段(含 ProductConfigId+Index=2+ReorderIndex=true) → ⑦API调用链(GetActivityMenus + UpdateSingleActivityProduct) → ⑧推送卡片 → ⑨回写状态 → 结束）；其中 ⑤ 含四个子步（a 勾选 / b 选直播间 / c 获取菜单 / d 选目标菜单）。<b>关键约束</b>：推送前必须「获取直播间商品卡片菜单 → 下拉选择目标菜单（名称+ID）」，菜单ID（ProductConfigId）为接口必填项，缺失则推送失败；若直播间无已启用商品卡片菜单，由技术侧启用已有菜单后取 ID；若完全无菜单则阻断推送并提示运营先在直播后台创建。<b>序号方案：Index 固定传 2 + ReorderIndex=true</b>，重复时已有卡片自动往后顺延。分支 A/B/C 独立于主线、互不影响。异常分支（推送失败）见 ⑨ 回写「同步失败」及 §4.2 批量失败处理。</p>
 </div>
 
 <div class="card">
@@ -358,7 +354,7 @@
   <ul style="font-size:13px">
     <li><b>入池 ≠ 推送</b>：添加商品仅写入本地「直播商品列表」，不调任何 API、不影响直播间。</li>
     <li><b>推送是显式动作</b>：运营在列表页勾选商品 → 打开「同步到直播间」弹窗 → 选目标直播间 → <b>点「📥 获取商品卡片」拉取该直播间的商品卡片菜单列表 → 下拉选择目标菜单（名称+ID）</b> → 确认推送，才经 OpenAPI 写入直播后台卡片。<b>未获取菜单 / 未选菜单，推送按钮不可点（接口缺必填菜单ID会失败）。</b></li>
-    <li><b>字段全自动</b>：卡片 20 参数由后端按映射表自动组装（系统携带 7 / 固定传 2 / 下拉选择 1 / 不传默认 8 / 请求级固定 2），运营无手动填写；其中<b>菜单ID（ProductConfigId）由运营在弹窗下拉中选择</b>，是推送接口必填项。</li>
+    <li><b>字段全自动</b>：卡片 20 参数由后端按映射表自动组装（系统携带 6 / 固定传 3 / 下拉选择 1 / 不传默认 8 / 请求级固定 2），运营无手动填写；其中<b>菜单ID（ProductConfigId）由运营在弹窗下拉中选择</b>，是推送接口必填项。<b>序号方案：Index 固定传 2 + ReorderIndex=true（重复顺延）</b>。</li>
     <li><b>允许重复推送</b>：同商品可多次推送同一直播间（新增卡片，Id=0），受冷却防刷约束（1 分钟 3 次 / 冷却 3 分钟）。</li>
     <li><b>更新/删除解耦</b>：直播商品列表的更新、移出，均不影响直播间已有卡片；反之亦然。</li>
   </ul>
@@ -367,14 +363,14 @@
 <div class="card">
   <h3 id="s3-3">3.3 商品字段 → 直播间商品卡片 字段映射表（20 参数 · 基于 UpdateSingleActivityProduct）</h3>
   <div class="callout">
-    <div class="t">接口说明（V2.0 更正）</div>
+    <div class="t">接口说明</div>
     真实新增/推送商品卡片接口为 <code>UpdateSingleActivityProduct</code>（docs/3019/1723281）。其请求体含<b>请求级必填</b>（ActivityId / <b>ProductConfigId 菜单ID</b> / Action=1）与 <code>Product</code> 对象（仅 Title 必填，其余可选）。下表逐参数列出，<b>无遗漏</b>；凡商品中心无对应数据源者，一律标注「不传·用接口默认值」，不臆造取值。菜单级开关字段（IsEnable/EnableFloating 等）属「菜单配置/启用」接口，<b>不在本卡片推送表内</b>。
   </div>
   <table>
     <tr><th>《商品表》/请求字段</th><th>卡片字段</th><th>API 参数</th><th>类型/约束</th><th>填充方式</th><th>取值/默认</th></tr>
     <tr><td><b>请求级·目标菜单</b></td><td>—</td><td><code>ProductConfigId</code></td><td>Long / <b class="req">★必填</b></td><td><span class="badge b-purple">下拉选择</span></td><td>弹窗「目标推送菜单」下拉选中的菜单ID（先 <code>GetActivityMenus</code> 拉取；若无已启用菜单则技术侧启用已有菜单后取 ID，若完全无菜单则阻断推送并提示运营先在直播后台创建）</td></tr>
     <tr><td><b>请求级·操作类型</b></td><td>—</td><td><code>Action</code></td><td>Int / 固定 1</td><td><span class="badge b-blue">固定传 1</span></td><td>1 = 新增卡片</td></tr>
-    <tr><td><b>请求级·序号重排</b></td><td>—</td><td><code>ReorderIndex</code></td><td>Bool / 默认 false</td><td><span class="badge b-gray">不传</span></td><td>同商品重复推送时由接口默认处理（不显式控制顺序）</td></tr>
+    <tr><td><b>请求级·序号重排</b></td><td>—</td><td><code>ReorderIndex</code></td><td>Bool / 默认 false</td><td><span class="badge b-blue">固定传 true</span></td><td>与 Index 配合使用：当新卡片 Index 与已有卡片重复时，接口自动将<b>已有卡片往后顺延</b>（例：原 A=2/B=3/C=4，新增 D(Index=2) → A=1/B=3/C=4/D=2）</td></tr>
     <tr><td>商品名称</td><td>商品名称</td><td><code>Title</code></td><td>String / 1-100 字符 <b class="req">★必填</b></td><td><span class="badge b-green">系统携带</span></td><td>取《商品表》名称</td></tr>
     <tr><td>商品主图</td><td>商品图</td><td><code>IntroduceImage</code></td><td>String / 含协议头 URL</td><td><span class="badge b-green">系统携带</span></td><td>取《商品表》主图 URL</td></tr>
     <tr><td>销售价</td><td>售卖价</td><td><code>Highlight</code></td><td>String / 1-20 字符</td><td><span class="badge b-green">系统携带</span></td><td>取《商品表》同一商品<b>最低价格</b>，格式如 ¥15</td></tr>
@@ -385,7 +381,7 @@
     <tr><td>—（系统固定）</td><td>下单消息</td><td><code>IsOrderMsgEnable</code></td><td>Integer / 0-1</td><td><span class="badge b-blue">固定传 1</span></td><td>显式传 <b>1（开启）</b>，覆盖 API 默认 0</td></tr>
     <tr><td>—（火山卡片侧）</td><td>商品介绍</td><td><code>Remark</code></td><td>String / 1-15 字</td><td><span class="badge b-gray">不传</span></td><td>默认空；<b>商品中心无此字段</b>（火山引擎直播卡片自有字段，非商家端字段），本期不映射。</td></tr>
     <tr><td>—</td><td>跳转图</td><td><code>RedirectImage</code></td><td>String / URL</td><td><span class="badge b-gray">不传（默认）</span></td><td>用直播后台菜单级默认图；接口有默认则传默认</td></tr>
-    <tr><td>—</td><td>序号</td><td><code>Index</code></td><td>Int / 0-499</td><td><span class="badge b-gray">不传（随机）</span></td><td>用户确认：<b>不传值</b>，由接口默认排序（"推送时间越晚越靠前"由接口默认行为，不在本需求显式控制）</td></tr>
+    <tr><td>—</td><td>序号</td><td><code>Index</code></td><td>Int / 0-499</td><td><span class="badge b-blue">固定传 2</span></td><td>所有推送商品统一传 <b>2</b>；配合 <code>ReorderIndex=true</code>，重复时已有卡片自动顺延（同序号商品卡片排列靠前）</td></tr>
     <tr><td>—</td><td>活动标签</td><td><code>PromotionTagType</code> / <code>PromotionTagUrl</code></td><td>Int / String</td><td><span class="badge b-gray">不传（默认）</span></td><td>商品中心无营销标签字段，默认 0 / 空</td></tr>
     <tr><td>—</td><td>热卖/库存提醒</td><td><code>ReminderType</code> / <code>HotSale</code> / <code>Stock</code></td><td>Int / Bool / Int</td><td><span class="badge b-gray">不传（默认）</span></td><td>默认 0 / false / 0，商品中心无对应字段</td></tr>
     <tr><td>—</td><td>售罄</td><td><code>OutOfStock</code></td><td>Int / 0-1</td><td><span class="badge b-gray">不传（默认）</span></td><td>默认 0（库存售罄是否映射 @干系人 确认，本期不传）</td></tr>
@@ -393,7 +389,7 @@
     <tr><td>—</td><td>会员价</td><td><code>MemberPrice</code></td><td>String / ≤20 字</td><td><span class="badge b-gray">不传（默认）</span></td><td>商品中心无会员价字段，默认空</td></tr>
     <tr><td>—</td><td>自定义透传</td><td><code>CustomContent</code></td><td>String / ≤512</td><td><span class="badge b-gray">不传（默认）</span></td><td>默认空</td></tr>
   </table>
-  <p style="font-size:12.5px;color:var(--text2)">统计：<b>共 20 参数</b> = 请求级 3（ProductConfigId 下拉选择 / Action 固定传 1 / ReorderIndex 不传）+ Product 级 17（系统携带 6：名称/图/售卖价/参考价/卖点/跳转路由 · 固定传 2：上架/下单消息 · 不传默认 9：简介(Remark)/跳转图/序号/活动标签/提醒/售罄/隐藏价/会员价/自定义）。<b>小程序跳转（MiniAppDirectUrl 等）本期不做</b>；菜单级开关（IsEnable/EnableFloating/DisplayEnable 等）属「菜单配置/启用」接口，单列于 §3.4 与 §3.6。</p>
+  <p style="font-size:12.5px;color:var(--text2)">统计：<b>共 20 参数</b> = 请求级 3（ProductConfigId 下拉选择 / Action 固定传 1 / <b>ReorderIndex 固定传 true</b>）+ Product 级 17（系统携带 6：名称/图/售卖价/参考价/卖点/跳转路由 · 固定传 3：上架/下单消息/<b>Index 固定传 2</b> · 不传默认 8：简介(Remark)/跳转图/活动标签/提醒/售罄/隐藏价/会员价/自定义）。<b>小程序跳转（MiniAppDirectUrl 等）本期不做</b>；菜单级开关（IsEnable/EnableFloating/DisplayEnable 等）属「菜单配置/启用」接口，单列于 §3.4 与 §3.6。</p>
 </div>
 
 <div class="card">
@@ -402,18 +398,16 @@
     <tr><th style="width:230px">接口</th><th style="width:70px">方法</th><th>用途</th><th>调用时机</th></tr>
     <tr><td><code>ListActivityAPI</code></td><td>POST</td><td>拉取直播间列表（分页/搜索/状态）</td><td>选直播间、点「🔄 刷新直播间」时</td></tr>
     <tr><td><code>GetActivityMenus</code></td><td>GET</td><td><b>新增</b>：拉取直播间<b>商品卡片菜单</b>列表（Type=2，含 ToolId/启用状态）</td><td>点「📥 获取商品卡片」时（弹窗下拉用）</td></tr>
-    <tr><td><code>GetActivityProducts</code></td><td>GET</td><td>获取直播间现有卡片（防误删/回查）</td><td>同步前、回写状态时</td></tr>
-    <tr><td><code>UpdateSingleActivityProduct</code></td><td>POST</td><td><b>核心（V2.0 更正）</b>：新增单个商品卡片，<code>ProductConfigId</code>（菜单ID）<b>必填</b></td><td>点「同步直播间」逐商品推送时</td></tr>
-    <tr><td><code>UpdateActivityProduct</code></td><td>POST</td><td>批量追加（Products 数组全量传入，含原有卡片防误删）</td><td>作为「全量追加」备选方案，与上方单卡接口二选一</td></tr>
+    <tr><td><code>GetActivityProducts</code></td><td>GET</td><td>获取直播间现有卡片（回查/状态确认）</td><td>同步后回写状态时</td></tr>
+    <tr><td><code>UpdateSingleActivityProduct</code></td><td>POST</td><td><b>核心</b>：新增单个商品卡片，<code>ProductConfigId</code>（菜单ID）<b>必填</b></td><td>点「同步直播间」逐商品推送时</td></tr>
     <tr><td><code>ModifyActivityMenus</code>（@干系人 确认接口名）</td><td>POST</td><td>菜单启用（无已启用商品卡片菜单时兜底启用已有）</td><td>GetActivityMenus 无启用菜单时，启用已有菜单（不新建）</td></tr>
     <tr><td><code>UpdateProductReminderInfo</code></td><td>POST</td><td>热卖/库存提醒（增强）</td><td><b>本期不做</b></td></tr>
     <tr><td><code>SendProductOrderMessage</code></td><td>POST</td><td>下单消息推聊天区（增强）</td><td><b>本期不做</b></td></tr>
   </table>
   <div class="callout danger">
-    <div class="t">⚠️ 防误删 + 菜单ID 关键约束（V2.0）</div>
+    <div class="t">⚠️ 菜单ID 关键约束</div>
     ① <b>菜单ID 必填</b>：调用 <code>UpdateSingleActivityProduct</code> 必须带 <code>ProductConfigId</code>，缺失或错误将"传不过去"。因此推送前必须先 <code>GetActivityMenus</code> 取目标菜单 ID（由运营在弹窗下拉选择）。<br>
-    ② <b>防误删</b>：若采用全量追加方案（<code>UpdateActivityProduct</code>），必须将原有卡片配置原样完整传入，否则漏传卡片会被删除/清空——推送前先 <code>GetActivityProducts</code> 拉全量，再追加新卡片（Id=0）。<br>
-    ③ <b>无启用菜单兜底</b>：<code>GetActivityMenus</code> 返回中若无 <code>IsEnable=true</code> 的商品卡片菜单，技术侧调用菜单启用接口将<b>已有的</b>菜单启用（仅启用、不新建），再取其 ID 作为 <code>ProductConfigId</code>；若该直播间<b>完全没有</b>商品卡片菜单，则<b>阻断推送</b>并提示运营先在直播后台创建菜单。
+    ② <b>无启用菜单兜底</b>：<code>GetActivityMenus</code> 返回中若无 <code>IsEnable=true</code> 的商品卡片菜单，技术侧调用菜单启用接口将<b>已有的</b>菜单启用（仅启用、不新建），再取其 ID 作为 <code>ProductConfigId</code>；若该直播间<b>完全没有</b>商品卡片菜单，则<b>阻断推送</b>并提示运营先在直播后台创建菜单。
   </div>
   <div class="callout ok">
     <div class="t">技术约束</div>
@@ -449,7 +443,7 @@
   <table>
     <tr><th style="width:120px">层次</th><th>组成</th><th>职责</th></tr>
     <tr><td><b>前端展示层</b><br>（平台端后台）</td><td>直播商品列表页 · 同步到直播间弹窗 · 添加商品入池弹窗</td><td>选品入池、勾选、批量同步、状态查看、更新/移出操作</td></tr>
-    <tr><td><b>后端逻辑层</b><br>（本期新建推送服务）</td><td>选品入池服务 · <b>菜单获取与启用服务</b> · 字段组装服务 · 冷却防刷服务 · 推送编排服务 · 状态回写服务</td><td>读取商品字段并映射为卡片字段、<b>拉取并兜底启用直播间商品卡片菜单（GetActivityMenus + ModifyActivityMenus）</b>、组装 API 请求（含 ProductConfigId）、冷却校验、编排 List/Get/Update 调用链、按商品回写同步状态</td></tr>
+    <tr><td><b>后端逻辑层</b><br>（本期新建推送服务）</td><td>选品入池服务 · <b>菜单获取与启用服务</b> · 字段组装服务 · 冷却防刷服务 · 推送编排服务 · 状态回写服务</td><td>读取商品字段并映射为卡片字段、<b>拉取并兜底启用直播间商品卡片菜单（GetActivityMenus + ModifyActivityMenus）</b>、组装 API 请求（含 ProductConfigId/Index/ReorderIndex）、冷却校验、编排 List/Get/Update 调用链、按商品回写同步状态</td></tr>
     <tr><td><b>数据层</b></td><td>《商品表》（商品中心，存量）· 直播商品列表表（本期新建）· 直播后台商品卡片（第三方存储，经 OpenAPI 读写）</td><td>商品字段来源；入池记录与推送状态持久化；直播间侧卡片实际落地</td></tr>
     <tr><td><b>第三方依赖</b></td><td>直播后台 OpenAPI（<code>livesaas.volcengineapi.com</code>，Version 2023-08-01）</td><td>提供 ListActivityAPI / GetActivityMenus / GetActivityProducts / UpdateSingleActivityProduct / ModifyActivityMenus 等本期接口</td></tr>
   </table>
@@ -658,9 +652,9 @@
 <h5>其他边界条件</h5>
 <ul style="font-size:13px">
   <li><b>库存为 0：</b>允许推送，但该批次含零库存商品时，点「同步直播间」弹二次确认「下列商品库存为 0，确定推送？{商品名列表}」，确认后继续。</li>
-  <li><b>直播间已达 500 卡片上限：</b>UpdateSingleActivityProduct（或 UpdateActivityProduct）返回上限错误 → 该商品置「同步失败」，气泡提示「该直播间商品卡片已达上限（500）」。</li>
+  <li><b>直播间已达 500 卡片上限：</b><code>UpdateSingleActivityProduct</code> 返回上限错误 → 该商品置「同步失败」，气泡提示「该直播间商品卡片已达上限（500）」。</li>
   <li><b>并发防重：</b>推送请求进行中，同步按钮置 loading 禁止重复点击（防抖）。</li>
-  <li><b>断网/超时：</b>推送请求超时 → 视为失败，商品置「同步失败」并提示「网络异常，请重试」；不产生脏卡片依赖后端幂等/回查（见 4.2 防误删）。</li>
+  <li><b>断网/超时：</b>推送请求超时 → 视为失败，商品置「同步失败」并提示「网络异常，请重试」。</li>
 </ul>
 </div>
 
@@ -701,13 +695,13 @@
         </div>
       </div>
       <div class="m-tip warn">⚠️ 推送规则：字段全自动填充（有则带/无则默认）· 允许同商品重复推送（每次新增卡片）· 冷却：同商品同直播间 1 分钟最多 3 次</div>
-      <div class="m-tip info">① 选直播间 → ② 点「📥 获取商品卡片」拉取菜单 → ③ 下拉选目标菜单（名称+ID）→ ④ 点「同步直播间」。未获取或未选菜单时按钮禁用。</div>
+      <div class="m-tip info">① 选直播间 → ② 点「📥 获取商品卡片」拉取菜单 → ③ 下拉选目标菜单（名称+ID）��� ④ 点「同步直播间」。未获取或未选菜单时按钮禁用。</div>
     </div>
     <div class="m-mft"><span class="m-btn">取消</span><span class="m-btn suc" style="opacity:.5">同步直播间</span></div>
   </div>
   </div>
 </div>
-<p class="cap">图 4.2　同步到直播间弹窗（V2.0：新增「获取商品卡片」+「目标推送菜单」两步）</p>
+<p class="cap">图 4.2　同步到直播间弹窗（含「获取商品卡片」+「目标推送菜单」两步）</p>
 
 <h5>交互说明</h5>
 <ul>
@@ -766,13 +760,12 @@
 <ol>
   <li><b>前置校验：</b>未选目标直播间 → 提示「请选择目标直播间」；已选商品为空 → 提示「请至少选择 1 个商品」。</li>
   <li><b>冷却校验：</b>逐商品校验「同商品+同直播间」冷却计数，冷却中的商品本次返回失败并提示「xxx商品冷却中，推送失败请稍后再试」；若全部冷却 → 提示「所选商品均在冷却中，请稍后再试」并中止，不调用 API。</li>
-  <li><b>字段组装：</b>后端按 <b>§三.3 字段映射表</b>从《商品表》读取字段，组装 Product 对象（含 App H5 路由自动获取、EnableStatus=1、IsOrderMsgEnable=1）；并取弹窗所选菜单的 <code>ProductConfigId</code> 作为请求级必填。</li>
+  <li><b>字段组装：</b>后端按 <b>§三.3 字段映射表</b>从《商品表》读取字段，组装 Product 对象（含 App H5 路由自动获取、EnableStatus=1、IsOrderMsgEnable=1、<b>Index 固定传 2</b>）；请求级带弹窗所选菜单的 <code>ProductConfigId</code>（必填）+ <b>ReorderIndex=true</b>（重复顺延）。</li>
   <li><b>API 调用链：</b>
     <ol type="a">
       <li>调 <code>GetActivityMenus</code>（GET）拉取该直播间的商品卡片菜单；<b>若无已启用（IsEnable=true）菜单但存在未启用菜单</b>，则调菜单启用接口（如 <code>ModifyActivityMenus</code>）启用已有菜单，取其 ID；若<b>完全没有商品卡片菜单</b>，则阻断推送并提示运营先在直播后台创建菜单。</li>
       <li>取运营在弹窗下拉选定的<b>目标菜单 ID（ProductConfigId）</b>。</li>
-      <li>（防误删，若采用全量追加方案）调 <code>GetActivityProducts</code>（GET）获取该直播间<b>现有全部卡片</b>，原样保留后追加新卡片。</li>
-      <li>逐商品调 <code>UpdateSingleActivityProduct</code>（POST）新增卡片：请求体带 ActivityId + <b>ProductConfigId（必填）</b> + Action=1 + Product 对象（Id 传 0，系统分配新卡片 ID；允许同名）。调用成功 → 成功商品回写「已同步」+ 最后同步时间。</li>
+      <li>逐商品调 <code>UpdateSingleActivityProduct</code>（POST）新增卡片：请求体带 ActivityId + <b>ProductConfigId（必填）</b> + Action=1 + <b>ReorderIndex=true</b> + Product 对象（Id 传 0，<b>Index 固定传 2</b>，系统分配新卡片 ID；允许同名；同序号重复时已有卡片自动往后顺延）。调用成功 → 成功商品回写「已同步」+ 最后同步时间。</li>
     </ol>
   </li>
   <li><b>批量失败处理：</b>成功商品不在返回结果中；<b>仅返回失败项</b> → 失败商品回写「同步失败」。前端统一 toast 汇总「成功 X 个，失败 Y 个」+ 失败商品名及原因（逐条列出失败项，非逐条气泡，避免刷屏）。</li>
@@ -780,9 +773,9 @@
 </ol>
 
 <h5>（三）商品字段 → 直播间卡片 字段映射（20 参数）</h5>
-<p>字段映射表已前置至 <b>§三.3 字段映射表（20 参数）</b>，此处不重复列出。推送时后端严格按该表组装 <code>Product</code> 对象（含 App H5 路由自动获取、<code>EnableStatus=1</code>、<code>IsOrderMsgEnable=1</code>），并取弹窗所选 <code>ProductConfigId</code> 作为请求级必填。</p>
+<p>字段映射表已前置至 <b>§三.3 字段映射表（20 参数）</b>，此处不重复列出。推送时后端严格按该表组装 <code>Product</code> 对象（含 App H5 路由自动获取、<code>EnableStatus=1</code>、<code>IsOrderMsgEnable=1</code>、<b>Index=2</b>），请求级带 <code>ProductConfigId</code>（必填）+ <b>ReorderIndex=true</b>（重复顺延）。</p>
 <h5>（四）API 接口清单（本期）</h5>
-<p>接口清单已前置至 <b>§三.4 API 接口清单（本期）</b>，此处不重复列出。推送调用链：<code>GetActivityMenus</code>（拉菜单、无启用则启用已有）→ 选定 <code>ProductConfigId</code> →（防误删）<code>GetActivityProducts</code>（拉全量现有卡片）→ <code>UpdateSingleActivityProduct</code>（逐商品新增卡片，Id=0，带必填 ProductConfigId）→ 回写状态；菜单ID 必填、防误删与无启用菜单兜底约束详见 §三.4。</p>
+<p>接口清单已前置至 <b>§三.4 API 接口清单（本期）</b>，此处不重复列出。推送调用链：<code>GetActivityMenus</code>（拉菜单、无启用则启用已有）→ 选定 <code>ProductConfigId</code> → <code>UpdateSingleActivityProduct</code>（逐商品新增卡片，Id=0，<b>Index=2, ReorderIndex=true</b>，带必填 ProductConfigId）→ 回写状态；菜单ID 必填与无启用菜单兜底约束详见 §三.4。</p>
 </div>
 
 <!-- ---------- 4.3 ---------- -->
@@ -812,7 +805,7 @@
         </table>
       </div>
     </div>
-    <div class="m-mft"><span class="m-btn">取消</span><span class="m-btn pri">添加到列表</span></div>
+    <div class="m-ft"><span class="m-btn">取消</span><span class="m-btn pri">添加到列表</span></div>
   </div>
   </div>
 </div>
@@ -881,7 +874,7 @@
 <div class="card">
   <h3>5.1 性能</h3>
   <ul>
-    <li>批量推送单次支持 ≥ 20 个商品；后端遵守 UpdateActivityProduct 10 次/秒频率限制，必要时排队/合并。</li>
+    <li>批量推送单次支持 ≥ 20 个商品；后端遵守 <code>UpdateSingleActivityProduct</code> 接口频率限制，必要时排队/合并。</li>
     <li>列表分页加载响应 ≤ 1s（常规数据量）；直播间刷新 ≤ 2s。</li>
   </ul>
   <h3>5.2 兼容性</h3>
@@ -936,7 +929,7 @@
   <tr><td>☑</td><td>极限值与空状态</td><td>空列表缺省图文案；商品名 100 字上限（Title）；卖点最多 3 个每点≤6字；直播间 500 卡片上限提示。</td></tr>
   <tr><td>☑</td><td>版本兼容性</td><td>纯新增页面，无老数据迁移；不影响现有商品中心/直播后台既有能力。</td></tr>
   <tr><td>☑</td><td>逆向流</td><td>移出列表/直播后台删卡片均已定义解耦规则（互不影响）。</td></tr>
-  <tr><td>☑</td><td>高并发与防重</td><td>推送进行中按钮 loading 防重复提交；冷却防刷（同商品同直播间 1 分钟 3 次/冷却 3 分钟）；防误删（先 Get 全量再 Update）。</td></tr>
+  <tr><td>☑</td><td>高并发与防重</td><td>推送进行中按钮 loading 防重复提交；冷却防刷（同商品同直播间 1 分钟 3 次/冷却 3 分钟）。</td></tr>
 </table>
 </div>
 
@@ -944,12 +937,12 @@
 <h2 id="s8" class="anchor">八、文档维护与变更规范</h2>
 <div class="card">
   <ul>
-    <li><b>版本号规范：</b>大迭代 V1.0 / V2.0；小修改 V1.1 / V1.2，历史修订记录写明修改人 / 时间 / 原因（见「一、历史修订记录」）。</li>
+    <li><b>版本号规范：</b>大迭代 V1.0 / V2.x；小修改递增次版本号，修订记录写明修改人 / 时间 / 原因（见「一、修订记录」）。</li>
     <li><b>变更周知：</b>定稿后任何需求变更须在文档中<b>高亮标出</b>，并主动 @ 对应开发与测试；重大范围变更需重新走评审。</li>
     <li><b>关联资产：</b>字段映射与流程见《直播挂车_需求梳理.html》；原型见《直播挂车_原型.html》；如二者更新，须同步本 PRD 版本记录。</li>
   </ul>
 </div>
-<div class="footer">泰小虎 · 直播挂车 PRD V2.0 · 2026-07-22 · 评审中</div>
+<div class="footer">泰小虎 · 直播挂车 PRD V2.2 · 2026-07-27 · 评审中</div>
 
 </div>
 </body>
