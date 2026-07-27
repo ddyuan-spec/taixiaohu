@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>泰小虎 · 直播挂车 PRD v2.2</title>
+<title>泰小虎 · 直播挂车 PRD v2.3</title>
 <style>
   :root{
     --bg:#f5f7fa;--card:#fff;--text:#1a1a2e;--text2:#555;--border:#e0e4ea;
@@ -116,7 +116,7 @@
 
 <div class="doc-title">
   <h1>泰小虎 · 直播挂车 产品需求文档（PRD）</h1>
-  <div class="meta">版本 V2.2 &nbsp;|&nbsp; 端口：平台端后台 + 直播后台 &nbsp;|&nbsp; 创建日期：2026-07-22 &nbsp;|&nbsp; 文档状态：评审中</div>
+  <div class="meta">版本 V2.3 &nbsp;|&nbsp; 端口：平台端后台 + 直播后台 &nbsp;|&nbsp; 创建日期：2026-07-22 &nbsp;|&nbsp; 文档状态：评审中</div>
   <div class="tags">
     <span>核心：平台端商品 → OpenAPI 推送至直播后台商品卡片</span>
     <span>无手动填字段</span>
@@ -150,6 +150,7 @@
   <a href="#s6">六、验收标准</a>
   <a href="#s7">七、关键边界设计检查清单</a>
   <a href="#s8">八、文档维护与变更规范</a>
+  <a href="#s9">九、待确认项汇总</a>
 </div>
 
 <!-- ==================== 一 ==================== -->
@@ -168,8 +169,8 @@
   <table>
     <tr><th style="width:70px">版本号</th><th style="width:110px">修订日期</th><th style="width:90px">修订人</th><th>修订内容简述</th><th style="width:80px">状态</th></tr>
     <tr>
-      <td>V2.2</td><td>2026-07-27</td><td>产品</td>
-      <td>定稿。基于 <code>UpdateSingleActivityProduct</code> 接口：① 菜单ID <code>ProductConfigId</code> 必填，推送前 <code>GetActivityMenus</code> 拉取→弹窗下拉选目标菜单（名称+ID）；② 字段映射 20 参数；③ <b>序号方案：Index 固定传 2 + ReorderIndex=true（重复时已有卡片自动往后顺延）</b>；④ 无已启用菜单时技术侧启用已有菜单（不新建），完全无菜单则阻断推送；⑤ 删除防误删/全量追加逻辑（单卡接口无此风险）。</td>
+      <td>V2.3</td><td>2026-07-27</td><td>产品</td>
+      <td>基于 V2.2 收口 3 项待确认：① <b>售罄不同步</b>——<code>OutOfStock</code> 固定不传（默认 0），不映射商品中心库存售罄；② <b>菜单启用接口名定为 <code>ModifyActivityMenus</code></b>（移除 @干系人 待确认，按此名开发）；③ <b>小程序跳转（MiniAppDirectUrl 等）本期不做</b>（移除待确认）。其余同 V2.2：<code>Index</code> 固定传 2 + <code>ReorderIndex=true</code>（重复顺延）、字段映射 20 参数、菜单ID 必填、无启用菜单兜底启用、删除防误删逻辑。</td>
       <td><span class="badge b-orange">评审中</span></td>
     </tr>
   </table>
@@ -388,7 +389,7 @@
     <tr><td>—</td><td>序号</td><td><code>Index</code></td><td>Int / 0-499</td><td><span class="badge b-blue">固定传 2</span></td><td>所有推送商品统一传 <b>2</b>；配合 <code>ReorderIndex=true</code>，重复时已有卡片自动顺延（同序号商品卡片排列靠前）</td></tr>
     <tr><td>—</td><td>活动标签</td><td><code>PromotionTagType</code> / <code>PromotionTagUrl</code></td><td>Int / String</td><td><span class="badge b-gray">不传（默认）</span></td><td>商品中心无营销标签字段，默认 0 / 空</td></tr>
     <tr><td>—</td><td>热卖/库存提醒</td><td><code>ReminderType</code> / <code>HotSale</code> / <code>Stock</code></td><td>Int / Bool / Int</td><td><span class="badge b-gray">不传（默认）</span></td><td>默认 0 / false / 0，商品中心无对应字段</td></tr>
-    <tr><td>—</td><td>售罄</td><td><code>OutOfStock</code></td><td>Int / 0-1</td><td><span class="badge b-gray">不传（默认）</span></td><td>默认 0（库存售罄是否映射 @干系人 确认，本期不传）</td></tr>
+    <tr><td>—</td><td>售罄</td><td><code>OutOfStock</code></td><td>Int / 0-1</td><td><span class="badge b-gray">不传（默认）</span></td><td><b>本期不同步售罄</b>：默认 0，不映射商品中心库存售罄，卡片不标记售罄状态。</td></tr>
     <tr><td>—</td><td>隐藏价格</td><td><code>PriceHidden</code></td><td>Int / 0-1</td><td><span class="badge b-gray">不传（默认）</span></td><td>默认 0 = 不隐藏</td></tr>
     <tr><td>—</td><td>会员价</td><td><code>MemberPrice</code></td><td>String / ≤20 字</td><td><span class="badge b-gray">不传（默认）</span></td><td>商品中心无会员价字段，默认空</td></tr>
     <tr><td>—</td><td>自定义透传</td><td><code>CustomContent</code></td><td>String / ≤512</td><td><span class="badge b-gray">不传（默认）</span></td><td>默认空</td></tr>
@@ -404,7 +405,7 @@
     <tr><td><code>GetActivityMenus</code></td><td>GET</td><td><b>新增</b>：拉取直播间<b>商品卡片菜单</b>列表（Type=2，含 ToolId/启用状态）</td><td>点「📥 获取商品卡片」时（弹窗下拉用）</td></tr>
     <tr><td><code>GetActivityProducts</code></td><td>GET</td><td>获取直播间现有卡片（回查/状态确认）</td><td>同步后回写状态时</td></tr>
     <tr><td><code>UpdateSingleActivityProduct</code></td><td>POST</td><td><b>核心</b>：新增单个商品卡片，<code>ProductConfigId</code>（菜单ID）<b>必填</b></td><td>点「同步直播间」逐商品推送时</td></tr>
-    <tr><td><code>ModifyActivityMenus</code>（@干系人 确认接口名）</td><td>POST</td><td>菜单启用（无已启用商品卡片菜单时兜底启用已有）</td><td>GetActivityMenus 无启用菜单时，启用已有菜单（不新建）</td></tr>
+    <tr><td><code>ModifyActivityMenus</code></td><td>POST</td><td>菜单启用（无已启用商品卡片菜单时兜底启用已有）</td><td>GetActivityMenus 无启用菜单时，启用已有菜单（不新建）</td></tr>
     <tr><td><code>UpdateProductReminderInfo</code></td><td>POST</td><td>热卖/库存提醒（增强）</td><td><b>本期不做</b></td></tr>
     <tr><td><code>SendProductOrderMessage</code></td><td>POST</td><td>下单消息推聊天区（增强）</td><td><b>本期不做</b></td></tr>
   </table>
@@ -928,7 +929,17 @@
     <li><b>关联资产：</b>字段映射与流程见《直播挂车_需求梳理.html》；原型见《直播挂车_原型.html》；如二者更新，须同步本 PRD 版本记录。</li>
   </ul>
 </div>
-<div class="footer">泰小虎 · 直播挂车 PRD V2.2 · 2026-07-27 · 评审中</div>
+<div class="card">
+  <h2 id="s9" class="anchor">九、待确认项汇总</h2>
+  <p>V2.3 已收口 V2.2 的全部历史待确认项，<b>本期无遗留待确认项</b>：</p>
+  <table>
+    <tr><th style="width:40px">#</th><th style="width:240px">历史待确认项</th><th>V2.3 处置结论</th></tr>
+    <tr><td>1</td><td>售罄（<code>OutOfStock</code>）是否映射商品中心库存</td><td><b>不同步</b>：固定不传（默认 0），不映射商品中心库存售罄，卡片不标记售罄（见 §3.3）。</td></tr>
+    <tr><td>2</td><td>菜单启用接口确切名</td><td>定为 <code>ModifyActivityMenus</code>（按此名开发，移除 @干系人 待确认，见 §3.4）。</td></tr>
+    <tr><td>3</td><td>小程序跳转（<code>MiniAppDirectUrl</code> 等）</td><td>本期不做（已在 §3.3 统计行与 §3.5 影响范围明确排除）。</td></tr>
+  </table>
+</div>
+<div class="footer">泰小虎 · 直播挂车 PRD V2.3 · 2026-07-27 · 评审中</div>
 
 </div>
 </body>
