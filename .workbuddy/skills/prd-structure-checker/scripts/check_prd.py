@@ -128,15 +128,37 @@ DIAGRAM_KW = ["流程图", "架构图", "范围图", "状态机", "时序图", "
 # 阶段4 扫描函数
 # ---------------------------------------------------------------------------
 def scan_red_line(text):
-    """红线词：用户裁定不纳入的端口/能力，出现须有明确'不涉及'豁免声明。"""
+    """红线词：用户裁定不纳入的端口/能力，出现须有明确'不涉及'豁免声明。
+
+    两级豁免：
+    1) 文档级豁免：PRD 含「红线豁免声明」块（写明某红线词为本需求「范围内」能力，
+       或写明「仅不涉及 XX」）时——被声明为范围内的词全文豁免；
+       被声明为不涉及的词，若声明块已覆盖，也全文豁免。
+       （红线词表沉淀自具体需求评审，跨需求存在范围差异，允许文档显式改判。）
+    2) 局部豁免：单次出现位置 ±30 字内含"不涉及/不在范围"等豁免词。
+    """
     warns = []
+    # 文档级豁免声明块（取「红线豁免声明」出现处往后 300 字作为声明内容）
+    doc_exempt_terms = set()
+    for dm in re.finditer(r"红线豁免声明", text):
+        decl = text[dm.start(): dm.start() + 300]
+        for term in RED_LINE_TERMS:
+            if term in decl:
+                # 声明块中写为「范围内」或「不涉及」均视为已对该词作出裁定
+                doc_exempt_terms.add(term)
     for term in RED_LINE_TERMS:
+        if term in doc_exempt_terms:
+            continue
+        # 子串词被更长的已豁免词覆盖（如「商家端」被「商家端后台」声明覆盖）
+        if any(term in longer and longer != term for longer in doc_exempt_terms):
+            continue
         for m in re.finditer(term, text):
             ctx = text[max(0, m.start() - 30): m.start() + 30]
             if not any(ex in ctx for ex in RED_LINE_EXEMPT):
                 warns.append(
                     f"红线词「{term}」出现且附近无豁免声明（不涉及/不在范围等）；"
-                    f"若为范围外请明确写「本需求不涉及{term}」，禁止作为功能实现描述")
+                    f"若为范围外请明确写「本需求不涉及{term}」，禁止作为功能实现描述；"
+                    f"若为范围内能力请在文档加「红线豁免声明」块显式改判")
                 break
     return warns
 
