@@ -122,8 +122,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .pd-info .nm{font-size:18px;font-weight:700}
 .pd-info .pr{font-size:22px;color:var(--bad);font-weight:800;margin-top:6px}
 .pd-info .pr small{font-size:13px}
-.pd-info .floor{font-size:11.5px;color:var(--t4);margin-top:4px}
-.pd-info .floor b{color:var(--warn)}
 .spec{display:flex;gap:8px;padding:10px 16px;flex-wrap:wrap}
 .spec .sp{padding:7px 14px;border:1px solid var(--line);border-radius:8px;font-size:13px;cursor:pointer}
 .spec .sp.on{border-color:var(--p);background:var(--pg);color:var(--p);font-weight:600}
@@ -142,8 +140,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .co-line{display:flex;justify-content:space-between;padding:9px 14px;font-size:13px}
 .co-line .v{font-weight:600}
 .co-line.disc .v{color:var(--bad)}
-.co-floorwarn{background:#FDECEC;color:var(--bad);font-size:12px;padding:10px 14px;margin:0 0 8px;font-weight:600;display:none}
-.co-floorwarn.show{display:block}
 .co-pay{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 12px;display:flex;align-items:center;gap:12px}
 .co-pay .tot{flex:1;font-size:13px;color:var(--t4)}
 .co-pay .tot b{font-size:19px;color:var(--bad)}
@@ -287,7 +283,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       <div class="pd-info">
         <div class="nm">虾·泰香脆Q56 泰国香米脆脆虾 56g</div>
         <div class="pr">¥79<small> / 盒</small></div>
-        <div class="floor">商品最低零售价：<b>¥59</b>（平台底价保护，不可击穿）</div>
       </div>
       <div class="sec-t" style="margin:4px 16px 0">规格</div>
       <div class="spec">
@@ -313,13 +308,11 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
           <div class="pr">¥239</div>
         </div>
         <div class="co-line"><span>商品总价</span><span class="v">¥239.00</span></div>
-        <div class="co-line"><span>最低零售价（底价保护）</span><span class="v" style="color:var(--warn)">¥199.00</span></div>
       </div>
       <div class="card co-coupon">
         <div class="sec-t" style="margin:0 0 4px">优惠券 <span style="font-weight:400;color:#9aa0ad">（手动勾选，系统已为你推荐最大抵扣）</span></div>
         <div id="c6Coupons"></div>
       </div>
-      <div class="co-floorwarn" id="c6FloorWarn">⚠️ 已触发底价保护：当前券组合会使实付低于最低零售价 ¥199，该组合不可用，请取消部分券。</div>
       <div class="card" style="margin-bottom:70px">
         <div class="co-line disc"><span>优惠券抵扣</span><span class="v" id="c6Disc">-¥0.00</span></div>
         <div class="co-line"><span>运费</span><span class="v">¥0.00</span></div>
@@ -403,13 +396,13 @@ const myCoupons = [
 ];
 // 商品列表
 const goodsItems = [
-  {id:'G001',icon:'🦐',name:'虾·泰香脆Q56 泰国香米脆脆虾 56g',price:79,floor:59},
-  {id:'G002',icon:'🍿',name:'零食大礼包 综合装（含坚果+果干）',price:129,floor:99},
-  {id:'G003',icon:'🥛',name:'泰国香米 5kg 新米茉莉香米',price:59,floor:45},
-  {id:'G004',icon:'🧴',name:'天然椰子油 冷压初榨 500ml',price:39,floor:29}
+  {id:'G001',icon:'🦐',name:'虾·泰香脆Q56 泰国香米脆脆虾 56g',price:79},
+  {id:'G002',icon:'🍿',name:'零食大礼包 综合装（含坚果+果干）',price:129},
+  {id:'G003',icon:'🥛',name:'泰国香米 5kg 新米茉莉香米',price:59},
+  {id:'G004',icon:'🧴',name:'天然椰子油 冷压初榨 500ml',price:39}
 ];
 // 确认订单
-const orderGoodsPrice = 239, orderFloor = 199;
+const orderGoodsPrice = 239;
 let orderSel = [];
 // 获券弹窗数据（系统发券触达，每种 1 张，对应后台关联多券模板）
 const arrivedCoupons = [
@@ -573,18 +566,14 @@ function c6Calc(){
   const sel = myCoupons.filter(c=>orderSel.includes(c.id));
   const disc = sel.reduce((s,c)=>s+c.amt,0);
   const total = orderGoodsPrice - disc;
-  const floorHit = total < orderFloor;
   document.getElementById('c6Disc').textContent = '-¥'+disc.toFixed(2);
   document.getElementById('c6Total').textContent = '¥'+total.toFixed(2);
   document.getElementById('c6Pay').textContent = '¥'+total.toFixed(2);
-  document.getElementById('c6FloorWarn').classList.toggle('show', floorHit);
   const btn = document.getElementById('c6Btn');
-  if(floorHit){ btn.classList.add('disabled'); btn.textContent='不可使用（击穿底价）'; }
-  else{ btn.classList.remove('disabled'); btn.textContent = sel.length?'领券购买':'确认购买'; }
+  btn.classList.remove('disabled');
+  btn.textContent = sel.length?'领券购买':'确认购买';
 }
 function c6Submit(){
-  const btn = document.getElementById('c6Btn');
-  if(btn.classList.contains('disabled')){ toast('已触发底价保护，请取消部分券'); return; }
   const sel = myCoupons.filter(c=>orderSel.includes(c.id));
   const disc = sel.reduce((s,c)=>s+c.amt,0);
   sel.forEach(c=>{ c.status='used'; });
@@ -598,7 +587,7 @@ function renderGoods(){
   document.getElementById('goodsList').innerHTML = goodsItems.map(g=>
     '<div class="gi-item" onclick="go(\'p_c5\')">'
     + '<div class="img">'+g.icon+'</div>'
-    + '<div class="info"><div class="nm">'+g.name+'</div><span class="tag">底价 ¥'+g.floor+'</span></div>'
+    + '<div class="info"><div class="nm">'+g.name+'</div></div>'
     + '<div class="pr">¥'+g.price+'</div></div>'
   ).join('');
 }
