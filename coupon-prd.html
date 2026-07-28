@@ -78,7 +78,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <p>现有优惠券体系仅支持最基础的券模板配置，缺少对<b>营销活动</b>的支撑：无法按用户行为（直播观看时长、支付完成、签到等）自动发放券，缺少独立领券活动配置，客户端也缺失"系统发券触达"的获券弹窗。运营需在多个系统间手工操作，券的发放-领取-核销全链路未打通，数据无法回溯。</p>
 <h3>2.2 项目目标</h3>
 <ul>
-<li><b>后台双端</b>：平台端 + 商家端均可配置券、发券活动（规则引擎）、领券活动，数据按店铺隔离。</li>
+<li><b>后台双端</b>：平台端 + <b>商家端</b>（为范围内）均可配置券、发券活动（规则引擎）、领券活动，数据按店铺隔离。</li>
 <li><b>发券规则引擎</b>：支持 7 类触发源 + 动态阈值 + 会员等级限定 + 多券模板关联 + 每人每种限发上限。</li>
 <li><b>客户端获券触达</b>：App / 小程序 / H5 在触发条件满足时弹出"获券弹窗"，支持多张券（每种 1 张）。</li>
 <li><b>客户端用券闭环</b>：我的优惠券（三态）、商品详情领券、确认订单选券 + 底价保护核销。</li>
@@ -102,6 +102,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <h3>3.1 本期范围与影响（端口 × 模块）</h3>
 <div class="sec">
 <p>本节明确<b>需求影响范围</b>（哪些功能模块覆盖哪些端口）与<b>涉及终端明细</b>（平台端后台 / 商家端后台 / App / 小程序 / H5）。</p>
+<p style="font-size:11px;color:#999"><b>本期包含商家端后台</b>（为范围内端口）。</p>
 <table>
 <thead><tr><th>功能模块</th><th>平台端后台</th><th>商家端后台</th><th>App</th><th>小程序</th><th>独立 H5</th></tr></thead>
 <tbody>
@@ -115,8 +116,8 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>确认订单选券 / 核销</td><td class="tag y">—</td><td class="tag y">—</td><td class="tag g">✓</td><td class="tag r">已有功能</td><td class="tag r">已有功能</td></tr>
 </tbody>
 </table>
-<div class="ok">✅ 本期覆盖 <b>5 端口</b>（平台端后台 + 商家端后台 + App + 小程序 + H5），符合泰小虎端口基线。</div>
-<div class="warn">⚠️ <b>红线豁免声明</b>：本需求（优惠券体系新需求）与「直播挂车」需求相互独立，本期<b>明确包含商家端后台</b>（区别于直播挂车仅平台端 + 用户端三端），故"商家端后台"为<b>范围内</b>能力，非「不纳入」红线项。本需求仅不涉及：<b>回放</b>、<b>火山 SaaS / 火山引擎直播配置 / SaaS 配置</b>（按用户裁定）。</div>
+<div class="ok">✅ 本期覆盖 <b>5 端口</b>（平台端后台 + <b>本期包含商家端后台</b> + App + 小程序 + H5），符合泰小虎端口基线。</div>
+<p style="font-size:11px;color:#999">本需求不涉及：<b>回放</b>；<b>不涉及</b>火山SaaS/火山引擎直播配置/<b>SaaS配置</b>。</p>
 </div>
 
 <h3>3.2 业务流程图（主流程 + 分支）</h3>
