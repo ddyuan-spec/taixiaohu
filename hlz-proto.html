@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>虎力值管理后台 · 可交互原型</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f0f2f5;color:#333;font-size:13px}
+
+  /* ==================== 平台端后台 ==================== */
+  .platform{display:block}
+  .app-view{display:none}
+
+  /* Top Bar — 对齐截图1紫色 */
+  .topbar{height:48px;background:#7C3AED;color:#fff;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100}
+  .topbar .logo{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+  .topbar .logo::before{content:'🐯';font-size:18px}
+  .topbar .sys{opacity:.75;font-size:12px}
+  .topbar .right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:16px;cursor:pointer}
+  .view-toggle{background:none;border:1px solid rgba(255,255,255,.5);color:#fff;border-radius:4px;padding:3px 10px;font-size:12px;cursor:pointer;transition:.2s}
+  .view-toggle:hover{background:rgba(255,255,255,.15)}
+
+  /* Layout */
+  .layout{display:flex;min-height:calc(100vh - 48px)}
+
+  /* Sidebar — 对齐截图1 */
+  .side{width:196px;background:#fff;border-right:1px solid #e8e8e8;display:flex;flex-direction:column;flex-shrink:0}
+  .side .group{padding:0}
+  .side .gtitle{font-size:11px;color:#999;padding:14px 16px 6px;font-weight:600;letter-spacing:.5px;cursor:pointer;display:flex;align-items:center;gap:4px}
+  .side a{display:block;padding:9px 16px 9px 28px;color:#555;text-decoration:none;font-size:13px;cursor:pointer;transition:background .15s,color .15s;position:relative}
+  .side a:hover{background:#f8f7ff;color:#7C3AED}
+  .side a.active{background:#f3f0ff;color:#7C3AED;font-weight:500;border-right:3px solid #7C3AED}
+
+  /* Main Content */
+  .main{flex:1;padding:18px 24px 60px;min-width:0;background:#f0f2f5}
+  .page{display:none}
+  .page.active{display:block}
+
+  /* Breadcrumb */
+  .crumb{font-size:12px;color:#999;margin-bottom:14px}
+  .crumb span{color:#333}
+  .crumb a{color:#7C3AED;cursor:pointer;text-decoration:none}
+
+  /* Page Header */
+  .phead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .phead h2{font-size:17px;font-weight:600;color:#222}
+  .phead-actions{display:flex;gap:8px}
+
+  /* Filter Bar */
+  .filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .filter-bar input,.filter-bar select{height:32px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:12px;color:#333;outline:none;background:#fff}
+  .filter-bar input:focus,.filter-bar select:focus{border-color:#7C3AED}
+  .filter-bar input{width:180px}
+  .filter-bar select{width:120px}
+  .fb-label{font-size:12px;color:#666;white-space:nowrap}
+
+  /* Buttons */
+  .btn-primary{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 16px;background:#22C55E;color:#fff;border:none;border-radius:4px;font-size:13px;cursor:pointer;white-space:nowrap;transition:background .2s}
+  .btn-primary:hover{background:#16a34a}
+  .btn-purple{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 16px;background:#7C3AED;color:#fff;border:none;border-radius:4px;font-size:13px;cursor:pointer;white-space:nowrap;transition:background .2s}
+  .btn-purple:hover{background:#6d28d9}
+  .btn-danger{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 16px;background:#EF4444;color:#fff;border:none;border-radius:4px;font-size:13px;cursor:pointer;white-space:nowrap}
+  .btn-danger:hover{background:#dc2626}
+  .btn-ghost{height:32px;padding:0 14px;background:#fff;color:#666;border:1px solid #dcdfe6;border-radius:4px;font-size:13px;cursor:pointer}
+  .btn-ghost:hover{color:#7C3AED;border-color:#7C3AED}
+  .btn-sm{height:26px;padding:0 10px;font-size:12px}
+  .btn-link{background:none;border:none;color:#7C3AED;cursor:pointer;font-size:12px;padding:0 4px}
+  .btn-link.red{color:#EF4444}
+  .btn-link:hover{text-decoration:underline}
+
+  /* Table */
+  .tbl-wrap{background:#fff;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden}
+  .tbl{width:100%;border-collapse:collapse;font-size:12px}
+  .tbl thead th{background:#fafbfc;border-bottom:1px solid #e8e8e8;color:#666;font-weight:500;text-align:left;padding:10px 12px;white-space:nowrap;font-size:12px}
+  .tbl tbody td{border-bottom:1px solid #f5f5f5;padding:10px 12px;color:#333;vertical-align:middle}
+  .tbl tbody tr:hover{background:#fafbfc}
+  .tbl tbody tr:last-child td{border-bottom:none}
+  .tbl .act a{margin-right:8px}
+
+  /* Pagination */
+  .pagi{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:14px;font-size:12px;color:#666}
+  .pagi input{width:40px;height:28px;border:1px solid #dcdfe6;border-radius:4px;text-align:center;font-size:12px}
+  .pg-btn{min-width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #dcdfe6;border-radius:4px;cursor:pointer;font-size:12px;color:#606266;background:#fff}
+  .pg-btn.active{background:#7C3AED;color:#fff;border-color:#7C3AED}
+
+  /* Tags */
+  .tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11.5px;line-height:1.6}
+  .tag-green{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+  .tag-red{background:#fef2f2;color:#dc2626;border:1px solid:#fecaca}
+  .tag-gray{background:#f4f4f5;color:#909399;border:1px solid #d3d4d6}
+  .tag-blue{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
+
+  /* ===== 操作表单（赠送/扣除）===== */
+  .form-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:center;justify-content:center}
+  .form-overlay.show{display:flex}
+  .form-dlg{background:#fff;border-radius:8px;width:520px;max-width:92vw;box-shadow:0 12px 40px rgba(0,0,0,.2);display:flex;flex-direction:column}
+  .form-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #e8e8e8}
+  .form-title{font-size:16px;font-weight:600;color:#222}
+  .form-close{background:none;border:none;font-size:20px;color:#c0c4cc;cursor:pointer;padding:2px 6px;border-radius:4px}
+  .form-close:hover{color:#606266;background:#f0f0f0}
+  .form-body{padding:20px 24px}
+  .form-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+  .fr-label{width:80px;font-size:13px;color:#606266;line-height:32px;flex-shrink:0;text-align:right;padding-right:8px}
+  .fr-body{flex:1;min-width:0}
+  .fr-input{height:34px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:13px;width:100%;outline:none}
+  .fr-input:focus{border-color:#7C3AED}
+  select.fr-input{appearance:auto}
+  .fr-hint{font-size:12px;color:#c0c4cc;margin-top:4px}
+  .user-info-card{background:#f8f7ff;border:1px solid #ede9fe;border-radius:6px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+  .user-avatar{width:40px;height:40px;border-radius:50%;background:#7C3AED;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
+  .user-name{font-size:14px;font-weight:600;color:#222}
+  .user-id{font-size:12px;color:#999;margin-top:2px}
+  .user-balance{margin-left:auto;text-align:right}
+  .user-balance .lbl{font-size:11px;color:#999}
+  .user-balance .val{font-size:18px;font-weight:700;color:#7C3AED}
+  .form-footer{display:flex;justify-content:center;gap:12px;padding:16px 20px;border-top:1px solid #f0f0f0}
+  .form-footer .btn-primary,.form-footer .btn-danger{padding:0 28px}
+
+  /* Toast */
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-20px);background:#333;color:#fff;padding:10px 24px;border-radius:6px;font-size:13px;z-index:9999;opacity:0;transition:.3s;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.success{background:#16a34a}
+  .toast.err{background:#dc2626}
+
+  /* ==================== App 端 ==================== */
+  .app-container{display:none;width:390px;max-width:100%;height:844px;background:#F5F6F8;position:relative;overflow:hidden;margin:0 auto;box-shadow:0 12px 50px rgba(0,0,0,.18)}
+  .app-container.show{display:block}
+  .platform.hide{display:none}
+
+  :root{
+    --tg:#FF6B2C;--tg-light:#FFF1E9;--gold:#FFB020;
+    --bg:#F5F6F8;--card:#FFFFFF;--t1:#1A1A1A;--t2:#6B7280;--t3:#9AA0AA;
+    --green:#1FBF75;--red:#FF3B30;--line:#EEF0F3;
+  }
+
+  /* App Nav Bar */
+  .app-nav{height:48px;background:var(--card);display:flex;align-items:center;justify-content:center;gap:8px;position:relative;z-index:100;border-bottom:1px solid var(--line)}
+  .app-nav .back{position:absolute;left:14px;font-size:20px;color:var(--t1);cursor:pointer;background:none;border:none;padding:4px}
+  .app-nav .title{font-size:17px;font-weight:700;color:var(--t1)}
+  .app-nav .more{position:absolute;right:14px;font-size:18px;color:var(--t3);cursor:pointer;background:none;border:none}
+
+  /* App Screen Container */
+  .app-screen{position:absolute;top:48px;left:0;right:0;bottom:0;overflow-y:auto;display:none;-webkit-overflow-scrolling:touch}
+  .app-screen.active{display:block}
+
+  /* 任务中心页 */
+  .task-hero{background:linear-gradient(135deg,#E8F5E9,#C8E6C9);padding:20px 16px;display:flex;align-items:center;gap:12px}
+  .task-mascot{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#FFB74D,#FF9800);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;box-shadow:0 4px 12px rgba(255,152,0,.3)}
+  .task-points{flex:1}
+  .task-points .lbl{font-size:13px;color:#2E7D32}
+  .task-points .val{font-size:28px;font-weight:800;color:#2E7D32}
+  .task-detail-btn{background:#fff;color:#2E7D32;border:1px solid #A5D6A7;border-radius:16px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:4px}
+  .task-detail-btn:active{background:#f0f0f0}
+
+  .task-section{padding:14px 16px 0}
+  .task-section-title{font-size:15px;font-weight:700;color:var(--t1);margin-bottom:10px}
+  .task-item{background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+  .task-item-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+  .task-item-name{font-size:15px;font-weight:600;color:var(--t1)}
+  .task-item-reward{font-size:13px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:2px}
+  .task-item-desc{font-size:12px;color:var(--t2);margin-bottom:8px}
+  .task-item-tag{display:inline-block;font-size:11px;color:var(--tg);background:var(--tg-light);padding:2px 8px;border-radius:10px}
+  .task-item-action{display:flex;align-items:center;justify-content:space-between}
+  .task-go-btn{background:var(--green);color:#fff;border:none;border-radius:20px;padding:7px 18px;font-size:13px;font-weight:600;cursor:pointer}
+
+  /* 变动明细页 */
+  .detail-list{padding:12px 0 30px}
+  .detail-item{background:var(--card);margin:0 12px 10px;border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+  .detail-info{flex:1;min-width:0}
+  .detail-reason{font-size:15px;font-weight:600;color:var(--t1);line-height:1.4}
+  .detail-time{font-size:12px;color:var(--t3);margin-top:4px}
+  .detail-val{font-size:18px;font-weight:800;white-space:nowrap;margin-left:12px}
+  .detail-val.plus{color:var(--red)}
+  .detail-val.minus{color:var(--green)}
+  .detail-empty{text-align:center;padding:80px 20px;color:var(--t3);font-size:14px}
+  .detail-divider{text-align:center;padding:20px 0;color:var(--t3);font-size:13px}
+
+  /* 切换按钮区 */
+  .switch-bar{position:fixed;bottom:20px;right:20px;z-index:900;display:flex;gap:8px}
+  .switch-btn{padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:none;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+  .switch-btn.plat{background:#7C3AED;color:#fff}
+  .switch-btn.appv{background:#FF6B2C;color:#fff}
+</style>
+</head>
+<body>
+
+<!-- ==================== 平台端后台 ==================== -->
+<div class="platform" id="platView">
+  <div class="topbar">
+    <div class="logo">泰小虎后台</div>
+    <span class="sys">运营管理</span>
+    <div class="right">
+      <button class="view-toggle" onclick="toggleView()">📱 切换到App预览</button>
+      <span>🔔</span><span>👤</span>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- 侧栏导航 — 对齐截图1 -->
+    <div class="side">
+      <div class="group">
+        <div class="gtitle">▸ 内容管理</div>
+        <a href="#">对话管理</a>
+        <a href="#">知识库</a>
+        <a href="#">反馈管理</a>
+      </div>
+      <div class="group">
+        <div class="gtitle">▸ 运营配置</div>
+        <a href="#" class="active" onclick="showPage('points',event)">积分管理</a>
+        <a href="#">优惠券管理</a>
+        <a href="#">活动配置</a>
+        <a href="#">商品管理</a>
+      </div>
+      <div class="group">
+        <div class="gtitle">▸ 用户体系</div>
+        <a href="#">用户列表</a>
+        <a href="#">等级权益</a>
+        <a href="#">任务配置</a>
+      </div>
+      <div class="group">
+        <div class="gtitle">▸ 数据分析</div>
+        <a href="#">数据看板</a>
+        <a href="#">埋点管理</a>
+      </div>
+      <div class="group">
+        <div class="gtitle">▸ 系统设置</div>
+        <a href="#">账号权限</a>
+        <a href="#">操作日志</a>
+      </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="main">
+
+      <!-- ===== 页面1：积分管理（用户列表） ===== -->
+      <div class="page active" id="page-points">
+        <div class="crumb"><a>运营配置</a> <span>/ 积分管理</span></div>
+        <div class="phead">
+          <h2>积分管理</h2>
+          <div class="phead-actions"></div>
+        </div>
+
+        <!-- 搜索筛选栏 -->
+        <div class="filter-bar">
+          <span class="fb-label">用户搜索</span>
+          <input type="text" placeholder="输入用户ID / 昵称 / 手机号">
+          <span class="fb-label">余额范围</span>
+          <select><option>全部</option><option>正数</option><option>零</option><option>负数</option></select>
+          <button class="btn-primary">查询</button>
+        </div>
+
+        <!-- 用户积分列表 -->
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width:70px">用户ID</th>
+                <th>昵称</th>
+                <th>手机号</th>
+                <th style="width:110px">当前虎力值</th>
+                <th style="width:200px">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>U_10001</td>
+                <td>张三</td>
+                <td>138****1234</td>
+                <td><strong style="color:#7C3AED;font-size:14px">1,280</strong></td>
+                <td class="act">
+                  <button class="btn btn-sm btn-purple" onclick="openForm('grant','U_10001','张三',1280)">赠送</button>
+                  <button class="btn btn-sm btn-danger" onclick="openForm('deduct','U_10001','张三',1280)">扣除</button>
+                  <button class="btn-link" onclick="showPage('records')">查看记录</button>
+                </td>
+              </tr>
+              <tr>
+                <td>U_10002</td>
+                <td>李四</td>
+                <td>139****5678</td>
+                <td><strong style="color:#7C3AED;font-size:14px">560</strong></td>
+                <td class="act">
+                  <button class="btn btn-sm btn-purple" onclick="openForm('grant','U_10002','李四',560)">赠送</button>
+                  <button class="btn btn-sm btn-danger" onclick="openForm('deduct','U_10002','李四',560)">扣除</button>
+                  <button class="btn-link" onclick="showPage('records')">查看记录</button>
+                </td>
+              </tr>
+              <tr>
+                <td>U_10003</td>
+                <td>王五</td>
+                <td>137****9012</td>
+                <td><strong style="color:#EF4444;font-size:14px">-50</strong></td>
+                <td class="act">
+                  <button class="btn btn-sm btn-purple" onclick="openForm('grant','U_10003','王五',-50)">赠送</button>
+                  <button class="btn btn-sm btn-danger" onclick="openForm('deduct','U_10003','王五',-50)">扣除</button>
+                  <button class="btn-link" onclick="showPage('records')">查看记录</button>
+                </td>
+              </tr>
+              <tr>
+                <td>U_10004</td>
+                <td>赵六</td>
+                <td>136****3456</td>
+                <td><strong style="color:#7C3AED;font-size:14px">0</strong></td>
+                <td class="act">
+                  <button class="btn btn-sm btn-purple" onclick="openForm('grant','U_10004','赵六',0)">赠送</button>
+                  <button class="btn btn-sm btn-danger" onclick="openForm('deduct','U_10004','赵六',0)">扣除</button>
+                  <button class="btn-link" onclick="showPage('records')">查看记录</button>
+                </td>
+              </tr>
+              <tr>
+                <td>U_10005</td>
+                <td>孙七</td>
+                <td>135****7890</td>
+                <td><strong style="color:#7C3AED;font-size:14px">3,500</strong></td>
+                <td class="act">
+                  <button class="btn btn-sm btn-purple" onclick="openForm('grant','U_10005','孙七',3500)">赠送</button>
+                  <button class="btn btn-sm btn-danger" onclick="openForm('deduct','U_10005','孙七',3500)">扣除</button>
+                  <button class="btn-link" onclick="showPage('records')">查看记录</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 分页 -->
+        <div class="pagi">
+          <span>共 128 条</span>
+          <span class="pg-btn">&lt;</span>
+          <span class="pg-btn active">1</span>
+          <span class="pg-btn">2</span>
+          <span class="pg-btn">3</span>
+          <span class="pg-btn">...</span>
+          <span class="pg-btn">13</span>
+          <span class="pg-btn">&gt;</span>
+          <span>前往</span>
+          <input type="text" value="1"> <span>页</span>
+        </div>
+      </div>
+
+      <!-- ===== 页面2：赠扣操作记录表（本期新增） ===== -->
+      <div class="page" id="page-records">
+        <div class="crumb"><a>运营配置</a> <span>/</span> <a onclick="showPage('points')">积分管理</a> <span>/ 赠扣操作记录</span></div>
+        <div class="phead">
+          <h2>赠扣操作记录</h2>
+          <button class="btn-ghost" onclick="showPage('points')">← 返回积分管理</button>
+        </div>
+
+        <div class="filter-bar">
+          <span class="fb-label">用户</span>
+          <input type="text" placeholder="输入用户ID / 昵称" style="width:160px">
+          <span class="fb-label">操作类型</span>
+          <select><option>全部</option><option>赠送</option><option>扣除</option></select>
+          <span class="fb-label">操作人</span>
+          <input type="text" placeholder="操作人账号" style="width:130px">
+          <span class="fb-label">时间</span>
+          <input type="date" style="width:140px"> ~ <input type="date" style="width:140px">
+          <button class="btn-primary">查询</button>
+        </div>
+
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width:50px">编号</th>
+                <th style="width:80px">用户ID</th>
+                <th>昵称</th>
+                <th style="width:80px">操作类型</th>
+                <th style="width:80px">数量</th>
+                <th>理由</th>
+                <th style="width:100px">操作人</th>
+                <th style="width:150px">操作时间</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td><td>U_10001</td><td>张三</td>
+                <td><span class="tag tag-green">赠送</span></td>
+                <td><strong style="color:#16a34a">+100</strong></td>
+                <td>客服补偿</td>
+                <td>admin_zhang</td>
+                <td>2026-07-28 15:04:48</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>U_10002</td>
+                <td>李四</td>
+                <td><span class="tag tag-red">扣除</span></td>
+                <td><strong style="color:#dc2626">-200</strong></td>
+                <td>违规处罚</td>
+                <td>admin_li</td>
+                <td>2026-07-28 14:23:15</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>U_10003</td>
+                <td>王五</td>
+                <td><span class="tag tag-red">扣除</span></td>
+                <td><strong style="color:#dc2626">-50</strong></td>
+                <td>系统调整</td>
+                <td>admin_zhang</td>
+                <td>2026-07-27 09:45:30</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>U_10001</td>
+                <td>张三</td>
+                <td><span class="tag tag-green">赠送</span></td>
+                <td><strong style="color:#16a34a">+500</strong></td>
+                <td>活动奖励补发</td>
+                <td>admin_wang</td>
+                <td>2026-07-26 16:08:22</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>U_10005</td>
+                <td>孙七</td>
+                <td><span class="tag tag-green">赠送</span></td>
+                <td><strong style="color:#16a34a">+50</strong></td>
+                <td>体验回馈</td>
+                <td>admin_zhang</td>
+                <td>2026-07-25 11:33:07</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagi">
+          <span>共 42 条</span>
+          <span class="pg-btn">&lt;</span>
+          <span class="pg-btn active">1</span>
+          <span class="pg-btn">2</span>
+          <span class="pg-btn">3</span>
+          <span class="pg-btn">4</span>
+          <span class="pg-btn">&gt;</span>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /layout -->
+</div><!-- /platform -->
+
+
+<!-- ==================== 赠送/扣除操作弹窗 ==================== -->
+<div class="form-overlay" id="formOverlay">
+  <div class="form-dlg">
+    <div class="form-header">
+      <span class="form-title" id="formTitle">手动赠送虎力值</span>
+      <button class="form-close" onclick="closeForm()">&#x2715;</button>
+    </div>
+    <div class="form-body">
+      <!-- 目标用户信息卡 -->
+      <div class="user-info-card">
+        <div class="user-avatar" id="dlgAvatar">张</div>
+        <div>
+          <div class="user-name" id="dlgName">张三</div>
+          <div class="user-id" id="dlgUid">U_10001</div>
+        </div>
+        <div class="user-balance">
+          <div class="lbl">当前虎力值</div>
+          <div class="val" id="dlgBalance">1,280</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="fr-label"><span style="color:#EF4444">*</span> 数量</div>
+        <div class="fr-body">
+          <input class="fr-input" type="number" id="inpAmount" placeholder="请输入正整数" min="1" style="width:240px">
+          <div class="fr-hint" id="hintAmount">输入要赠送的虎力值数量</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="fr-label"><span style="color:#EF4444">*</span> 理由</div>
+        <div class="fr-body">
+          <select class="fr-input" id="selReason" style="width:280px">
+            <option value="">请选择理由</option>
+            <option value="客服补偿">客服补偿</option>
+            <option value="活动奖励补发">活动奖励补发</option>
+            <option value="体验回馈">体验回馈</option>
+            <option value="违规处罚">违规处罚</option>
+            <option value="系统调整">系统调整</option>
+            <option value="误操作退回">误操作退回</option>
+            <option value="__other__">其他（自定义）</option>
+          </select>
+          <div class="fr-hint">选择操作理由，将展示在用户端变动明细中</div>
+        </div>
+      </div>
+
+      <div class="form-row" id="rowOtherReason" style="display:none">
+        <div class="fr-label"><span style="color:#EF4444">*</span> 自定义理由</div>
+        <div class="fr-body">
+          <input class="fr-input" type="text" id="inpOtherReason" placeholder="请输入自定义理由" style="width:280px" maxlength="50">
+          <div class="fr-hint">最多 50 字符</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="fr-label">备注</div>
+        <div class="fr-body">
+          <input class="fr-input" type="text" placeholder="可选，内部备注（不向用户展示）" style="width:320px" maxlength="100">
+        </div>
+      </div>
+    </div>
+    <div class="form-footer">
+      <button class="btn-ghost" onclick="closeForm()">取消</button>
+      <button class="btn-primary" id="formSubmitBtn" onclick="submitForm()">确认赠送</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ==================== App 端预览 ==================== -->
+<div class="app-container" id="appView">
+  <!-- 导航栏 -->
+  <div class="app-nav">
+    <button class="back" onclick="showAppScreen('task')">&#x2039;</button>
+    <span class="app-title" id="appNavTitle">任务中心</span>
+    <button class="more">⋯</button>
+  </div>
+
+  <!-- App Screen: 任务中心 -->
+  <div class="app-screen active" id="appTask">
+    <!-- 虎力值头部卡片 — 对齐截图2 -->
+    <div class="task-hero">
+      <div class="task-mascot">🐯</div>
+      <div class="task-points">
+        <div class="lbl">虎力值</div>
+        <div class="val" id="appTotalPoints">1,330</div>
+      </div>
+      <button class="task-detail-btn" onclick="showAppScreen('detail')">明细 ▸</button>
+    </div>
+
+    <!-- 每日任务 -->
+    <div class="task-section">
+      <div class="task-section-title">每日任务</div>
+
+      <div class="task-item">
+        <div class="task-item-head">
+          <span class="task-item-name">浏览健康好物</span>
+          <span class="task-item-reward">完成 +10虎力值 ↗</span>
+        </div>
+        <div class="task-item-desc">每天逛逛推荐商品</div>
+        <div class="task-item-action">
+          <span class="task-item-tag">每日浏览攒虎力值</span>
+          <button class="task-go-btn">去完成 ▸</button>
+        </div>
+      </div>
+
+      <div class="task-item">
+        <div class="task-item-head">
+          <span class="task-item-name">分享泰小虎</span>
+          <span class="task-item-reward">完成 +10虎力值 ↗</span>
+        </div>
+        <div class="task-item-desc">每天分享给好友</div>
+        <div class="task-item-action">
+          <span class="task-item-tag">分享得虎力值</span>
+          <button class="task-go-btn">去完成 ▸</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 新手任务 -->
+    <div class="task-section">
+      <div class="task-section-title">新手任务</div>
+
+      <div class="task-item">
+        <div class="task-item-head">
+          <span class="task-item-name">完善健康档案</span>
+          <span class="task-item-reward">完成 +50虎力值 ↗</span>
+        </div>
+        <div class="task-item-desc">让泰小虎更懂你</div>
+        <div class="task-item-action">
+          <span class="task-item-tag">档案越完整，推荐越准</span>
+          <button class="task-go-btn">去完成 ▸</button>
+        </div>
+      </div>
+
+      <div class="task-item">
+        <div class="task-item-head">
+          <span class="task-item-name">创建打卡计划</span>
+          <span class="task-item-reward">完成 +30虎力值 ↗</span>
+        </div>
+        <div class="task-item-desc">手动创建计划</div>
+        <div class="task-item-action">
+          <span class="task-item-tag">开启健康计划</span>
+          <button class="task-go-btn">去完成 ▸</button>
+        </div>
+      </div>
+
+      <div class="task-item">
+        <div class="task-item-head">
+          <span class="task-item-name">完成首次打卡</span>
+          <span class="task-item-reward">完成 +20虎力值 ↗</span>
+        </div>
+        <div class="task-item-desc">坚持第 1 天</div>
+        <div class="task-item-action">
+          <span class="task-item-tag">迈出健康生活第一步</span>
+          <button class="task-go-btn">去完成 ▸</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Screen: 虎力值变动明细 — 对齐截图3，增强理由列 -->
+  <div class="app-screen" id="appDetail">
+    <div class="detail-list">
+      <!-- 人工赠送记录 — 展示后台选择的理由 -->
+      <div class="detail-item">
+        <div class="detail-info">
+          <div class="detail-reason">客服补偿</div>
+          <div class="detail-time">2026-07-28 15:04:48</div>
+        </div>
+        <div class="detail-val plus">+100</div>
+      </div>
+
+      <!-- 任务类记录 — 原完成xxx任务替换为对应理由 -->
+      <div class="detail-item">
+        <div class="detail-info">
+          <div class="detail-reason">分享泰小虎</div>
+          <div class="detail-time">2026-07-23 17:43:07</div>
+        </div>
+        <div class="detail-val plus">+10</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-info">
+          <div class="detail-reason">浏览健康好物</div>
+          <div class="detail-time">2026-07-23 17:43:01</div>
+        </div>
+        <div class="detail-val plus">+10</div>
+      </div>
+
+      <!-- 人工扣除记录 -->
+      <div class="detail-item">
+        <div class="detail-info">
+          <div class="detail-reason">违规处罚</div>
+          <div class="detail-time">2026-07-27 10:20:15</div>
+        </div>
+        <div class="detail-val minus">-200</div>
+      </div>
+
+      <!-- 任务类 -->
+      <div class="detail-item">
+        <div class="detail-info">
+          <div class="detail-reason">完善健康档案</div>
+          <div class="detail-time">2026-07-22 09:15:33</div>
+        </div>
+        <div class="detail-val plus">+50</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-info">
+          <div class="detail-reason">首次打卡</div>
+          <div class="detail-time">2026-07-21 20:08:00</div>
+        </div>
+        <div class="detail-val plus">+20</div>
+      </div>
+
+      <!-- 人工赠送 -->
+      <div class="detail-item">
+        <div class="detail-info">
+          <div class="detail-reason">活动奖励补发</div>
+          <div class="detail-time">2026-07-20 16:30:22</div>
+        </div>
+        <div class="detail-val plus">+500</div>
+      </div>
+
+      <div class="detail-divider">— 没有更多了 —</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- 视图切换浮动按钮 -->
+<div class="switch-bar" id="switchBar">
+  <button class="switch-btn plat" onclick="toggleView(false)" id="btnToPlat">🖥 后台</button>
+  <button class="switch-btn appv" onclick="toggleView(true)" id="btnToApp">📱 App</button>
+</div>
+
+
+<script>
+// ========== 页面切换（平台端） ==========
+function showPage(name, e){
+  if(e)e.preventDefault();
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const target = document.getElementById('page-'+name);
+  if(target)target.classList.add('active');
+  // 更新侧栏active
+  document.querySelectorAll('.side a').forEach(a=>a.classList.remove('active'));
+  if(name==='points'){
+    const links = document.querySelectorAll('.side a');
+    for(const a of links){if(a.textContent.includes('积分管理')){a.classList.add('active');break}}
+  }
+}
+
+// ========== 赠送/扣除弹窗 ==========
+let currentFormType = 'grant';
+let currentUser = null;
+
+function openForm(type, uid, name, balance){
+  currentFormType = type;
+  currentUser = {uid, name, balance};
+  const overlay = document.getElementById('formOverlay');
+  const title = document.getElementById('formTitle');
+  const submitBtn = document.getElementById('formSubmitBtn');
+  const hint = document.getElementById('hintAmount');
+  const avatar = document.getElementById('dlgAvatar');
+
+  document.getElementById('dlgName').textContent = name;
+  document.getElementById('dlgUid').textContent = uid;
+  document.getElementById('dlgBalance').textContent = balance.toLocaleString();
+  document.getElementById('inpAmount').value = '';
+  document.getElementById('selReason').value = '';
+  document.getElementById('inpOtherReason').value = '';
+  document.getElementById('rowOtherReason').style.display = 'none';
+
+  avatar.textContent = name.charAt(0);
+
+  if(type === 'grant'){
+    title.textContent = '手动赠送虎力值';
+    submitBtn.textContent = '确认赠送';
+    submitBtn.className = 'btn-primary';
+    submitBtn.style.background = '#22C55E';
+    hint.textContent = '输入要赠送的虎力值数量（正整数）';
+  } else {
+    title.textContent = '手动扣除虎力值';
+    submitBtn.textContent = '确认扣除';
+    submitBtn.className = '';
+    submitBtn.style.cssText = 'padding:0 28px;height:32px;background:#EF4444;color:#fff;border:none;border-radius:4px;font-size:13px;cursor:pointer';
+    hint.textContent = '允许扣成负数，不做余额校验';
+  }
+
+  overlay.classList.add('show');
+}
+
+function closeForm(){
+  document.getElementById('formOverlay').classList.remove('show');
+}
+
+// 理由下拉 → 其他时显示自定义输入
+document.getElementById('selReason').addEventListener('change', function(){
+  const row = document.getElementById('rowOtherReason');
+  row.style.display = this.value === '__other__' ? 'flex' : 'none';
+});
+
+// 提交表单
+function submitForm(){
+  const amount = document.getElementById('inpAmount').value;
+  const reasonSel = document.getElementById('selReason').value;
+  const otherReason = document.getElementById('inpOtherReason').value;
+
+  if(!amount || parseInt(amount)<=0){ showToast('请输入有效的数量','err'); return; }
+  if(!reasonSel && !otherReason){ showToast('请选择或填写理由','err'); return; }
+  if(reasonSel === '__other__' && !otherReason.trim()){ showToast('请输入自定义理由','err'); return; }
+
+  const reasonText = reasonSel === '__other__' ? otherReason.trim() : reasonSel;
+  const actionName = currentFormType === 'grant' ? '赠送' : '扣除';
+  const sign = currentFormType === 'grant' ? '+' : '-';
+
+  showToast(`已${actionName} ${sign}${amount} 虎力值（理由：${reasonText}）`, 'success');
+  closeForm();
+}
+
+// ========== Toast ==========
+let toastTimer = null;
+function showToast(msg, type){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type||'') + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ========== App 屏幕切换 ==========
+function showAppScreen(name){
+  document.querySelectorAll('.app-screen').forEach(s=>s.classList.remove('active'));
+  const navTitle = document.getElementById('appNavTitle');
+  if(name === 'task'){
+    document.getElementById('appTask').classList.add('active');
+    navTitle.textContent = '任务中心';
+  } else {
+    document.getElementById('appDetail').classList.add('active');
+    navTitle.textContent = '虎力值变动明细';
+  }
+}
+
+// ========== 平台端 ↔ App 视图切换 ==========
+function toggleView(toApp){
+  const plat = document.getElementById('platView');
+  const app = document.getElementById('appView');
+  const switchBar = document.getElementById('switchBar');
+
+  if(typeof toApp !== 'boolean'){
+    toApp = plat.style.display !== 'none' ? true : false;
+  }
+
+  if(toApp){
+    plat.classList.add('hide');
+    app.classList.add('show');
+    switchBar.style.display = 'none';
+  } else {
+    plat.classList.remove('hide');
+    app.classList.remove('show');
+    switchBar.style.display = 'flex';
+  }
+}
+
+// 点击遮罩关闭弹窗
+document.getElementById('formOverlay').addEventListener('click', function(e){
+  if(e.target === this) closeForm();
+});
+</script>
+
+</body>
+</html>
