@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>虎力值管理后台 · 需求梳理图集</title>
+<style>
+  :root{
+    --new:#43a047; --new-bg:#e8f5e9;
+    --old:#1e88e5; --old-bg:#e3f2fd;
+    --ext:#fb8c00; --ext-bg:#fff3e0;
+    --svc:#546e7a; --svc-bg:#eceff1;
+    --extn:#8e24aa; --extn-bg:#f3e5f5;
+    --dead:#9e9e9e; --dead-bg:#f5f5f5;
+    --ink:#263238; --line:#b0bec5;
+    --warn:#e65100; --warn-bg:#fff3e0;
+    --err:#c62828; --err-bg:#ffebee;
+  }
+  *{box-sizing:border-box;}
+  body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:#fafafa;color:var(--ink);margin:0;padding:24px 32px 60px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:#607d8b;font-size:13px;margin-bottom:18px;line-height:1.6;}
+  h2{font-size:17px;margin:34px 0 10px;padding-left:10px;border-left:4px solid #1e88e5;}
+  h3{font-size:14.5px;margin:16px 0 8px;color:#37474f;}
+  .card{background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:18px;overflow-x:auto;}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0 4px;font-size:12.5px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .chip{width:14px;height:14px;border-radius:3px;display:inline-block;border:1.5px solid;}
+  .note{font-size:12.5px;color:#78909c;margin-top:8px;line-height:1.7;}
+  svg{display:block;min-width:900px;width:100%;height:auto;}
+  svg text{font-family:"Microsoft YaHei","PingFang SC",sans-serif;}
+
+  /* 端口影响表 */
+  .impact-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .impact-table th{background:#f5f5f5;font-weight:600;color:#455a64;text-align:left;padding:10px 14px;border:1px solid #e0e0e0;white-space:nowrap;}
+  .impact-table td{padding:10px 14px;border:1px solid #e0e0e0;vertical-align:middle;}
+  .impact-table tr:nth-child(even){background:#fdfdfd;}
+  .status-new{background:var(--new-bg);color:var(--new);font-weight:600;font-size:11.5px;padding:2px 8px;border-radius:4px;white-space:nowrap;}
+  .status-old{background:var(--old-bg);color:var(--old);font-weight:600;font-size:11.5px;padding:2px 8px;border-radius:4px;white-space:nowrap;}
+  .status-ext{background:var(--ext-bg);color:var(--ext);font-weight:600;font-size:11.5px;padding:2px 8px;border-radius:4px;white-space:nowrap;}
+  .status-svc{background:var(--svc-bg);color:var(--svc);font-weight:600;font-size:11.5px;padding:2px 8px;border-radius:4px;white-space:nowrap;}
+  .thumb{width:140px;height:90px;background:#f0f0f0;border:1px solid #ddd;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#999;overflow:hidden;flex-shrink:0;}
+  .thumb img{width:100%;height:100%;object-fit:cover;}
+
+  /* FR 卡片 */
+  .fr-item{border-left:3px solid var(--new);padding:10px 14px;margin-bottom:10px;background:#fafafa;border-radius:0 6px 6px 0;}
+  .fr-item.enhance{border-left-color:var(--old);}
+  .fr-id{font-weight:700;font-size:13px;color:#37474f;}
+  .fr-desc{font-size:12.5px;color:#546e7a;margin-top:4px;line-height:1.6;}
+
+  /* 待确认 */
+  .q-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .q-table th{background:#fff8e1;text-align:left;padding:8px 12px;border:1px solid #ffe082;font-weight:600;color:#f57f17;}
+  .q-table td{padding:8px 12px;border:1px solid #fff8e1;vertical-align:top;}
+  .q-table tr:nth-child(odd){background:#fffbf0;}
+
+  .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:3px;font-weight:600;}
+  .tag-p1{background:#e8f5e9;color:#2e7d32;} .tag-op{background:#e3f2fd;color:#1565c0;}
+</style>
+</head>
+<body>
+
+<h1>虎力值管理后台（手动赠扣 + 理由）· 需求梳理图集</h1>
+<div class="sub">
+  依据：用户口述需求（2026-07-28）｜ 端口：<b>平台端后台</b> + <b>App</b>（不含商家端/H5/小程序）<br>
+  性质：<span class="tag tag-p1">本期新增</span> — 后端积分体系(user_points/point_transactions)已存在（含 source='admin'）；本期在「App管理」页签下<b>新增「虎力值管理」</b>（批量赠送/扣除 + 操作记录表 + 明细下钻），App变动记录页增强理由展示。
+</div>
+
+<div class="legend">
+  <span><i class="chip" style="background:var(--new-bg);border-color:var(--new)"></i>本期新增</span>
+  <span><i class="chip" style="background:var(--old-bg);border-color:var(--old)"></i>已有功能</span>
+  <span><i class="chip" style="background:var(--ext-bg);border-color:var(--ext)"></i>已有·待增强</span>
+  <span><i class="chip" style="background:var(--svc-bg);border-color:var(--svc)"></i>后端服务能力</span>
+  <span><i class="chip" style="background:var(--dead-bg);border-color:var(--dead)"></i>规则写死 / 本期不做</span>
+</div>
+
+<!-- ═══════════════════ 一、需求端口影响表 ═══════════════════ -->
+<h2>一、需求端口影响表</h2>
+<div class="card">
+<table class="impact-table">
+  <thead>
+    <tr>
+      <th style="width:110px">影响端口</th>
+      <th style="width:110px">影响周期 / 模块</th>
+      <th style="width:150px">影响功能</th>
+      <th style="width:130px">功能状态</th>
+      <th>截图 / 参考</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- 平台端后台 -->
+    <tr>
+      <td rowspan="4" style="font-weight:700;vertical-align:top;padding-top:14px">平台端后台</td>
+      <td rowspan="4" style="vertical-align:top;padding-top:14px">虎力值管理<br><span style="font-size:11.5px;color:#78909c">（App管理 页签下）</span></td>
+      <td><b>批量赠送 / 扣除</b>虎力值<br><span style="font-size:11.5px;color:#78909c">选人员(搜索手机号/ID逗号/全选/导入表格)→选理由→填统一数量</span></td>
+      <td><span class="status-new">本期新增</span></td>
+      <td>
+        <div class="thumb" title="新增：批量操作">
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect fill="#fff" stroke="#ddd" width="138" height="88" rx="4"/>
+            <rect fill="#e8f5e9" x="4" y="4" width="130" height="16" rx="2"/><text x="70" y="15" text-anchor="middle" font-size="9" fill="#2e7d32" font-weight="bold">批量赠送/扣除（新增）</text>
+            <text x="8" y="32" font-size="6.5" fill="#666">① 选择人员：搜索/ID/全选/导入</text>
+            <text x="8" y="46" font-size="6.5" fill="#666">② 选择理由（下拉预设）</text>
+            <text x="8" y="60" font-size="6.5" fill="#666">③ 统一填写数量（每人）</text>
+            <rect fill="#22C55E" x="14" y="70" width="50" height="14" rx="3"/><text x="39" y="80" text-anchor="middle" font-size="7" fill="#fff">确认赠送</text>
+            <rect fill="#EF4444" x="76" y="70" width="50" height="14" rx="3"/><text x="101" y="80" text-anchor="middle" font-size="7" fill="#fff">确认扣除</text>
+          </svg>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td><b>赠扣操作记录表</b><br><span style="font-size:11.5px;color:#78909c">列表：操作时间/操作人员/影响用户数/变动总虎力值/理由</span></td>
+      <td><span class="status-new">本期新增</span></td>
+      <td>
+        <div class="thumb" title="新增：操作记录列表">
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect fill="#fff" stroke="#ddd" width="138" height="88" rx="4"/>
+            <rect fill="#e8f5e9" x="4" y="4" width="130" height="18" rx="2"/><text x="70" y="17" text-anchor="middle" font-size="9" fill="#2e7d32" font-weight="bold">操作记录列表（新增）</text>
+            <line x1="4" y1="26" x2="134" y2="26" stroke="#e0e0e0"/>
+            <text x="8" y="39" font-size="6.5" fill="#666">时间</text><text x="30" y="39" font-size="6.5" fill="#666">操作</text><text x="56" y="39" font-size="6.5" fill="#666">用户数</text><text x="92" y="39" font-size="6.5" fill="#666">变动总</text>
+            <line x1="4" y1="44" x2="134" y2="44" stroke="#f0f0f0"/>
+            <text x="8" y="55" font-size="6.5" fill="#999">07-28 16:30</text><text x="30" y="55" font-size="6.5" fill="#2e7d32">赠送</text><text x="58" y="55" font-size="6.5" fill="#999">3人</text><text x="92" y="55" font-size="6.5" fill="#2e7d32">+300</text>
+            <line x1="4" y1="60" x2="134" y2="60" stroke="#f0f0f0"/>
+            <text x="8" y="71" font-size="6.5" fill="#999">07-28 15:12</text><text x="32" y="71" font-size="6.5" fill="#c62828">扣除</text><text x="58" y="71" font-size="6.5" fill="#999">5人</text><text x="94" y="71" font-size="6.5" fill="#c62828">-100</text>
+            <text x="70" y="84" text-anchor="middle" font-size="6.5" fill="#bbb">本期新增 · 独立于积分流水</text>
+          </svg>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td><b>操作明细下钻</b><br><span style="font-size:11.5px;color:#78909c">点击「影响用户数」→展示该次操作影响的用户清单及各自增减</span></td>
+      <td><span class="status-new">本期新增</span></td>
+      <td>
+        <div class="thumb" title="新增：明细下钻">
+          <svg width="60" height="40" viewBox="0 0 60 40"><rect fill="#eee" width="60" height="40" rx="4"/><text x="30" y="24" text-anchor="middle" font-size="10" fill="#bbb">下钻弹窗</text></svg>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td><b>理由配置</b><br><span style="font-size:11.5px;color:#78909c">预设赠扣理由枚举维护</span></td>
+      <td><span class="status-new">本期新增</span></td>
+      <td>
+        <div class="thumb" title="待原型补充">
+          <svg width="60" height="40" viewBox="0 0 60 40"><rect fill="#eee" width="60" height="40" rx="4"/><text x="30" y="24" text-anchor="middle" font-size="10" fill="#bbb">待原型</text></svg>
+        </div>
+      </td>
+    </tr>
+    <!-- App -->
+    <tr>
+      <td rowspan="3" style="font-weight:700;vertical-align:top;padding-top:14px">App 客户端</td>
+      <td rowspan="3" style="vertical-align:top;padding-top:14px">我的 / 虎力值<br><span style="font-size:11.5px;color:#78909c">个人中心模块</span></td>
+      <td><b>虎力值总额</b>展示<br><span style="font-size:11.5px;color:#78909c">「我的」页显示当前总额</span></td>
+      <td><span class="status-old">已有功能</span></td>
+      <td>
+        <div class="thumb" title="存量：我的页">
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect fill="#fff" stroke="#ddd" width="138" height="88" rx="4"/>
+            <rect fill="#fff3e0" x="4" y="4" width="130" height="32" rx="4"/>
+            <circle cx="28" cy="20" r="12" fill="#ffe0b2" stroke="#fb8c00"/>
+            <text x="50" y="17" font-size="8" fill="#e65100" font-weight="bold">我的虎力值</text>
+            <text x="50" y="30" font-size="14" fill="#e65100" font-weight="bold">1,280</text>
+            <text x="70" y="52" text-anchor="middle" font-size="7.5" fill="#999">存量页面 · 进入拉取最新</text>
+            <text x="70" y="64" text-anchor="middle" font-size="7.5" fill="#999">本期增强：确保刷新最新值</text>
+            <text x="70" y="80" text-anchor="middle" font-size="6.5" fill="#bbb">参考：power-record-filled.html</text>
+          </svg>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td><b>变动记录</b>展示<br><span style="font-size:11.5px;color:#78909c">逐条显示增减数量+时间+理由</span></td>
+      <td><span class="status-ext">已有·待增强</span></td>
+      <td>
+        <div class="thumb" title="存量：power-record-filled.html">
+          <svg width="140" height="90" viewBox="0 0 140 90">
+            <rect fill="#fff" stroke="#ddd" width="138" height="88" rx="4"/>
+            <rect fill="#e8f5e9" x="4" y="4" width="130" height="16" rx="2"/><text x="70" y="15" text-anchor="middle" font-size="8" fill="#2e7d32" font-weight="bold">虎力值变动记录</text>
+            <line x1="4" y1="22" x2="134" y2="22" stroke="#e0e0e0"/>
+            <text x="8" y="34" font-size="7" fill="#43a047" font-weight="bold">+50</text><text x="30" y="34" font-size="6.5" fill="#666">完成每日浏览任务</text><text x="105" y="34" font-size="6.5" fill="#999">1,280</text>
+            <line x1="4" y1="40" x2="134" y2="40" stroke="#f0f0f0"/>
+            <text x="8" y="52" font-size="7" fill="#43a047" font-weight="bold">+30</text><text x="30" y="52" font-size="6.5" fill="#666">创建打卡计划</text><text x="105" y="52" font-size="6.5" fill="#999">1,230</text>
+            <line x1="4" y1="58" x2="134" y2="58" stroke="#f0f0f0"/>
+            <text x="8" y="70" font-size="7" fill="#e65100" font-weight="bold">-20</text><text x="30" y="70" font-size="6.5" fill="#999">兑换商品抵扣</text><text x="105" y="70" font-size="6.5" fill="#999">1,200</text>
+            <rect x="4" y="76" width="130" height="10" fill="#fff3e0" rx="2"/>
+            <text x="70" y="84" text-anchor="middle" font-size="6.5" fill="#e65100">⚠ 缺少「理由」列 · 本期补上</text>
+          </svg>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td><b>变动通知</b>Toast<br><span style="font-size:11.5px;color:#78909c">赠扣后是否弹 Toast 提示</span></td>
+      <td><span class="status-old" style="background:var(--dead-bg);color:var(--dead);border-color:var(--dead)">本期不做</span></td>
+      <td><div class="thumb"><span style="font-size:10px;color:#bbb">—</span></div></td>
+    </tr>
+    <!-- 后端 -->
+    <tr>
+      <td rowspan="3" style="font-weight:700;vertical-align:top;padding-top:14px">后端服务</td>
+      <td rowspan="3" style="vertical-align:top;padding-top:14px">积分服务<br><span style="font-size:11.5px;color:#78909c">data_service.py</span></td>
+      <td><b>user_points</b> 账户模型<br><span style="font-size:11.5px;color:#78909c">total / available 余额</span></td>
+      <td><span class="status-svc">已有能力</span></td>
+      <td><div class="thumb"><span style="font-size:10px;color:#999">数据模型</span></div></td>
+    </tr>
+    <tr>
+      <td><b>point_transactions</b> 流水模型<br><span style="font-size:11.5px;color:#78909c">source 含 'admin' 枚举</span></td>
+      <td><span class="status-svc">已有能力</span></td>
+      <td><div class="thumb"><span style="font-size:10px;color:#999">数据模型</span></div></td>
+    </tr>
+    <tr>
+      <td><b>Admin 赠扣 API</b><br><span style="font-size:11.5px;color:#78909c">grant / deduct 接口</span></td>
+      <td><span class="status-new">本期新增接口</span></td>
+      <td><div class="thumb"><span style="font-size:10px;color:#999">待设计</span></div></td>
+    </tr>
+  </tbody>
+</table>
+<div class="note">
+  <b>说明：</b>截图列中「存量」标注的为已存在的页面/原型（admin_points.html / power-record-filled.html），本期在其基础上增强；「待原型」表示 Step 3 可交互原型阶段产出。
+  功能状态定义：<b>本期新增</b>=从零新建；<b>已有功能</b>=存在且不变；<b>已有·待增强</b>=存在但需改动；<b>本期不做</b>=明确排除。
+</div>
+</div>
+
+<!-- ═══════════════════ 二、整体业务流程图 ═══════════════════ -->
+<h2>二、整体业务流程图（横向泳道 · 赠送 / 扣除 / 查看全链路）</h2>
+<div class="card">
+<svg viewBox="0 0 1100 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#37474f"/></marker>
+    <marker id="arrD" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#90a4ae"/></marker>
+  </defs>
+
+  <!-- 阶段列头 -->
+  <g font-size="11" font-weight="bold" fill="#455a64" text-anchor="middle">
+    <text x="180" y="22">① 检索用户</text>
+    <text x="380" y="22">② 赠送 / 扣除操作</text>
+    <text x="620" y="22">③ 后端处理</text>
+    <text x="860" y="22">④ 记录与查看</text>
+  </g>
+  <line x1="80" y1="30" x2="1080" y2="30" stroke="#cfd8dc"/>
+
+  <!-- 泳道背景（3个端口） -->
+  <g font-size="12" font-weight="bold" fill="#37474f">
+    <rect x="8" y="40" width="1076" height="116" fill="#f0f7ff" stroke="#cfd8dc" rx="5"/>
+    <text x="20" y="102" writing-mode="tb" letter-spacing="2">平台端后台</text>
+
+    <rect x="8" y="162" width="1076" height="100" fill="#eceff1" stroke="#cfd8dc" rx="5"/>
+    <text x="20" y="216" writing-mode="tb" letter-spacing="1">后端服务</text>
+
+    <rect x="8" y="268" width="1076" height="120" fill="#f0fff4" stroke="#cfd8dc" rx="5"/>
+    <text x="20" y="332" writing-mode="tb" letter-spacing="2">App</text>
+  </g>
+
+  <!-- ===== 平台端后台泳道 ===== -->
+  <g font-size="10">
+    <!-- 检索：进入页面 -->
+    <rect x="100" y="56" width="130" height="40" rx="5" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.4"/>
+    <text x="165" y="75" text-anchor="middle" font-weight="bold">进入虎力值管理页</text>
+    <text x="165" y="89" text-anchor="middle" fill="#1565c0" font-size="8.5">已有 · 只读展示</text>
+
+    <!-- 检索：搜索用户 -->
+    <rect x="260" y="56" width="130" height="40" rx="5" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.4"/>
+    <text x="325" y="75" text-anchor="middle" font-weight="bold">批量选择人员</text>
+    <text x="325" y="89" text-anchor="middle" fill="#1565c0" font-size="8.5">已有 · session_id</text>
+
+    <!-- 赠送：输入 -->
+    <rect x="280" y="106" width="110" height="36" rx="4" fill="#e8f5e9" stroke="#43a047" stroke-width="1.4"/>
+    <text x="335" y="123" text-anchor="middle" font-weight="bold">选人员+选理由+填数量</text>
+    <text x="335" y="136" text-anchor="middle" font-size="8" fill="#2e7d32">新增</text>
+
+    <!-- 赠送：提交 -->
+    <rect x="420" y="106" width="90" height="36" rx="4" fill="#e8f5e9" stroke="#43a047" stroke-width="1.4"/>
+    <text x="465" y="123" text-anchor="middle" font-weight="bold">批量确认赠送</text>
+    <text x="465" y="136" text-anchor="middle" font-size="8" fill="#2e7d32">新增</text>
+
+    <!-- 扣除：输入 -->
+    <rect x="280" y="106" width="110" height="36" rx="4" fill="#e8f5e9" stroke="#43a047" stroke-width="1.4"/>
+    <text x="335" y="123" text-anchor="middle" font-weight="bold">选人员+选理由+填数量</text>
+    <text x="335" y="136" text-anchor="middle" font-size="8" fill="#2e7d32">新增</text>
+
+    <!-- 扣除：提交 -->
+    <rect x="420" y="106" width="90" height="36" rx="4" fill="#e8f5e9" stroke="#43a047" stroke-width="1.4"/>
+    <text x="465" y="123" text-anchor="middle" font-weight="bold">批量确认扣除</text>
+    <text x="465" y="136" text-anchor="middle" font-size="8" fill="#2e7d32">新增 · 允许负数</text>
+
+    <!-- 赠扣记录表 -->
+    <rect x="800" y="54" width="150" height="88" rx="5" fill="#e8f5e9" stroke="#43a047" stroke-width="1.4"/>
+    <text x="875" y="76" text-anchor="middle" font-weight="bold">赠扣操作记录表</text>
+    <text x="875" y="92" text-anchor="middle" font-size="8.5" fill="#2e7d32">新增 · 独立于积分流水</text>
+    <text x="875" y="108" text-anchor="middle" font-size="8" fill="#78909c">时间 / 操作类型</text>
+    <text x="875" y="122" text-anchor="middle" font-size="8" fill="#78909c">数量(±) / 理由 / 操作人</text>
+    <text x="875" y="136" text-anchor="middle" font-size="7.5" fill="#999">独立页面或 Tab 展示</text>
+  </g>
+
+  <!-- ===== 后端泳道 ===== -->
+  <g font-size="10">
+    <rect x="140" y="178" width="120" height="38" rx="4" fill="#eceff1" stroke="#546e7a" stroke-width="1.4"/>
+    <text x="200" y="196" text-anchor="middle" font-weight="bold">user_points</text>
+    <text x="200" y="210" text-anchor="middle" font-size="8" fill="#78909c">账户模型（已有）</text>
+
+    <rect x="290" y="178" width="140" height="38" rx="4" fill="#eceff1" stroke="#546e7a" stroke-width="1.4"/>
+    <text x="360" y="196" text-anchor="middle" font-weight="bold">point_transactions</text>
+    <text x="360" y="210" text-anchor="middle" font-size="8" fill="#78909c">流水模型（已有）</text>
+
+    <rect x="480" y="174" width="170" height="44" rx="4" fill="#e8f5e9" stroke="#43a047" stroke-width="1.4"/>
+    <text x="565" y="194" text-anchor="middle" font-weight="bold">Admin Grant/Deduct API</text>
+    <text x="565" y="209" text-anchor="middle" font-size="8.5" fill="#2e7d32">新增 · earn/consume(source='admin')</text>
+
+    <rect x="690" y="178" width="130" height="38" rx="4" fill="#eceff1" stroke="#546e7a" stroke-width="1.4"/>
+    <text x="755" y="196" text-anchor="middle" font-weight="bold">写入流水记录</text>
+    <text x="755" y="210" text-anchor="middle" font-size="8" fill="#78909c">reason + operator + timestamp</text>
+  </g>
+
+  <!-- ===== App 泳道 ===== -->
+  <g font-size="10">
+    <rect x="520" y="284" width="150" height="38" rx="4" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.4"/>
+    <text x="595" y="302" text-anchor="middle" font-weight="bold">我的页 · 虎力值总额</text>
+    <text x="595" y="315" text-anchor="middle" font-size="8" fill="#e65100">已有 · 进页拉取最新</text>
+
+    <rect x="700" y="282" width="180" height="52" rx="4" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.4"/>
+    <text x="790" y="303" text-anchor="middle" font-weight="bold">变动记录页（增强）</text>
+    <text x="790" y="318" text-anchor="middle" font-size="8.5" fill="#e65100">展示：增减数量 + 时间 + 理由</text>
+    <text x="790" y="330" text-anchor="middle" font-size="7.5" fill="#999">原「完成xxx任务」→替换为理由</text>
+  </g>
+
+  <!-- ===== 连线（实线=主流程，加粗加清晰） ===== -->
+  <g stroke="#37474f" stroke-width="1.8" fill="none" marker-end="url(#arr)">
+    <!-- ① 进入页 → 搜索用户 -->
+    <line x1="230" y1="76" x2="254" y2="76"/>
+    <!-- ② 搜索 → 输入区 -->
+    <path d="M 325 96 L 335 102"/>
+    <!-- ③ 数量 → 提交 -->
+    <line x1="390" y1="124" x2="414" y2="124"/>
+    <!-- ④ 提交 → 后端API -->
+    <path d="M 465 142 L 555 170"/>
+    <!-- ⑤ API → 写流水 -->
+    <line x1="650" y1="196" x2="684" y2="196"/>
+    <!-- ⑥ 写流水 → 赠扣记录表 -->
+    <path d="M 820 196 Q 875 196 875 146"/>
+    <!-- ⑦ 写流水 → App总额 -->
+    <path d="M 755 216 L 600 280"/>
+    <!-- ⑧ 总额 → 变动记录 -->
+    <line x1="670" y1="304" x2="694" y2="304"/>
+  </g>
+
+  <!-- 连线（虚线=数据依赖，加粗） -->
+  <g stroke="#90a4ae" stroke-width="1.5" fill="none" marker-end="url(#arrD)" stroke-dasharray="5 3">
+    <!-- user_points → API -->
+    <path d="M 260 196 L 474 192"/>
+    <!-- transactions → API -->
+    <path d="M 430 197 L 474 195"/>
+    <!-- 搜索 → 记录表（弱依赖） -->
+    <path d="M 950 98 Q 970 98 970 196" opacity="0.45"/>
+  </g>
+
+  <!-- 步骤序号（圆圈标在箭头旁） -->
+  <g font-size="9" font-weight="bold" fill="#fff">
+    <circle cx="242" cy="76" r="8" fill="#546e7a"/><text x="242" y="79" text-anchor="middle">1</text>
+    <circle cx="400" cy="124" r="8" fill="#43a047"/><text x="400" y="127" text-anchor="middle">2</text>
+    <circle cx="510" cy="158" r="8" fill="#43a047"/><text x="510" y="161" text-anchor="middle">3</text>
+    <circle cx="668" cy="196" r="8" fill="#546e7a"/><text x="668" y="199" text-anchor="middle">4</text>
+    <circle cx="880" cy="172" r="8" fill="#43a047"/><text x="880" y="175" text-anchor="middle">5</text>
+    <circle cx="682" cy="250" r="8" fill="#fb8c00"/><text x="682" y="253" text-anchor="middle">6</text>
+    <circle cx="682" cy="304" r="8" fill="#fb8c00"/><text x="682" y="307" text-anchor="middle">7</text>
+  </g>
+</svg>
+<div class="note">
+  主流程（3 个端口泳道）：① 平台端后台进入「虎力值管理」页（App管理页签下，<b>新增</b>）→ 批量选择人员 → ② 选理由+填统一数量+批量确认赠送或扣除（<b>新增</b>，允许扣成负数）→
+  ③ 后端 Admin Grant/Deduct API（<b>新增</b>），包裹既有 earn/consume 方法，写入 reason+operator → 写入流水记录 → ④ 赠扣操作记录表（<b>新增</b>，独立于积分流水）+
+  App 端「我的」页总额自动反映最新值 + 「变动记录」页展示<b>增减数量+时间+理由</b>（<b>增强</b>，原「完成xxx任务」替换为后台选择的理由）。
+  虚线为数据依赖关系。
+  虚线为数据依赖关系。
+</div>
+</div>
+
+<!-- ═══════════════════ 三、时序图 A：手动赠送 ═══════════════════ -->
+<h2>三、时序图 A：批量赠送虎力值（运营 → 后台 → 后端 → 用户可见）</h2>
+<div class="card">
+<svg viewBox="0 0 1060 540" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="sa" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#37474f"/></marker>
+    <marker id="sd" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#78909c"/></marker>
+  </defs>
+
+  <!-- 参与者 -->
+  <g font-size="13" font-weight="bold" text-anchor="middle">
+    <rect x="40" y="18" width="100" height="38" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/><text x="90" y="42">运营人员</text>
+    <rect x="220" y="18" width="130" height="38" rx="6" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.5"/><text x="285" y="42">平台端后台</text>
+    <rect x="460" y="18" width="130" height="38" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/><text x="525" y="42">积分服务(后端)</text>
+    <rect x="700" y="18" width="140" height="38" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/><text x="770" y="42">App 用户端</text>
+    <rect x="910" y="18" width="120" height="38" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/><text x="970" y="42">数据库</text>
+  </g>
+
+  <!-- 生命线 -->
+  <g stroke="#b0bec5" stroke-width="1.2" stroke-dasharray="4 4">
+    <line x1="90" y1="56" x2="90" y2="520"/>
+    <line x1="285" y1="56" x2="285" y2="520"/>
+    <line x1="525" y1="56" x2="525" y2="520"/>
+    <line x1="770" y1="56" x2="770" y2="520"/>
+    <line x1="970" y1="56" x2="970" y2="520"/>
+  </g>
+
+  <!-- 消息 -->
+  <g font-size="12" fill="#263238">
+    <!-- 1. 进入积分管理 -->
+    <line x1="90" y1="92" x2="281" y2="92" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/>
+    <text x="185" y="84" text-anchor="middle">1. 进入「虎力值管理」页</text>
+    <text x="185" y="107" text-anchor="middle" font-size="10.5" fill="#78909c">已有只读页面</text>
+
+    <!-- 2. 批量选择人员 -->
+    <line x1="90" y1="136" x2="281" y2="136" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/>
+    <text x="185" y="128" text-anchor="middle">2. 搜索并选择目标用户</text>
+    <text x="185" y="151" text-anchor="middle" font-size="10.5" fill="#78909c">session_id / 昵称</text>
+
+    <!-- 3. 填写赠送表单 -->
+    <line x1="90" y1="182" x2="281" y2="182" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/>
+    <text x="185" y="174" text-anchor="middle">3. 填写赠送表单</text>
+    <text x="185" y="196" text-anchor="middle" font-size="10.5" fill="#2e7d32">【新增】数量(M) + 理由(下拉)</text>
+
+    <!-- 4. 批量确认赠送请求 -->
+    <line x1="90" y1="228" x2="281" y2="228" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/>
+    <text x="185" y="220" text-anchor="middle">4. 点击「确认赠送」</text>
+
+    <!-- 5. 前端校验→调后端 -->
+    <line x1="285" y1="264" x2="521" y2="264" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/>
+    <text x="403" y="256" text-anchor="middle">5. POST /api/admin/points/grant</text>
+    <text x="403" y="279" text-anchor="middle" font-size="10.5" fill="#78909c">{user_id, points, reason, operator}</text>
+
+    <!-- 6. 后端自处理：earn_points -->
+    <path d="M 525 296 H 620 V 326 H 529" fill="none" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/>
+    <text x="635" y="306" text-anchor="start">6. earn_points(source='admin', ...)</text>
+    <text x="635" y="322" text-anchor="start" font-size="10.5" fill="#78909c">更新 user_points.available += M</text>
+
+    <!-- 7. 写入流水 -->
+    <line x1="525" y1="356" x2="966" y2="356" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/>
+    <text x="745" y="348" text-anchor="middle">7. INSERT point_transactions</text>
+    <text x="745" y="371" text-anchor="middle" font-size="10.5" fill="#78909c">{source:'admin', points:+M, reason, operator, balance_after}</text>
+
+    <!-- 8. 返回成功 -->
+    <line x1="970" y1="392" x2="529" y2="392" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#sd)"/>
+    <text x="750" y="384" text-anchor="middle">8. 写入成功，返回 {success, new_balance}</text>
+
+    <!-- 9. 后台返回前端 -->
+    <line x1="525" y1="428" x2="289" y2="428" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#sd)"/>
+    <text x="406" y="420" text-anchor="middle">9. 返回结果 → Toast「赠送成功」</text>
+
+    <!-- 10. App 用户查看（异步） -->
+    <line x1="770" y1="468" x2="966" y2="468" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/>
+    <text x="868" y="460" text-anchor="middle">10. 用户打开变动记录（拉取最新）</text>
+    <text x="868" y="483" text-anchor="middle" font-size="10.5" fill="#2e7d32">【增强】展示增减数量+时间+理由（替换原任务名）</text>
+
+    <!-- 11. 返回流水含理由 -->
+    <line x1="970" y1="500" x2="774" y2="500" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#sd)"/>
+    <text x="872" y="492" text-anchor="middle" font-size="11">11. 返回流水列表（含 reason 字段）</text>
+  </g>
+
+  <!-- 激活条 -->
+  <g fill="#cfd8dc" opacity="0.85">
+    <rect x="280" y="88" width="10" height="152"/>
+    <rect x="520" y="260" width="10" height="180"/>
+    <rect x="965" y="352" width="10" height="48"/>
+    <rect x="760" y="464" width="10" height="44"/>
+  </g>
+</svg>
+<div class="note">
+  关键点：步骤 3~5 为<b>本期新增</b>（赠送表单 + 提交按钮 + grant API）；步骤 6 复用既有 <code>earn_points</code> 方法，仅 source 设为 <code>'admin'</code>；
+  步骤 7 流水记录需额外写入 <code>reason</code>（理由）和 <code>operator</code>（操作人）；步骤 10~11 为 App 端增强——变动记录页展示<b>增减数量+时间+理由</b>三列，原「完成xxx任务」文本替换为后台操作时选择的理由。
+</div>
+</div>
+
+<!-- ═══════════════════ 四、时序图 B：手动扣除（含拒绝分支） ═══════════════════ -->
+<h2>四、时序图 B：批量扣除虎力值（允许扣成负数，不做余额阻拦）</h2>
+<div class="card">
+<svg viewBox="0 0 1060 480" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="sb" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#37474f"/></marker>
+    <marker id="sbd" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#78909c"/></marker>
+  </defs>
+
+  <g font-size="13" font-weight="bold" text-anchor="middle">
+    <rect x="40" y="18" width="100" height="38" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/><text x="90" y="42">运营人员</text>
+    <rect x="220" y="18" width="130" height="38" rx="6" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.5"/><text x="285" y="42">平台端后台</text>
+    <rect x="460" y="18" width="130" height="38" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/><text x="525" y="42">积分服务(后端)</text>
+    <rect x="910" y="18" width="120" height="38" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/><text x="970" y="42">数据库</text>
+  </g>
+
+  <g stroke="#b0bec5" stroke-width="1.2" stroke-dasharray="4 4">
+    <line x1="90" y1="56" x2="90" y2="460"/>
+    <line x1="285" y1="56" x2="285" y2="460"/>
+    <line x1="525" y1="56" x2="525" y2="460"/>
+    <line x1="970" y1="56" x2="970" y2="460"/>
+  </g>
+
+  <g font-size="12" fill="#263238">
+    <!-- 1. 进入并选择用户 -->
+    <line x1="90" y1="92" x2="281" y2="92" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/>
+    <text x="185" y="84" text-anchor="middle">1. 进入「虎力值管理」→ 批量选择人员</text>
+
+    <!-- 2. 填写扣除表单 -->
+    <line x1="90" y1="132" x2="281" y2="132" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/>
+    <text x="185" y="124" text-anchor="middle">2. 填写扣除表单</text>
+    <text x="185" y="147" text-anchor="middle" font-size="10.5" fill="#e65100">【新增】数量(M) + 理由(下拉)</text>
+
+    <!-- 3. 提交 -->
+    <line x1="90" y1="176" x2="281" y2="176" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/>
+    <text x="185" y="168" text-anchor="middle">3. 点击「确认扣除」</text>
+
+    <!-- 4. 调后端 deduct API -->
+    <line x1="285" y1="208" x2="521" y2="208" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/>
+    <text x="403" y="200" text-anchor="middle">4. POST /api/admin/points/deduct</text>
+    <text x="403" y="223" text-anchor="middle" font-size="10.5" fill="#78909c">{user_id, points:M, reason, operator}</text>
+
+    <!-- 5. 后端：consume_points（不校验余额） -->
+    <path d="M 525 240 H 620 V 274 H 529" fill="none" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/>
+    <text x="635" y="250" text-anchor="start">5. consume_points(source='admin', M)</text>
+    <text x="635" y="266" text-anchor="start" font-size="10.5" fill="#e65100"><b>不校验余额</b>，available -= M（可为负）</text>
+
+    <!-- 6. 写入流水（含负值） -->
+    <line x1="525" y1="300" x2="966" y2="300" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/>
+    <text x="745" y="292" text-anchor="middle">6. INSERT point_transactions</text>
+    <text x="745" y="315" text-anchor="middle" font-size="10.5" fill="#78909c">{source:'admin', points:-M, reason, operator, balance_after}</text>
+
+    <!-- 7. 更新账户（可能为负） -->
+    <path d="M 525 332 H 620 V 362 H 529" fill="none" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/>
+    <text x="635" y="342" text-anchor="start">7. UPDATE user_points</text>
+    <text x="635" y="358" text-anchor="start" font-size="10.5" fill="#78909c">SET available = available - M（可为负数）</text>
+
+    <!-- 8. 返回成功 -->
+    <line x1="970" y1="388" x2="529" y2="388" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#sbd)"/>
+    <text x="750" y="380" text-anchor="middle">8. 返回 {success, new_balance}</text>
+
+    <!-- 9. 前端 Toast + 刷新 -->
+    <line x1="525" y1="420" x2="289" y2="420" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#sbd)"/>
+    <text x="406" y="412" text-anchor="middle">9. Toast「已扣除 X 虎力值」+ 刷新余额/流水</text>
+  </g>
+
+  <!-- 激活条 -->
+  <g fill="#cfd8dc" opacity="0.85">
+    <rect x="280" y="88" width="10" height="100"/>
+    <rect x="520" y="200" width="10" height="230"/>
+    <rect x="965" y="292" width="10" height="40"/>
+  </g>
+</svg>
+<div class="note">
+  与赠送的核心差异：<b>扣除不做余额校验，允许扣成负数</b>（用户已确认）。步骤 5 直接调用 <code>consume_points</code> 扣减，<code>available</code> 可为负数；
+  步骤 6 流水 <code>points</code> 字段存负值（如 -100），<code>balance_after</code> 反映扣后实际余额（可能 &lt; 0）。
+  后台前端提交前<strong>不弹二次确认框</strong>（除非后续追加需求），运营自行对金额负责。
+</div>
+</div>
+
+<!-- ═══════════════════ 五、功能需求清单 FR ═══════════════════ -->
+<h2>五、功能需求清单（FR）</h2>
+<div class="card">
+
+<div class="fr-item">
+  <div class="fr-id">FR-PLT-01 · 平台端-入口与列表（App管理页签）</div>
+  <div class="fr-desc">在「App管理」页签下<b>本期新增</b>「虎力值管理」页。页面主体为<b>赠扣操作记录表</b>：列出每次批量/单笔赠扣操作的记录，字段含 操作时间 / 操作类型（赠送·扣除）/ 操作人员 / 影响用户数（可下钻）/ 变动总虎力值(±) / 理由。支持按操作类型、操作人员、时间范围筛选。<span class="tag tag-p1">新增</span></div>
+</div>
+
+<div class="fr-item">
+  <div class="fr-id">FR-PLT-02 · 平台端-批量赠送 / 扣除</div>
+  <div class="fr-desc">列表上方提供「批量赠送」「批量扣除」按钮，弹出批量操作面板：<b>① 选择人员</b>——支持按手机号搜索添加、按用户ID（多个用逗号隔开）添加、一键全选、批量导入表格（CSV/Excel）勾选人员；<b>② 选择理由</b>（预设枚举+「其他」自由填）；<b>③ 统一填写数量</b>（每位用户相同的赠/扣值）。确认后生成<b>一条</b>操作记录，并逐用户写入流水。<span class="tag tag-p1">新增</span></div>
+</div>
+
+<div class="fr-item">
+  <div class="fr-id">FR-PLT-03 · 平台端-扣除允许负数</div>
+  <div class="fr-desc">批量扣除时<b>不做余额校验，允许扣成负数</b>（后台不阻拦）。批量操作通过 Admin Deduct API（包裹 consume_points，source='admin'）统一扣减所选用户，写入 reason + operator。<span class="tag tag-p1">新增</span> 已确认 Q5。</div>
+</div>
+
+<div class="fr-item">
+  <div class="fr-id">FR-PLT-04 · 平台端-操作明细下钻</div>
+  <div class="fr-desc">操作记录列表的「影响用户数」可点击，弹出该次操作的<b>明细</b>：展示所影响的用户清单（昵称 / 用户ID / 手机号）及各自获得的虎力值(±)。<span class="tag tag-p1">新增</span></div>
+</div>
+
+<div class="fr-item">
+  <div class="fr-id">FR-PLT-05 · 平台端-理由配置与操作人落库</div>
+  <div class="fr-desc">维护预设理由枚举（客服补偿 / 活动奖励补发 / 体验回馈 / 违规处罚 / 系统调整 / 误操作退回 / 其他自由填），供批量面板下拉使用。每次操作记录落库 reason（理由）+ operator（当前后台操作人账号）。<span class="tag tag-p1">新增</span> ⚠️ 理由是否需后台独立配置页（还是代码写死）见待确认 Q1。</div>
+</div>
+
+<div class="fr-item enhance">
+  <div class="fr-id">FR-APP-01 · App-变动记录展示理由</div>
+  <div class="fr-desc">现有「虎力值变动记录」页每条记录展示<b>三列信息：增减数量 + 时间 + 理由</b>（不含余额列）。原显示「完成xxx任务」的记录，统一替换为后台操作时选择的理由文本（如「客服补偿」「活动奖励」等）。<span class="tag tag-op">增强</span></div>
+</div>
+
+<div class="fr-item enhance">
+  <div class="fr-id">FR-APP-02 · App-虎力值总额实时刷新</div>
+  <div class="fr-desc">「我的」页虎力值总额进入页面时拉取服务端最新值（非本地缓存）。确保后台赠扣操作后用户再次进入即可看到正确金额。<span class="tag tag-op">增强</span> ⚠️ 是否需 WebSocket 主动推送见待确认 Q4。</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════ 六、待确认项 ═══════════════════ -->
+<h2>六、待确认项（不臆造，需干系人拍板）</h2>
+<div class="card">
+<table class="q-table">
+  <thead>
+    <tr><th style="width:40px">#</th><th style="width:320px">待确认问题</th><th style="width:200px">建议默认</th><th>干系人</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Q1</td><td>理由枚举是否需后台可增删维护？还是代码固定预设 + 「其他」自由填？</td><td>固定预设 + 其他自由填（本期不做配置页）</td><td>@产品 / @研发</td></tr>
+    <tr><td>Q2</td><td>是否支持批量赠扣（一次操作多个用户）？</td><td><b style="color:#2e7d32">✓ 已确认：本期即为批量操作（选多人+统一数量）</b></td><td>@产品（已拍板）</td></tr>
+    <tr><td>Q3</td><td>reason / operator 如何落库？复用 description 还是新增独立字段？</td><td>新增 reason + operator 独立字段（检索/展示更清晰）</td><td>@研发</td></tr>
+    <tr><td>Q4</td><td>App 总额变化：进页拉取足够，还是需要 WebSocket 主动推送？</td><td>进页拉取最新（被动刷新）</td><td>@研发</td></tr>
+    <tr><td>Q5</td><td>扣除余额不足：直接拒绝，还是允许扣到 0（舍去超出部分）？</td><td><b style="color:#2e7d32">✓ 已确认：允许扣成负数，后台不做阻拦</b></td><td>@产品（已拍板）</td></tr>
+    <tr><td>Q6</td><td>批量赠送是否计入累计积分（参与等级计算）？</td><td>计入 total_points，与 earn 一致</td><td>@产品</td></tr>
+    <tr><td>Q7</td><td>操作人账号体系？后台是否有现成登录态可获取 operator？</td><td>复用现有后台管理员登录态</td><td>@研发</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ═══════════════════ 七、存量资产清单 ═══════════════════ -->
+<h2>七、存量资产清单（已核对，避免重复建设）</h2>
+<div class="card">
+<div class="note" style="margin-top:0">
+  <b>后端：</b><code>泰小虎智能体后端/app/data_service.py</code> — 积分体系完整（user_points / point_transactions / earn_points / consume_points / source 枚举含 'admin'）。<br>
+  <b>平台端后台：</b><code>泰小虎智能体后端/app/templates/admin_points.html</code> — 积分账户只读页（存量）。<b>本期不在该页做单用户赠扣</b>，改为在「App管理」页签下新增「虎力值管理」（批量操作 + 操作记录）。<br>
+  <b>App 原型：</b><code>平铺设计原型/power-record-filled.html</code> — 虎力值变动记录页（有 .pr-reason 样式但未使用，无理由列）。<br>
+  <b>关联文档：</b><code>泰小虎智能体后端/req-points-system.html</code>（积分体系需求）、<code>req-points-shop.html</code>（积分商城需求）。
+</div>
+</div>
+
+<div class="note" style="margin-top:28px;border-top:1px dashed #cfd8dc;padding-top:14px;">
+  生成时间：2026-07-28 ｜ 依据：用户口述需求 ｜ 下一步：Step 3 可交互原型 → Step 5 PRD
+</div>
+
+</body>
+</html>
