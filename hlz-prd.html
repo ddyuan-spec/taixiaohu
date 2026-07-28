@@ -440,7 +440,7 @@
 <!-- ═══════════ 七、关键边界检查清单 ═══════════ -->
 <h2>七、关键边界设计检查清单</h2>
 <div class="card">
-<table><thead><tr><th style="width:220px">检查项</th><th>结论 / 处理方式</th></tr></thead><tbody><tr><td>网络异常（弱网/断网/500）</td><td>网络异常→提示「网络异常」；不自动重试，以实际结果为准。</td></tr><tr><td>未登录 / 无权限</td><td>未登录跳转登录页；无虎力值管理权限 → 页面显示「无权访问」</td></tr><tr><td>空状态</td><td>操作记录空→「暂无操作记录」；人员空确认→「请至少选一位用户」。</td></tr><tr><td>极限值</td><td>人数上限 ⚠️ 待确认 @研发（建议200）；数量上限 ⚠️（建议99999）；理由≤50字</td></tr><tr><td>并发防重</td><td>提交后立即 disabled 防重复；后端建议 request_id 幂等（⚠️ 待确认 @研发）。</td></tr><tr><td>扣除负数余额</td><td>允许扣成负数不阻拦；负数余额 App 正常显示（⚠️ 待确认 @设计）。</td></tr><tr><td>逆向流 / 撤销</td><td>本期不做撤销/回退功能。误操作可通过再次赠送/扣除修正（产生新的操作记录）</td></tr></tbody></table>
+<table><thead><tr><th style="width:220px">检查项</th><th>结论 / 处理方式</th></tr></thead><tbody><tr><td>网络异常（弱网/断网/500）</td><td>网络异常→提示「网络异常」；不自动重试，以实际结果为准。</td></tr><tr><td>未登录 / 无权限</td><td>未登录跳转登录页；无虎力值管理权限 → 页面显示「无权访问」</td></tr><tr><td>空状态</td><td>操作记录空→「暂无操作记录」；人员空确认→「请至少选一位用户」。</td></tr><tr><td>极限值</td><td>人数上限 ≤ 200（⚠️ 待确认 @研发）；数量上限 ≤ 99,999（已确认）；理由 ≤ 50 字</td></tr><tr><td>并发防重</td><td>提交后立即 disabled 防重复；后端建议 request_id 幂等（⚠️ 待确认 @研发）。</td></tr><tr><td>扣除负数余额</td><td>允许扣成负数不阻拦；负数余额 App 正常显示（⚠️ 待确认 @设计）。</td></tr><tr><td>逆向流 / 撤销</td><td>本期不做撤销/回退功能。误操作可通过再次赠送/扣除修正（产生新的操作记录）</td></tr></tbody></table>
 </div>
 
 <!-- ═══════════ 八、文档维护与变更规范 ═══════════ -->
@@ -456,7 +456,7 @@
 <!-- ═══════════ 九、待确认项汇总 ═══════════ -->
 <h2>九、待确认项汇总</h2>
 <div class="card">
-<table><thead><tr><th style="width:30px">#</th><th style="width:320px">待确认事项</th><th style="width:150px">建议 / 当前立场</th><th>干系人</th></tr></thead><tbody><tr><td>1</td><td>理由字典来源（系统/表/接口）？不新建配置页，需确认归属（已有能力）。</td><td>取系统既有赠扣理由字典（代码固定预设 + 其他自由填）</td><td>@研发</td></tr><tr><td>2</td><td>单次批量操作人数上限？</td><td>建议 200</td><td>@研发</td></tr><tr><td>3</td><td>单次赠送/扣除数量上限？</td><td>建议 99,999</td><td>@研发</td></tr><tr><td>4</td><td>虎力值管理员权限角色？复用现有还是新建？</td><td>建议复用现有管理员角色 + 新增权限点</td><td>@研发</td></tr><tr><td>5</td><td>后端是否做 request_id 幂等防重？</td><td>建议做</td><td>@研发</td></tr><tr><td>6</td><td>App 端负数余额的展示样式（颜色/图标/提示文案）？</td><td>待设计输出</td><td>@设计</td></tr><tr><td>7</td><td>用户 ID 的格式（U_xxx 前缀 or 纯数字）？</td><td>⚠️ 待确认 @研发</td><td>@研发</td></tr><tr><td>8</td><td>埋点：是否需要新增 admin_operate 类事件？还是现有事件已覆盖？</td><td>需从 v2.3 既有事件中选取或走新增评审</td><td>@研发/@数据分析</td></tr></tbody></table>
+<table><thead><tr><th style="width:30px">#</th><th style="width:320px">待确认事项</th><th style="width:150px">建议 / 当前立场</th><th>干系人</th></tr></thead><tbody><tr><td>1</td><td>理由字典来源（系统/表/接口）？不新建配置页，需确认归属（已有能力）。</td><td>取系统既有赠扣理由字典（代码固定预设 + 其他自由填）</td><td>@研发</td></tr><tr><td>2</td><td>单次批量操作人数上限？</td><td>建议 200</td><td>@研发</td></tr><tr><td>3</td><td>单次赠送/扣除数量上限？</td><td>已确认 99,999</td><td>@研发</td></tr><tr><td>4</td><td>虎力值管理员权限角色？复用现有还是新建？</td><td>建议复用现有管理员角色 + 新增权限点</td><td>@研发</td></tr><tr><td>5</td><td>后端是否做 request_id 幂等防重？</td><td>建议做</td><td>@研发</td></tr><tr><td>6</td><td>App 端负数余额的展示样式（颜色/图标/提示文案）？</td><td>待设计输出</td><td>@设计</td></tr><tr><td>7</td><td>用户 ID 的格式（U_xxx 前缀 or 纯数字）？</td><td>⚠️ 待确认 @研发</td><td>@研发</td></tr><tr><td>8</td><td>埋点：是否需要新增 admin_operate 类事件？还是现有事件已覆盖？</td><td>需从 v2.3 既有事件中选取或走新增评审</td><td>@研发/@数据分析</td></tr></tbody></table>
 </div>
 
 <div style="margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--gray);">
