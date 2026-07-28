@@ -311,7 +311,7 @@
       <div class="bstep">
         <div class="bstep-title"><span class="bstep-no">1</span> 选择人员</div>
         <div class="sel-tools">
-          <input class="fr-input" id="inpPhone" placeholder="搜索手机号" style="width:170px">
+          <input class="fr-input" id="inpPhone" placeholder="手机号，多个用逗号隔开" style="width:200px">
           <button class="btn-ghost btn-sm" onclick="addByPhone()">搜索添加</button>
           <input class="fr-input" id="inpIds" placeholder="用户ID，多个用逗号隔开" style="width:220px">
           <button class="btn-ghost btn-sm" onclick="addByIds()">添加</button>
@@ -688,10 +688,14 @@ function removeUser(uid){
 function addByPhone(){
   const v = document.getElementById('inpPhone').value.trim();
   if(!v){ showToast('请输入手机号','err'); return; }
-  const u = userBase.find(x=>x.phone.includes(v));
-  if(!u){ showToast('未找到匹配用户','err'); return; }
-  addUser(u);
-  showToast('已添加 '+u.name);
+  const phones = v.split(/[,，\s]+/).filter(Boolean);
+  let added=0; const miss=[];
+  phones.forEach(ph=>{
+    const u = userBase.find(x=>x.phone.includes(ph));
+    if(u){ addUser(u); added++; } else { miss.push(ph); }
+  });
+  if(added) showToast('已添加 '+added+' 人'+(miss.length?'，未找到：'+miss.join(','):''), miss.length?'err':'success');
+  else if(miss.length) showToast('未找到：'+miss.join(','),'err');
 }
 function addByIds(){
   const v = document.getElementById('inpIds').value.trim();
