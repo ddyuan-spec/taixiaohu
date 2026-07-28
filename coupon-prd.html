@@ -46,7 +46,7 @@ li{margin:4px 0}
 <div class="wrap">
 
 <h1>泰小虎优惠券体系重构 · 需求文档（PRD）</h1>
-<div class="meta">文档版本：V1.0.26 ｜ 创建时间：2026-07-27 ｜ 更新时间：2026-07-28 ｜ 状态：草稿（待评审）｜ 所属项目：泰小虎 · 营销中台</div>
+<div class="meta">文档版本：V1.0.27 ｜ 创建时间：2026-07-27 ｜ 更新时间：2026-07-28 ｜ 状态：草稿（待评审）｜ 所属项目：泰小虎 · 营销中台</div>
 
 <!-- ==================== 一、文档基本信息 ==================== -->
 <h2>一、文档基本信息</h2>
@@ -629,12 +629,12 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <table>
 <thead><tr><th style="width:80px">起始状态</th><th style="width:90px">触发动作</th><th>操作方</th><th>前置条件</th><th style="width:80px">目标状态</th><th>原型按钮位置</th></tr></thead>
 <tbody>
-<tr><td>进行中</td><td>下架</td><td>商家端</td><td>仅可下架<b>自己创建</b>的优惠券</td><td>已下架</td><td>列表操作列「<span style="color:#d9363e">下架</span>」<br><span style="color:#2ba245;font-size:11px">✅ 原型已有（截图验证：进行中行显示红色"下架"）</span></td></tr>
-<tr><td>进行中</td><td>违规下架</td><td>平台端</td><td>可下架<b>所有商家</b>的优惠券（违规处置）<br>弹窗「违规下架」→ 输入违规原因（<b>必填</b>，≤200字）→ 确定</td><td>已下架</td><td>平台端列表操作列「<span style="color:#d9363e">违规下架</span>」→ 弹窗（标题"违规下架"，文本框 placeholder="请输入违规原因，必填"，取消/确定按钮）<br><span style="color:#2ba245;font-size:11px">✅ 原型已验证（截图确认：平台端弹窗含必填原因输入框）</span></td></tr>
-<tr><td>已下架</td><td>删除</td><td>商家端 / 平台端</td><td>① 仅可删除<b>本端操作下架</b>的券<br>② confirm 弹窗二次确认</td><td>已删除(不可恢复)</td><td>列表操作列「<span style="color:#d9363e">删除</span>」（替换原「编辑」按钮，已下架行无编辑需求）<br><span style="color:#2ba245;font-size:11px">✅ 方案确认：已下架/未开始行的操作列将原下架/编辑替换为「删除」，走删除交互</span></td></tr>
-<tr><td>未开始</td><td>删除</td><td>商家端 / 平台端</td><td>① 仅可删除<b>本端创建</b>的券<br>② confirm 弹窗二次确认</td><td>已删除(不可恢复)</td><td>列表操作列「<span style="color:#d9363e">删除</span>」（替换原「编辑」按钮）<br><span style="color:#2ba245;font-size:11px">✅ 方案确认：同上</span></td></tr>
+<tr><td>进行中</td><td>下架</td><td>商家端</td><td>仅可下架<b>自己创建</b>的优惠券</td><td>已下架</td><td>列表操作列「<span style="color:#d9363e">下架</span>」</td></tr>
+<tr><td>进行中</td><td>违规下架</td><td>平台端</td><td>可下架<b>所有商家</b>的优惠券（违规处置）<br>弹窗「违规下架」→ 输入违规原因（<b>必填</b>，≤200字）→ 确定</td><td>已下架</td><td>平台端列表操作列「<span style="color:#d9363e">违规下架</span>」→ 弹窗（标题"违规下架"，文本框 placeholder="请输入违规原因，必填"，取消/确定按钮）</td></tr>
+<tr><td>已下架</td><td>删除</td><td>商家端 / 平台端</td><td>① 仅可删除<b>本端操作下架</b>的券<br>② confirm 弹窗二次确认</td><td>已删除(不可恢复)</td><td>列表操作列「<span style="color:#d9363e">删除</span>」（替换原「编辑」按钮，已下架行无编辑需求）</td></tr>
+<tr><td>未开始</td><td>删除</td><td>商家端 / 平台端</td><td>① 仅可删除<b>本端创建</b>的券<br>② confirm 弹窗二次确认</td><td>已删除(不可恢复)</td><td>列表操作列「<span style="color:#d9363e">删除</span>」（替换原「编辑」按钮）</td></tr>
 <tr><td>进行中</td><td>—</td><td>—</td><td><b>禁止删除</b>，仅允许下架</td><td>—</td><td>—</td></tr>
-<tr><td>未开始</td><td>编辑</td><td>商家端 / 平台端</td><td>仅编辑本端创建的券</td><td>未开始（不变）</td><td>列表操作列「<span style="color:#d9363e">编辑</span>」<br><span style="color:#2ba245;font-size:11px">✅ 原型已有（截图验证：未开始行显示红色"编辑"）</span></td></tr>
+<tr><td>未开始</td><td>编辑</td><td>商家端 / 平台端</td><td>仅编辑本端创建的券</td><td>未开始（不变）</td><td>列表操作列「<span style="color:#d9363e">编辑</span>」</td></tr>
 <tr><td>—</td><td>到达有效结束时间</td><td>系统定时任务</td><td>当前日期 &gt; 有效结束时间</td><td>未生效</td><td>自动（无按钮）</td></tr>
 </tbody>
 </table>
