@@ -46,7 +46,7 @@ li{margin:4px 0}
 <div class="wrap">
 
 <h1>泰小虎优惠券体系重构 · 需求文档（PRD）</h1>
-<div class="meta">文档版本：V1.0 ｜ 创建时间：2026-07-27 ｜ 状态：草稿（待评审）｜ 所属项目：泰小虎 · 营销中台</div>
+<div class="meta">文档版本：V1.0.6 ｜ 创建时间：2026-07-27 ｜ 更新时间：2026-07-28 ｜ 状态：草稿（待评审）｜ 所属项目：泰小虎 · 营销中台</div>
 
 <!-- ==================== 一、文档基本信息 ==================== -->
 <h2>一、文档基本信息</h2>
@@ -426,12 +426,10 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>popup_close</td><td>弹窗关闭</td><td>L2</td><td>同上</td><td>获券弹窗关闭</td><td>弹窗名称、停留时长、用户选择</td><td>v2.3 既有</td></tr>
 <tr><td>coupon_arrival_push</td><td>系统发券触达</td><td>L3</td><td>同上</td><td>系统发放券并弹窗</td><td>券模板ID、券类型、触发源</td><td>⚠️ 待对齐 v2.3</td></tr>
 <tr><td>my_coupons_view</td><td>我的优惠券页曝光</td><td>L2</td><td>同上</td><td>进入我的优惠券</td><td>当前Tab(未使用/已使用/已过期)</td><td>⚠️ 待对齐</td></tr>
-<tr><td>my_coupons_tab_switch</td><td>券包Tab切换</td><td>L2</td><td>同上</td><td>切换三态</td><td>目标Tab</td><td>⚠️ 待对齐</td></tr>
 <tr><td>coupon_claim_click</td><td>商品详情领券点击</td><td>L3</td><td>同上</td><td>点"立即领券"</td><td>券模板ID、商品ID</td><td>⚠️ 待对齐</td></tr>
-<tr><td>coupon_redeem_result</td><td>用券核销结果</td><td>L3</td><td>同上</td><td>支付成功核销</td><td>券模板ID、抵扣金额、实付金额</td><td>⚠️ 待对齐</td></tr>
 </tbody>
 </table>
-<div class="warn">⚠️ 上述 <code>coupon_*</code> / <code>my_coupons_*</code> 为本期客户端埋点候选事件，<b>需对齐《泰小虎埋点表 v2.3》既有目录</b>；非既有事件须走埋点评审后补充定义，禁止凭空定版。引用参数一律用友盟后台中文名。</div>
+<div class="warn">⚠️ 上述 <code>coupon_*</code> / <code>my_coupons_*</code> 为本期客户端埋点候选事件，<b>需对齐《泰小虎埋点表 v2.3》既有目录</b>；非既有事件须走埋点评审后补充定义，禁止凭空定版。引用参数一律用友盟后台中文名。<br><b>本期已移除的埋点</b>：① <code>my_coupons_tab_switch</code>（券包Tab切换）— 无分析价值，不做埋点；② <code>coupon_redeem_result</code>（用券核销结果）— 核销数据后端核销流水表可直接统计，无需客户端埋点。</div>
 
 <h3>5.2 性能 / 安全 / 兼容</h3>
 <ul>
@@ -490,7 +488,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>2</td><td>KPI 具体阈值（发放量/核销率目标）</td><td>@干系人</td></tr>
 <tr><td>3</td><td>商家端数据范围隔离规则、是否开放看板/用户券查询、可否配发券活动</td><td>@干系人</td></tr>
 <tr><td>4</td><td>后端 API 接口契约（路径/字段/鉴权）</td><td>@技术Owner</td></tr>
-<tr><td>5</td><td>客户端埋点事件英文名对齐 v2.3（coupon_*/my_coupons_* 是否既有，非既有走评审）</td><td>@干系人</td></tr>
+<tr><td>5</td><td>客户端埋点事件英文名对齐 v2.3（剩余需对齐：coupon_arrival_push / my_coupons_view / coupon_claim_click 是否既有，非既有走评审；my_coupons_tab_switch、coupon_redeem_result 已裁定不做埋点）</td><td>@干系人</td></tr>
 <tr><td>6</td><td>老版本无获券弹窗时的兼容表现</td><td>@技术Owner</td></tr>
 <tr><td>7</td><td>券列表"日期期"列名是否为最终命名（原型沿用）</td><td>@干系人</td></tr>
 </tbody>
