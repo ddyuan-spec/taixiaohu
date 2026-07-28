@@ -242,9 +242,431 @@ def scan_diagram_consistency(text):
 
 
 # ---------------------------------------------------------------------------
-# 阶段4 扩展：表格质量扫描
-# 沉淀自 PRD 评审常见表格异常：结构错误、渲染塌陷、排版不一致
+# 阶段4 扩展：业务流程图一致性扫描
+# 沉淀自评审踩坑：PRD 内画的流程图与已梳理确认的泳道流程图偏离
+# 规则：没有已梳理的业务流程图 → 必须先画出来确认再写 PRD；
+#       有已梳理图 → PRD §三 流程图必须与其一致（节点/阶段/泳道不遗漏）
 # ---------------------------------------------------------------------------
+def scan_flow_diagram_consistency(html_text, plain_text):
+    """检测 PRD 业务流程图与已梳理基线流程图的一致性。
+
+    检测项：
+      🔴 必须修：
+        1) PRD 含「业务流程图」但无「已梳理/基线/横向泳道/全链路」等基线声明
+           → 说明 PRD 作者未基于已确认的流程图画图，可能脑补/简化
+        2) PRD 无业务流程图但正文有流程相关章节（§三）
+           → 缺少流程图，必须补
+      🟡 建议查：
+        3) 图中提取的关键节点词在正文功能模块列表中覆盖率低
+
+    返回 (warns, info_list)。
+    """
+    import re
+    warns = []
+    infos = []
+
+    # 1) 是否有业务流程图（SVG / img + 流程图关键词）
+    has_svg = '<svg' in html_text or ('<img' in html_text and '流程图' in html_text)
+    flow_section = bool(re.search(r'(业务|数据)?流程[图表]', plain_text))
+
+    if not has_svg and not flow_section:
+        return [], []  # 完全无流程图相关内容，不告警（可能本需求不需要）
+
+    # 2) 有流程图章节但无 SVG/img → 缺图
+    if flow_section and not has_svg:
+        warns.append(
+            "PRD 含「流程图」章节标题但未检测到 <svg> 或 <img> 图形内容；"
+            "必须补画业务流程图后再定稿")
+
+    # 3) 有图但无基线声明 → 核心告警
+    if has_svg:
+        baseline_kw = [
+            "已梳理", "横向泳道", "泳道图",
+            "与.*流程图一致", "依据.*梳理",
+            "流程图（横向", "流程图（泳道",
+            "本图与", "沿用.*流程图.*一致",
+        ]
+        # 找到流程图/SVG 在文中的位置，仅在该位置前后 600 字范围内
+        # 搜索基线声明（避免全文其他位置的"基线""全链路"等词误命中）
+        svg_pos = html_text.find('<svg')
+        if svg_pos < 0:
+            svg_pos = html_text.find('<img')
+        # 也尝试从 plain_text 中找"业务流程图"标题位置
+        flow_heading = re.search(r'业务流程[图表]', plain_text)
+        heading_pos = flow_heading.start() if flow_heading else -1
+
+        # 取流程图附近的纯文本窗口（取 SVG 位置和标题位置中较前的，往前/后各扩展）
+        search_start = max(0, min(
+            svg_pos if svg_pos > 0 else len(plain_text),
+            heading_pos if heading_pos > 0 else len(plain_text)
+        ) - 200)
+        search_end = min(len(plain_text), max(
+            svg_pos if svg_pos > 0 else 0,
+            heading_pos if heading_pos > 0 else 0
+        ) + 600)
+        nearby_text = plain_text[search_start:search_end]
+
+        has_baseline = any(re.search(kw, nearby_text) for kw in baseline_kw)
+        if not has_baseline:
+            warns.append(
+                "🔴 **业务流程图缺少基线声明**："
+                "PRD 中检测到流程图（<svg>），但未找到「已梳理/基线/横向泳道/全链路/"
+                "与XX流程图一致」等基线引用说明。"
+                "\n   规则：PRD §三 的业务流程图**必须基于已梳理确认的业务流程图绘制**"
+                "（如需求梳理阶段产出的横向泳道全链路图），不得自行简化或另画。"
+                "\n   修正：① 若已有已梳理的流程图 → 在流程图旁标注"
+                "「本图与《XX业务流程图（横向泳道）》一致」并确保节点/阶段/泳道对应；"
+                "② 若尚未梳理 → 必须**先停止写 PRD**，先画出业务流程图（推荐横向泳道）"
+                "经你确认后，再基于该图画 PRD 流程图。")
+
+        # 4) 提取图中文字节点与正文模块列表做覆盖度检查
+        # 从 SVG <text> 标签提取节点文字
+        svg_texts = re.findall(r'<text[^>]*>([^<]+)</text>', html_text)
+        # 过滤掉太短的和纯数字/符号的
+        nodes = [t.strip() for t in svg_texts
+                 if len(t.strip()) >= 4 and not re.match(r'^[\d\s·•\-\→↓↑←]+$',
+                                                           t.strip())]
+        if nodes:
+            # 从正文中提取功能模块词（通常在表格 or 列表中）
+            module_patterns = r'(优惠券?管理|发券活动|领券活动|券模板|核销|退券|' \
+                              r'数据看板|用户券|获券弹窗|发券引擎|配置券|' \
+                              r'添加券|编辑券|下架券|支付成功|触发条件|用券)'
+            modules_found = set(re.findall(module_patterns, plain_text))
+            # 节点中能匹配到模块词的数量
+            node_plain = ' '.join(nodes)
+            matched = sum(1 for m in modules_found if m in node_plain)
+            coverage = matched / len(modules_found) * 100 if modules_found else 100
+            if coverage < 50:
+                infos.append(
+                    f"流程图节点对正文功能模块覆盖度偏低（约 {coverage:.0f}%）；"
+                    f"建议确认图中是否遗漏关键环节（如制券模板库、发券引擎、"
+                    f"数据看板、核销引擎等后台/服务端环节）")
+            else:
+                infos.append(f"流程图节点对正文功能模块覆盖度约 {coverage:.0f}% ✅")
+
+    return warns, infos
+
+
+# ---------------------------------------------------------------------------
+# 阶段4 扩展：状态机完整性扫描
+# 沉淀自评审踩坑：状态机表缺前置条件、原型缺操作按钮、破坏性操作无守卫
+# ---------------------------------------------------------------------------
+def scan_state_machine(plain_text, html_text):
+    """检测 PRD 状态机与状态流转表的完整性。
+
+    检测项：
+      🔴 必须修：
+        1) 状态转换表中「任意→删除」「任意→下架」等宽泛起始状态
+           → 缺少状态守卫（如必须先下架才能删除）
+        2) 破坏性操作（删除/作废/回滚）的前置条件为空或仅写
+           「确认弹窗」→ 缺业务前置条件（如无已发放券/无关联活动）
+        3) 状态转换出现循环或同态转换（如 启用→下架 目标=下架）
+        4) 原型中列表操作列缺少状态变更按钮（如只有查看+删除，
+           缺下架/启用/编辑）
+      🟡 建议修：
+        5) 状态枚举未完整列出（仅有转换表，无「完整状态集」定义）
+        6) 子实体（发券活动/领券活动/用户券）的状态机仅为文字描述
+           无表格
+
+    返回 (warns, info_list)。
+    """
+    import re
+    warns = []
+    infos = []
+
+    # 检测是否有状态机相关内容
+    has_state = bool(re.search(r'状态[机流转]|状态流[转]|状态机', plain_text))
+    if not has_state:
+        return [], []
+
+    # ---- 1) 宽泛起始状态检测（任意→破坏性操作）----
+    loose_start = re.findall(
+        r'[^>](任意|所有|全部|无论.*状态)[^<]*\s*(删除|作废|回滚|下架)',
+        plain_text)
+    if loose_start:
+        for start, action in loose_start:
+            warns.append(
+                f"🔴 状态转换表存在宽泛起始状态「{start}→{action}」："
+                f"缺少状态守卫。通常「{action}」操作应限制在特定状态下执行"
+                f"（如仅「下架」状态可「删除」，或「启用」状态须先「下架」）。"
+                f"请补充每个状态的合法转换路径。")
+
+    # ---- 2) 破坏性操作前置条件检测 ----
+    destructive_ops = ['删除', '作废', '回滚', '强制结束']
+    weak_preconditions = ['确认弹窗', '用户确认', '弹窗确认', '二次确认',
+                          '运营操作', '管理员操作', '手动']
+    # 找状态转换表中的行模式：触发动作 + 前置条件 + 目标
+    for op in destructive_ops:
+        # 查找含该操作的行
+        rows = re.finditer(
+            rf'(?:^|\n)\s*\|[^\|]*{op}[^\|]*\|[^\|]*\|[^\|]*\|',
+            plain_text, re.MULTILINE)
+        for row in rows:
+            cell_text = row.group(0)
+            # 检查前置条件列是否过弱
+            is_weak = any(wp in cell_text for wp in weak_preconditions)
+            # 同时检查是否没有有意义的业务前置
+            has_business_guard = any(
+                kw in cell_text for kw in [
+                    '无已发放', '无关联', '已下架', '未开始',
+                    '零发放', '零领取', '无进行中', '先下架',
+                    '仅.*可删除', '仅.*可.*'])
+            if is_weak and not has_business_guard:
+                warns.append(
+                    f"🔴 破坏性操作「{op}」的前置条件过弱"
+                    f"（当前仅写确认类/运营操作类）："
+                    f"需补充**业务前置条件**（如「必须先下架」"
+                    f"「无已发放券」「无关联进行中活动」），"
+                    f"防止误操作导致数据不一致。")
+
+    # ---- 3) 循环/同态转换检测 ----
+    circular = re.findall(
+        r'\|(\w+[^\|]*)\|\s*(\w+)\s*\|\s*[^\|]*\s*\|\s*\1\s*\|',
+        plain_text)
+    if circular:
+        for src, action in circular:
+            if src != '任意':  # "任意"不算循环
+                warns.append(
+                    f"🔴 状态转换疑似循环/同态转换：「{src} → {action} → {src}」。"
+                    f"若非有意设计（如刷新重试），请检查是否起始/目标状态写反。")
+
+    # ---- 4) 原型操作列按钮检测（对 HTML 原型文件） ----
+    if html_text:
+        # 提取列表操作列中的按钮文字
+        act_buttons = re.findall(
+            r'class="(?:btn-link|act-btn)"[^>]*>([^<]+)</a>',
+            html_text)
+        # 常见状态变更操作关键词
+        state_actions = ['下架', '启用', '停用', '编辑', '发布', '撤回', '作废']
+        found_state_btns = [b for b in act_buttons if any(s in b for s in state_actions)]
+        has_delete = any('删除' in b or 'del' in b.lower() for b in act_buttons)
+
+        # 如果有删除按钮但无下架/启用按钮 → 可能缺失中间状态操作
+        if has_delete and not found_state_btns:
+            warns.append(
+                "🔴 **原型操作列缺状态变更按钮**："
+                "检测到列表操作列含「删除」按钮但不含「下架/启用/编辑」等"
+                "状态变更按钮。结合状态机规则（如须先下架再删除），"
+                "原型可能缺少关键操作入口。请核对原型与状态机是否一一对应。")
+        elif not act_buttons:
+            infos.append(
+                "原型列表未检测到操作列按钮（可能为纯展示页或截图原型）；"
+                "请人工确认操作按钮是否完整。")
+
+    # ---- 5) 状态枚举完整性 ----
+    has_enum_def = bool(re.search(
+        r'(完整状态集|状态枚举|状态定义|所有状态[:：])', plain_text))
+    has_table = bool(re.search(r'起始状态.*触发动作.*前置条件.*目标状态', plain_text))
+    if has_table and not has_enum_def:
+        infos.append(
+            "状态转换表存在但未明确定义「完整状态枚举」；"
+            "建议在表前列出所有状态值（如：草稿/启用/下架/已删除/已过期），"
+            "避免遗漏边界状态。")
+
+    # ---- 6) 子实体状态机格式 ----
+    sub_entities = ['发券活动状态', '领券活动状态', '用户券状态', '订单状态']
+    for entity in sub_entities:
+        m = re.search(rf'{entity}[:：]([^\n]+)', plain_text)
+        if m:
+            desc = m.group(1).strip()
+            # 仅文字描述（含箭头和中文）但无表格
+            has_arrows = '→' in desc or '->' in desc
+            if has_arrows and len(desc) < 80:
+                infos.append(
+                    f"「{entity}」仅为简短文字描述（<80字），"
+                    f"建议扩展为状态转换表格（起始/触发/前置/目标），"
+                    f"与主实体状态机保持一致颗粒度。")
+
+    return warns, infos
+
+
+# ---------------------------------------------------------------------------
+# 阶段4 扩展：功能范围标注扫描（已有 vs 新增/改动）
+# 沉淀自优惠券 PRD 评审：平台端已有功能（新增/编辑/下架/删除）被全量展开，
+# 用户要求「已有功能不赘述，仅写一句沿用现有功能；只写本期新增/改动」。
+# ---------------------------------------------------------------------------
+def scan_scope_tagging(plain_text):
+    """扫描 §四 功能需求详情下每个功能点（h3/h4 标题）是否标注了范围标签。
+
+    检测项分两级：
+      🔴 必须修：功能点标题所在小节附近无任何范围标注关键词
+                （已有 / 沿用现有功能 / 本期新增 / 新增 / 改动 / 沿用）
+      🟡 建议查：标注「沿用现有功能」却仍展开大段字段表/逻辑（疑似冗余）
+
+    返回 (warns, infos)。
+    """
+    import re as _re
+    # 仅当存在「四、功能需求」章节才激活
+    if not _re.search(r'四[、.、]\s*功能需求', plain_text):
+        return [], []
+
+    SCOPE_KW = ['已有', '沿用现有功能', '沿用', '本期新增', '本期改动',
+                '新增', '改动', '已存在', '存量']
+
+    # 提取 §四 章节正文（从「四、功能需求」到「五、」之前）
+    m_start = _re.search(r'四[、.、]\s*功能需求', plain_text)
+    m_end = _re.search(r'五[、.、]\s*非功能性|五[、.、]\s*', plain_text)
+    sec_start = m_start.start() if m_start else 0
+    sec_end = m_end.start() if m_end else len(plain_text)
+    section = plain_text[sec_start:sec_end]
+
+    # 切分功能点：以 h3/h4 标题（「N.N」编号）为界
+    # 匹配形如 4.1 / 4.1.1 / 4.2 的标题行
+    point_pattern = _re.compile(r'\n\s*(\d+\.\d+(?:\.\d+)?)\s*([^\n]+)')
+    points = list(point_pattern.finditer(section))
+
+    warns = []
+    infos = []
+
+    for i, pm in enumerate(points):
+        title = pm.group(2).strip()
+        # 当前功能点内容范围：从本标题到下一个标题
+        start = pm.end()
+        end = points[i + 1].start() if i + 1 < len(points) else sec_end
+        block = section[start:end]
+
+        # 跳过纯编号导航（如 "4.1 平台端后台" 这种大节也检查，但允许其下属小节点标注）
+        has_scope = any(kw in block[:200] or kw in title for kw in SCOPE_KW)
+        if not has_scope:
+            warns.append(
+                f"🔴 **功能点「{pm.group(1)} {title}」缺少范围标注**："
+                f"未标明「已有-沿用 / 本期新增 / 本期改动」。"
+                f"请按需求梳理范围补标——已有功能仅写一句「沿用现有功能」，"
+                f"本期新增/改动才详写。")
+        else:
+            # 标注了「沿用」但内容过长（> 400 字且无表格截断）→ 疑似冗余
+            if any(kw in block[:200] for kw in ['已有', '沿用现有功能', '沿用', '已存在', '存量']):
+                # 粗略判断：沿用块里是否含多行 <tr> 字段表
+                tr_count = block.count('<tr')
+                if tr_count >= 3:
+                    infos.append(
+                        f"💡 功能点「{pm.group(1)} {title}」标注为已有/沿用，"
+                        f"但仍展开 {tr_count} 行表格，疑似冗余——"
+                        f"已有功能建议压缩为一句「沿用现有功能，详见原型」。")
+
+    return warns, infos
+
+
+# ---------------------------------------------------------------------------
+# 阶段4 扩展：待确认项卫生 + 状态机前后矛盾扫描
+# 沉淀自优惠券 PRD v1.0.7 评审：
+#   - 状态机转换表出现「某状态既声明无编辑/编辑被替换，又保留该状态编辑行」
+#     → 前后矛盾（已下架等终态若禁止变相上架，应直接移除编辑行）
+#   - 待确认项提出「编辑能否变相上架 / 重新上架 / 重新启用」类提问
+#     → 与正文已定的「设计如此」决策冲突，不应作为待确认项
+# ---------------------------------------------------------------------------
+def scan_pending_hygiene(plain_text, html_text=""):
+    """待确认项卫生与状态机前后矛盾扫描。
+
+    检测项：
+      🔴 必须修：
+        1) 状态机转换表中，某起始状态既存在「编辑」行，又在其它行
+           声明「无编辑 / 编辑已替换 / 无…编辑需求」→ 前后矛盾
+        2) 同一「起始状态 → 触发动作」映射到不同目标状态 → 重复/写反
+        3) 待确认项提出「变相上架 / 重新上架 / 重新启用」类提问，
+           与正文已定「设计如此」决策冲突（这类问题不构成待确认项）
+      🟡 建议查：
+        4) 待确认项提及对已有/沿用功能动作的权限提问（编辑/下架/删除
+           + 是否允许/可否），疑似与现有功能冲突，需人工确认归属
+
+    返回 (warns, infos)。
+    """
+    import re as _re
+    warns = []
+    infos = []
+
+    def _strip_tags(s):
+        return _re.sub(r'<[^>]+>', '', s or '')
+
+    # ---------- A) 状态机转换表前后矛盾 ----------
+    if html_text:
+        tables = _re.findall(r'<table>.*?</table>', html_text, _re.DOTALL)
+        sm_table = None
+        for tb in tables:
+            if '起始状态' in tb and '触发动作' in tb:
+                sm_table = tb
+                break
+        if sm_table:
+            rows = _re.findall(r'<tr>(.*?)</tr>', sm_table, _re.DOTALL)
+            parsed = []
+            for r in rows:
+                cells = _re.findall(r'<td[^>]*>(.*?)</td>', r, _re.DOTALL)
+                cells = [_strip_tags(c) for c in cells]
+                if len(cells) >= 5:
+                    parsed.append({
+                        'from': cells[0].strip(),
+                        'action': cells[1].strip(),
+                        'to': cells[4].strip(),
+                        'btn': cells[-1].strip() if len(cells) > 5 else '',
+                    })
+            state_edit_rows = {}
+            state_noedit_claim = {}
+            for p in parsed:
+                s = p['from']
+                if s in ('—', '-', '', '任意'):
+                    continue
+                if p['action'] == '编辑':
+                    state_edit_rows.setdefault(s, p)
+                if _re.search(r'无编辑|编辑.*替换|无.*编辑需求|不提供.*编辑|编辑.*已替换',
+                              p['btn'] + ' ' + p['to']):
+                    state_noedit_claim.setdefault(s, p)
+            for s, er in state_edit_rows.items():
+                if s in state_noedit_claim:
+                    nc = state_noedit_claim[s]
+                    warns.append(
+                        f"🔴 状态机前后矛盾：状态「{s}」转换表既存在「编辑」行"
+                        f"（{er['from']}→{er['action']}→{er['to']}），"
+                        f"又在其它行声明「无编辑 / 编辑已替换」"
+                        f"（如：「{nc['btn'][:40]}」）。两者冲突——"
+                        f"终态若禁止变相上架，应直接移除编辑行，"
+                        f"而非同时保留编辑行与「无编辑」声明。")
+            # 同 (from, action) 不同 to
+            seen = {}
+            for p in parsed:
+                if p['from'] in ('—', '-', '', '任意') or p['action'] in ('—', '-', ''):
+                    continue
+                key = (p['from'], p['action'])
+                if key in seen and seen[key] != p['to']:
+                    warns.append(
+                        f"🔴 状态机前后矛盾：同一「{key[0]} → {key[1]}」"
+                        f"映射到不同目标状态（{seen[key]} 与 {p['to']}），"
+                        f"请核对是否写反或重复。")
+                else:
+                    seen[key] = p['to']
+
+    # ---------- B) 待确认项卫生 ----------
+    # B1) 与「设计如此」决策冲突：提出「变相上架 / 重新上架」类提问。
+    #     判定：relist 词附近同时含疑问词（？/是否/可否/能否/允许），
+    #           且不在否定语境（设计如此/非待确认/不构成待确认项/已裁定）。
+    #     否定说明句（如「结构上杜绝变相上架，故不构成待确认项」）会被排除。
+    relist_kw = _re.compile(r'变相上架|重新上架|重新启用|恢复上架')
+    interr = _re.compile(r'[？?]|是否|可否|能否|允许')
+    neg_ctx = _re.compile(r'不构成待确认项|非待确认|设计如此|已裁定|既定设计|为既定|不是待确认项')
+    for m in relist_kw.finditer(plain_text):
+        seg = plain_text[max(0, m.start() - 50): m.end() + 50]
+        if interr.search(seg) and not neg_ctx.search(seg):
+            warns.append(
+                f"🔴 待确认项与「设计如此」决策冲突（「…{seg.strip()}…」）："
+                f"若正文已裁定无「重新上架/启用」路径（下架即终态），"
+                f"则「变相上架/重新上架」类问题不构成待确认项，"
+                f"应写为既定设计说明，而非待确认项。")
+    # B2) 疑似与现有功能冲突（仅对真正的待确认项标记做宽松提示）
+    gen_markers = _re.findall(
+        r'⚠️\s*待确认[^<\n]{0,60}|待确认项[:：][^<\n]{0,60}|待确认：[^<\n]{0,60}',
+        plain_text)
+    conflict_kw = _re.compile(
+        r'(编辑|下架|删除|新增|上架|启用|停用).{0,10}(是否|能否|允许|可否|限制|禁止)')
+    for seg in gen_markers:
+        if conflict_kw.search(seg):
+            infos.append(
+                f"💡 待确认项疑似与现有功能冲突：「{seg.strip()}…」。"
+                f"若所问动作（编辑/下架/删除等）属已标「已有/沿用」功能，"
+                f"其是否允许应由既有实现决定；若属本期新增/改动，"
+                f"请标注「本期新增」并写清规则，而非含糊待确认。")
+
+    return warns, infos
+
+
 def scan_table_quality(html_text):
     """扫描 HTML 中所有 <table> 的结构/排版异常。
 
@@ -489,6 +911,10 @@ def main():
     dg_found, dg_check = scan_diagram_consistency(text)
     tq_struct, tq_style, tq_cnt = scan_table_quality(raw_html) if raw_html else ([], [], 0)
     rd_hits = scan_redundant_declarations(text)
+    fd_warns, fd_infos = scan_flow_diagram_consistency(raw_html if raw_html else html_text, text)
+    sm_warns, sm_infos = scan_state_machine(text, raw_html if raw_html else html_text)
+    st_warns, st_infos = scan_scope_tagging(text)
+    ph_warns, ph_infos = scan_pending_hygiene(text, raw_html if raw_html else html_text)
 
     if rl:
         print(f"### 🚫 红线词告警（{len(rl)} 处）")
@@ -551,6 +977,61 @@ def main():
     else:
         print("✅ 未发现冗余声明/免责块。")
 
+    # 业务流程图一致性扫描
+    if fd_warns or fd_infos:
+        print(f"### 🔄 业务流程图一致性（{len(fd_warns)} 告警 / {len(fd_infos)} 提示）")
+        for w in fd_warns:
+            print(f"- {w}")
+            print()
+        for i in fd_infos:
+            print(f"- 💡 {i}")
+        if not fd_warns:
+            print()
+    else:
+        pass  # 无流程图相关内容，静默跳过
+
+    # 状态机完整性扫描
+    if sm_warns or sm_infos:
+        print(f"### ⚙️ 状态机完整性（{len(sm_warns)} 告警 / {len(sm_infos)} 提示）")
+        for w in sm_warns:
+            print(f"- {w}")
+            print()
+        for i in sm_infos:
+            print(f"- 💡 {i}")
+        if not sm_warns:
+            print()
+    else:
+        pass  # 无状态机内容，静默跳过
+
+    # 功能范围标注扫描
+    if st_warns or st_infos:
+        print(f"### 🏷️ 功能范围标注（{len(st_warns)} 告警 / {len(st_infos)} 提示）")
+        for w in st_warns:
+            print(f"- ⚠️ {w}")
+        for i in st_infos:
+            print(f"- 💡 {i}")
+        print()
+        print("处理要求：§四 每个功能点须标注 已有-沿用 / 本期新增 / 本期改动；"
+              "已有功能仅写一句「沿用现有功能，详见原型」，不展开细节。")
+        print()
+    else:
+        print("✅ 全部功能点已标注范围（已有/新增/改动）。")
+
+    # 待确认项卫生 + 状态机前后矛盾扫描
+    if ph_warns or ph_infos:
+        print(f"### 🧹 待确认项卫生 / 状态机前后矛盾（{len(ph_warns)} 告警 / {len(ph_infos)} 提示）")
+        for w in ph_warns:
+            print(f"- {w}")
+            print()
+        for i in ph_infos:
+            print(f"- 💡 {i}")
+        print()
+        print("处理要求：待确认项不得与「设计如此/已有-沿用」决策冲突，"
+              "不得前后矛盾（状态机同一状态不能既声明无编辑又保留编辑行）。")
+        print()
+    else:
+        print("✅ 待确认项无与现有功能/设计决策冲突，状态机无前后矛盾。")
+
     # ---------- 结论 ----------
     print()
     print("## 结论")
@@ -579,11 +1060,13 @@ def main():
     if uncertain_hits:
         print(f"⚠️ **存在 {len(uncertain_hits)} 处待确认项**：须向用户澄清或保留「⚠️ 待确认 @干系人」占位，"
               "不得臆测填充。")
-    red_total = len(rl) + len(ut) + len(tv) + len(tq_struct) + len(rd_hits)
+    red_total = len(rl) + len(ut) + len(tv) + len(tq_struct) + len(rd_hits) + len(fd_warns) + len(sm_warns) + len(st_warns) + len(ph_warns)
     if red_total:
         print(f"⚠️ **阶段4 发现 {red_total} 处风险**（红线词 {len(rl)} / 待确认悬空 {len(ut)}"
               f" / 埋点规范 {len(tv)} / 表格结构异常 {len(tq_struct)}"
-              f" / 冗余声明 {len(rd_hits)}）："
+              f" / 冗余声明 {len(rd_hits)} / 流程图一致性 {len(fd_warns)}"
+              f" / 状态机完整性 {len(sm_warns)} / 功能范围标注 {len(st_warns)}"
+              f" / 待确认项卫生 {len(ph_warns)}）："
               "须逐项确认或修正后再定稿。")
     print()
 
