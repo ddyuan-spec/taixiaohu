@@ -113,11 +113,28 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .gi-item .pr{font-size:15px;font-weight:800;color:var(--bad)}
 /* 商品详情 */
 .pd-hero{height:240px;background:linear-gradient(135deg,#ffd9a0,#ffb5c2);display:flex;align-items:center;justify-content:center;font-size:64px}
-.pd-couponbar{display:flex;align-items:center;background:linear-gradient(135deg,#fff3e6,#ffe9ef);margin:10px 12px;padding:12px 14px;border-radius:12px;border:1px dashed var(--warn)}
-.pd-couponbar .txt{flex:1;font-size:13px;color:#7a4a1e}
-.pd-couponbar .txt b{color:var(--bad)}
-.pd-couponbar .lk{background:var(--bad);color:#fff;font-size:12px;font-weight:700;padding:7px 14px;border-radius:16px;cursor:pointer}
-.pd-couponbar .lk.done{background:var(--t4)}
+/* 商品详情 - 领券区（价格区下方，折叠条 + 横向可滑动券列表） */
+.pd-couponbar{margin:0 0 10px}
+.pd-coupon-fold{display:flex;align-items:center;background:linear-gradient(135deg,#fff3e6,#ffe9ef);margin:10px 12px;padding:12px 14px;border-radius:12px;border:1px dashed var(--warn);cursor:pointer;user-select:none}
+.pd-coupon-fold .txt{flex:1;font-size:13px;color:#7a4a1e}
+.pd-coupon-fold .txt b{color:var(--bad)}
+.pd-coupon-fold .arr{font-size:12px;color:var(--t4);transition:transform .2s;margin-left:4px}
+.pd-coupon-fold.open .arr{transform:rotate(180deg)}
+.pd-coupon-list{display:none;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:10px 12px 14px;gap:10px}
+.pd-coupon-list.show{display:flex}
+.pd-coupon-list::-webkit-scrollbar{height:4px}
+.pd-coupon-list::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px}
+.pd-ci{flex:0 0 auto;width:160px;background:linear-gradient(135deg,#fff,#fef9f3);border-radius:12px;border:1px solid #f0e0d0;overflow:hidden;position:relative}
+.pd-ci::before{content:'';position:absolute;top:0;left:0;right:0;height:28px;background:linear-gradient(135deg,#E5484D,#ff6b6a);border-radius:12px 12px 0 0}
+.pd-ci .ci-amt{position:relative;padding:6px 10px 0;color:#fff;font-size:20px;font-weight:800;z-index:1;line-height:1}
+.pd-ci .ci-amt small{font-size:11px;font-weight:400}
+.pd-ci .ci-body{padding:8px 10px 10px}
+.pd-ci .ci-nm{font-size:12px;font-weight:600;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pd-ci .ci-cond{font-size:11px;color:#888;margin-top:2px}
+.pd-ci .ci-lk{display:block;width:100%;margin-top:8px;border:none;border-radius:14px;padding:6px 0;font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all .15s}
+.pd-ci .ci-lk.claim{background:var(--bad);color:#fff}
+.pd-ci .ci-lk.claim:hover{background:#d63a40}
+.pd-ci .ci-lk.done{background:#eee;color:#aaa;cursor:default}
 .pd-info{padding:14px 16px}
 .pd-info .nm{font-size:18px;font-weight:700}
 .pd-info .pr{font-size:22px;color:var(--bad);font-weight:800;margin-top:6px}
@@ -276,13 +293,45 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
     <section class="page" id="p_c5">
       <div class="navbar"><div class="back" onclick="back()">‹</div><div class="title">商品详情</div></div>
       <div class="pd-hero">🦐</div>
-      <div class="pd-couponbar">
-        <div class="txt" id="c5Hint">🎁 领券立享 <b>新人立减 15 元</b>，下单自动可用</div>
-        <div class="lk" id="c5Lk" onclick="c5Claim()">立即领券</div>
-      </div>
       <div class="pd-info">
         <div class="nm">虾·泰香脆Q56 泰国香米脆脆虾 56g</div>
         <div class="pr">¥79<small> / 盒</small></div>
+      </div>
+      <!-- 领券区：价格区下方（PRD 4.3.4 对齐） -->
+      <div class="pd-couponbar">
+        <div class="pd-coupon-fold" id="c5Fold" onclick="toggleC5Coupons()">
+          <span class="txt">🎁 领券立享 <b>新人立减15元</b> 等 <b id="c5CouponCount">3</b> 张可用</span>
+          <span class="arr">▸</span>
+        </div>
+        <div class="pd-coupon-list" id="c5CouponList">
+          <!-- 券1：新人立减（未领） -->
+          <div class="pd-ci" data-ci="MC002">
+            <div class="ci-amt">¥<span class="ci-val">15</span><small> 减</small></div>
+            <div class="ci-body">
+              <div class="ci-nm">新人立减券</div>
+              <div class="ci-cond">满 29 可用</div>
+              <button class="ci-lk claim" onclick="c5ClaimItem(this,'MC002',15)">立即领取</button>
+            </div>
+          </div>
+          <!-- 券2：满减券（未领） -->
+          <div class="pd-ci" data-ci="MC003">
+            <div class="ci-amt">¥<span class="ci-val">10</span><small> 减</small></div>
+            <div class="ci-body">
+              <div class="ci-nm">满额专享券</div>
+              <div class="ci-cond">满 99 可用</div>
+              <button class="ci-lk claim" onclick="c5ClaimItem(this,'MC003',10)">立即领取</button>
+            </div>
+          </div>
+          <!-- 券3：已领取示例 -->
+          <div class="pd-ci" data-ci="MC004">
+            <div class="ci-amt">¥<span class="ci-val">5</span><small> 减</small></div>
+            <div class="ci-body">
+              <div class="ci-nm">无门槛券</div>
+              <div class="ci-cond">无门槛</div>
+              <button class="ci-lk done" disabled>已领取</button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="sec-t" style="margin:4px 16px 0">规格</div>
       <div class="spec">
@@ -516,18 +565,41 @@ function showArrival(){
 }
 
 /* ============ C5 商品详情 ============ */
-function resetC5(){ const lk=document.getElementById('c5Lk'); lk.textContent='立即领券'; lk.classList.remove('done'); }
-function c5Spec(el){ document.querySelectorAll('.spec .sp').forEach(s=>s.classList.remove('on')); el.classList.add('on'); }
-function c5Claim(){
-  const lk = document.getElementById('c5Lk');
-  if(lk.classList.contains('done')){ toast('您已领取该券'); return; }
-  // 领取「新人立减15」成功
-  document.getElementById('claimModalSub').textContent = '「新人立减15」恭喜！已放入您的卡包';
-  document.getElementById('claimModalBtns').innerHTML =
-    '<button class="btn sm" onclick="closeClaimModalAndBuy()" style="width:100%">立即购买</button>';
-  document.getElementById('claimModal').classList.add('show');
-  lk.textContent='已领取'; lk.classList.add('done');
+function resetC5(){
+  // 重置所有券按钮
+  document.querySelectorAll('#c5CouponList .pd-ci').forEach(ci=>{
+    const lk = ci.querySelector('.ci-lk');
+    if(!lk.disabled){ lk.textContent='立即领取'; lk.classList.remove('done'); lk.classList.add('claim'); }
+  });
+  // 默认折叠
+  const fold=document.getElementById('c5Fold'); const list=document.getElementById('c5CouponList');
+  if(fold)fold.classList.remove('open'); if(list)list.classList.remove('show');
 }
+function c5Spec(el){ document.querySelectorAll('.spec .sp').forEach(s=>s.classList.remove('on')); el.classList.add('on'); }
+/* 折叠/展开券列表 */
+function toggleC5Coupons(){
+  const fold=document.getElementById('c5Fold');
+  const list=document.getElementById('c5CouponList');
+  if(!fold||!list)return;
+  const isOpen=list.classList.contains('show');
+  if(isOpen){ fold.classList.remove('open'); list.classList.remove('show'); }
+  else{ fold.classList.add('open'); list.classList.add('show'); }
+}
+/* 单张券领取 */
+function c5ClaimItem(btn, couponId, amt){
+  if(btn.classList.contains('done')) return;
+  // 模拟领取成功
+  btn.textContent='已领取';
+  btn.classList.remove('claim');
+  btn.classList.add('done');
+  btn.disabled=true;
+  // 弹「已放入卡包」提示
+  document.getElementById('claimModalSub').textContent = '恭喜！已放入您的卡包（¥'+amt+' 减）';
+  document.getElementById('claimModalBtns').innerHTML =
+    '<button class="btn sm" onclick="closeClaimModal()" style="width:100%">查看我的券</button>';
+  document.getElementById('claimModal').classList.add('show');
+}
+function c5Claim(){ /* 兼容旧调用 */ }
 function closeClaimModalAndBuy(){ closeModal('claimModal'); orderSel=['MC002']; go('p_c6'); }
 
 /* C5 底栏「立即购买」→ 进 C6 */
