@@ -180,18 +180,60 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <h3>3.4 状态机与状态流转</h3>
 <div class="sec">
-<p><b>优惠券配置状态</b>（平台/商家后台券列表）：</p>
+<p><b>完整状态枚举（优惠券配置）</b>：</p>
+<p>启用（默认，可参与发券/领券活动） / 下架（不可被新活动关联，已有发放仍可用） / 已删除（不可恢复） / 已过期（有效期结束自动进入）。</p>
+
+<p><b>优惠券配置状态转换表</b>（平台/商家后台券列表 + 详情页）：</p>
+<table>
+<thead><tr><th>起始状态</th><th>触发动作</th><th>前置条件</th><th>目标状态</th><th>原型按钮位置</th></tr></thead>
+<tbody>
+<tr><td>草稿/新建</td><td>保存并发布</td><td>必填字段校验通过</td><td>启用</td><td>D2 新建页「提交」按钮</td></tr>
+<tr><td>启用</td><td>下架</td><td>无已发放券 或 允许已有券继续使用至过期 ⚠️ 待确认 @干系人</td><td>下架</td><td>D1 详情页「下架」按钮<br><span style="color:#e8932b;font-size:11px">⚠️ 列表操作列当前缺「下架」按钮，需补充</span></td></tr>
+<tr><td>下架</td><td>重新启用</td><td>仍在有效期内</td><td>启用</td><td>D1 详情页「启用」按钮<br><span style="color:#e8932b;font-size:11px">⚠️ 列表操作列当前缺「启用」按钮，需补充</span></td></tr>
+<tr><td>下架</td><td>删除</td><td>① 必须先处于「下架」状态；<br>② 无已发放用户券；<br>③ 无关联进行中的发券/领券活动；<br>④ confirm 弹窗二次确认</td><td>已删除(不可恢复)</td><td>列表操作列「删除」<br><span style="color:#e8932b;font-size:11px">⚠️ 当前删除逻辑仅 confirm→filter，缺前置校验 ①②③</span></td></tr>
+<tr><td>启用</td><td>编辑</td><td>仅允许编辑非核心字段（如商品范围扩展）⚠️ 待确认 @干系人</td><td>启用（版本递增）</td><td><span style="color:#e8932b;font-size:11px">❌ 列表操作列缺「编辑」按钮</span></td></tr>
+<tr><td>任意</td><td>到达有效期截止</td><td>系统定时任务</td><td>已过期</td><td>自动（无按钮）</td></tr>
+</tbody>
+</table>
+
+<div class="warn">⚠️ <b>原型与状态机不一致（须修正）</b>：
+列表操作列当前仅有「查看」+「删除」两个按钮——缺少「下架」「启用」「编辑」三个关键状态变更入口。
+按上述状态机，用户无法在列表页执行 启用↔下架 切换和 编辑 操作。
+<b>建议方案</b>：列表操作列补全为「查看 / 编辑 / 下架或启用（随状态切换文案） / 删除」，
+且「删除」按钮在「启用」状态下置灰+提示"请先下架"。</div>
+
+<p><b>发券活动状态转换表</b>：</p>
 <table>
 <thead><tr><th>起始状态</th><th>触发动作</th><th>前置条件</th><th>目标状态</th></tr></thead>
 <tbody>
-<tr><td>新建(默认启用)</td><td>下架</td><td>运营操作</td><td>下架</td></tr>
-<tr><td>下架</td><td>启用</td><td>运营操作</td><td>启用</td></tr>
-<tr><td>任意</td><td>删除</td><td>确认弹窗</td><td>已删除(不可恢复)</td></tr>
+<tr><td>未开始</td><td>到达开始时间</td><td>系统定时任务</td><td>进行中</td></tr>
+<tr><td>进行中</td><td>到达结束时间</td><td>系统定时任务</td><td>已结束</td></tr>
+<tr><td>未开始 / 进行中</td><td>手动停用</td><td>运营操作 + confirm</td><td>停用</td></tr>
+<tr><td>停用</td><td>手动启用</td><td>仍在活动时间范围内</td><td>未开始 / 进行中</td></tr>
 </tbody>
 </table>
-<p><b>发券活动状态</b>：未开始 →（到达开始发券时间）进行中 →（结束）已结束。手动可置为停用。</p>
-<p><b>领券活动状态</b>：未开始 →（到达活动开始时间）进行中 →（到达结束时间）已结束；可手动启用/停用。</p>
-<p><b>用户券状态</b>（我的优惠券三态）：未使用 →（支付成功）已使用；未使用 →（超过有效期）已过期。</p>
+
+<p><b>领券活动状态转换表</b>：</p>
+<table>
+<thead><tr><th>起始状态</th><th>触发动作</th><th>前置条件</th><th>目标状态</th></tr></thead>
+<tbody>
+<tr><td>未开始</td><td>到达开始时间</td><td>系统定时任务</td><td>进行中</td></tr>
+<tr><td>进行中</td><td>到达结束时间</td><td>系统定时任务</td><td>已结束</td></tr>
+<tr><td>未开始 / 进行中</td><td>手动停用</td><td>运营操作 + confirm</td><td>停用</td></tr>
+<tr><td>停用</td><td>手动启用</td><td>仍在活动时间范围内</td><td>未开始 / 进行中</td></tr>
+</tbody>
+</table>
+
+<p><b>用户券状态转换表</b>（我的优惠券三态 + 边界）：</p>
+<table>
+<thead><tr><th>起始状态</th><th>触发动作</th><th>前置条件</th><th>目标状态</th></tr></thead>
+<tbody>
+<tr><td>未使用</td><td>支付成功核销</td><td>订单支付完成 + 底价保护校验通过</td><td>已使用</td></tr>
+<tr><td>未使用</td><td>超过有效期</td><td>系统定时任务（每日扫描）</td><td>已过期</td></tr>
+<tr><td>已使用</td><td>订单退款回滚</td><td>退款成功 + 券仍在有效期内</td><td>未使用（回滚）</td></tr>
+<tr><td>已使用</td><td>订单退款回滚</td><td>退款成功 + 券已过期</td><td>已过期（回滚）</td></tr>
+</tbody>
+</table>
 </div>
 
 <h3>3.5 券类型字段映射表</h3>
