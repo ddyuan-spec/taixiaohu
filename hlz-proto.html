@@ -40,7 +40,6 @@
   /* Breadcrumb */
   .crumb{font-size:12px;color:#999;margin-bottom:14px}
   .crumb span{color:#333}
-  .crumb a{color:#7C3AED;cursor:pointer;text-decoration:none}
 
   /* Page Header */
   .phead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
@@ -49,10 +48,11 @@
 
   /* Filter Bar */
   .filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-  .filter-bar input,.filter-bar select{height:32px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:12px;color:#333;outline:none;background:#fff}
+  .filter-bar input,.filter-bar select{height:32px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:12px;color:#333;line:none;background:#fff}
   .filter-bar input:focus,.filter-bar select:focus{border-color:#7C3AED}
-  .filter-bar input{width:180px}
-  .filter-bar select{width:120px}
+  .filter-bar input[type=text]{width:150px}
+  .filter-bar input[type=date]{width:140px}
+  .filter-bar select{width:110px}
   .fb-label{font-size:12px;color:#666;white-space:nowrap}
 
   /* Buttons */
@@ -87,33 +87,44 @@
   /* Tags */
   .tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11.5px;line-height:1.6}
   .tag-green{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
-  .tag-red{background:#fef2f2;color:#dc2626;border:1px solid:#fecaca}
+  .tag-red{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
   .tag-gray{background:#f4f4f5;color:#909399;border:1px solid #d3d4d6}
   .tag-blue{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
 
-  /* ===== 操作表单（赠送/扣除）===== */
+  /* ===== 弹窗（批量/明细） ===== */
   .form-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:center;justify-content:center}
   .form-overlay.show{display:flex}
-  .form-dlg{background:#fff;border-radius:8px;width:520px;max-width:92vw;box-shadow:0 12px 40px rgba(0,0,0,.2);display:flex;flex-direction:column}
+  .form-dlg{background:#fff;border-radius:8px;width:520px;max-width:94vw;box-shadow:0 12px 40px rgba(0,0,0,.2);display:flex;flex-direction:column;max-height:92vh}
   .form-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #e8e8e8}
   .form-title{font-size:16px;font-weight:600;color:#222}
   .form-close{background:none;border:none;font-size:20px;color:#c0c4cc;cursor:pointer;padding:2px 6px;border-radius:4px}
   .form-close:hover{color:#606266;background:#f0f0f0}
-  .form-body{padding:20px 24px}
+  .form-body{padding:20px 24px;overflow-y:auto}
   .form-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
   .fr-label{width:80px;font-size:13px;color:#606266;line-height:32px;flex-shrink:0;text-align:right;padding-right:8px}
   .fr-body{flex:1;min-width:0}
-  .fr-input{height:34px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:13px;width:100%;outline:none}
+  .fr-input{height:34px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:13px;width:100%;line:none}
   .fr-input:focus{border-color:#7C3AED}
   select.fr-input{appearance:auto}
   .fr-hint{font-size:12px;color:#c0c4cc;margin-top:4px}
-  .user-info-card{background:#f8f7ff;border:1px solid #ede9fe;border-radius:6px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
-  .user-avatar{width:40px;height:40px;border-radius:50%;background:#7C3AED;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
-  .user-name{font-size:14px;font-weight:600;color:#222}
-  .user-id{font-size:12px;color:#999;margin-top:2px}
-  .user-balance{margin-left:auto;text-align:right}
-  .user-balance .lbl{font-size:11px;color:#999}
-  .user-balance .val{font-size:18px;font-weight:700;color:#7C3AED}
+
+  /* 批量弹窗专用 */
+  .batch-dlg{width:660px}
+  .bstep{border:1px solid #f0f0f0;border-radius:6px;padding:14px 16px;margin-bottom:14px;background:#fafbfc}
+  .bstep-title{font-size:14px;font-weight:600;color:#222;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .bstep-no{width:22px;height:22px;border-radius:50%;background:#7C3AED;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+  .sel-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .sel-box{background:#fff;border:1px dashed #dcdfe6;border-radius:6px;padding:10px 12px;min-height:46px}
+  .sel-count{font-size:12px;color:#666;margin-bottom:8px}
+  .sel-count b{color:#7C3AED;font-size:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:#f3f0ff;color:#7C3AED;border:1px solid #ede9fe;border-radius:14px;padding:4px 4px 4px 12px;font-size:12px}
+  .chip-x{background:none;border:none;color:#7C3AED;cursor:pointer;font-size:13px;line-height:1;padding:0 4px}
+  .chip-x:hover{color:#dc2626}
+  .import-area{margin-top:12px;border-top:1px solid #f0f0f0;padding-top:12px}
+  .import-tip{font-size:12px;color:#909399;margin-bottom:8px}
+  .detail-meta{font-size:12px;color:#666;margin-bottom:12px;display:flex;gap:18px;flex-wrap:wrap}
+  .detail-meta b{color:#333}
   .form-footer{display:flex;justify-content:center;gap:12px;padding:16px 20px;border-top:1px solid #f0f0f0}
   .form-footer .btn-primary,.form-footer .btn-danger{padding:0 28px}
 
@@ -191,319 +202,189 @@
     <div class="logo">泰小虎后台</div>
     <span class="sys">运营管理</span>
     <div class="right">
-      <button class="view-toggle" onclick="toggleView()">📱 切换到App预览</button>
+      <button class="view-toggle" onclick="toggleView(true)">📱 切换到App预览</button>
       <span>🔔</span><span>👤</span>
     </div>
   </div>
 
   <div class="layout">
-    <!-- 侧栏导航 — 对齐截图1 -->
+    <!-- 侧栏导航 — 对齐截图1，虎力值管理置于「App管理」页签下 -->
     <div class="side">
       <div class="group">
         <div class="gtitle">▸ 内容管理</div>
-        <a href="#">对话管理</a>
-        <a href="#">知识库</a>
-        <a href="#">反馈管理</a>
+        <a href="#" onclick="setActiveSide(this)">对话管理</a>
+        <a href="#" onclick="setActiveSide(this)">知识库</a>
+        <a href="#" onclick="setActiveSide(this)">反馈管理</a>
+      </div>
+      <div class="group">
+        <div class="gtitle">▸ App管理</div>
+        <a href="#" class="active" onclick="setActiveSide(this)">虎力值管理</a>
+        <a href="#" onclick="setActiveSide(this)">版本管理</a>
+        <a href="#" onclick="setActiveSide(this)">开屏配置</a>
       </div>
       <div class="group">
         <div class="gtitle">▸ 运营配置</div>
-        <a href="#" class="active" onclick="showPage('points',event)">积分管理</a>
-        <a href="#">优惠券管理</a>
-        <a href="#">活动配置</a>
-        <a href="#">商品管理</a>
+        <a href="#" onclick="setActiveSide(this)">优惠券管理</a>
+        <a href="#" onclick="setActiveSide(this)">活动配置</a>
+        <a href="#" onclick="setActiveSide(this)">商品管理</a>
       </div>
       <div class="group">
         <div class="gtitle">▸ 用户体系</div>
-        <a href="#">用户列表</a>
-        <a href="#">等级权益</a>
-        <a href="#">任务配置</a>
+        <a href="#" onclick="setActiveSide(this)">用户列表</a>
+        <a href="#" onclick="setActiveSide(this)">等级权益</a>
+        <a href="#" onclick="setActiveSide(this)">任务配置</a>
       </div>
       <div class="group">
         <div class="gtitle">▸ 数据分析</div>
-        <a href="#">数据看板</a>
-        <a href="#">埋点管理</a>
+        <a href="#" onclick="setActiveSide(this)">数据看板</a>
+        <a href="#" onclick="setActiveSide(this)">埋点管理</a>
       </div>
       <div class="group">
         <div class="gtitle">▸ 系统设置</div>
-        <a href="#">账号权限</a>
-        <a href="#">操作日志</a>
+        <a href="#" onclick="setActiveSide(this)">账号权限</a>
+        <a href="#" onclick="setActiveSide(this)">操作日志</a>
       </div>
     </div>
 
     <!-- 主内容区 -->
     <div class="main">
-
-      <!-- ===== 页面1：积分管理（用户列表） ===== -->
-      <div class="page active" id="page-points">
-        <div class="crumb"><a>运营配置</a> <span>/ 积分管理</span></div>
+      <!-- 页面：App管理 / 虎力值管理（操作记录列表 + 批量赠扣） -->
+      <div class="page active" id="page-hulizhi">
+        <div class="crumb"><span>App管理</span> <span>/ 虎力值管理</span></div>
         <div class="phead">
-          <h2>积分管理</h2>
-          <div class="phead-actions"></div>
+          <h2>虎力值管理</h2>
+          <div class="phead-actions">
+            <button class="btn-primary" onclick="openBatch('grant')">批量赠送</button>
+            <button class="btn-danger" onclick="openBatch('deduct')">批量扣除</button>
+          </div>
         </div>
 
-        <!-- 搜索筛选栏 -->
+        <!-- 筛选栏 -->
         <div class="filter-bar">
-          <span class="fb-label">用户搜索</span>
-          <input type="text" placeholder="输入用户ID / 昵称 / 手机号">
-          <span class="fb-label">余额范围</span>
-          <select><option>全部</option><option>正数</option><option>零</option><option>负数</option></select>
-          <button class="btn-primary">查询</button>
-        </div>
-
-        <!-- 用户积分列表 -->
-        <div class="tbl-wrap">
-          <table class="tbl">
-            <thead>
-              <tr>
-                <th style="width:70px">用户ID</th>
-                <th>昵称</th>
-                <th>手机号</th>
-                <th style="width:110px">当前虎力值</th>
-                <th style="width:200px">操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>U_10001</td>
-                <td>张三</td>
-                <td>138****1234</td>
-                <td><strong style="color:#7C3AED;font-size:14px">1,280</strong></td>
-                <td class="act">
-                  <button class="btn btn-sm btn-purple" onclick="openForm('grant','U_10001','张三',1280)">赠送</button>
-                  <button class="btn btn-sm btn-danger" onclick="openForm('deduct','U_10001','张三',1280)">扣除</button>
-                  <button class="btn-link" onclick="showPage('records')">查看记录</button>
-                </td>
-              </tr>
-              <tr>
-                <td>U_10002</td>
-                <td>李四</td>
-                <td>139****5678</td>
-                <td><strong style="color:#7C3AED;font-size:14px">560</strong></td>
-                <td class="act">
-                  <button class="btn btn-sm btn-purple" onclick="openForm('grant','U_10002','李四',560)">赠送</button>
-                  <button class="btn btn-sm btn-danger" onclick="openForm('deduct','U_10002','李四',560)">扣除</button>
-                  <button class="btn-link" onclick="showPage('records')">查看记录</button>
-                </td>
-              </tr>
-              <tr>
-                <td>U_10003</td>
-                <td>王五</td>
-                <td>137****9012</td>
-                <td><strong style="color:#EF4444;font-size:14px">-50</strong></td>
-                <td class="act">
-                  <button class="btn btn-sm btn-purple" onclick="openForm('grant','U_10003','王五',-50)">赠送</button>
-                  <button class="btn btn-sm btn-danger" onclick="openForm('deduct','U_10003','王五',-50)">扣除</button>
-                  <button class="btn-link" onclick="showPage('records')">查看记录</button>
-                </td>
-              </tr>
-              <tr>
-                <td>U_10004</td>
-                <td>赵六</td>
-                <td>136****3456</td>
-                <td><strong style="color:#7C3AED;font-size:14px">0</strong></td>
-                <td class="act">
-                  <button class="btn btn-sm btn-purple" onclick="openForm('grant','U_10004','赵六',0)">赠送</button>
-                  <button class="btn btn-sm btn-danger" onclick="openForm('deduct','U_10004','赵六',0)">扣除</button>
-                  <button class="btn-link" onclick="showPage('records')">查看记录</button>
-                </td>
-              </tr>
-              <tr>
-                <td>U_10005</td>
-                <td>孙七</td>
-                <td>135****7890</td>
-                <td><strong style="color:#7C3AED;font-size:14px">3,500</strong></td>
-                <td class="act">
-                  <button class="btn btn-sm btn-purple" onclick="openForm('grant','U_10005','孙七',3500)">赠送</button>
-                  <button class="btn btn-sm btn-danger" onclick="openForm('deduct','U_10005','孙七',3500)">扣除</button>
-                  <button class="btn-link" onclick="showPage('records')">查看记录</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- 分页 -->
-        <div class="pagi">
-          <span>共 128 条</span>
-          <span class="pg-btn">&lt;</span>
-          <span class="pg-btn active">1</span>
-          <span class="pg-btn">2</span>
-          <span class="pg-btn">3</span>
-          <span class="pg-btn">...</span>
-          <span class="pg-btn">13</span>
-          <span class="pg-btn">&gt;</span>
-          <span>前往</span>
-          <input type="text" value="1"> <span>页</span>
-        </div>
-      </div>
-
-      <!-- ===== 页面2：赠扣操作记录表（本期新增） ===== -->
-      <div class="page" id="page-records">
-        <div class="crumb"><a>运营配置</a> <span>/</span> <a onclick="showPage('points')">积分管理</a> <span>/ 赠扣操作记录</span></div>
-        <div class="phead">
-          <h2>赠扣操作记录</h2>
-          <button class="btn-ghost" onclick="showPage('points')">← 返回积分管理</button>
-        </div>
-
-        <div class="filter-bar">
-          <span class="fb-label">用户</span>
-          <input type="text" placeholder="输入用户ID / 昵称" style="width:160px">
           <span class="fb-label">操作类型</span>
-          <select><option>全部</option><option>赠送</option><option>扣除</option></select>
-          <span class="fb-label">操作人</span>
-          <input type="text" placeholder="操作人账号" style="width:130px">
+          <select id="fType"><option>全部</option><option>赠送</option><option>扣除</option></select>
+          <span class="fb-label">操作人员</span>
+          <input type="text" id="fOperator" placeholder="操作人账号" style="width:130px">
           <span class="fb-label">时间</span>
-          <input type="date" style="width:140px"> ~ <input type="date" style="width:140px">
-          <button class="btn-primary">查询</button>
+          <input type="date" id="fDateStart" style="width:140px"> ~ <input type="date" id="fDateEnd" style="width:140px">
+          <button class="btn-primary" onclick="renderOps()">查询</button>
+          <button class="btn-ghost" onclick="resetFilter()">重置</button>
         </div>
 
+        <!-- 操作记录列表 -->
         <div class="tbl-wrap">
           <table class="tbl">
             <thead>
               <tr>
-                <th style="width:50px">编号</th>
-                <th style="width:80px">用户ID</th>
-                <th>昵称</th>
-                <th style="width:80px">操作类型</th>
-                <th style="width:80px">数量</th>
+                <th style="width:160px">操作时间</th>
+                <th style="width:90px">操作类型</th>
+                <th style="width:110px">操作人员</th>
+                <th style="width:120px">影响用户数</th>
+                <th style="width:120px">变动总虎力值</th>
                 <th>理由</th>
-                <th style="width:100px">操作人</th>
-                <th style="width:150px">操作时间</th>
+                <th style="width:80px">操作</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>1</td><td>U_10001</td><td>张三</td>
-                <td><span class="tag tag-green">赠送</span></td>
-                <td><strong style="color:#16a34a">+100</strong></td>
-                <td>客服补偿</td>
-                <td>admin_zhang</td>
-                <td>2026-07-28 15:04:48</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>U_10002</td>
-                <td>李四</td>
-                <td><span class="tag tag-red">扣除</span></td>
-                <td><strong style="color:#dc2626">-200</strong></td>
-                <td>违规处罚</td>
-                <td>admin_li</td>
-                <td>2026-07-28 14:23:15</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>U_10003</td>
-                <td>王五</td>
-                <td><span class="tag tag-red">扣除</span></td>
-                <td><strong style="color:#dc2626">-50</strong></td>
-                <td>系统调整</td>
-                <td>admin_zhang</td>
-                <td>2026-07-27 09:45:30</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>U_10001</td>
-                <td>张三</td>
-                <td><span class="tag tag-green">赠送</span></td>
-                <td><strong style="color:#16a34a">+500</strong></td>
-                <td>活动奖励补发</td>
-                <td>admin_wang</td>
-                <td>2026-07-26 16:08:22</td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>U_10005</td>
-                <td>孙七</td>
-                <td><span class="tag tag-green">赠送</span></td>
-                <td><strong style="color:#16a34a">+50</strong></td>
-                <td>体验回馈</td>
-                <td>admin_zhang</td>
-                <td>2026-07-25 11:33:07</td>
-              </tr>
-            </tbody>
+            <tbody id="opTbody"></tbody>
           </table>
         </div>
 
         <div class="pagi">
-          <span>共 42 条</span>
-          <span class="pg-btn">&lt;</span>
+          <span id="opCount">共 0 条</span>
           <span class="pg-btn active">1</span>
-          <span class="pg-btn">2</span>
-          <span class="pg-btn">3</span>
-          <span class="pg-btn">4</span>
-          <span class="pg-btn">&gt;</span>
         </div>
       </div>
-
     </div><!-- /main -->
   </div><!-- /layout -->
 </div><!-- /platform -->
 
 
-<!-- ==================== 赠送/扣除操作弹窗 ==================== -->
-<div class="form-overlay" id="formOverlay">
-  <div class="form-dlg">
+<!-- ==================== 批量赠送/扣除 弹窗 ==================== -->
+<div class="form-overlay" id="batchOverlay">
+  <div class="form-dlg batch-dlg">
     <div class="form-header">
-      <span class="form-title" id="formTitle">手动赠送虎力值</span>
-      <button class="form-close" onclick="closeForm()">&#x2715;</button>
+      <span class="form-title" id="batchTitle">批量赠送虎力值</span>
+      <button class="form-close" onclick="closeBatch()">✕</button>
     </div>
     <div class="form-body">
-      <!-- 目标用户信息卡 -->
-      <div class="user-info-card">
-        <div class="user-avatar" id="dlgAvatar">张</div>
-        <div>
-          <div class="user-name" id="dlgName">张三</div>
-          <div class="user-id" id="dlgUid">U_10001</div>
+      <!-- 步骤1 选择人员 -->
+      <div class="bstep">
+        <div class="bstep-title"><span class="bstep-no">1</span> 选择人员</div>
+        <div class="sel-tools">
+          <input class="fr-input" id="inpPhone" placeholder="搜索手机号" style="width:170px">
+          <button class="btn-ghost btn-sm" onclick="addByPhone()">搜索添加</button>
+          <input class="fr-input" id="inpIds" placeholder="用户ID，多个用逗号隔开" style="width:220px">
+          <button class="btn-ghost btn-sm" onclick="addByIds()">添加</button>
+          <button class="btn-ghost btn-sm" onclick="selectAll()">全选</button>
+          <label class="btn-ghost btn-sm" style="cursor:pointer">批量导入表格
+            <input type="file" id="fileImport" accept=".csv,.xlsx,.xls,.txt" style="display:none" onchange="handleImport(event)">
+          </label>
+          <a class="btn-link" onclick="loadSampleImport()" style="margin-left:auto">无文件？载入示例表格</a>
         </div>
-        <div class="user-balance">
-          <div class="lbl">当前虎力值</div>
-          <div class="val" id="dlgBalance">1,280</div>
+        <div class="sel-box">
+          <div class="sel-count">已选人员：<b id="selCount">0</b> 人</div>
+          <div class="chips" id="chips"></div>
         </div>
-      </div>
-
-      <div class="form-row">
-        <div class="fr-label"><span style="color:#EF4444">*</span> 数量</div>
-        <div class="fr-body">
-          <input class="fr-input" type="number" id="inpAmount" placeholder="请输入正整数" min="1" style="width:240px">
-          <div class="fr-hint" id="hintAmount">输入要赠送的虎力值数量</div>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="fr-label"><span style="color:#EF4444">*</span> 理由</div>
-        <div class="fr-body">
-          <select class="fr-input" id="selReason" style="width:280px">
-            <option value="">请选择理由</option>
-            <option value="客服补偿">客服补偿</option>
-            <option value="活动奖励补发">活动奖励补发</option>
-            <option value="体验回馈">体验回馈</option>
-            <option value="违规处罚">违规处罚</option>
-            <option value="系统调整">系统调整</option>
-            <option value="误操作退回">误操作退回</option>
-            <option value="__other__">其他（自定义）</option>
-          </select>
-          <div class="fr-hint">选择操作理由，将展示在用户端变动明细中</div>
+        <!-- 导入表格预览 -->
+        <div class="import-area" id="importArea" style="display:none">
+          <div class="import-tip">勾选需要赠送/扣除的人员，点击「确认选中」加入已选名单</div>
+          <div class="tbl-wrap" style="max-height:200px;overflow:auto">
+            <table class="tbl" id="importTbl"><thead></thead><tbody></tbody></table>
+          </div>
+          <div style="margin-top:10px">
+            <button class="btn-purple btn-sm" onclick="confirmImport()">确认选中</button>
+          </div>
         </div>
       </div>
 
-      <div class="form-row" id="rowOtherReason" style="display:none">
-        <div class="fr-label"><span style="color:#EF4444">*</span> 自定义理由</div>
-        <div class="fr-body">
-          <input class="fr-input" type="text" id="inpOtherReason" placeholder="请输入自定义理由" style="width:280px" maxlength="50">
-          <div class="fr-hint">最多 50 字符</div>
-        </div>
+      <!-- 步骤2 选择理由 -->
+      <div class="bstep">
+        <div class="bstep-title"><span class="bstep-no">2</span> 选择理由</div>
+        <select class="fr-input" id="batchReason" style="width:320px">
+          <option value="">请选择理由</option>
+          <option value="客服补偿">客服补偿</option>
+          <option value="活动奖励补发">活动奖励补发</option>
+          <option value="体验回馈">体验回馈</option>
+          <option value="违规处罚">违规处罚</option>
+          <option value="系统调整">系统调整</option>
+          <option value="误操作退回">误操作退回</option>
+          <option value="__other__">其他（自定义）</option>
+        </select>
+        <input class="fr-input" id="batchOther" placeholder="请输入自定义理由" style="width:320px;display:none;margin-top:10px" maxlength="50">
       </div>
 
-      <div class="form-row">
-        <div class="fr-label">备注</div>
-        <div class="fr-body">
-          <input class="fr-input" type="text" placeholder="可选，内部备注（不向用户展示）" style="width:320px" maxlength="100">
-        </div>
+      <!-- 步骤3 填写数量 -->
+      <div class="bstep">
+        <div class="bstep-title"><span class="bstep-no">3</span> 填写数量</div>
+        <input class="fr-input" id="batchAmount" type="number" min="1" placeholder="每位用户统一获得的虎力值数量" style="width:320px">
+        <div class="fr-hint" id="batchHint">将统一应用到上方所选全部人员</div>
       </div>
     </div>
     <div class="form-footer">
-      <button class="btn-ghost" onclick="closeForm()">取消</button>
-      <button class="btn-primary" id="formSubmitBtn" onclick="submitForm()">确认赠送</button>
+      <button class="btn-ghost" onclick="closeBatch()">取消</button>
+      <button class="btn-primary" id="batchSubmit" onclick="submitBatch()">确认赠送</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ==================== 操作明细 弹窗（下钻） ==================== -->
+<div class="form-overlay" id="detailOverlay">
+  <div class="form-dlg" style="width:560px">
+    <div class="form-header">
+      <span class="form-title" id="detailTitle">操作明细</span>
+      <button class="form-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="form-body">
+      <div class="detail-meta" id="detailMeta"></div>
+      <div class="tbl-wrap" style="max-height:320px;overflow:auto">
+        <table class="tbl">
+          <thead><tr>
+            <th>昵称</th><th>用户ID</th><th>手机号</th><th style="width:100px">虎力值</th>
+          </tr></thead>
+          <tbody id="detailTbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -513,8 +394,8 @@
 <div class="app-container" id="appView">
   <!-- 导航栏 -->
   <div class="app-nav">
-    <button class="back" onclick="showAppScreen('task')">&#x2039;</button>
-    <span class="app-title" id="appNavTitle">任务中心</span>
+    <button class="back" onclick="showAppScreen('task')">‹</button>
+    <span class="title" id="appNavTitle">任务中心</span>
     <button class="more">⋯</button>
   </div>
 
@@ -673,7 +554,6 @@
 
 <!-- Toast -->
 <div class="toast" id="toast"></div>
-
 <!-- 视图切换浮动按钮 -->
 <div class="switch-bar" id="switchBar">
   <button class="switch-btn plat" onclick="toggleView(false)" id="btnToPlat">🖥 后台</button>
@@ -682,86 +562,278 @@
 
 
 <script>
-// ========== 页面切换（平台端） ==========
-function showPage(name, e){
-  if(e)e.preventDefault();
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  const target = document.getElementById('page-'+name);
-  if(target)target.classList.add('active');
-  // 更新侧栏active
+// ========== 模拟用户库（用于搜索/全选/导入匹配） ==========
+const userBase = [
+  {uid:'U_10001',name:'张三',phone:'138****1234'},
+  {uid:'U_10002',name:'李四',phone:'139****5678'},
+  {uid:'U_10003',name:'王五',phone:'137****9012'},
+  {uid:'U_10004',name:'赵六',phone:'136****3456'},
+  {uid:'U_10005',name:'孙七',phone:'135****7890'},
+  {uid:'U_10006',name:'周八',phone:'134****2345'},
+  {uid:'U_10007',name:'吴九',phone:'133****6789'},
+  {uid:'U_10008',name:'郑十',phone:'132****0123'},
+];
+
+// ========== 操作记录数据（本期新增） ==========
+let operations = [
+  {id:1,time:'2026-07-28 15:04:48',type:'grant',operator:'admin_zhang',count:3,total:300,reason:'客服补偿',
+    users:[{name:'张三',uid:'U_10001',phone:'138****1234',amt:100},{name:'王五',uid:'U_10003',phone:'137****9012',amt:100},{name:'赵六',uid:'U_10004',phone:'136****3456',amt:100}]},
+  {id:2,time:'2026-07-28 14:23:15',type:'deduct',operator:'admin_li',count:5,total:-100,reason:'违规处罚',
+    users:[{name:'李四',uid:'U_10002',phone:'139****5678',amt:20},{name:'周八',uid:'U_10006',phone:'134****2345',amt:20},{name:'吴九',uid:'U_10007',phone:'133****6789',amt:20},{name:'郑十',uid:'U_10008',phone:'132****0123',amt:20},{name:'孙七',uid:'U_10005',phone:'135****7890',amt:20}]},
+  {id:3,time:'2026-07-27 09:45:30',type:'grant',operator:'admin_wang',count:2,total:100,reason:'活动奖励补发',
+    users:[{name:'张三',uid:'U_10001',phone:'138****1234',amt:50},{name:'李四',uid:'U_10002',phone:'139****5678',amt:50}]},
+  {id:4,time:'2026-07-26 16:08:22',type:'deduct',operator:'admin_zhang',count:1,total:-200,reason:'系统调整',
+    users:[{name:'王五',uid:'U_10003',phone:'137****9012',amt:200}]},
+  {id:5,time:'2026-07-25 11:33:07',type:'grant',operator:'admin_zhang',count:4,total:120,reason:'体验回馈',
+    users:[{name:'赵六',uid:'U_10004',phone:'136****3456',amt:30},{name:'孙七',uid:'U_10005',phone:'135****7890',amt:30},{name:'周八',uid:'U_10006',phone:'134****2345',amt:30},{name:'吴九',uid:'U_10007',phone:'133****6789',amt:30}]},
+];
+
+// ========== 侧栏高亮 ==========
+function setActiveSide(el){
   document.querySelectorAll('.side a').forEach(a=>a.classList.remove('active'));
-  if(name==='points'){
-    const links = document.querySelectorAll('.side a');
-    for(const a of links){if(a.textContent.includes('积分管理')){a.classList.add('active');break}}
+  el.classList.add('active');
+}
+
+// ========== 渲染操作记录列表 ==========
+function renderOps(){
+  const ft = document.getElementById('fType').value;
+  const fo = document.getElementById('fOperator').value.trim().toLowerCase();
+  const tbody = document.getElementById('opTbody');
+  const list = operations.filter(o=>
+    (ft==='全部' || (ft==='赠送'&&o.type==='grant') || (ft==='扣除'&&o.type==='deduct')) &&
+    (!fo || o.operator.toLowerCase().includes(fo))
+  );
+  tbody.innerHTML = list.map(o=>{
+    const realIdx = operations.indexOf(o);
+    const badge = o.type==='grant' ? '<span class="tag tag-green">赠送</span>' : '<span class="tag tag-red">扣除</span>';
+    const tColor = o.total>=0 ? '#16a34a' : '#dc2626';
+    const tSign = o.total>=0 ? '+' : '';
+    return `<tr>
+      <td>${o.time}</td>
+      <td>${badge}</td>
+      <td>${o.operator}</td>
+      <td><a class="btn-link" onclick="showDetail(${realIdx})">${o.count} 人 ▸</a></td>
+      <td><strong style="color:${tColor}">${tSign}${o.total}</strong></td>
+      <td>${o.reason}</td>
+      <td><button class="btn-link" onclick="showDetail(${realIdx})">明细</button></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('opCount').textContent = '共 '+list.length+' 条';
+}
+
+function resetFilter(){
+  document.getElementById('fType').value='全部';
+  document.getElementById('fOperator').value='';
+  document.getElementById('fDateStart').value='';
+  document.getElementById('fDateEnd').value='';
+  renderOps();
+}
+
+// ========== 批量赠送/扣除弹窗 ==========
+let batchType = 'grant';
+let selectedUsers = new Map();
+
+function openBatch(type){
+  batchType = type;
+  selectedUsers.clear();
+  document.getElementById('batchReason').value='';
+  document.getElementById('batchOther').style.display='none';
+  document.getElementById('batchOther').value='';
+  document.getElementById('batchAmount').value='';
+  document.getElementById('inpPhone').value='';
+  document.getElementById('inpIds').value='';
+  document.getElementById('importArea').style.display='none';
+  renderChips();
+  const title = document.getElementById('batchTitle');
+  const submit = document.getElementById('batchSubmit');
+  const hint = document.getElementById('batchHint');
+  if(type==='grant'){
+    title.textContent='批量赠送虎力值';
+    submit.textContent='确认赠送';
+    submit.className='btn-primary';
+    hint.textContent='将统一应用到上方所选全部人员（赠送）';
+    document.getElementById('batchAmount').placeholder='每位用户统一获得的虎力值数量';
+  }else{
+    title.textContent='批量扣除虎力值';
+    submit.textContent='确认扣除';
+    submit.className='btn-danger';
+    hint.textContent='将统一应用到上方所选全部人员（扣除，允许扣成负数）';
+    document.getElementById('batchAmount').placeholder='每位用户统一扣除的虎力值数量';
   }
+  document.getElementById('batchOverlay').classList.add('show');
 }
 
-// ========== 赠送/扣除弹窗 ==========
-let currentFormType = 'grant';
-let currentUser = null;
-
-function openForm(type, uid, name, balance){
-  currentFormType = type;
-  currentUser = {uid, name, balance};
-  const overlay = document.getElementById('formOverlay');
-  const title = document.getElementById('formTitle');
-  const submitBtn = document.getElementById('formSubmitBtn');
-  const hint = document.getElementById('hintAmount');
-  const avatar = document.getElementById('dlgAvatar');
-
-  document.getElementById('dlgName').textContent = name;
-  document.getElementById('dlgUid').textContent = uid;
-  document.getElementById('dlgBalance').textContent = balance.toLocaleString();
-  document.getElementById('inpAmount').value = '';
-  document.getElementById('selReason').value = '';
-  document.getElementById('inpOtherReason').value = '';
-  document.getElementById('rowOtherReason').style.display = 'none';
-
-  avatar.textContent = name.charAt(0);
-
-  if(type === 'grant'){
-    title.textContent = '手动赠送虎力值';
-    submitBtn.textContent = '确认赠送';
-    submitBtn.className = 'btn-primary';
-    submitBtn.style.background = '#22C55E';
-    hint.textContent = '输入要赠送的虎力值数量（正整数）';
-  } else {
-    title.textContent = '手动扣除虎力值';
-    submitBtn.textContent = '确认扣除';
-    submitBtn.className = '';
-    submitBtn.style.cssText = 'padding:0 28px;height:32px;background:#EF4444;color:#fff;border:none;border-radius:4px;font-size:13px;cursor:pointer';
-    hint.textContent = '允许扣成负数，不做余额校验';
-  }
-
-  overlay.classList.add('show');
+function closeBatch(){
+  document.getElementById('batchOverlay').classList.remove('show');
 }
 
-function closeForm(){
-  document.getElementById('formOverlay').classList.remove('show');
+// 已选人员渲染
+function renderChips(){
+  const box = document.getElementById('chips');
+  box.innerHTML = [...selectedUsers.values()].map(u=>
+    `<span class="chip">${u.name}（${u.uid}）<button class="chip-x" onclick="removeUser('${u.uid}')">✕</button></span>`
+  ).join('');
+  document.getElementById('selCount').textContent = selectedUsers.size;
+}
+function addUser(u){
+  if(!u) return;
+  selectedUsers.set(u.uid, u);
+  renderChips();
+}
+function removeUser(uid){
+  selectedUsers.delete(uid);
+  renderChips();
+}
+function addByPhone(){
+  const v = document.getElementById('inpPhone').value.trim();
+  if(!v){ showToast('请输入手机号','err'); return; }
+  const u = userBase.find(x=>x.phone.includes(v));
+  if(!u){ showToast('未找到匹配用户','err'); return; }
+  addUser(u);
+  showToast('已添加 '+u.name);
+}
+function addByIds(){
+  const v = document.getElementById('inpIds').value.trim();
+  if(!v){ showToast('请输入用户ID','err'); return; }
+  const ids = v.split(/[,，\s]+/).filter(Boolean);
+  let added=0; const miss=[];
+  ids.forEach(id=>{
+    const u = userBase.find(x=>x.uid.toLowerCase()===id.toLowerCase());
+    if(u){ addUser(u); added++; } else { miss.push(id); }
+  });
+  if(added) showToast('已添加 '+added+' 人'+(miss.length?'，未找到：'+miss.join(','):''), miss.length?'err':'success');
+  else if(miss.length) showToast('未找到：'+miss.join(','),'err');
+}
+function selectAll(){
+  userBase.forEach(u=>addUser(u));
+  showToast('已全选 '+userBase.length+' 人','success');
 }
 
-// 理由下拉 → 其他时显示自定义输入
-document.getElementById('selReason').addEventListener('change', function(){
-  const row = document.getElementById('rowOtherReason');
-  row.style.display = this.value === '__other__' ? 'flex' : 'none';
+// 理由 → 其他自定义
+document.getElementById('batchReason').addEventListener('change', function(){
+  document.getElementById('batchOther').style.display = this.value==='__other__' ? 'block' : 'none';
 });
 
-// 提交表单
-function submitForm(){
-  const amount = document.getElementById('inpAmount').value;
-  const reasonSel = document.getElementById('selReason').value;
-  const otherReason = document.getElementById('inpOtherReason').value;
+// ========== 批量导入表格 ==========
+function handleImport(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    try{
+      const rows = parseCSV(ev.target.result);
+      if(!rows.length){ showToast('表格为空','err'); return; }
+      const first = rows[0].join('').toLowerCase();
+      let header, data;
+      if(first.includes('id')||first.includes('昵称')||first.includes('手机')||first.includes('uid')){
+        header = rows[0]; data = rows.slice(1);
+      }else{ header = ['用户ID','昵称','手机号']; data = rows; }
+      renderImportTable([header, ...data]);
+      document.getElementById('importArea').style.display='block';
+    }catch(err){ showToast('表格解析失败','err'); }
+  };
+  reader.readAsText(file);
+}
+function parseCSV(text){
+  const lines = text.split(/\r?\n/).filter(l=>l.trim());
+  const delim = text.includes('\t') ? '\t' : ',';
+  return lines.map(l=>l.split(delim).map(c=>c.trim()));
+}
+function renderImportTable(rows){
+  const thead = document.querySelector('#importTbl thead');
+  const tbody = document.querySelector('#importTbl tbody');
+  const header = rows[0];
+  const data = rows.slice(1);
+  thead.innerHTML = '<tr><th style="width:40px"><input type="checkbox" id="impAll" onchange="toggleAllImport(this)"></th>'
+    + header.map(h=>`<th>${h}</th>`).join('') + '</tr>';
+  tbody.innerHTML = data.map((r,i)=>
+    `<tr><td><input type="checkbox" class="imp-check" data-i="${i}"></td>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`
+  ).join('');
+  window.__importData = data;
+}
+function toggleAllImport(cb){
+  document.querySelectorAll('.imp-check').forEach(x=>x.checked = cb.checked);
+}
+function confirmImport(){
+  const checks = [...document.querySelectorAll('.imp-check')].filter(x=>x.checked);
+  if(!checks.length){ showToast('请勾选人员','err'); return; }
+  let added=0;
+  checks.forEach(x=>{
+    const r = window.__importData[+x.dataset.i];
+    const uid = r[0]||''; const name = r[1]||uid; const phone = r[2]||'';
+    const u = userBase.find(y=>y.uid.toLowerCase()===uid.toLowerCase());
+    if(u) addUser(u); else addUser({uid, name, phone});
+    added++;
+  });
+  document.getElementById('importArea').style.display='none';
+  showToast('已选中 '+added+' 人','success');
+}
+function loadSampleImport(){
+  const sample = [
+    ['用户ID','昵称','手机号'],
+    ['U_10002','李四','139****5678'],
+    ['U_10005','孙七','135****7890'],
+    ['U_10007','吴九','133****6789'],
+  ];
+  renderImportTable(sample);
+  document.getElementById('importArea').style.display='block';
+}
 
-  if(!amount || parseInt(amount)<=0){ showToast('请输入有效的数量','err'); return; }
-  if(!reasonSel && !otherReason){ showToast('请选择或填写理由','err'); return; }
-  if(reasonSel === '__other__' && !otherReason.trim()){ showToast('请输入自定义理由','err'); return; }
+// ========== 提交批量操作 ==========
+function submitBatch(){
+  if(selectedUsers.size===0){ showToast('请先选择人员','err'); return; }
+  const amt = parseInt(document.getElementById('batchAmount').value);
+  if(!amt || amt<=0){ showToast('请输入有效的数量','err'); return; }
+  const rsel = document.getElementById('batchReason').value;
+  const other = document.getElementById('batchOther').value.trim();
+  if(!rsel && !other){ showToast('请选择或填写理由','err'); return; }
+  if(rsel==='__other__' && !other){ showToast('请输入自定义理由','err'); return; }
+  const reason = rsel==='__other__' ? other : rsel;
+  const sign = batchType==='grant' ? 1 : -1;
+  const total = sign * amt * selectedUsers.size;
+  const users = [...selectedUsers.values()].map(u=>({name:u.name, uid:u.uid, phone:u.phone, amt}));
+  const action = batchType==='grant' ? '赠送' : '扣除';
 
-  const reasonText = reasonSel === '__other__' ? otherReason.trim() : reasonSel;
-  const actionName = currentFormType === 'grant' ? '赠送' : '扣除';
-  const sign = currentFormType === 'grant' ? '+' : '-';
+  operations.unshift({
+    id: operations.length+1,
+    time: fmtTime(new Date()),
+    type: batchType,
+    operator: 'admin_zhang',
+    count: selectedUsers.size,
+    total: total,
+    reason: reason,
+    users: users
+  });
+  renderOps();
+  closeBatch();
+  showToast(`已${action} ${selectedUsers.size} 人，每人 ${sign>0?'+':''}${amt} 虎力值（理由：${reason}）`,'success');
+}
+function fmtTime(d){
+  const p = n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
 
-  showToast(`已${actionName} ${sign}${amount} 虎力值（理由：${reasonText}）`, 'success');
-  closeForm();
+// ========== 操作明细下钻 ==========
+function showDetail(idx){
+  const o = operations[idx];
+  if(!o) return;
+  document.getElementById('detailTitle').textContent = '操作明细 · ' + (o.type==='grant'?'赠送':'扣除');
+  const tColor = o.total>=0 ? '#16a34a' : '#dc2626';
+  document.getElementById('detailMeta').innerHTML =
+    `<span>操作时间：<b>${o.time}</b></span>`+
+    `<span>操作人员：<b>${o.operator}</b></span>`+
+    `<span>影响用户：<b>${o.count} 人</b></span>`+
+    `<span>变动总计：<b style="color:${tColor}">${o.total>=0?'+':''}${o.total}</b></span>`;
+  const tbody = document.getElementById('detailTbody');
+  const sign = o.type==='grant' ? '+' : '-';
+  const vColor = o.type==='grant' ? '#16a34a' : '#dc2626';
+  tbody.innerHTML = o.users.map(u=>
+    `<tr><td>${u.name}</td><td>${u.uid}</td><td>${u.phone||'-'}</td><td><strong style="color:${vColor}">${sign}${u.amt}</strong></td></tr>`
+  ).join('');
+  document.getElementById('detailOverlay').classList.add('show');
+}
+function closeDetail(){
+  document.getElementById('detailOverlay').classList.remove('show');
 }
 
 // ========== Toast ==========
@@ -771,17 +843,17 @@ function showToast(msg, type){
   t.textContent = msg;
   t.className = 'toast ' + (type||'') + ' show';
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('show'),2500);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
 }
 
 // ========== App 屏幕切换 ==========
 function showAppScreen(name){
   document.querySelectorAll('.app-screen').forEach(s=>s.classList.remove('active'));
   const navTitle = document.getElementById('appNavTitle');
-  if(name === 'task'){
+  if(name==='task'){
     document.getElementById('appTask').classList.add('active');
     navTitle.textContent = '任务中心';
-  } else {
+  }else{
     document.getElementById('appDetail').classList.add('active');
     navTitle.textContent = '虎力值变动明细';
   }
@@ -792,26 +864,26 @@ function toggleView(toApp){
   const plat = document.getElementById('platView');
   const app = document.getElementById('appView');
   const switchBar = document.getElementById('switchBar');
-
   if(typeof toApp !== 'boolean'){
     toApp = plat.style.display !== 'none' ? true : false;
   }
-
   if(toApp){
     plat.classList.add('hide');
     app.classList.add('show');
     switchBar.style.display = 'none';
-  } else {
+  }else{
     plat.classList.remove('hide');
     app.classList.remove('show');
     switchBar.style.display = 'flex';
   }
 }
 
-// 点击遮罩关闭弹窗
-document.getElementById('formOverlay').addEventListener('click', function(e){
-  if(e.target === this) closeForm();
-});
+// ========== 遮罩点击关闭 ==========
+document.getElementById('batchOverlay').addEventListener('click', function(e){ if(e.target===this) closeBatch(); });
+document.getElementById('detailOverlay').addEventListener('click', function(e){ if(e.target===this) closeDetail(); });
+
+// ========== 初始化 ==========
+renderOps();
 </script>
 
 </body>
