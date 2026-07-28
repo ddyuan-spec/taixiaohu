@@ -593,14 +593,10 @@ function c5ClaimItem(btn, couponId, amt){
   btn.classList.remove('claim');
   btn.classList.add('done');
   btn.disabled=true;
-  // 弹「已放入卡包」提示
-  document.getElementById('claimModalSub').textContent = '恭喜！已放入您的卡包（¥'+amt+' 减）';
-  document.getElementById('claimModalBtns').innerHTML =
-    '<button class="btn sm" onclick="closeClaimModal()" style="width:100%">查看我的券</button>';
-  document.getElementById('claimModal').classList.add('show');
+  // toast 气泡提示（不弹窗）
+  toast('领取成功！已放入您的卡包');
 }
 function c5Claim(){ /* 兼容旧调用 */ }
-function closeClaimModalAndBuy(){ closeModal('claimModal'); orderSel=['MC002']; go('p_c6'); }
 
 /* C5 底栏「立即购买」→ 进 C6 */
 function goC5Buy(){
