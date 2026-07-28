@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>虎力值管理后台 · 产品需求文档（PRD）</title>
+<style>
+  :root{--pri:#6366f1;--pri-bg:#eef2ff;--green:#16a34a;--green-bg:#f0fdf4;--red:#dc2626;--red-bg:#fef2f2;--orange:#ea580c;--orange-bg:#fff7ed;--gray:#6b7280;--bg:#fafafa;--ink:#1f2937;--line:#e5e7eb;--warn:#d97706;--warn-bg:#fffbeb;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7;padding:24px 40px 60px;max-width:1200px;margin:0 auto;}
+  h1{font-size:22px;color:var(--ink);margin:0 0 4px;border-bottom:3px solid var(--pri);padding-bottom:8px;}
+  .sub{color:var(--gray);font-size:13px;margin-bottom:20px;line-height:1.8;}
+  h2{font-size:17px;color:var(--ink);margin:36px 0 12px;padding-left:12px;border-left:4px solid var(--pri);}
+  h3{font-size:14.5px;color:var(--ink);margin:20px 0 10px;}
+  h4{font-size:13px;color:var(--ink);margin:16px 0 8px;font-weight:600;}
+  h5{font-size:12.5px;color:var(--gray);margin:12px 0 6px;}
+  p{margin:6px 0 10px;font-size:13px;}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0 16px;table-layout:fixed;word-break:break-all;overflow-wrap:break-word;}
+  th,td{padding:8px 10px;border:1px solid var(--line);text-align:left;vertical-align:top;}
+  th{background:#f8fafc;font-weight:600;color:#37474f;white-space:nowrap;}
+  tr:nth-child(even){background:#fcfcfc;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px 20px;margin:12px 0 16px;}
+  .note{font-size:12.5px;color:var(--gray);margin-top:6px;line-height:1.7;}
+  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600;vertical-align:middle;}
+  .tag-y{background:var(--green-bg);color:var(--green);}/* 本期新增 */
+  .tag-g{background:var(--orange-bg);color:var(--orange);}/* 本期改动 */
+  .tag-r{background:#f1f5f9;color:var(--gray);}/* 已有-沿用 */
+  img.proto{max-width:100%;max-height:800px;border:1px solid #ddd;border-radius:8px;object-fit:contain;display:block;margin:10px 0 16px;}
+  .flow-note{font-size:12px;color:var(--gray);margin-top:8px;line-height:1.7;border-top:1px dashed var(--line);padding-top:10px;}
+  ul,ol{padding-left:22px;margin:6px 0 10px;font-size:13px;}
+  li{margin:3px 0;}
+  code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px;font-family:"Consolas","Monaco",monospace;color:#be123c;}
+  .pending{background:var(--warn-bg);border-left:3px solid var(--warn);padding:8px 12px;font-size:12.5px;margin:8px 0;border-radius:0 4px 4px 0;}
+  a{color:var(--pri);text-decoration:none;}a:hover{text-decoration:underline;}
+  .rev-table td,.rev-table th{font-size:12px;}
+  .ac-table td,.ac-table th{font-size:12.5px;}
+  strong{font-weight:600;}
+  .section-num{color:var(--pri);font-weight:700;margin-right:4px;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ 一、文档基本信息 ═══════════ -->
+<h1>虎力值管理后台（手动赠扣 + 理由）· 产品需求文档（PRD）</h1>
+<div class="sub">
+  项目：泰小虎 — 虎力值管理后台（批量赠送/扣除 + 操作记录 + 理由）<br>
+  端口：<b>平台端后台</b> + <b>App 客户端</b>（不含商家端 / H5 / 小程序）<br>
+  文档状态：<span class="tag tag-y">终稿 v1.0</span>｜ 创建：2026-07-28 ｜ PM：（待填）
+</div>
+
+<h2>一、文档基本信息</h2>
+<div class="card">
+<table class="rev-table"><thead><tr><th style="width:70px">版本</th><th style="width:100px">日期</th><th style="width:80px">修订人</th><th>修订内容</th><th style="width:70px">状态</th></tr></thead><tbody><tr><td>v1.0</td><td>2026-07-28</td><td>PM</td><td>初稿终版：平台端后台「虎力值管理」模块 + App 变动记录增强理由展示</td><td>已定稿</td></tr></tbody></table>
+</div>
+
+<!-- ═══════════ 二、项目背景与目标 ═══════════ -->
+<h2>二、项目背景与目标</h2>
+
+<h3>2.1 业务背景</h3>
+<div class="card">
+<p>当前泰小虎积分体系（后端称「虎力值」）已有完整数据模型（<code>user_points</code> 账户表 + <code>point_transactions</code> 流水表）和 earn/consume 方法，但<strong>缺少运营侧手动干预能力</strong>：</p>
+<ul>
+  <li>运营无法对用户批量赠送或扣除虎力值（如客服补偿、活动奖励补发、违规处罚等场景）。</li>
+  <li>现有 App 端「变动记录」页仅展示任务类记录（文本为「完成xxx任务」），<strong>不展示后台人工操作的理由</strong>，用户看到的是模糊的任务名而非实际原因。</li>
+  <li>存量积分管理页面（<code>admin_points.html</code>）为只读展示页，不支持批量操作。</li>
+</ul>
+<p>本期需求在<strong>平台端后台「App管理」页签下新增「虎力值管理」模块</strong>，提供批量赠扣能力 + 操作记录追溯；同时增强 App 端变动记录展示，将原任务名替换为后台选择的理由。</p>
+</div>
+
+<h3>2.2 项目目标</h3>
+<div class="card">
+<table><thead><tr><th style="width:140px">目标维度</th><th>具体目标</th></tr></thead><tbody><tr><td>业务目标</td><td>赋予运营批量干预虎力值的能力（赠送/扣除），覆盖补偿、补发、处罚场景。</td></tr><tr><td>用户目标</td><td>App 用户可在变动记录查看每次增减<strong>理由</strong>（替代模糊「完成xxx任务」）。</td></tr><tr><td>技术目标</td><td>复用 earn/consume；新增 source='admin' 分支。</td></tr></tbody></table>
+</div>
+
+<h3>2.3 衡量指标</h3>
+<div class="card">
+<table><thead><tr><th style="width:160px">指标</th><th>定义</th><th>衡量方式</th></tr></thead><tbody><tr><td>批量操作成功率</td><td>后台提交批量赠扣请求的成功比例</td><td>后端日志统计</td></tr><tr><td>操作记录可追溯率</td><td>每笔赠扣操作均可通过记录表查到明细（用户清单+各自数值）</td><td>功能验收</td></tr><tr><td>App 变动记录理由覆盖率</td><td>变动记录中含「理由」列的比例（目标 100%）</td><td>UI 验收</td></tr></tbody></table>
+</div>
+
+<!-- ═══════════ 三、业务流程与架构 ═══════════ -->
+<h2>三、业务流程与架构</h2>
+<div class="pending" style="border-left-color:var(--red);background:var(--red-bg);">
+⚠️ <b>流程图权威性约束：</b>本章泳道图与时序图 A·B 均直接引用《虎力值管理后台·需求梳理图集》（线上 <code>hlz-req.html</code>）原图，<b>禁止在 PRD 中自行简化、重绘或修改节点 / 连线</b>。若与正文不一致，须报用户确认后统一修正，不得 AI 擅自篡改。
+</div>
+
+
+<h3>3.1 业务流程图（横向泳道 · 全链路）</h3>
+<div class="card">
+<p class="note" style="margin-bottom:10px;">📎 权威来源：《<a href="https://ddyuan-spec.github.io/taixiaohu/hlz-req.html" target="_blank">虎力值管理后台·需求梳理图集</a>》§二。以下泳道图与梳理文件一致，节点/阶段/泳道一一对应。</p>
+
+<svg viewBox="0 0 1100 400" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#37474f"/></marker>
+    <marker id="arrD" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#90a4ae"/></marker>
+  </defs>
+  <g font-size="11" font-weight="bold" fill="#455a64" text-anchor="middle">
+    <text x="180" y="22">① 检索用户</text>
+    <text x="380" y="22">② 赠送 / 扣除操作</text>
+    <text x="620" y="22">③ 后端处理</text>
+    <text x="860" y="22">④ 记录与查看</text>
+  </g>
+  <line x1="80" y1="30" x2="1080" y2="30" stroke="#cfd8dc"/>
+  <g font-size="12" font-weight="bold" fill="#37474f">
+    <rect x="8" y="40" width="1076" height="116" fill="#f0f7ff" stroke="#cfd8dc" rx="5"/>
+    <text x="20" y="102" writing-mode="tb" letter-spacing="2">平台端后台</text>
+    <rect x="8" y="162" width="1076" height="100" fill="#eceff1" stroke="#cfd8dc" rx="5"/>
+    <text x="20" y="216" writing-mode="tb" letter-spacing="1">后端服务</text>
+    <rect x="8" y="268" width="1076" height="120" fill="#f0fff4" stroke="#cfd8dc" rx="5"/>
+    <text x="20" y="332" writing-mode="tb" letter-spacing="2">App</text>
+  </g>
+  <g font-size="10">
+    <rect x="100" y="56" width="130" height="40" rx="5" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.4"/>
+    <text x="165" y="75" text-anchor="middle" font-weight="bold">进入虎力值管理页</text>
+    <text x="165" y="89" text-anchor="middle" fill="#1565c0" font-size="8.5">本期新增</text>
+    <rect x="260" y="56" width="130" height="40" rx="5" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.4"/>
+    <text x="325" y="75" text-anchor="middle" font-weight="bold">批量选择人员</text>
+    <text x="325" y="89" text-anchor="middle" fill="#1565c0" font-size="8.5">搜索/ID/全选/导入</text>
+    <rect x="280" y="106" width="110" height="36" rx="4" fill="#e8f5e9" stroke="#43a047" stroke-width="1.4"/>
+    <text x="335" y="123" text-anchor="middle" font-weight="bold">选人员+选理由+填数量</text>
+    <text x="335" y="136" text-anchor="middle" font-size="8" fill="#2e7d32">新增</text>
+    <rect x="420" y="106" width="90" height="36" rx="4" fill="#e8f5e9" stroke="#43a047" stroke-width="1.4"/>
+    <text x="465" y="123" text-anchor="middle" font-weight="bold">批量确认赠送/扣除</text>
+    <text x="465" y="136" text-anchor="middle" font-size="8" fill="#2e7d32">新增 · 允许负数</text>
+    <rect x="800" y="54" width="150" height="88" rx="5" fill="#e8f5e9" stroke="#43a047" stroke-width="1.4"/>
+    <text x="875" y="76" text-anchor="middle" font-weight="bold">赠扣操作记录表</text>
+    <text x="875" y="92" text-anchor="middle" font-size="8.5" fill="#2e7d32">新增 · 独立于积分流水</text>
+    <text x="875" y="108" text-anchor="middle" font-size="8" fill="#78909c">时间 / 操作类型(±) / 理由 / 操作人</text>
+    <text x="875" y="122" text-anchor="middle" font-size="7.5" fill="#999">App管理页签下独立页面</text>
+  </g>
+  <g font-size="10">
+    <rect x="140" y="178" width="120" height="38" rx="4" fill="#eceff1" stroke="#546e7a" stroke-width="1.4"/>
+    <text x="200" y="196" text-anchor="middle" font-weight="bold">user_points</text>
+    <text x="200" y="210" text-anchor="middle" font-size="8" fill="#78909c">账户模型（已有）</text>
+    <rect x="290" y="178" width="140" height="38" rx="4" fill="#eceff1" stroke="#546e7a" stroke-width="1.4"/>
+    <text x="360" y="196" text-anchor="middle" font-weight="bold">point_transactions</text>
+    <text x="360" y="210" text-anchor="middle" font-size="8" fill="#78909c">流水模型（已有）</text>
+    <rect x="480" y="174" width="170" height="44" rx="4" fill="#e8f5e9" stroke="#43a047" stroke-width="1.4"/>
+    <text x="565" y="194" text-anchor="middle" font-weight="bold">Admin Grant/Deduct API</text>
+    <text x="565" y="209" text-anchor="middle" font-size="8.5" fill="#2e7d32">新增 · source='admin'</text>
+    <rect x="690" y="178" width="130" height="38" rx="4" fill="#eceff1" stroke="#546e7a" stroke-width="1.4"/>
+    <text x="755" y="196" text-anchor="middle" font-weight="bold">写入流水记录</text>
+    <text x="755" y="210" text-anchor="middle" font-size="8" fill="#78909c">reason + operator + timestamp</text>
+  </g>
+  <g font-size="10">
+    <rect x="520" y="284" width="150" height="38" rx="4" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.4"/>
+    <text x="595" y="302" text-anchor="middle" font-weight="bold">我的页 · 虎力值总额</text>
+    <text x="595" y="315" text-anchor="middle" font-size="8" fill="#e65100">已有 · 进页拉取最新</text>
+    <rect x="700" y="282" width="180" height="52" rx="4" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.4"/>
+    <text x="790" y="303" text-anchor="middle" font-weight="bold">变动记录页（增强）</text>
+    <text x="790" y="318" text-anchor="middle" font-size="8.5" fill="#e65100">展示：增减数量 + 时间 + 理由</text>
+    <text x="790" y="330" text-anchor="middle" font-size="7.5" fill="#999">原「完成xxx任务」→替换为理由</text>
+  </g>
+  <g stroke="#37474f" stroke-width="1.8" fill="none" marker-end="url(#arr)">
+    <line x1="230" y1="76" x2="254" y2="76"/>
+    <path d="M 325 96 L 335 102"/>
+    <line x1="390" y1="124" x2="414" y2="124"/>
+    <path d="M 465 142 L 555 170"/>
+    <line x1="650" y1="196" x2="684" y2="196"/>
+    <path d="M 820 196 Q 875 196 875 146"/>
+    <path d="M 755 216 L 600 280"/>
+    <line x1="670" y1="304" x2="694" y2="304"/>
+  </g>
+  <g stroke="#90a4ae" stroke-width="1.5" fill="none" marker-end="url(#arrD)" stroke-dasharray="5 3">
+    <path d="M 260 196 L 474 192"/>
+    <path d="M 430 197 L 474 195"/>
+    <path d="M 950 98 Q 970 98 970 196" opacity="0.45"/>
+  </g>
+  <g font-size="9" font-weight="bold" fill="#fff">
+    <circle cx="242" cy="76" r="8" fill="#546e7a"/><text x="242" y="79" text-anchor="middle">1</text>
+    <circle cx="400" cy="124" r="8" fill="#43a047"/><text x="400" y="127" text-anchor="middle">2</text>
+    <circle cx="510" cy="158" r="8" fill="#43a047"/><text x="510" y="161" text-anchor="middle">3</text>
+    <circle cx="668" cy="196" r="8" fill="#546e7a"/><text x="668" y="199" text-anchor="middle">4</text>
+    <circle cx="880" cy="172" r="8" fill="#43a047"/><text x="880" y="175" text-anchor="middle">5</text>
+    <circle cx="682" cy="250" r="8" fill="#fb8c00"/><text x="682" y="253" text-anchor="middle">6</text>
+    <circle cx="682" cy="304" r="8" fill="#fb8c00"/><text x="682" y="307" text-anchor="middle">7</text>
+  </g>
+</svg>
+<div class="flow-note"><b>主流程：</b>① 运营进入「虎力值管理」页 → ② 批量选人员 + 选理由（预设枚举）+ 填统一数量 → ③ 后端 Admin API 处理（包裹 earn/consume，source='admin'），写入 reason + operator → ④ 操作记录表（独立于积分流水）+ App 总额自动刷新 + 变动记录展示理由三列。</div>
+</div>
+
+<h3>3.2 时序图 A：批量赠送</h3>
+<div class="card">
+<p class="note" style="margin-bottom:10px;">📎 权威来源：《<a href="https://ddyuan-spec.github.io/taixiaohu/hlz-req.html" target="_blank">虎力值管理后台·需求梳理图集</a>》§三。</p>
+<svg viewBox="0 0 1060 540" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;">
+  <defs><marker id="sa" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#37474f"/></marker><marker id="sd" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#78909c"/></marker></defs>
+  <g font-size="13" font-weight="bold" text-anchor="middle">
+    <rect x="40" y="18" width="100" height="38" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/><text x="90" y="42">运营人员</text>
+    <rect x="220" y="18" width="130" height="38" rx="6" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.5"/><text x="285" y="42">平台端后台</text>
+    <rect x="460" y="18" width="130" height="38" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/><text x="525" y="42">积分服务(后端)</text>
+    <rect x="700" y="18" width="140" height="38" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/><text x="770" y="42">App 用户端</text>
+    <rect x="910" y="18" width="120" height="38" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/><text x="970" y="42">数据库</text>
+  </g>
+  <g stroke="#b0bec5" stroke-width="1.2" stroke-dasharray="4 4">
+    <line x1="90" y1="56" x2="90" y2="520"/><line x1="285" y1="56" x2="285" y2="520"/>
+    <line x1="525" y1="56" x2="525" y2="520"/><line x1="770" y1="56" x2="770" y2="520"/>
+    <line x1="970" y1="56" x2="970" y2="520"/>
+  </g>
+  <g font-size="12" fill="#263238">
+    <line x1="90" y1="92" x2="281" y2="92" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/><text x="185" y="84" text-anchor="middle">1. 进入「虎力值管理」页</text>
+    <line x1="90" y1="136" x2="281" y2="136" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/><text x="185" y="128" text-anchor="middle">2. 搜索并选择目标用户</text>
+    <line x1="90" y1="182" x2="281" y2="182" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/><text x="185" y="174" text-anchor="middle">3. 填写赠送表单【新增】</text><text x="185" y="196" text-anchor="middle" font-size="10.5" fill="#2e7d32">数量(M) + 理由(下拉预设)</text>
+    <line x1="90" y1="228" x2="281" y2="228" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/><text x="185" y="220" text-anchor="middle">4. 点击「确认赠送」</text>
+    <line x1="285" y1="264" x2="521" y2="264" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/><text x="403" y="256" text-anchor="middle">5. POST /api/admin/points/grant</text><text x="403" y="279" text-anchor="middle" font-size="10.5" fill="#78909c">{user_ids[], points, reason, operator}</text>
+    <path d="M 525 296 H 620 V 326 H 529" fill="none" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/><text x="635" y="306" text-anchor="start">6. earn_points(source='admin', ...)</text><text x="635" y="322" text-anchor="start" font-size="10.5" fill="#78909c">更新 user_points.available += M</text>
+    <line x1="525" y1="356" x2="966" y2="356" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/><text x="745" y="348" text-anchor="middle">7. INSERT point_transactions</text><text x="745" y="371" text-anchor="middle" font-size="10.5" fill="#78909c">{source:'admin', points:+M, reason, operator}</text>
+    <line x1="970" y1="392" x2="529" y2="392" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#sd)"/><text x="750" y="384" text-anchor="middle">8. 写入成功，返回 {success, new_balance}</text>
+    <line x1="525" y1="428" x2="289" y2="428" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#sd)"/><text x="406" y="420" text-anchor="middle">9. 返回结果 → Toast「赠送成功」</text>
+    <line x1="770" y1="468" x2="966" y2="468" stroke="#37474f" stroke-width="1.6" marker-end="url(#sa)"/><text x="868" y="460" text-anchor="middle">10. 用户打开变动记录（拉取最新）</text><text x="868" y="483" text-anchor="middle" font-size="10.5" fill="#2e7d32">【增强】展示增减数量+时间+理由</text>
+    <line x1="970" y1="500" x2="774" y2="500" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#sd)"/><text x="872" y="492" text-anchor="middle" font-size="11">11. 返回流水列表（含 reason 字段）</text>
+  </g>
+  <g fill="#cfd8dc" opacity="0.85"><rect x="280" y="88" width="10" height="152"/><rect x="520" y="260" width="10" height="180"/><rect x="965" y="352" width="10" height="48"/><rect x="760" y="464" width="10" height="44"/></g>
+</svg>
+<div class="flow-note"><b>关键点：</b>步骤 3~5 为本期新增（赠送表单 + grant API）；步骤 6 复用既有 <code>earn_points</code>，source 设为 <code>'admin'</code>；步骤 7 流水额外写入 reason + operator；步骤 10~11 为 App 端增强——变动记录展示增减数量+时间+理由三列。</div>
+</div>
+
+<h3>3.3 时序图 B：批量扣除（允许负数）</h3>
+<div class="card">
+<p class="note" style="margin-bottom:10px;">📎 权威来源：《<a href="https://ddyuan-spec.github.io/taixiaohu/hlz-req.html" target="_blank">虎力值管理后台·需求梳理图集</a>》§四。</p>
+<svg viewBox="0 0 1060 480" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;">
+  <defs><marker id="sb" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#37474f"/></marker><marker id="sbd" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#78909c"/></marker></defs>
+  <g font-size="13" font-weight="bold" text-anchor="middle">
+    <rect x="40" y="18" width="100" height="38" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/><text x="90" y="42">运营人员</text>
+    <rect x="220" y="18" width="130" height="38" rx="6" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.5"/><text x="285" y="42">平台端后台</text>
+    <rect x="460" y="18" width="130" height="38" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/><text x="525" y="42">积分服务(后端)</text>
+    <rect x="910" y="18" width="120" height="38" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/><text x="970" y="42">数据库</text>
+  </g>
+  <g stroke="#b0bec5" stroke-width="1.2" stroke-dasharray="4 4">
+    <line x1="90" y1="56" x2="90" y2="460"/><line x1="285" y1="56" x2="285" y2="460"/>
+    <line x1="525" y1="56" x2="525" y2="460"/><line x1="970" y1="56" x2="970" y2="460"/>
+  </g>
+  <g font-size="12" fill="#263238">
+    <line x1="90" y1="92" x2="281" y2="92" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/><text x="185" y="84" text-anchor="middle">1. 进入「虎力值管理」→ 选用户</text>
+    <line x1="90" y1="132" x2="281" y2="132" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/><text x="185" y="124" text-anchor="middle">2. 填写扣除表单【新增】</text><text x="185" y="147" text-anchor="middle" font-size="10.5" fill="#e65100">数量(M) + 理由(下拉预设)</text>
+    <line x1="90" y1="176" x2="281" y2="176" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/><text x="185" y="168" text-anchor="middle">3. 点击「确认扣除」</text>
+    <line x1="285" y1="208" x2="521" y2="208" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/><text x="403" y="200" text-anchor="middle">4. POST /api/admin/points/deduct</text><text x="403" y="223" text-anchor="middle" font-size="10.5" fill="#78909c">{user_ids[], points:M, reason, operator}</text>
+    <path d="M 525 240 H 620 V 274 H 529" fill="none" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/><text x="635" y="250" text-anchor="start">5. consume_points(source='admin', M)</text><text x="635" y="266" text-anchor="start" font-size="10.5" fill="#e65100"><b>不校验余额，available -= M（可为负）</b></text>
+    <line x1="525" y1="300" x2="966" y2="300" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/><text x="745" y="292" text-anchor="middle">6. INSERT point_transactions</text><text x="745" y="315" text-anchor="middle" font-size="10.5" fill="#78909c">{source:'admin', points:-M, reason, operator}</text>
+    <path d="M 525 332 H 620 V 362 H 529" fill="none" stroke="#37474f" stroke-width="1.6" marker-end="url(#sb)"/><text x="635" y="342" text-anchor="start">7. UPDATE user_points</text><text x="635" y="358" text-anchor="start" font-size="10.5" fill="#78909c">SET available = available - M（可为负数）</text>
+    <line x1="970" y1="388" x2="529" y2="388" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#sbd)"/><text x="750" y="380" text-anchor="middle">8. 返回 {success, new_balance}</text>
+    <line x1="525" y1="420" x2="289" y2="420" stroke="#78909c" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#sbd)"/><text x="406" y="412" text-anchor="middle">9. Toast「已扣除 X 虎力值」+ 刷新列表</text>
+  </g>
+  <g fill="#cfd8dc" opacity="0.85"><rect x="280" y="88" width="10" height="100"/><rect x="520" y="200" width="10" height="230"/><rect x="965" y="292" width="10" height="40"/></g>
+</svg>
+<div class="flow-note"><b>核心差异：</b>扣除不做余额校验，允许扣成负数（用户已确认）。步骤 5 直接调用 <code>consume_points</code>，<code>available</code> 可为负数；流水 <code>points</code> 存负值。</div>
+</div>
+
+<h3>3.4 信息架构</h3>
+<div class="card">
+<table><thead><tr><th style="width:130px">层级</th><th>组件</th><th>说明</th></tr></thead><tbody><tr><td>前端展示层</td><td>平台端后台「虎力值管理」页 + App「变动记录」页</td><td>平台端：列表 + 批量弹窗 + 明细弹窗；App：任务中心 + 变动明细</td></tr><tr><td>后端配置层</td><td>Admin Grant/Deduct API</td><td>新增接口，包裹 earn/consume 方法，source='admin'</td></tr><tr><td>数据层</td><td>user_points + point_transactions</td><td>既有表新增 source='admin'，落库 reason/operator。</td></tr><tr><td>理由字典</td><td>预设枚举（已有能力）</td><td>理由来源取自系统已有赠扣理由字典（非本期新建配置页），预设枚举见 §4.2.2</td></tr></tbody></table>
+</div>
+
+<h3>3.5 状态机</h3>
+<div class="card">
+<p>本需求涉及的状态实体及流转：</p>
+<p class="note">说明：本 PRD 为需求文档，操作按钮清单见 §4.1.2「功能按钮总表」（批量赠送 / 批量扣除 / 查询重置 / 明细下钻）；状态机仅描述业务实体终态与流转，无中间操作态。</p>
+
+<table><thead><tr><th style="width:120px">实体</th><th>状态枚举</th><th>流转规则</th></tr></thead><tbody><tr><td>操作记录</td><td>已完成（默认终态）</td><td>创建即完成，无中间态。操作一旦提交成功即为不可变更的审计记录。</td></tr><tr><td>用户虎力值余额</td><td>正数 / 零 / 负数</td><td>赠送 available += M；扣除 available -= M（可负）。</td></tr></tbody></table>
+</div>
+
+<!-- ═══════════ 四、功能需求详情 ═══════════ -->
+<h2>四、功能需求详情</h2>
+<p class="note" style="margin-bottom:14px;">
+<b>涉及终端明细：</b>本期仅涉及 <b>平台端后台</b>（新增「虎力值管理」模块）与 <b>App 客户端</b>（变动记录增强）；不含商家端后台 / H5 / 小程序。<br>
+<b>需求影响范围：</b>① 平台端后台「App 管理」页签（新增子模块）；② 后端积分服务（新增 Admin Grant/Deduct API，复用 earn/consume，新增 source='admin' 分支）；③ 数据层 user_points / point_transactions（新增 reason/operator 落库）；④ App 端「变动记录」页（展示增强）；⑤ 理由字典（系统已有能力，仅引用不新建）。不影响优惠券、订单、用户画像等其他模块。
+</p>
+
+
+<!-- ===== 4.1 平台端后台 - 虎力值管理列表页 ===== -->
+<h3>4.1 平台端后台 — 虎力值管理列表页 <span class="tag tag-y">本期新增</span></h3>
+
+<h4>4.1.1 页面原型与交互示意</h4>
+<p>原型截图：</p>
+<img class="proto" src="hlz-prd-assets/plat-list.png" alt="平台端后台-虎力值管理列表页原型">
+<p class="note">页面位于「App管理」页签下，主体为赠扣操作记录表格，顶部有查询筛选区和操作按钮区。</p>
+
+<h4>4.1.2 详细逻辑规则</h4>
+
+<h5>界面与展示规则</h5>
+<p><b>列表字段表：</b></p>
+<table><thead><tr><th style="width:110px">字段名称</th><th style="width:200px">需求说明</th><th>备注</th></tr></thead><tbody><tr><td>操作时间</td><td>该次批量操作的提交时间，格式 yyyy-MM-dd HH:mm:ss</td><td>取《操作记录表》created_at</td></tr><tr><td>操作类型</td><td>赠送（绿色标签）/ 扣除（红色标签）</td><td>取《操作记录表》operation_type</td></tr><tr><td>操作人员</td><td>执行该操作的后台管理员账号</td><td>取《操作记录表》operator</td></tr><tr><td>影响用户数</td><td>本次操作影响的用户总数，可点击下钻查看明细</td><td>关联《操作明细表》count</td></tr><tr><td>变动总虎力值</td><td>本次所有用户变动合计：赠送显绿正值，扣除显红负值。</td><td>SUM《操作明细表》points</td></tr><tr><td>理由</td><td>操作时选择的理由文本（来自预设字典或自由填写）</td><td>取《操作记录表》reason</td></tr><tr><td>操作</td><td>「明细」按钮，点击弹出该操作的受影响用户清单</td><td>触发明细弹窗</td></tr></tbody></table>
+<p><b>功能按钮总表：</b></p>
+<table><thead><tr><th style="width:100px">功能说明</th><th style="width:100px">显示位置</th><th style="width:80px">权限</th><th>前置条件</th></tr></thead><tbody><tr><td>批量赠送</td><td>列表上方右侧，绿色主按钮</td><td>虎力值管理员</td><td>无</td></tr><tr><td>批量扣除</td><td>列表上方右侧，红色次按钮</td><td>虎力值管理员</td><td>无</td></tr><tr><td>查询 / 重置</td><td>列表上方筛选栏</td><td>虎力值管理员</td><td>无</td></tr><tr><td>明细下钻</td><td>每行操作记录末尾</td><td>虎力值管理员</td><td>该行影响用户数 &gt; 0</td></tr></tbody></table>
+
+<h5>业务逻辑与边界条件</h5>
+<p><b>查询条件规格：</b></p>
+<table><thead><tr><th style="width:100px">查询条件</th><th>控件类型</th><th>选项来源 / 说明</th><th>查询行为</th></tr></thead><tbody><tr><td>操作类型</td><td>下拉选择</td><td>全部 / 赠送 / 扣除</td><td>精确匹配</td></tr><tr><td>操作人员</td><td>文本输入</td><td>支持模糊搜索管理员账号</td><td>LIKE 匹配</td></tr><tr><td>时间范围</td><td>日期范围选择器</td><td>开始日期 ~ 结束日期</td><td>范围闭区间查询 created_at</td></tr></tbody></table>
+<p><b>逐步操作逻辑：</b></p>
+<ol>
+  <li>运营进入「App管理」→「虎力值管理」页签，页面加载时默认查询近 30 天全部类型的操作记录，按操作时间倒序排列。</li>
+  <li>修改筛选条件后点击「查询」，前端带参请求后端刷新列表；点击「重置」清空所有筛选项并恢复默认查询。</li>
+  <li>点击某行「明细」按钮，弹出操作明细弹窗（见 §4.3），展示该次操作影响的用户清单。</li>
+  <li>列表底部显示分页控件，默认每页 10 条，支持切换每页 20/50 条。</li>
+</ol>
+<p><b>异常分支：</b></p>
+<ul>
+  <li>列表为空时显示空状态提示：「暂无操作记录」，无数据时不显示表格。</li>
+  <li>查询无结果时显示「未找到符合条件的记录」。</li>
+</ul>
+<p><b>数据来源：</b>列表数据取《操作记录表》（admin_point_operations），后端接口 <code>GET /api/admin/point-operations</code> 返回。</p>
+
+<!-- ===== 4.2 平台端后台 - 批量赠送/扣除弹窗 ===== -->
+<h3>4.2 平台端后台 — 批量赠送 / 批量扣除弹窗 <span class="tag tag-y">本期新增</span></h3>
+
+<h4>4.2.1 页面原型与交互示意</h4>
+<p>原型截图：</p>
+<img class="proto" src="hlz-prd-assets/plat-batch-grant.png" alt="平台端后台-批量赠送/扣除弹窗原型">
+<p class="note">点击「批量赠送」或「批量扣除」按钮后弹出此面板。面板包含三个区域：人员选择区、理由选择区、数量填写区。</p>
+
+<h4>4.2.2 详细逻辑规则</h5>
+
+<h5>界面与展示规则</h5>
+<p><b>弹窗结构分区：</b></p>
+<table><thead><tr><th style="width:100px">区域</th><th>字段/元素</th><th>功能逻辑说明</th><th>备注</th></tr></thead><tbody><tr><td>人员选择区</td><td>手机号搜索框</td><td>输入手机号后按回车或点击添加，支持多个手机号用逗号隔开一次添加</td><td>调用户检索接口</td></tr><tr><td>—</td><td>用户ID输入框</td><td>支持输入多个用户ID（逗号隔开）批量添加</td><td>⚠️ 待确认 @研发：ID 格式（U_xxx 或纯数字）</td></tr><tr><td>—</td><td>已选人员标签</td><td>以 Chip 形式展示已选用户（昵称 + ID），每个 Chip 带 ✕ 可移除</td><td>上限 ⚠️ 待确认 @研发：单次批量上限人数</td></tr><tr><td>—</td><td>导入表格入口</td><td>支持上传 CSV/Excel 文件批量导入用户；提供「下载导入模板」按钮</td><td>模板仅含「用户ID / 昵称 / 手机号」三列</td></tr><tr><td>理由选择区</td><td>理由下拉框</td><td>预设理由枚举（来自<b>已有理由字典</b>），枚举明细见本表下方清单</td><td>理由字典为系统已有能力，本期不新增配置页</td></tr><tr><td>—</td><td>其他理由输入框</td><td>选择「其他」时显示，自由文本输入，最大长度 50 字符</td><td>仅「其他」选项可见</td></tr><tr><td>数量填写区</td><td>虎力值数量输入框</td><td>数字输入，统一应用于每位被选用户</td><td>赠送：正整数；扣除：正整数（后端存为负值）</td></tr><tr><td>操作按钮</td><td>确认赠送 / 确认扣除</td><td>根据入口按钮区分，提交批量操作</td><td>提交前校验</td></tr><tr><td>—</td><td>取消</td><td>关闭弹窗，不保存已选人员</td><td>—</td></tr></tbody></table>
+<p class="note"><b>预设理由枚举（已有字典，非本期新建）：</b>客服补偿 / 活动奖励补发 / 体验回馈 / 违规处罚 / 系统调整 / 误操作退回 / 其他（选中后自由填写，最长 50 字）。</p>
+
+<h5>业务逻辑与边界条件</h5>
+<p><b>「确认赠送」逐步操作逻辑：</b></p>
+<ol>
+  <li><b>前置校验：</b>已选人员不能为空 → 提示「请至少选择一位用户」；数量必须为正整数且 &gt; 0 → 提示「请输入有效的赠送数量」；理由必选 → 提示「请选择操作理由」。</li>
+  <li><b>提交请求：</b>前端收集 user_ids[] + points（正整数）+ reason（所选理由文本）+ operator（当前登录账号），POST 到 <code>/api/admin/points/grant</code>。</li>
+  <li><b>后端处理：</b>遍历 user_ids，对每个用户调用 <code>earn_points(user_id, points, source='admin')</code>，更新 <code>user_points.available += points</code>；同时 INSERT 一条 <code>point_transactions</code> 记录（source='admin', points=+N, reason, operator, balance_after）。</li>
+  <li><b>生成操作记录：</b>所有用户处理完毕后，INSERT 一条 <code>admin_point_operations</code> 记录（operation_type='grant', total_points=+N*count, reason, operator, affected_count=count）。</li>
+  <li><b>返回结果：</b>后端返回 {success:true, affected_count:N, operation_id:xxx}；前端 Toast「赠送成功，共影响 N 位用户」并关闭弹窗，刷新列表。</li>
+</ol>
+<p><b>「确认扣除」逐步操作逻辑：</b></p>
+<ol>
+  <li><b>前置校验：</b>同赠送（人员非空、数量有效、理由必选）。</li>
+  <li><b>提交请求：</b>POST 到 <code>/api/admin/points/deduct</code>，参数同上（points 为正整数，后端取负）。</li>
+  <li><b>后端处理：</b>遍历 user_ids，调用 <code>consume_points(user_id, points, source='admin')</code>。<b>不校验余额</b>，<code>user_points.available -= points</code> 可为负数。</li>
+  <li><b>写流水 + 操作记录：</b>同赠送流程，points 存负值（如 -100），operation_type='deduct'。</li>
+  <li><b>返回结果：</b>Toast「已扣除 X 虎力值，共影响 N 位用户」并刷新列表。</li>
+</ol>
+<p><b>异常分支：</b></p>
+<ul>
+  <li>用户不存在（ID/手机号无效）→ 该用户跳过并在结果中标记失败，不影响其他用户处理；最终 Toast 中注明「其中 M 位用户处理失败」。</li>
+  <li>网络超时 → 显示「操作超时，请稍后重试」，不自动重试（防止重复扣款）。</li>
+  <li>导入模板解析失败（格式错误/列为空）→ 提示「导入文件格式不正确，请下载标准模板填写」。</li>
+</ul>
+<p><b>计算公式：</b>变动总虎力值 = 单用户数量 × 已选用户数。赠送时为正值，扣除时为负值。</p>
+<p><b>数据来源：</b>人员检索调 <code>GET /api/admin/users/search</code>；提交分别调 grant/deduct API；理由枚举取自有字典（非本期新建）。</p>
+
+<!-- ===== 4.3 平台端后台 - 操作明细下钻弹窗 ===== -->
+<h3>4.3 平台端后台 — 操作明细下钻弹窗 <span class="tag tag-y">本期新增</span></h3>
+
+<h4>4.3.1 页面原型与交互示意</h4>
+<p>原型截图：</p>
+<img class="proto" src="hlz-prd-assets/plat-detail.png" alt="平台端后台-操作明细下钻弹窗原型">
+<p class="note">点击列表中某行的「影响用户数」或「明细」按钮后弹出，展示该次操作影响的所有用户及其各自的虎力值变动。</p>
+
+<h4>4.3.2 详细逻辑规则</h4>
+
+<h5>界面与展示规则</h5>
+<p><b>弹窗头部信息：</b></p>
+<table><thead><tr><th style="width:110px">字段</th><th>说明</th><th>数据来源</th></tr></thead><tbody><tr><td>操作时间</td><td>该次操作的提交时间</td><td>取《操作记录表》created_at</td></tr><tr><td>操作人员</td><td>执行操作的管理员账号</td><td>取《操作记录表》operator</td></tr><tr><td>影响用户</td><td>受影响的总人数</td><td>COUNT《操作明细表》</td></tr><tr><td>变动总计</td><td>所有用户变动合计（±）</td><td>SUM《操作明细表》points</td></tr></tbody></table>
+<p><b>用户明细列表字段表：</b></p>
+<table><thead><tr><th style="width:90px">字段名称</th><th>需求说明</th><th>备注</th></tr></thead><tbody><tr><td>昵称</td><td>用户昵称</td><td>取《用户表》nickname</td></tr><tr><td>用户ID</td><td>系统用户唯一标识</td><td>取《用户表》user_id</td></tr><tr><td>手机号</td><td>用户手机号（脱敏显示：138****1234）</td><td>取《用户表》phone</td></tr><tr><td>虎力值</td><td>该用户本次变动数量，赠送显示绿色正值，扣除显示红色负值</td><td>取《操作明细表》points</td></tr></tbody></table>
+
+<h5>业务逻辑与边界条件</h5>
+<p><b>逐步操作逻辑：</b></p>
+<ol>
+  <li>点击列表行的「明细」按钮，前端携带 operation_id 请求 <code>GET /api/admin/point-operations/{id}/details</code>。</li>
+  <li>后端返回该操作关联的用户明细列表，前端渲染弹窗（头部汇总 + 明细表格）。</li>
+  <li>弹窗右上角「✕」关闭；支持点击遮罩层关闭。</li>
+</ol>
+<p><b>数据来源：</b>明细数据取《操作明细表》（admin_point_operation_details），通过 operation_id 关联查询。</p>
+
+<!-- ===== 4.4 App 客户端 - 任务中心虎力值 ===== -->
+<h3>4.4 App 客户端 — 任务中心（虎力值卡片） <span class="tag tag-r">已有-沿用</span></h4>
+<p>沿用现有功能。「我的」页虎力值总额展示 + 任务中心页（每日任务 / 新手任务列表）均为既有功能，本期不做改动。进页时拉取服务端最新虎力值余额（确保后台赠扣后反映正确金额）。</p>
+
+<h4>4.4.1 页面原型与交互示意</h4>
+<p>原型截图：</p>
+<img class="proto" src="hlz-prd-assets/app-task.png" alt="App-任务中心页原型">
+
+<!-- ===== 4.5 App 客户端 - 变动记录页增强 ===== -->
+<h3>4.5 App 客户端 — 虎力值变动记录（增强理由展示） <span class="tag tag-g">本期改动</span></h3>
+
+<h4>4.5.1 页面原型与交互示意</h4>
+<p>原型截图：</p>
+<img class="proto" src="hlz-prd-assets/app-detail.png" alt="App-变动记录页原型">
+<p class="note">从任务中心点击「明细 ▸」进入。本期增强：每条记录展示「理由 + 时间 + 增减数量」三列，原「完成xxx任务」文本替换为后台操作时选择的理由。</p>
+
+<h4>4.5.2 详细逻辑规则</h4>
+
+<h5>界面与展示规则</h5>
+<p><b>变动记录列表字段表：</b></p>
+<table><thead><tr><th style="width:100px">字段名称</th><th>需求说明</th><th>备注</th></tr></thead><tbody><tr><td>理由</td><td>变动原因文本。任务类显示任务名；admin 类显示后台操作理由。</td><td>取 point_transactions；任务类=原名，admin=后台理由。</td></tr><tr><td>时间</td><td>变动发生时间，格式 MM-dd HH:mm</td><td>取《point_transactions》created_at</td></tr><tr><td>增减数量</td><td>虎力值变动数值。增加显绿正值，减少显红负值。</td><td>取《point_transactions》points</td></tr></tbody></table>
+<p><b>展示样式与空/异常态：</b></p>
+<ul>
+  <li>记录按时间倒序排列（最新的在最上方）。</li>
+  <li>列表滚动到底部时显示「— 没有更多了 —」。</li>
+  <li>无记录时显示空状态：「暂无变动记录」。</li>
+</ul>
+
+<h5>业务逻辑与边界条件</h5>
+<p><b>逐步操作逻辑：</b></p>
+<ol>
+  <li>用户从任务中心点击「明细 ▸」进入变动记录页。</li>
+  <li>前端请求 <code>GET /api/user/point-transactions</code>（带分页参数），后端返回流水列表（含 reason 字段）。</li>
+  <li>前端逐条渲染：判断 <code>source</code> 字段——若为 <code>'admin'</code> 则直接显示 reason（后台操作理由）；若为 <code>'task'</code> 则显示对应任务名称（原有逻辑不变）。</li>
+  <li>支持下拉加载更多（分页加载）。</li>
+</ol>
+<p><b>数据来源：</b>流水数据取《point_transactions》表，通过 user_id 关联当前登录用户过滤。</p>
+
+<!-- ═══════════ 五、非功能性需求 ═══════════ -->
+<h2>五、非功能性需求</h2>
+
+<h3>5.1 埋点需求</h3>
+<div class="card">
+<p>本需求埋点事件与属性严格遵循<a href="https://ddyuan-spec.github.io/taixiaohu/taixiaohu-tracking-spec.html" target="_blank">《泰小虎埋点规范 v2.3》</a>（在线全文，含完整 30 事件/属性/页面枚举/友盟约束）。</p>
+<p><b>本期涉及事件清单：</b></p>
+<table><thead><tr><th style="width:150px">事件英文名</th><th style="width:110px">事件显示名</th><th style="width:55px">所属层</th><th style="width:90px">平台</th><th>触发时机</th><th style="width:140px">必含上报参数(友盟中文名)</th><th>备注</th></tr></thead><tbody><tr><td colspan="7" style="background:#f8fafc;text-align:center;font-weight:600;">本期可能涉及的埋点事件（需按实际开发对接确认）</td></tr><tr><td>—</td><td>—</td><td>—</td><td>平台端后台</td><td>运营点击「确认赠送」</td><td>操作类型、理由、影响用户数、变动总量</td><td>⚠️ 待确认 @研发：是否需要新增 admin_operate 事件</td></tr><tr><td>—</td><td>—</td><td>—</td><td>平台端后台</td><td>运营点击「确认扣除」</td><td>同上</td><td>可与赠送合为同一事件，以操作类型区分</td></tr><tr><td>—</td><td>—</td><td>—</td><td>App</td><td>用户查看变动记录</td><td>—</td><td>若已有 page_view 事件覆盖则不需单独埋</td></tr></tbody></table>
+<p class="note">注：以上事件清单为初步评估，具体事件定义须严格从《泰小虎埋点规范 v2.3》既有 30 事件目录中选取或走新增评审。<b>禁止凭空编造事件英文名或属性变量名。</b></p>
+</div>
+
+<h3>5.2 性能要求</h3>
+<div class="card">
+<ul>
+  <li>批量操作（单次 ≤ 100 人）后端响应时间 ≤ 3 秒。</li>
+  <li>操作记录列表查询（默认分页 10 条）响应 ≤ 500ms。</li>
+  <li>App 变动记录页首次加载 ≤ 1 秒。</li>
+</ul>
+</div>
+
+<h3>5.3 安全要求</h3>
+<div class="card">
+<ul>
+  <li>虎力值管理功能仅限「虎力值管理员」角色访问（权限配置 ⚠️ 待确认 @研发：是否复用现有角色体系或新建角色）。</li>
+  <li>所有写操作（赠送/扣除）记录操作人（operator），不可篡改，用于审计追溯。</li>
+  <li>扣除操作允许负数余额，但后端仍记录完整流水，确保可追溯。</li>
+</ul>
+</div>
+
+<!-- ═══════════ 六、验收标准 ═══════════ -->
+<h2>六、验收标准（Given-When-Then）</h2>
+<div class="card">
+<table class="ac-table"><thead><tr><th style="width:40px">#</th><th style="width:180px">Given（前提）</th><th style="width:180px">When（操作）</th><th>Then（结果）</th></tr></thead><tbody><tr><td>AC-01</td><td>运营已登录平台端后台且有虎力值管理权限</td><td>进入「App管理」→「虎力值管理」页签</td><td>页面正常加载，显示操作记录列表（可为空），顶部有「批量赠送」「批量扣除」按钮</td></tr><tr><td>AC-02</td><td>在虎力值管理页面</td><td>点击「批量赠送」→选3用户→理由「客服补偿」→填100→确认</td><td>提示赠送成功（共 3 位用户）；列表新增赠送记录（3人/+300/客服补偿）。</td></tr><tr><td>AC-03</td><td>在虎力值管理页面</td><td>点击「批量扣除」→选1用户(余额50)→理由「违规处罚」→填200→确认</td><td>提示已扣除 200；用户余额 -150（允许负数）；列表新增扣除记录。</td></tr><tr><td>AC-04</td><td>操作记录列表有数据</td><td>点击某条记录的「明细」按钮</td><td>弹出明细弹窗，显示该操作影响的所有用户（昵称/ID/手机号/各自变动值）</td></tr><tr><td>AC-05</td><td>在批量操作弹窗</td><td>手机号输入框输入「13800001111,13800002222」回车</td><td>两个手机号对应的用户同时添加到已选人员列表</td></tr><tr><td>AC-06</td><td>在批量操作弹窗</td><td>点击「下载导入模板」</td><td>下载 Excel 模板（含「用户ID / 昵称 / 手机号」三列表头）</td></tr><tr><td>AC-07</td><td>在批量操作弹窗</td><td>理由下拉选择「其他」</td><td>展开自由填写输入框，可输入自定义理由（最长 50 字符）</td></tr><tr><td>AC-08</td><td>App 用户已被后台赠送 100 虎力值（理由=客服补偿）</td><td>进入 App「任务中心」→ 点击「明细 ▸」</td><td>首条显示：理由=客服补偿，时间=操作时间，增减=+100（绿色）。</td></tr><tr><td>AC-09</td><td>App 用户已被后台扣除 200 虎力值（理由=违规处罚）</td><td>进入 App 变动记录页</td><td>列表中可见一条记录：理由=「违规处罚」，增减=「-200」（红色）</td></tr><tr><td>AC-10</td><td>在虎力值管理页面</td><td>按操作类型筛选「扣除」+ 时间范围「本周」</td><td>列表仅显示本周内的扣除类型记录</td></tr></tbody></table>
+</div>
+
+<!-- ═══════════ 七、关键边界检查清单 ═══════════ -->
+<h2>七、关键边界设计检查清单</h2>
+<div class="card">
+<table><thead><tr><th style="width:220px">检查项</th><th>结论 / 处理方式</th></tr></thead><tbody><tr><td>网络异常（弱网/断网/500）</td><td>网络异常→提示「网络异常」；不自动重试，以实际结果为准。</td></tr><tr><td>未登录 / 无权限</td><td>未登录跳转登录页；无虎力值管理权限 → 页面显示「无权访问」</td></tr><tr><td>空状态</td><td>操作记录空→「暂无操作记录」；人员空确认→「请至少选一位用户」。</td></tr><tr><td>极限值</td><td>人数上限 ⚠️ 待确认 @研发（建议200）；数量上限 ⚠️（建议99999）；理由≤50字</td></tr><tr><td>并发防重</td><td>提交后立即 disabled 防重复；后端建议 request_id 幂等（⚠️ 待确认 @研发）。</td></tr><tr><td>扣除负数余额</td><td>允许扣成负数不阻拦；负数余额 App 正常显示（⚠️ 待确认 @设计）。</td></tr><tr><td>逆向流 / 撤销</td><td>本期不做撤销/回退功能。误操作可通过再次赠送/扣除修正（产生新的操作记录）</td></tr></tbody></table>
+</div>
+
+<!-- ═══════════ 八、文档维护与变更规范 ═══════════ -->
+<h2>八、文档维护与变更规范</h2>
+<div class="card">
+<ul>
+  <li>版本号规范：V1.0 为初稿定版；后续功能变更递增小版本（V1.1, V1.2…），结构性变更递增大版本（V2.0）。</li>
+  <li>变更须在本文档顶部修订记录表中登记版本号、日期、修订人、变更摘要。</li>
+  <li>定稿后任何变更须高亮标注并主动通知开发和测试干系人。</li>
+</ul>
+</div>
+
+<!-- ═══════════ 九、待确认项汇总 ═══════════ -->
+<h2>九、待确认项汇总</h2>
+<div class="card">
+<table><thead><tr><th style="width:30px">#</th><th style="width:320px">待确认事项</th><th style="width:150px">建议 / 当前立场</th><th>干系人</th></tr></thead><tbody><tr><td>1</td><td>理由字典来源（系统/表/接口）？不新建配置页，需确认归属（已有能力）。</td><td>取系统既有赠扣理由字典（代码固定预设 + 其他自由填）</td><td>@研发</td></tr><tr><td>2</td><td>单次批量操作人数上限？</td><td>建议 200</td><td>@研发</td></tr><tr><td>3</td><td>单次赠送/扣除数量上限？</td><td>建议 99,999</td><td>@研发</td></tr><tr><td>4</td><td>虎力值管理员权限角色？复用现有还是新建？</td><td>建议复用现有管理员角色 + 新增权限点</td><td>@研发</td></tr><tr><td>5</td><td>后端是否做 request_id 幂等防重？</td><td>建议做</td><td>@研发</td></tr><tr><td>6</td><td>App 端负数余额的展示样式（颜色/图标/提示文案）？</td><td>待设计输出</td><td>@设计</td></tr><tr><td>7</td><td>用户 ID 的格式（U_xxx 前缀 or 纯数字）？</td><td>⚠️ 待确认 @研发</td><td>@研发</td></tr><tr><td>8</td><td>埋点：是否需要新增 admin_operate 类事件？还是现有事件已覆盖？</td><td>需从 v2.3 既有事件中选取或走新增评审</td><td>@研发/@数据分析</td></tr></tbody></table>
+</div>
+
+<div style="margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--gray);">
+  文档结束 · 虎力值管理后台 PRD v1.0 · 2026-07-28
+</div>
+
+</body>
+</html>
