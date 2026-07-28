@@ -46,7 +46,7 @@ li{margin:4px 0}
 <div class="wrap">
 
 <h1>泰小虎优惠券体系重构 · 需求文档（PRD）</h1>
-<div class="meta">文档版本：V1.0.23 ｜ 创建时间：2026-07-27 ｜ 更新时间：2026-07-28 ｜ 状态：草稿（待评审）｜ 所属项目：泰小虎 · 营销中台</div>
+<div class="meta">文档版本：V1.0.24 ｜ 创建时间：2026-07-27 ｜ 更新时间：2026-07-28 ｜ 状态：草稿（待评审）｜ 所属项目：泰小虎 · 营销中台</div>
 
 <!-- ==================== 一、文档基本信息 ==================== -->
 <h2>一、文档基本信息</h2>
@@ -721,11 +721,66 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <h4>4.1.1 P1 优惠券管理列表 <span class="tag r">已有-沿用</span></h4>
 <p>沿用现有功能。</p>
 
-<h4>4.1.2 D1 券详情 <span class="tag r">已有-沿用</span></h4>
-<p>沿用现有功能。</p>
+<h4>4.1.2 D1 券详情 <span class="tag y">本期新增</span></h4>
+<p>平台端当前无独立券详情页（仅商家端有），本期新建。从 P1 列表点击「查看」进入。</p>
 
-<h4>4.1.3 D2 新建优惠券 <span class="tag r">已有-沿用</span></h4>
-<p>沿用现有功能。</p>
+<p><b>页面字段表</b></p>
+<table>
+<thead><tr><th>字段/区域</th><th>需求说明</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>券配置名称</td><td>文本只读，显示券模板名称</td><td>取《券模板表》name</td></tr>
+<tr><td>券编码提示</td><td>名称旁显示券编码（hint 文字）</td><td>取 template_code</td></tr>
+<tr><td>有效时间类型</td><td>Radio 只读：固定时间段 / 领取后生效</td><td>取 time_type</td></tr>
+<tr><td>固定时间段</td><td>日期范围：开始时间 ~ 结束时间，只读</td><td>time_type=fixed 时显示；取 start_time/end_time</td></tr>
+<tr><td>领取后有效天数</td><td>数字只读：X 天内有效</td><td>time_type=after 时显示；取 valid_days</td></tr>
+<tr><td>活动范围</td><td>内嵌表格：店铺名 / 券类型 / 发行量 / 每人限领</td><td>取关联规则配置</td></tr>
+<tr><td>商品选择</td><td>Radio 只读：全部商品参与 / 指定商品参与 / 排除商品不参与</td><td>取 product_scope</td></tr>
+<tr><td>发放方式</td><td>文本只读，显示发放渠道（如"直播时长发券"）</td><td>取 issue_mode</td></tr>
+<tr><td>状态</td><td>状态 Tag 显示（未开始/进行中/已下架/…）</td><td>取 status 枚举</td></tr>
+</tbody>
+</table>
+
+<p><b>功能按钮</b></p>
+<table>
+<thead><tr><th>按钮</th><th>功能说明</th><th>权限</th><th>前置条件</th></tr></thead>
+<tbody>
+<tr><td>← 返回列表</td><td>返回 P1 优惠券管理列表</td><td>所有角色</td><td>—</td></tr>
+<tr><td>下架</td><td>将当前券置为「已下架」状态（不可逆）</td><td>直播运营</td><td>当前状态=进行中；已发放券数=0 或用户确认强制下架</td></tr>
+</tbody>
+</table>
+
+<h4>4.1.3 D2 新建/编辑优惠券 <span class="tag y">本期新增</span></h4>
+<p>平台端当前无制券能力（仅商家端有添加/编辑券功能），本期新建。与商家端的差异：平台端 D2 多「**店铺选择**」列（可指定全部或某商家店铺），商家端写死自身店铺。</p>
+
+<p><b>D2 表单字段表</b></p>
+<table>
+<thead><tr><th>字段</th><th>控件类型</th><th>需求说明</th><th>校验规则</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>券配置名称</td><td>文本输入</td><td>必填，内部识别用，不展示给用户</td><td>空→"请填写名称"；≤50 字符</td><td>hint: "该配置名称不展示给用户仅作内部识别用"</td></tr>
+<tr><td>有效时间类型</td><td>Radio 2 选 1</td><td>固定时间段 / 领取后生效</td><td>必选其一</td><td>切换时联动下方字段显隐</td></tr>
+<tr><td>固定时间段</td><td>日期范围</td><td>开始时间 ~ 结束时间</td><td>结束时间 > 开始时间；结束时间 > 当前时间</td><td>time_type=fixed 时显示</td></tr>
+<tr><td>领取后有效天数</td><td>数字输入</td><td>X 天内有效</td><td>≥1 整数；默认 24</td><td>time_type=after 时显示</td></tr>
+<tr><td>店铺</td><td>下拉选择</td><td>全部店铺 / 指定店铺（单选）</td><td>必选</td><td>⚠️ 平台端独有字段；商家端此列写死自身店铺</td></tr>
+<tr><td>选择优惠券类型</td><td>下拉选择</td><td>满减券 / 满折券 / 无门槛折扣券 / 无门槛抵现券</td><td>必选；选中后联动规则单元格</td><td>—</td></tr>
+<tr><td>优惠券规则</td><td>动态单元格</td><td>随券类型变化：满减→"满X减Y"；满折→"满X折Y折"；折扣→"X折"；抵现→"减X元"</td><td>数值 ≥0；未选类型时 placeholder 灰色提示</td><td>cpRuleCell 动态渲染</td></tr>
+<tr><td>发行量（张）</td><td>数字输入</td><td>该券模板总发行量上限</td><td>≥1 整数；默认 1</td><td>—</td></tr>
+<tr><td>每人领取（张）</td><td>数字输入</td><td>每人限领张数</td><td>≥1 整数；≤发行量；默认 1</td><td>—</td></tr>
+<tr><td>商品选择</td><td>Radio 3 选 1</td><td>全部商品参与 / 指定商品参与 / 排除商品不参与</td><td>必选其一</td><td>选"指定/排除"时展开商品选择区</td></tr>
+<tr><td>商品选择区</td><td>弹窗+标签列表</td><td>打开商品选择弹窗 → 搜索/筛选/分页勾选 → 已选商品以 chip 标签展示可删除</td><td>指定/排除模式至少选 1 件</td><td>弹窗含分类筛选+价格筛选+关键词搜索+分页</td></tr>
+</tbody>
+</table>
+
+<p><b>功能按钮</b></p>
+<table>
+<thead><tr><th>按钮</th><th>功能说明</th><th>权限</th><th>前置条件</th><th>逐步操作逻辑</th></tr></thead>
+<tbody>
+<tr><td>取消</td><td>放弃当前编辑，返回 P1 列表</td><td>所有角色</td><td>—</td><td>点击 → 若有已填内容 → 弹确认"确定放弃？编辑内容不会保存" → 确认返回 / 取消留页</td></tr>
+<tr><td>提交（新建）</td><td>创建新券模板，写入《券模板表》</td><td>直播运营</td><td>所有必填项通过校验</td><td>① 前端逐字段校验（见上表校验规则）→ 不通过则对应字段标红+提示文案<br>② 全部通过 → 调 POST /coupon/template → 成功后跳转 P1 列表并 Toast"创建成功"<br>③ 失败 → 接口报错文案 Toast 展示</td></tr>
+<tr><td>提交（编辑）</td><td>更新已有券模板</td><td>直播运营</td><td>当前状态=未开始 或 已下架</td><td>① 同新建校验<br>② 调 PUT /coupon/template/{id} → 成功 Toast"更新成功"<br>③ ⚠️ 进行中状态的券不允许编辑（按钮禁用或隐藏）</td></tr>
+</tbody>
+</table>
+
+<p><b>数据来源</b>：店铺下拉取《店铺表》；商品弹窗取《商品中心·商品表》；提交写《券模板表》（/coupon/template CRUD）。</p>
 
 <h4>4.1.4 P2 发券活动管理列表 + D3 发券活动（规则引擎）<span class="tag y">本期新增</span></h4>
 <p><b>D3 表单字段（规则引擎）</b></p>
