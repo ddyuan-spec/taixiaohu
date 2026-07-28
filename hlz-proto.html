@@ -319,6 +319,7 @@
           <label class="btn-ghost btn-sm" style="cursor:pointer">批量导入表格
             <input type="file" id="fileImport" accept=".csv,.xlsx,.xls,.txt" style="display:none" onchange="handleImport(event)">
           </label>
+          <button class="btn-ghost btn-sm" onclick="downloadTemplate()">⬇ 下载导入模板</button>
           <a class="btn-link" onclick="loadSampleImport()" style="margin-left:auto">无文件？载入示例表格</a>
         </div>
         <div class="sel-box">
@@ -327,7 +328,7 @@
         </div>
         <!-- 导入表格预览 -->
         <div class="import-area" id="importArea" style="display:none">
-          <div class="import-tip">勾选需要赠送/扣除的人员，点击「确认选中」加入已选名单</div>
+          <div class="import-tip">勾选需要赠送/扣除的人员，点击「确认选中」加入已选名单 · 每行至少填写一个字段（用户ID / 昵称 / 手机号）即可</div>
           <div class="tbl-wrap" style="max-height:200px;overflow:auto">
             <table class="tbl" id="importTbl"><thead></thead><tbody></tbody></table>
           </div>
@@ -715,6 +716,21 @@ document.getElementById('batchReason').addEventListener('change', function(){
 });
 
 // ========== 批量导入表格 ==========
+function downloadTemplate(){
+  const header = ['用户ID','昵称','手机号'];
+  const rows = [
+    ['U_10002','李四',''],               // 填 ID + 昵称
+    ['','王五','13900005678'],          // 仅填手机号（演示「每行至少填一个」）
+    ['U_10005','孙七','13500007890'],
+  ];
+  const csv = [header, ...rows].map(r=>r.map(c=>`"${c}"`).join(',')).join('\r\n');
+  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '虎力值批量操作导入模板.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  showToast('模板已下载（用户ID/昵称/手机号，每行至少填一个）','success');
+}
 function handleImport(e){
   const file = e.target.files[0];
   if(!file) return;
@@ -757,16 +773,19 @@ function toggleAllImport(cb){
 function confirmImport(){
   const checks = [...document.querySelectorAll('.imp-check')].filter(x=>x.checked);
   if(!checks.length){ showToast('请勾选人员','err'); return; }
-  let added=0;
+  let added=0, skip=0;
   checks.forEach(x=>{
     const r = window.__importData[+x.dataset.i];
-    const uid = r[0]||''; const name = r[1]||uid; const phone = r[2]||'';
+    const uid=(r[0]||'').trim(), name=(r[1]||'').trim(), phone=(r[2]||'').trim();
+    if(!uid && !name && !phone){ skip++; return; }   // 每行至少填一个字段
     const u = userBase.find(y=>y.uid.toLowerCase()===uid.toLowerCase());
     if(u) addUser(u); else addUser({uid, name, phone});
     added++;
   });
   document.getElementById('importArea').style.display='none';
-  showToast('已选中 '+added+' 人','success');
+  let msg = '已选中 '+added+' 人';
+  if(skip) msg += '（跳过 '+skip+' 行空白）';
+  showToast(msg,'success');
 }
 function loadSampleImport(){
   const sample = [
