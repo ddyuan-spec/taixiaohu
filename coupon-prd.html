@@ -213,8 +213,8 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <div class="warn">⚠️ <b>原型与状态机差异清单（已确认方案，待原型修正）</b>：
 <ol style="margin:4px 0 4px 20px;padding:0">
 <li><b>✅ 已解决 — 删除入口</b>：已下架/未开始行的操作列将原「编辑」/「下架」按钮替换为「<span style="color:#d9363e">删除</span>」，点击走 confirm 弹窗确认后删除。进行中行保持「下架」不变（禁止删除）。</li>
-<li><b>无「重新上架/启用」路径</b>：已下架的券无「启用」动作回到进行中——符合业务语义（下架即终态），但需确认编辑时是否允许修改有效期来"变相上架"。 ⚠️ 待确认 @干系人</li>
-<li><b>✅ 已解决 — 平台端违规下架弹窗</b>：平台端「违规下架」操作触发 Modal 弹窗（标题"违规下架"，必填原因输入框 placeholder="请输入违规原因，必填"，取消/确定按钮）。截图已验证。</li>
+<li><b>设计如此 — 无「重新上架/启用」路径</b>：已下架的券无「启用」动作回到进行中，<b>下架即终态</b>，为既定设计（非待确认）。编辑时不允许修改有效期来"变相上架"。</li>
+<li><b>设计如此 — 平台/商家端为独立后台</b>：平台端「违规下架」与商家端「下架」目标状态相同（已下架）但分属两个独立后台系统，各自为原生功能，<b>UI 无需对比统一/区分</b>。平台端弹窗必填原因（见行2）为其独立实现。</li>
 </ol>
 </div>
 
@@ -287,70 +287,27 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <!-- ==================== 四、功能需求详情 ==================== -->
 <h2>四、功能需求详情（按页面拆解）</h2>
 <div class="meta">遵循《产品需求文档规范》§四 逐功能点写法；每个页面含「原型示意 + 列表字段表 + 功能按钮权限表 + 关键按钮逐步逻辑 + 表单字段 + 查询条件 + 数据来源」。原型示意见各端链接。</div>
+<div class="note">📌 <b>功能范围标注规则（强制）</b>：本节每个功能点须标注 <span class="tag r">已有-沿用</span> / <span class="tag y">本期新增</span> / <span class="tag g">本期改动</span>。
+<b>已有功能</b>仅写一句「沿用现有功能，详见原型 XXX.html」，<b>不展开字段表/逻辑</b>（业务逻辑闭环在原型，PRD 不赘述）；
+<b>本期新增/改动</b>才逐功能点详写。标注依据 = 需求梳理阶段确认的范围（哪些端口/功能此前已存在）。</div>
 
 <!-- ===== 平台端后台 ===== -->
-<h3>4.1 平台端后台（优惠券管理 / 发券 / 领券 / 看板 / 用户券）</h3>
+<h3>4.1 平台端后台（券CRUD沿用 + 发券/领券/看板/用户券本期新增）</h3>
 <div class="sec">
 <p>原型示意：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-platform.html" target="_blank">coupon-platform.html</a></p>
+<div class="ok">✅ <b>平台端券的「新增 / 编辑 / 下架 / 删除 / 查看」均为已有功能</b>（沿用现有实现，业务逻辑闭环在原型）。
+本节仅标注范围，<b>不展开字段表与逐步逻辑</b>；本期平台端新增/改动见下方标注。</div>
 
-<h4>4.1.1 P1 优惠券管理列表</h4>
-<p><b>列表字段表</b></p>
-<table>
-<thead><tr><th>字段</th><th>需求说明</th><th>备注</th></tr></thead>
-<tbody>
-<tr><td>优惠券名称</td><td>券配置名称（内部识别，不展示用户）</td><td>排序：默认</td></tr>
-<tr><td>优惠券类型</td><td>满减券/满折券/无门槛折扣券/无门槛抵现券</td><td>—</td></tr>
-<tr><td>店铺</td><td>所属店铺（红门旗舰店/健康生活馆/泰山滋补专营店）</td><td>v9 重绘恢复字段</td></tr>
-<tr><td>使用规则</td><td>如"满99减20""1折无门槛"</td><td>列宽 150px</td></tr>
-<tr><td>状态</td><td>启用 / 下架</td><td>tag 展示</td></tr>
-<tr><td>有效期</td><td>固定时间段 / 领取后 N 天</td><td>—</td></tr>
-<tr><td>已领取 / 剩余</td><td>领取计数 / 库存剩余</td><td>—</td></tr>
-<tr><td>日期期</td><td>券有效期区间</td><td>列名沿用原型</td></tr>
-</tbody>
-</table>
-<p><b>查询条件</b></p>
-<table>
-<thead><tr><th>查询条件</th><th>说明</th></tr></thead>
-<tbody>
-<tr><td>新建券名称</td><td>输入框模糊查询</td></tr>
-<tr><td>店铺</td><td>下拉：全部店铺 / 3 店铺单选</td></tr>
-<tr><td>活动状态</td><td>启用 / 停用</td></tr>
-<tr><td>优惠类型</td><td>满减券/折扣券/代金券</td></tr>
-</tbody>
-</table>
-<p><b>功能按钮权限表</b></p>
-<table>
-<thead><tr><th>按钮</th><th>显示位置</th><th>权限</th><th>说明</th></tr></thead>
-<tbody>
-<tr><td>新建优惠券</td><td>列表上方主按钮</td><td>营销管理-券配置-新增</td><td>跳转 D2 独立页</td></tr>
-<tr><td>批量删除</td><td>列表上方</td><td>营销管理-券配置-删除</td><td>需勾选；未勾选提示"请先勾选要删除的券"</td></tr>
-<tr><td>查看</td><td>操作列</td><td>查看权限</td><td>跳转 D1 详情独立页</td></tr>
-<tr><td>删除</td><td>操作列</td><td>删除权限</td><td>confirm 后删除，toast"已删除"</td></tr>
-</tbody>
-</table>
+<h4>4.1.1 P1 优惠券管理列表 <span class="tag r">已有-沿用</span></h4>
+<p>列表、查询、新建/查看/删除/下架按钮<b>沿用现有功能</b>，详见原型 <a href="https://ddyuan-spec.github.io/taixiaohu/coupon-platform.html" target="_blank">coupon-platform.html</a>。本期仅补充：已下架/未开始行操作列「删除」替换原「编辑」（见 §3.4 转换表）。</p>
 
-<h4>4.1.2 D1 券详情（独立页）</h4>
-<p>只读展示：券配置名称、券码（CP+6位）、有效时间（固定/领取后）、活动范围表（店铺/类型/规则/发行量/每人限领）、商品选择（全部/指定/排除）、发放方式、状态。底部「返回列表」「下架」。</p>
+<h4>4.1.2 D1 券详情 <span class="tag r">已有-沿用</span></h4>
+<p>只读展示券配置信息 + 底部「返回列表」「下架」按钮，<b>沿用现有功能</b>，详见原型。</p>
 
-<h4>4.1.3 D2 新建优惠券（独立页）</h4>
-<p><b>表单字段</b></p>
-<table>
-<thead><tr><th>区域</th><th>字段</th><th>逻辑说明</th><th>备注</th></tr></thead>
-<tbody>
-<tr><td>基本信息</td><td>券配置名称</td><td>文本输入，必填；不展示用户</td><td>校验：空→提示"请填写券配置名称"</td></tr>
-<tr><td>基本信息</td><td>有效时间</td><td>单选：固定时间段(date×2) / 领取后生效(天数)</td><td>—</td></tr>
-<tr><td>活动范围</td><td>店铺</td><td>下拉：全部店铺 / 3 店铺单选</td><td>商家端此列删除（写死自身店铺）</td></tr>
-<tr><td>活动范围</td><td>选择优惠券类型</td><td>下拉 4 项（满减/满折/无门槛折扣/无门槛抵现）</td><td>选后动态渲染规则输入</td></tr>
-<tr><td>活动范围</td><td>优惠券规则</td><td>随类型动态：满X减Y / 满X享Z折 / Z折无门槛 / Y元无门槛</td><td>内联单元格</td></tr>
-<tr><td>活动范围</td><td>发行量（张）</td><td>数字，≥1，默认 1</td><td>—</td></tr>
-<tr><td>活动范围</td><td>每人领取（张）</td><td>数字，≥1，默认 1</td><td>—</td></tr>
-<tr><td>商品选择</td><td>范围</td><td>单选：全部商品参与 / 指定商品参与 / 排除商品不参与</td><td>选指定/排除→显示添加商品</td></tr>
-<tr><td>商品选择</td><td>商品选择器</td><td>Modal：分类筛选+关键词+价格+卡片网格+分页+全选+已选列表</td><td>选定态蓝边框✓</td></tr>
-</tbody>
-</table>
-<p><b>保存逻辑</b>：校验名称+类型 → 组装记录（状态默认启用，有效期区间）→ 列表置顶 → toast"已保存"。</p>
+<h4>4.1.3 D2 新建优惠券 <span class="tag r">已有-沿用</span></h4>
+<p>表单（基本信息/活动范围/商品选择）+ 保存逻辑，<b>沿用现有功能</b>，详见原型。商家端差异：店铺列写死自身店铺（见 4.2）。</p>
 
-<h4>4.1.4 P2 发券活动管理列表 + D3 发券活动（规则引擎）</h4>
+<h4>4.1.4 P2 发券活动管理列表 + D3 发券活动（规则引擎）<span class="tag y">本期新增</span></h4>
 <p><b>D3 表单字段（规则引擎）</b></p>
 <table>
 <thead><tr><th>字段</th><th>逻辑说明</th><th>备注</th></tr></thead>
@@ -367,7 +324,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 </table>
 <p><b>保存</b>：写发券活动记录（触发源/阈值文本/等级/券模板/每人上限/开始时间）→ 列表置顶。</p>
 
-<h4>4.1.5 P3 领券活动列表 + D4 领券活动</h4>
+<h4>4.1.5 P3 领券活动列表 + D4 领券活动 <span class="tag y">本期新增</span></h4>
 <table>
 <thead><tr><th>字段</th><th>逻辑说明</th><th>备注</th></tr></thead>
 <tbody>
@@ -381,17 +338,17 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 </tbody>
 </table>
 
-<h4>4.1.6 P4 数据看板</h4>
+<h4>4.1.6 P4 数据看板 <span class="tag y">本期新增</span></h4>
 <p>KPI 卡：总发放量 / 总核销量 / 核销金额 / 活动进行中。维度 Tab：按券 / 按发放活动 / 按领券活动；近 7 日核销趋势 SVG。</p>
-<h4>4.1.7 P5 用户券查询</h4>
+<h4>4.1.7 P5 用户券查询 <span class="tag y">本期新增</span></h4>
 <p>输入用户 ID/手机号 → 查券包：券名称/券码/获取来源/领取时间/有效期至/状态（未使用/已使用）。</p>
 </div>
 
 <!-- ===== 商家端后台 ===== -->
-<h3>4.2 商家端后台</h3>
+<h3>4.2 商家端后台 <span class="tag y">本期新增</span></h3>
 <div class="sec">
 <p>原型示意：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-merchant.html" target="_blank">coupon-merchant.html</a></p>
-<p>功能与平台端一致（4.1），差异点：</p>
+<p>商家端首次具备券管理能力（券 CRUD / 发券 / 领券），本期新增；与平台端差异点：</p>
 <table>
 <thead><tr><th>差异项</th><th>平台端</th><th>商家端</th></tr></thead>
 <tbody>
@@ -404,14 +361,15 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 </div>
 
 <!-- ===== App 端 ===== -->
-<h3>4.3 App 端（用户侧）</h3>
+<h3>4.3 App 端（获券弹窗本期新增 + 其余已有-沿用）</h3>
 <div class="sec">
 <p>原型示意：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" target="_blank">coupon-app.html</a></p>
+<p>获券弹窗（系统发券触达）为<span class="tag y">本期新增</span>；我的优惠券 / 商品详情领券 / 下单核销为<span class="tag r">已有-沿用</span>（不重做，见 4.4 说明）。</p>
 
-<h4>4.3.1 首页 · 获券弹窗入口</h4>
+<h4>4.3.1 首页 · 获券弹窗入口 <span class="tag y">本期新增</span></h4>
 <p>直播时长发券触发卡（"观看直播满 30 分钟，系统自动发放关联优惠券（每种 1 张）"）→ 点"进入直播间"→ 触发获券弹窗。</p>
 
-<h4>4.3.2 获券弹窗（系统发券触达）</h4>
+<h4>4.3.2 获券弹窗（系统发券触达）<span class="tag y">本期新增</span></h4>
 <table>
 <thead><tr><th>要素</th><th>说明</th></tr></thead>
 <tbody>
@@ -422,13 +380,13 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 </tbody>
 </table>
 
-<h4>4.3.3 我的优惠券（三态）</h4>
+<h4>4.3.3 我的优惠券（三态）<span class="tag r">已有-沿用</span></h4>
 <p>Tab：未使用 / 已使用 / 已过期。未使用券显示"去使用"（跳可用商品）；临近过期(≤3天)标"X天后过期"；已使用标"已核销"，已过期标"已过期"。</p>
 
-<h4>4.3.4 商品详情领券</h4>
+<h4>4.3.4 商品详情领券<span class="tag r">已有-沿用</span></h4>
 <p>商详领券条（如"领券立享 新人立减15元"）→ 点"立即领券"→ 领取成功弹窗（"已放入卡包"）→ 可"立即购买"进确认订单。已领显示"已领取"防重复。</p>
 
-<h4>4.3.5 确认订单选券 / 核销</h4>
+<h4>4.3.5 确认订单选券 / 核销<span class="tag r">已有-沿用</span></h4>
 <table>
 <thead><tr><th>要素</th><th>说明</th></tr></thead>
 <tbody>
@@ -441,7 +399,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 </div>
 
 <!-- ===== 小程序 / H5 ===== -->
-<h3>4.4 小程序 / H5 端（仅获券弹窗新增）</h3>
+<h3>4.4 小程序 / H5 端（获券弹窗新增）<span class="tag y">本期新增</span></h3>
 <div class="sec">
 <p>原型示意：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-mini-h5.html" target="_blank">coupon-mini-h5.html</a></p>
 <p>本期仅新增<b>获券弹窗</b>（系统发券触达），两端外壳不同：</p>
