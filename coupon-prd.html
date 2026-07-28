@@ -46,7 +46,7 @@ li{margin:4px 0}
 <div class="wrap">
 
 <h1>泰小虎优惠券体系重构 · 需求文档（PRD）</h1>
-<div class="meta">文档版本：V1.0.27 ｜ 创建时间：2026-07-27 ｜ 更新时间：2026-07-28 ｜ 状态：草稿（待评审）｜ 所属项目：泰小虎 · 营销中台</div>
+<div class="meta">文档版本：V1.0.30 ｜ 创建时间：2026-07-27 ｜ 更新时间：2026-07-28 ｜ 状态：草稿（待评审）｜ 所属项目：泰小虎 · 营销中台</div>
 
 <!-- ==================== 一、文档基本信息 ==================== -->
 <h2>一、文档基本信息</h2>
@@ -685,7 +685,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>无门槛抵现券 <code>nocash</code></td><td>Y 元，无门槛使用</td><td>无门槛减Y元</td><td>手动领取 / 系统触发</td></tr>
 </tbody>
 </table>
-<div class="ok">✅ 券类型下拉 4 项，已去重校验（无重复"满减券"、含满折券），详见原型冒烟测试 [F] 项。</div>
 </div>
 
 <h3>3.6 API 接口清单（占位）</h3>
@@ -722,6 +721,8 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <p>沿用现有功能。</p>
 
 <h4>4.1.2 D1 券详情 <span class="tag y">本期新增</span></h4>
+<p><img src="coupon-prd-assets/coupon-d1-coupon-detail.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="平台端券详情页"></p>
+
 <p>平台端当前无独立券详情页（仅商家端有），本期新建。从 P1 列表点击「查看」进入。</p>
 
 <p><b>页面字段表</b></p>
@@ -750,6 +751,8 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 </table>
 
 <h4>4.1.3 D2 新建/编辑优惠券 <span class="tag y">本期新增</span></h4>
+<p><img src="coupon-prd-assets/coupon-d2-new-coupon.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="D2新建编辑优惠券"></p>
+
 <p>平台端当前无制券能力（仅商家端有添加/编辑券功能），本期新建。与商家端的差异：平台端 D2 多「**店铺选择**」列（可指定全部或某商家店铺），商家端写死自身店铺。</p>
 
 <p><b>D2 表单字段表</b></p>
@@ -807,6 +810,8 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <p><b>保存</b>：写发券活动记录（触发源/阈值文本/等级/券模板/每人上限/开始时间）→ 列表置顶。</p>
 
 <h4>4.1.5 P3 领券活动列表 + D4 领券活动 <span class="tag y">本期新增</span></h4>
+<p><img src="coupon-prd-assets/coupon-p3-claim-list.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="领券活动列表"></p><p><img src="coupon-prd-assets/coupon-d4-claim-edit.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="领券活动新建表单"></p>
+
 
 <h5>4.1.5.1 列表字段表（字段名称 / 需求说明 / 备注）</h5>
 <table>
@@ -883,6 +888,8 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <p>领券活动：<b>停用</b> ──(运营点启用)──&gt; <b>启用</b> ──(运营点停用)──&gt; <b>停用</b>。启用中活动可被 C 端按入口曝光领券；停用后新用户不可领，已领券不受影响。</p>
 
 <h4>4.1.6 P4 数据看板 <span class="tag y">本期新增</span></h4>
+<p><img src="coupon-prd-assets/coupon-p4-dashboard.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="数据看板"></p>
+
 <h5>4.1.6.1 看板元素（字段名称 / 需求说明 / 备注）</h5>
 <table>
 <thead><tr><th>字段名称</th><th>需求说明</th><th>备注</th></tr></thead>
@@ -997,7 +1004,8 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <h4>4.3.2 获券弹窗（系统发券触达）<span class="tag y">本期新增</span></h4>
 <h5>4.3.2.1 原型与交互示意</h5>
-<p>弹窗从屏幕底部升起（半屏），展示本次系统发放的全部券（每种 1 张）；示意图见本节顶部 App 原型「获券弹窗」页。</p>
+<p><img src="coupon-prd-assets/coupon-app-arrival-modal.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="App获券弹窗"></p>
+<p>弹窗从屏幕底部升起（半屏），展示本次系统发放的全部券（每种 1 张）；示意图见上方。</p>
 <h5>4.3.2.2 详细逻辑规则</h5>
 <p><b>界面与展示规则</b>：</p>
 <ul>
@@ -1055,7 +1063,8 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <h4>4.3.3 我的优惠券（三态）<span class="tag y">本期新增</span></h4>
 <h5>4.3.3.1 原型与交互示意</h5>
-<p>独立页面，顶部三个 Tab（未使用 / 已使用 / 已过期），默认「未使用」；示意图见顶部 App 原型「我的优惠券」页。</p>
+<p><img src="coupon-prd-assets/coupon-app-my-coupons.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="App我的优惠券三态"></p>
+<p>独立页面，顶部三个 Tab（未使用 / 已使用 / 已过期），默认「未使用」；示意图见上方 App 原型「我的优惠券」页。</p>
 <h5>4.3.3.2 详细逻辑规则</h5>
 <p><b>界面与展示规则</b>：</p>
 <ul>
@@ -1125,6 +1134,8 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <p>未使用 ──(支付成功核销)──&gt; 已使用；未使用 ──(超过 expire_time，定时任务)──&gt; 已过期。</p>
 
 <h4>4.3.4 商品详情领券<span class="tag y">本期新增</span></h4>
+<p><img src="coupon-prd-assets/coupon-app-product-detail-coupon.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="商品详情领券"></p>
+
 <h5>4.3.4.1 原型与交互示意</h5>
 <p>商品详情页价格区下方，横向可滑动券列表（或折叠条「领券立享 新人立减15元 ▸」）；点击展开领券，示意图见顶部 App 原型「商品详情」页。</p>
 <h5>4.3.4.2 详细逻辑规则</h5>
