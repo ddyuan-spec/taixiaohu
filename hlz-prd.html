@@ -246,7 +246,7 @@
 
 <h3>3.4 信息架构</h3>
 <div class="card">
-<table><thead><tr><th style="width:130px">层级</th><th>组件</th><th>说明</th></tr></thead><tbody><tr><td>前端展示层</td><td>平台端后台「虎力值管理」页 + App「变动记录」页</td><td>平台端：列表 + 批量弹窗 + 明细弹窗；App：任务中心 + 变动明细</td></tr><tr><td>后端配置层</td><td>Admin Grant/Deduct API</td><td>新增接口，包裹 earn/consume 方法，source='admin'</td></tr><tr><td>数据层</td><td>user_points + point_transactions</td><td>既有表新增 source='admin'，落库 reason/operator。</td></tr><tr><td>理由字典</td><td>预设枚举（已有能力）</td><td>理由来源取自系统已有赠扣理由字典（非本期新建配置页），预设枚举见 §4.2.2</td></tr></tbody></table>
+<table><thead><tr><th style="width:130px">层级</th><th>组件</th><th>说明</th></tr></thead><tbody><tr><td>前端展示层</td><td>平台端后台「虎力值管理」页 + App「变动记录」页</td><td>平台端：列表 + 批量弹窗 + 明细弹窗；App：任务中心 + 变动明细</td></tr><tr><td>后端配置层</td><td>Admin Grant/Deduct API</td><td>新增接口，包裹 earn/consume 方法，source='admin'</td></tr><tr><td>数据层</td><td>user_points + point_transactions</td><td>既有表新增 source='admin'，落库 reason/operator。</td></tr><tr><td>理由字典</td><td>预设枚举（已有能力）</td><td>理由来源取自系统「字段管理」中的赠扣理由字典（既有能力，本期仅引用不新建配置页），预设枚举见 §4.2.2</td></tr></tbody></table>
 </div>
 
 <h3>3.5 状态机</h3>
@@ -261,7 +261,7 @@
 <h2>四、功能需求详情</h2>
 <p class="note" style="margin-bottom:14px;">
 <b>涉及终端明细：</b>本期仅涉及 <b>平台端后台</b>（新增「虎力值管理」模块）与 <b>App 客户端</b>（变动记录增强）；不含商家端后台 / H5 / 小程序。<br>
-<b>需求影响范围：</b>① 平台端后台「App 管理」页签（新增子模块）；② 后端积分服务（新增 Admin Grant/Deduct API，复用 earn/consume，新增 source='admin' 分支）；③ 数据层 user_points / point_transactions（新增 reason/operator 落库）；④ App 端「变动记录」页（展示增强）；⑤ 理由字典（系统已有能力，仅引用不新建）。不影响优惠券、订单、用户画像等其他模块。
+<b>需求影响范围：</b>① 平台端后台「App 管理」页签（新增子模块）；② 后端积分服务（新增 Admin Grant/Deduct API，复用 earn/consume，新增 source='admin' 分支）；③ 数据层 user_points / point_transactions（新增 reason/operator 落库）；④ App 端「变动记录」页（展示增强）；⑤ 理由字典（来源于系统「字段管理」，既有能力，仅引用不新建）。不影响优惠券、订单、用户画像等其他模块。
 </p>
 
 
@@ -279,7 +279,7 @@
 <p><b>列表字段表：</b></p>
 <table><thead><tr><th style="width:110px">字段名称</th><th style="width:200px">需求说明</th><th>备注</th></tr></thead><tbody><tr><td>操作时间</td><td>该次批量操作的提交时间，格式 yyyy-MM-dd HH:mm:ss</td><td>取《操作记录表》created_at</td></tr><tr><td>操作类型</td><td>赠送（绿色标签）/ 扣除（红色标签）</td><td>取《操作记录表》operation_type</td></tr><tr><td>操作人员</td><td>执行该操作的后台管理员账号</td><td>取《操作记录表》operator</td></tr><tr><td>影响用户数</td><td>本次操作影响的用户总数，可点击下钻查看明细</td><td>关联《操作明细表》count</td></tr><tr><td>变动总虎力值</td><td>本次所有用户变动合计：赠送显绿正值，扣除显红负值。</td><td>SUM《操作明细表》points</td></tr><tr><td>理由</td><td>操作时选择的理由文本（来自预设字典或自由填写）</td><td>取《操作记录表》reason</td></tr><tr><td>操作</td><td>「明细」按钮，点击弹出该操作的受影响用户清单</td><td>触发明细弹窗</td></tr></tbody></table>
 <p><b>功能按钮总表：</b></p>
-<table><thead><tr><th style="width:100px">功能说明</th><th style="width:100px">显示位置</th><th style="width:80px">权限</th><th>前置条件</th></tr></thead><tbody><tr><td>批量赠送</td><td>列表上方右侧，绿色主按钮</td><td>虎力值管理员</td><td>无</td></tr><tr><td>批量扣除</td><td>列表上方右侧，红色次按钮</td><td>虎力值管理员</td><td>无</td></tr><tr><td>查询 / 重置</td><td>列表上方筛选栏</td><td>虎力值管理员</td><td>无</td></tr><tr><td>明细下钻</td><td>每行操作记录末尾</td><td>虎力值管理员</td><td>该行影响用户数 &gt; 0</td></tr></tbody></table>
+<table><thead><tr><th style="width:100px">功能说明</th><th style="width:100px">显示位置</th><th style="width:80px">权限</th><th>前置条件</th></tr></thead><tbody><tr><td>批量赠送</td><td>列表上方右侧，绿色主按钮</td><td>平台管理员（虎力值管理权限点）</td><td>无</td></tr><tr><td>批量扣除</td><td>列表上方右侧，红色次按钮</td><td>平台管理员（虎力值管理权限点）</td><td>无</td></tr><tr><td>查询 / 重置</td><td>列表上方筛选栏</td><td>平台管理员（虎力值管理权限点）</td><td>无</td></tr><tr><td>明细下钻</td><td>每行操作记录末尾</td><td>平台管理员（虎力值管理权限点）</td><td>该行影响用户数 &gt; 0</td></tr></tbody></table>
 
 <h5>业务逻辑与边界条件</h5>
 <p><b>查询条件规格：</b></p>
@@ -310,7 +310,7 @@
 
 <h5>界面与展示规则</h5>
 <p><b>弹窗结构分区：</b></p>
-<table><thead><tr><th style="width:100px">区域</th><th>字段/元素</th><th>功能逻辑说明</th><th>备注</th></tr></thead><tbody><tr><td>人员选择区</td><td>手机号搜索框</td><td>输入手机号后按回车或点击添加，支持多个手机号用逗号隔开一次添加</td><td>调用户检索接口</td></tr><tr><td>—</td><td>用户ID输入框</td><td>支持输入多个用户ID（逗号隔开）批量添加</td><td>⚠️ 待确认 @研发：ID 格式（U_xxx 或纯数字）</td></tr><tr><td>—</td><td>已选人员标签</td><td>以 Chip 形式展示已选用户（昵称 + ID），每个 Chip 带 ✕ 可移除</td><td>上限 ⚠️ 待确认 @研发：单次批量上限人数</td></tr><tr><td>—</td><td>导入表格入口</td><td>支持上传 CSV/Excel 文件批量导入用户；提供「下载导入模板」按钮</td><td>模板仅含「用户ID / 昵称 / 手机号」三列</td></tr><tr><td>理由选择区</td><td>理由下拉框</td><td>预设理由枚举（来自<b>已有理由字典</b>），枚举明细见本表下方清单</td><td>理由字典为系统已有能力，本期不新增配置页</td></tr><tr><td>—</td><td>其他理由输入框</td><td>选择「其他」时显示，自由文本输入，最大长度 50 字符</td><td>仅「其他」选项可见</td></tr><tr><td>数量填写区</td><td>虎力值数量输入框</td><td>数字输入，统一应用于每位被选用户</td><td>赠送：正整数；扣除：正整数（后端存为负值）</td></tr><tr><td>操作按钮</td><td>确认赠送 / 确认扣除</td><td>根据入口按钮区分，提交批量操作</td><td>提交前校验</td></tr><tr><td>—</td><td>取消</td><td>关闭弹窗，不保存已选人员</td><td>—</td></tr></tbody></table>
+<table><thead><tr><th style="width:100px">区域</th><th>字段/元素</th><th>功能逻辑说明</th><th>备注</th></tr></thead><tbody><tr><td>人员选择区</td><td>手机号搜索框</td><td>输入手机号后按回车或点击添加，支持多个手机号用逗号隔开一次添加</td><td>调用户检索接口</td></tr><tr><td>—</td><td>用户ID输入框</td><td>支持输入多个用户ID（逗号隔开）批量添加</td><td>不限定格式，支持任意标识（U_xxx / 纯数字 / 手机号）精准查询匹配</td></tr><tr><td>—</td><td>已选人员标签</td><td>以 Chip 形式展示已选用户（昵称 + ID），每个 Chip 带 ✕ 可移除</td><td>上限 9,999（已确认）</td></tr><tr><td>—</td><td>导入表格入口</td><td>支持上传 CSV/Excel 文件批量导入用户；提供「下载导入模板」按钮</td><td>模板仅含「用户ID / 昵称 / 手机号」三列</td></tr><tr><td>理由选择区</td><td>理由下拉框</td><td>预设理由枚举（来自<b>字段管理中的已有理由字典</b>），枚举明细见本表下方清单</td><td>理由字典来源于系统「字段管理」（既有能力），本期不新增配置页</td></tr><tr><td>—</td><td>其他理由输入框</td><td>选择「其他」时显示，自由文本输入，最大长度 50 字符</td><td>仅「其他」选项可见</td></tr><tr><td>数量填写区</td><td>虎力值数量输入框</td><td>数字输入，统一应用于每位被选用户</td><td>赠送：正整数；扣除：正整数（后端存为负值）</td></tr><tr><td>操作按钮</td><td>确认赠送 / 确认扣除</td><td>根据入口按钮区分，提交批量操作</td><td>提交前校验</td></tr><tr><td>—</td><td>取消</td><td>关闭弹窗，不保存已选人员</td><td>—</td></tr></tbody></table>
 <p class="note"><b>预设理由枚举（已有字典，非本期新建）：</b>客服补偿 / 活动奖励补发 / 体验回馈 / 违规处罚 / 系统调整 / 误操作退回 / 其他（选中后自由填写，最长 50 字）。</p>
 
 <h5>业务逻辑与边界条件</h5>
@@ -409,7 +409,7 @@
 <div class="card">
 <p>本需求埋点事件与属性严格遵循<a href="https://ddyuan-spec.github.io/taixiaohu/taixiaohu-tracking-spec.html" target="_blank">《泰小虎埋点规范 v2.3》</a>（在线全文，含完整 30 事件/属性/页面枚举/友盟约束）。</p>
 <p><b>本期涉及事件清单：</b></p>
-<table><thead><tr><th style="width:150px">事件英文名</th><th style="width:110px">事件显示名</th><th style="width:55px">所属层</th><th style="width:90px">平台</th><th>触发时机</th><th style="width:140px">必含上报参数(友盟中文名)</th><th>备注</th></tr></thead><tbody><tr><td colspan="7" style="background:#f8fafc;text-align:center;font-weight:600;">本期可能涉及的埋点事件（需按实际开发对接确认）</td></tr><tr><td>—</td><td>—</td><td>—</td><td>平台端后台</td><td>运营点击「确认赠送」</td><td>操作类型、理由、影响用户数、变动总量</td><td>⚠️ 待确认 @研发：是否需要新增 admin_operate 事件</td></tr><tr><td>—</td><td>—</td><td>—</td><td>平台端后台</td><td>运营点击「确认扣除」</td><td>同上</td><td>可与赠送合为同一事件，以操作类型区分</td></tr><tr><td>—</td><td>—</td><td>—</td><td>App</td><td>用户查看变动记录</td><td>—</td><td>若已有 page_view 事件覆盖则不需单独埋</td></tr></tbody></table>
+<table><thead><tr><th style="width:150px">事件英文名</th><th style="width:110px">事件显示名</th><th style="width:55px">所属层</th><th style="width:90px">平台</th><th>触发时机</th><th style="width:140px">必含上报参数(友盟中文名)</th><th>备注</th></tr></thead><tbody><tr><td colspan="7" style="background:#f8fafc;text-align:center;font-weight:600;">本期暂不埋点（后续有统计诉求再补，不新增 admin_operate 事件）</td></tr><tr><td>—</td><td>—</td><td>—</td><td>平台端后台</td><td>运营点击「确认赠送」</td><td>操作类型、理由、影响用户数、变动总量</td><td>已确认：本期不埋点，后续补</td></tr><tr><td>—</td><td>—</td><td>—</td><td>平台端后台</td><td>运营点击「确认扣除」</td><td>同上</td><td>可与赠送合为同一事件，以操作类型区分</td></tr><tr><td>—</td><td>—</td><td>—</td><td>App</td><td>用户查看变动记录</td><td>—</td><td>若已有 page_view 事件覆盖则不需单独埋</td></tr></tbody></table>
 <p class="note">注：以上事件清单为初步评估，具体事件定义须严格从《泰小虎埋点规范 v2.3》既有 30 事件目录中选取或走新增评审。<b>禁止凭空编造事件英文名或属性变量名。</b></p>
 </div>
 
@@ -425,7 +425,7 @@
 <h3>5.3 安全要求</h3>
 <div class="card">
 <ul>
-  <li>虎力值管理功能仅限「虎力值管理员」角色访问（权限配置 ⚠️ 待确认 @研发：是否复用现有角色体系或新建角色）。</li>
+  <li>虎力值管理功能仅限「平台管理员」角色（含「虎力值管理」权限点）访问，复用现有角色体系、不新建角色（已确认）。</li>
   <li>所有写操作（赠送/扣除）记录操作人（operator），不可篡改，用于审计追溯。</li>
   <li>扣除操作允许负数余额，但后端仍记录完整流水，确保可追溯。</li>
 </ul>
@@ -440,7 +440,7 @@
 <!-- ═══════════ 七、关键边界检查清单 ═══════════ -->
 <h2>七、关键边界设计检查清单</h2>
 <div class="card">
-<table><thead><tr><th style="width:220px">检查项</th><th>结论 / 处理方式</th></tr></thead><tbody><tr><td>网络异常（弱网/断网/500）</td><td>网络异常→提示「网络异常」；不自动重试，以实际结果为准。</td></tr><tr><td>未登录 / 无权限</td><td>未登录跳转登录页；无虎力值管理权限 → 页面显示「无权访问」</td></tr><tr><td>空状态</td><td>操作记录空→「暂无操作记录」；人员空确认→「请至少选一位用户」。</td></tr><tr><td>极限值</td><td>人数上限 ≤ 9,999（已确认）；数量上限 ≤ 99,999（已确认）；理由 ≤ 50 字</td></tr><tr><td>并发防重</td><td>提交后立即 disabled 防重复；后端建议 request_id 幂等（⚠️ 待确认 @研发）。</td></tr><tr><td>扣除负数余额</td><td>允许扣成负数不阻拦；负数余额 App 正常显示（⚠️ 待确认 @设计）。</td></tr><tr><td>逆向流 / 撤销</td><td>本期不做撤销/回退功能。误操作可通过再次赠送/扣除修正（产生新的操作记录）</td></tr></tbody></table>
+<table><thead><tr><th style="width:220px">检查项</th><th>结论 / 处理方式</th></tr></thead><tbody><tr><td>网络异常（弱网/断网/500）</td><td>网络异常→提示「网络异常」；不自动重试，以实际结果为准。</td></tr><tr><td>未登录 / 无权限</td><td>未登录跳转登录页；无虎力值管理权限 → 页面显示「无权访问」</td></tr><tr><td>空状态</td><td>操作记录空→「暂无操作记录」；人员空确认→「请至少选一位用户」。</td></tr><tr><td>极限值</td><td>人数上限 ≤ 9,999（已确认）；数量上限 ≤ 99,999（已确认）；理由 ≤ 50 字</td></tr><tr><td>并发防重</td><td>提交后立即 disabled 防重复；后端按 request_id 幂等去重（已确认：重复提交返回首次结果，杜绝重复扣款）。</td></tr><tr><td>扣除负数余额</td><td>允许扣成负数不阻拦；负数余额 App 以红色 +「-」号展示，下方小字提示「虎力值不足，部分权益将受限」（已确认）。</td></tr><tr><td>逆向流 / 撤销</td><td>本期不做撤销/回退功能。误操作可通过再次赠送/扣除修正（产生新的操作记录）</td></tr></tbody></table>
 </div>
 
 <!-- ═══════════ 八、文档维护与变更规范 ═══════════ -->
@@ -455,8 +455,9 @@
 
 <!-- ═══════════ 九、待确认项汇总 ═══════════ -->
 <h2>九、待确认项汇总</h2>
+<p class="note"><b>状态：以下 8 项均已确认闭环，无遗留待确认项。</b></p>
 <div class="card">
-<table><thead><tr><th style="width:30px">#</th><th style="width:320px">待确认事项</th><th style="width:150px">建议 / 当前立场</th><th>干系人</th></tr></thead><tbody><tr><td>1</td><td>理由字典来源（系统/表/接口）？不新建配置页，需确认归属（已有能力）。</td><td>取系统既有赠扣理由字典（代码固定预设 + 其他自由填）</td><td>@研发</td></tr><tr><td>2</td><td>单次批量操作人数上限？</td><td>已确认 9,999</td><td>@研发</td></tr><tr><td>3</td><td>单次赠送/扣除数量上限？</td><td>已确认 99,999</td><td>@研发</td></tr><tr><td>4</td><td>虎力值管理员权限角色？复用现有还是新建？</td><td>建议复用现有管理员角色 + 新增权限点</td><td>@研发</td></tr><tr><td>5</td><td>后端是否做 request_id 幂等防重？</td><td>建议做</td><td>@研发</td></tr><tr><td>6</td><td>App 端负数余额的展示样式（颜色/图标/提示文案）？</td><td>待设计输出</td><td>@设计</td></tr><tr><td>7</td><td>用户 ID 的格式（U_xxx 前缀 or 纯数字）？</td><td>⚠️ 待确认 @研发</td><td>@研发</td></tr><tr><td>8</td><td>埋点：是否需要新增 admin_operate 类事件？还是现有事件已覆盖？</td><td>需从 v2.3 既有事件中选取或走新增评审</td><td>@研发/@数据分析</td></tr></tbody></table>
+<table><thead><tr><th style="width:30px">#</th><th style="width:320px">待确认事项</th><th style="width:150px">建议 / 当前立场</th><th>干系人</th></tr></thead><tbody><tr><td>1</td><td>理由字典来源（系统/表/接口）？</td><td>已确认：来源于系统「字段管理」（既有能力，本期不新建配置页）</td><td>@研发</td></tr><tr><td>2</td><td>单次批量操作人数上限？</td><td>已确认 9,999</td><td>@研发</td></tr><tr><td>3</td><td>单次赠送/扣除数量上限？</td><td>已确认 99,999</td><td>@研发</td></tr><tr><td>4</td><td>虎力值管理员权限角色？复用现有还是新建？</td><td>已确认：复用现有「平台管理员」角色 + 新增「虎力值管理」权限点（不新建角色）</td><td>@研发</td></tr><tr><td>5</td><td>后端是否做 request_id 幂等防重？</td><td>已确认：做（前端下发 request_id，后端按 request_id 幂等去重）</td><td>@研发</td></tr><tr><td>6</td><td>App 端负数余额的展示样式（颜色/图标/提示文案）？</td><td>已确认：红色 +「-」号 + 小字提示「虎力值不足，部分权益将受限」</td><td>@设计</td></tr><tr><td>7</td><td>用户 ID 的格式（U_xxx 前缀 or 纯数字）？</td><td>已确认：不限定格式，支持任意标识（U_xxx/纯数字/手机号）精准查询</td><td>@研发</td></tr><tr><td>8</td><td>埋点：是否需要新增 admin_operate 类事件？还是现有事件已覆盖？</td><td>已确认：本期先不埋点，后续有统计诉求再补（不新增 admin_operate 事件）</td><td>@研发/@数据分析</td></tr></tbody></table>
 </div>
 
 <div style="margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--gray);">
