@@ -922,7 +922,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <h4>4.1.6 P4 数据看板 <span class="tag y">本期新增</span></h4>
 <p><img src="coupon-prd-assets/coupon-p4-dashboard.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="数据看板"></p>
-<p><b>维度 Tab 第四项「券明细记录」</b>（本期新增，评审第5点）：展示每张券的<b>发放 / 核销明细</b>（两个历史记录合一，用「动作」列区分：发放=蓝、核销=绿）。直播数据本期不做（关联需求，下期待规划）。</p>
+<p><b>维度 Tab 第四项「券明细记录」</b>（本期新增，评审第5点修订）：以<b>一行一张券</b>展示该券的完整生命周期，所有动作指标（发放量 / 已领 / 已核销 / 核销率 / 核销金额）直接作为列呈现，<b>不按动作切分多行</b>。直播数据本期不做（关联需求，下期待规划）。</p>
 <p><img src="coupon-prd-assets/coupon-p4-coupon-detail.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="券明细记录"></p>
 
 <h5>4.1.6.1 看板元素（字段名称 / 需求说明 / 备注）</h5>
@@ -940,7 +940,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <table>
 <thead><tr><th>查询条件</th><th>查询说明</th></tr></thead>
 <tbody>
-<tr><td>维度</td><td>下拉单选：按券 / 按发放活动 / 按领券活动 / <b>券明细记录</b>；默认按券。选「券明细记录」时下方展示明细表 + 独立筛选（券名称 / 用户手机号 / 动作 / 时间范围）</td></tr>
+<tr><td>维度</td><td>下拉单选：按券 / 按发放活动 / 按领券活动 / <b>券明细记录</b>；默认按券。选「券明细记录」时下方展示按券汇总的明细表 + 顶部「券名称」搜索框</td></tr>
 <tr><td>时间范围</td><td>日期范围；默认近 7 日</td></tr>
 </tbody>
 </table>
@@ -957,24 +957,23 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <table>
 <thead><tr><th>字段名称</th><th>需求说明</th><th>备注</th></tr></thead>
 <tbody>
-<tr><td>券名称</td><td>取《券模板表》券名</td><td>筛选条件</td></tr>
-<tr><td>用户</td><td>领取/核销用户手机号（脱敏展示）</td><td>筛选条件</td></tr>
-<tr><td>动作</td><td>发放 / 核销；发放=蓝 tag、核销=绿 tag</td><td>筛选条件（全部/发放/核销）</td></tr>
-<tr><td>时间</td><td>发放时间（写入《发放记录表》）/ 核销时间（写入《核销记录表》）</td><td>筛选条件（时间范围）</td></tr>
-<tr><td>关联订单</td><td>核销动作关联订单号；发放动作显示「-」</td><td>仅核销有值</td></tr>
-<tr><td>核销金额</td><td>核销动作对应券面额；发放动作显示「-」</td><td>仅核销有值</td></tr>
+<tr><td>券名称</td><td>取《券模板表》券名</td><td>筛选条件（券名称搜索）</td></tr>
+<tr><td>类型</td><td>券类型：满减 / 折扣 / 代金 等</td><td>—</td></tr>
+<tr><td>发放量</td><td>该券发放实例总数 = 已领 + 剩余</td><td>取《用户券表》该券写入数</td></tr>
+<tr><td>已领</td><td>已被用户领取的实例数</td><td>—</td></tr>
+<tr><td>已核销</td><td>status=已使用的实例数</td><td>—</td></tr>
+<tr><td>核销率</td><td>已核销 / 发放量 ×100%</td><td>—</td></tr>
+<tr><td>核销金额</td><td>Σ 已使用券的券面额</td><td>合计行</td></tr>
 </tbody>
 </table>
 <h5>4.1.6.5 券明细记录数据来源（字段级）</h5>
 <table>
 <thead><tr><th>字段名称</th><th>取值逻辑说明</th></tr></thead>
 <tbody>
-<tr><td>发放类明细</td><td>取《发放记录表》（user_id / coupon_id / issue_time / send_source）</td></tr>
-<tr><td>核销类明细</td><td>取《核销记录表》（user_id / coupon_id / redeem_time / order_id / amount）</td></tr>
-<tr><td>合并展示</td><td>两表按 coupon_id + user_id 关联，动作列标记来源表；同一用户同一券可能同时有发放与核销两行</td></tr>
+<tr><td>发放量 / 已领 / 已核销 / 核销率 / 核销金额</td><td>按 coupon_id 聚合《用户券表》（一行一张券，所有动作指标作为列）</td></tr>
 </tbody>
 </table>
-<p>列表附加规则：排序：按时间倒序；分页：支持 20/50/100，默认 20；数据唯一判断：发放流水号 / 核销流水号各自唯一。</p>
+<p>列表附加规则：排序：按发放量倒序；分页：支持 20/50/100，默认 20；数据唯一判断：以券模板 ID 唯一。</p>
 
 <h4>4.1.7 P5 用户券查询 <span class="tag y">本期新增</span></h4>
 <h5>4.1.7.1 查询条件（查询条件 / 查询说明）</h5>
