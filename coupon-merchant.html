@@ -261,7 +261,8 @@
           <th>有效期</th>
           <th>已领取</th>
           <th>剩余</th>
-          <th>日期期</th>
+          <th>总库存</th>
+          <th>创建日期</th>
           <th>操作</th>
         </tr>
       </thead>
@@ -512,6 +513,7 @@
 
   <div class="form-actions">
     <button class="btn-ghost" onclick="go('list')">← 返回列表</button>
+    <button class="btn-primary" onclick="openIncreaseStock()">＋ 增加发行量</button>
     <button class="btn-danger-ghost" id="cdBtnOffline" onclick="offlineCoupon()">下架</button>
   </div>
 </div>
@@ -647,6 +649,34 @@
   </div>
 </div>
 
+<!-- ==================== 增加发行量 弹窗 ==================== -->
+<div class="modal-overlay" id="stockModal" style="display:none">
+  <div class="modal-dlg" style="width:420px">
+    <div class="modal-header">
+      <span class="modal-title">增加发行量</span>
+      <button class="modal-close" onclick="closeStockModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row" style="margin:6px 0">
+        <label class="fr-label" style="width:110px">当前总库存</label>
+        <div class="fr-body"><span id="stockCurTotal" style="font-weight:700;color:#303133">-</span> 张</div>
+      </div>
+      <div class="form-row" style="margin:6px 0">
+        <label class="fr-label" style="width:110px">增加数量<span style="color:#f56c6c">*</span></label>
+        <div class="fr-body"><input class="fr-input" id="stockAddQty" type="number" min="1" value="100" style="width:160px"> 张</div>
+      </div>
+      <div class="form-row" style="margin:6px 0">
+        <label class="fr-label" style="width:110px">增加后总额</label>
+        <div class="fr-body"><span id="stockNewTotal" style="font-weight:700;color:#67c23a">-</span> 张</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost btn-sm" onclick="closeStockModal()">取消</button>
+      <button class="btn-primary btn-sm" onclick="confirmIncreaseStock()">确认增加</button>
+    </div>
+  </div>
+</div>
+
 <!-- ==================== D4: 领券活动 新建/编辑 独立页 ==================== -->
 <div id="viewClaimEdit" class="hidden">
   <div class="phead">
@@ -713,11 +743,12 @@ function go(page){
 
 /* ==================== DATA ==================== */
 let coupons=[
-  {id:1,name:'dHoff',shop:'红门旗舰店',type:'无门槛折扣',rule:'1折，无门槛使用',status:'启用',valid:'领取后日起X天无可用',claimed:0,left:1,date:'2026-07-01 ~ 2026-12-31'},
-  {id:2,name:'123',shop:'健康生活馆',type:'无门槛折扣',rule:'1折，无门槛使用',status:'下架',valid:'领取后日起X天无可用',claimed:0,left:1,date:'2026-07-05 ~ 2026-12-31'},
-  {id:3,name:'新人满99减20',shop:'红门旗舰店',type:'满减券',rule:'满99减20',status:'启用',valid:'固定 2026-07-15 ~ 2026-09-15',claimed:156,left:344,date:'2026-07-15 ~ 2026-09-15'},
-  {id:4,name:'无门槛5元代金',shop:'泰山滋补专营店',type:'代金券',rule:'无门槛减5元',status:'启用',valid:'领取后7天有效',claimed:89,left:211,date:'2026-07-10 ~ 2026-12-31'}
+  {id:1,name:'dHoff',shop:'红门旗舰店',type:'无门槛折扣',rule:'1折，无门槛使用',status:'启用',valid:'领取后日起X天无可用',claimed:0,left:1,date:'2026-07-01 ~ 2026-12-31',createDate:'2026-07-01'},
+  {id:2,name:'123',shop:'健康生活馆',type:'无门槛折扣',rule:'1折，无门槛使用',status:'下架',valid:'领取后日起X天无可用',claimed:0,left:1,date:'2026-07-05 ~ 2026-12-31',createDate:'2026-07-05'},
+  {id:3,name:'新人满99减20',shop:'红门旗舰店',type:'满减券',rule:'满99减20',status:'启用',valid:'固定 2026-07-15 ~ 2026-09-15',claimed:156,left:344,date:'2026-07-15 ~ 2026-09-15',createDate:'2026-07-15'},
+  {id:4,name:'无门槛5元代金',shop:'泰山滋补专营店',type:'代金券',rule:'无门槛减5元',status:'启用',valid:'领取后7天有效',claimed:89,left:211,date:'2026-07-10 ~ 2026-12-31',createDate:'2026-07-10'}
 ];
+let currentCouponId=null;
 
 let sends=[
   {id:1,name:'7月直播时长发券-A',trigger:'live',triggerName:'直播时长',thresholdText:'观看满30分钟',live:'LIVE-20260721-001 泰小虎健康好物专场',levelMode:'all',levels:[],coupons:['新人满99减20','无门槛5元代金'],perUser:1,startTime:'2026-07-21T10:00:00',issued:89,status:'进行中',time:'2026-07-21 10:00'},
@@ -787,18 +818,22 @@ function renderCoupons(){
       <td>${c.valid}</td>
       <td>${c.claimed}</td>
       <td>${c.left}</td>
-      <td>${c.date}</td>
+      <td>${c.claimed+c.left}</td>
+      <td>${c.createDate}</td>
       <td class="act">
         <a class="btn-link" onclick="viewCoupon(${c.id})">查看</a>
-        <a class="btn-link red" onclick="delCoupon(${c.id})">删除</a>
+        ${c.status==='启用'
+          ? `<a class="btn-link warn" onclick="offlineCouponById(${c.id})">下架</a>`
+          : `<a class="btn-link red" onclick="delCoupon(${c.id})">删除</a>`}
       </td>
     </tr>`).join('');
-  $('couponTbody').innerHTML=rows||'<tr><td colspan="11" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
+  $('couponTbody').innerHTML=rows||'<tr><td colspan="12" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
   $('couponPagi').innerHTML='共 <strong>'+list.length+'</strong> 条 <select><option>10条/页</option></select> <span class="pg-btn active">1</span> 跳至 <input type="number" value="1"> 页';
 }
 function resetFilter(){$('fName').value='';$('fShop').value='';$('fStatus').value='';$('fType').value='';renderCoupons();}
 function viewCoupon(id){
   const c=coupons.find(x=>x.id===id);if(!c)return;
+  currentCouponId=id;
   $('cdName').value=c.name;
   $('cdCodeHint').textContent='券码：CP'+String(id).padStart(6,'0');
   $('cdStart').value=c.date.split(' ~ ')[0];
@@ -812,7 +847,30 @@ function viewCoupon(id){
   go('detail');
 }
 function delCoupon(id){if(confirm('确认删除该券？')){coupons=coupons.filter(x=>x.id!==id);renderCoupons();toast('已删除');}}
+function offlineCouponById(id){const c=coupons.find(x=>x.id===id);if(!c)return;c.status='下架';renderCoupons();toast('已下架');}
 function offlineCoupon(){toast('已下架');setTimeout(()=>go('list'),1200);}
+
+/* ---- 增加发行量 ---- */
+function openIncreaseStock(){
+  const c=coupons.find(x=>x.id===currentCouponId);if(!c)return;
+  const total=c.claimed+c.left;
+  $('stockCurTotal').textContent=total;
+  $('stockAddQty').value=100;
+  $('stockNewTotal').textContent=total+ (+$('stockAddQty').value||0);
+  $('stockAddQty').oninput=()=>{ const add=+$('stockAddQty').value||0; $('stockNewTotal').textContent=(c.claimed+c.left)+add; };
+  $('stockModal').style.display='flex';
+}
+function closeStockModal(){ $('stockModal').style.display='none'; }
+function confirmIncreaseStock(){
+  const c=coupons.find(x=>x.id===currentCouponId);if(!c)return;
+  const add=+$('stockAddQty').value||0;
+  if(add<1){ toast('增加数量需 ≥ 1',true); return; }
+  c.left+=add;
+  closeStockModal();
+  if($('cdTotalQty')) $('cdTotalQty').textContent=c.claimed+c.left;
+  renderCoupons();
+  toast('已增加发行量 '+add+' 张，当前总库存 '+(c.claimed+c.left)+' 张');
+}
 
 /* ==================== D2: 新增券 独立页 ==================== */
 function resetCouponNew(){
