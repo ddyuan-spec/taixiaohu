@@ -922,7 +922,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <h4>4.1.6 P4 数据看板 <span class="tag y">本期新增</span></h4>
 <p><img src="coupon-prd-assets/coupon-p4-dashboard.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="数据看板"></p>
-<p><b>维度 Tab 第四项「券明细记录」</b>（本期新增，评审第5点修订）：以<b>一行一张券</b>展示该券的完整生命周期，所有动作指标（发放量 / 已领 / 已核销 / 核销率 / 核销金额）直接作为列呈现，<b>不按动作切分多行</b>。直播数据本期不做（关联需求，下期待规划）。</p>
+<p><b>维度 Tab 第四项「券明细记录」</b>（本期新增，评审第5点修订）：以<b>一行一张券</b>展示该券的汇总指标，所有动作指标（发放量 / 已领 / 已核销 / 核销率 / 核销金额）直接作为列呈现，<b>不按动作切分多行</b>。<b>维度 Tab 第五项「券生命周期」</b>（本期新增，评审第6点）：以<b>每张券一条生命周期漏斗</b>展示券从「发放 → 领取 → 核销 → 过期」的流转与各环节转化率。直播数据本期不做（关联需求，下期待规划）。</p>
 <p><img src="coupon-prd-assets/coupon-p4-coupon-detail.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="券明细记录"></p>
 
 <h5>4.1.6.1 看板元素（字段名称 / 需求说明 / 备注）</h5>
@@ -940,7 +940,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <table>
 <thead><tr><th>查询条件</th><th>查询说明</th></tr></thead>
 <tbody>
-<tr><td>维度</td><td>下拉单选：按券 / 按发放活动 / 按领券活动 / <b>券明细记录</b>；默认按券。选「券明细记录」时下方展示按券汇总的明细表 + 顶部「券名称」搜索框</td></tr>
+<tr><td>维度</td><td>下拉单选：按券 / 按发放活动 / 按领券活动 / 券明细记录 / <b>券生命周期</b>；默认按券。选「券明细记录」时下方展示按券汇总的明细表 + 顶部「券名称」搜索框；选「券生命周期」时下方展示每张券生命周期漏斗（发放→领取→核销→过期 + 转化率）+ 顶部「券名称」搜索框</td></tr>
 <tr><td>时间范围</td><td>日期范围；默认近 7 日</td></tr>
 </tbody>
 </table>
@@ -974,6 +974,20 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 </tbody>
 </table>
 <p>列表附加规则：排序：按发放量倒序；分页：支持 20/50/100，默认 20；数据唯一判断：以券模板 ID 唯一。</p>
+
+<h5>4.1.6.6 券生命周期字段表与说明（评审第6点新增）</h5>
+<p>以<b>每张券</b>为单位展示生命周期四阶段流转：</p>
+<table>
+<thead><tr><th>阶段</th><th>含义</th><th>取值逻辑</th></tr></thead>
+<tbody>
+<tr><td>发放</td><td>该券被写入《用户券表》的实例总数</td><td>发放量 = 已领 + 未领取（剩余）</td></tr>
+<tr><td>领取</td><td>用户已领取的实例数</td><td>取《用户券表》已领取数</td></tr>
+<tr><td>核销</td><td>已被使用的实例数</td><td>status=已使用 的实例数</td></tr>
+<tr><td>过期</td><td>领取后未在有效期前使用的实例数</td><td>领取数 − 核销数</td></tr>
+</tbody>
+</table>
+<p>转化率指标：<b>领取率</b> = 领取 / 发放；<b>核销率</b> = 核销 / 领取；<b>过期率</b> = 过期 / 领取。顶部「券名称」搜索框按券名过滤；列表按发放量倒序。可视化：每券一条横向条形漏斗（四阶段按占比着色），直观呈现各环节流失。</p>
+<p><img src="coupon-prd-assets/coupon-p4-lifecycle.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="券生命周期"></p>
 
 <h4>4.1.7 P5 用户券查询 <span class="tag y">本期新增</span></h4>
 <h5>4.1.7.1 查询条件（查询条件 / 查询说明）</h5>
