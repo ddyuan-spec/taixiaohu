@@ -200,6 +200,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .side .navbtn b{color:var(--p);margin-right:6px}
 .side .desc{font-size:11.5px;color:var(--t4);line-height:1.6;margin-top:8px;border-top:1px dashed var(--line);padding-top:10px}
 .side .desc b{color:#3a3d45}
+.webview-note{font-size:12px;color:#909399;background:#f4f4f5;padding:10px 14px;line-height:1.5}
+.webview{width:100%;flex:1;border:0;min-height:520px;background:#fff}
 </style>
 </head>
 <body>
@@ -277,15 +279,11 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       <div class="beacon">mine_view ／ my_coupons_entry_click</div>
     </section>
 
-    <!-- C2 我的优惠券 -->
+    <!-- C2 我的优惠券（App 内嵌 H5，不独立开发原生模块） -->
     <section class="page" id="p_c2">
       <div class="navbar"><div class="back" onclick="back()">‹</div><div class="title">我的优惠券</div></div>
-      <div class="tabs" id="c2Tabs">
-        <div class="tb on" data-t="unused" onclick="c2Switch('unused')">未使用</div>
-        <div class="tb" data-t="used" onclick="c2Switch('used')">已使用</div>
-        <div class="tb" data-t="expired" onclick="c2Switch('expired')">已过期</div>
-      </div>
-      <div id="c2List"></div>
+      <div class="webview-note">本页为 H5 页面在 App 内嵌 webview 呈现，不独立开发原生模块。</div>
+      <iframe class="webview" src="小程序H5原型.html#我的优惠券" title="我的优惠券 H5"></iframe>
       <div class="beacon">my_coupons_view</div>
     </section>
 
@@ -473,7 +471,6 @@ function go(p){
   if(p==='p_home') renderHome();
   if(p==='p_mall') renderMall();
   if(p==='p_me') renderMe();
-  if(p==='p_c2') renderC2(curTab);
   if(p==='p_c5') resetC5();
   if(p==='p_c6') renderC6();
   if(p==='p_goods') renderGoods();
@@ -516,34 +513,6 @@ function renderMe(){
 }
 /* ============ C2 券包 ============ */
 let curTab = 'unused';
-function c2Switch(t){
-  curTab = t;
-  document.querySelectorAll('#c2Tabs .tb').forEach(b=>b.classList.toggle('on', b.dataset.t===t));
-  renderC2(t);
-}
-function renderC2(tab){
-  const list = myCoupons.filter(c=>c.status===tab);
-  const box = document.getElementById('c2List');
-  if(!list.length){box.innerHTML='<div class="empty">暂无'+(tab==='unused'?'未使用':tab==='used'?'已使用':'已过期')+'的券</div>';return;}
-  if(tab==='unused'){ list.sort((a,b)=> new Date(a.expire)-new Date(b.expire)); }
-  box.innerHTML = list.map(c=>{
-    const days = Math.ceil((new Date(c.expire)-new Date('2026-07-17'))/86400000);
-    const urgent = (tab==='unused' && days<=3);
-    const gray = (tab!=='unused');
-    const amtHtml = c.type==='discount'
-      ? '<div class="amt">'+(c.amt===30?'9折':'8折')+'</div><div class="cond">'+c.cond+'</div>'
-      : '<div class="amt"><small>¥</small>'+c.amt+'</div><div class="cond">'+c.cond+'</div>';
-    return '<div class="coupon'+(gray?' gray':'')+'">'
-      + (urgent?'<div class="urg">'+days+'天后过期</div>':'')
-      + '<div class="lft">'+amtHtml+'</div>'
-      + '<div class="rgt"><div class="nm">'+c.name+'</div>'
-      + '<div class="ds">'+c.scope+'</div>'
-      + '<div class="bot"><span class="exp">'+c.expire+' 到期</span>'
-      + (tab==='unused'?'<button class="btn sm" onclick="go(\'p_goods\')">去使用</button>':'<span class="tag t4">'+(tab==='used'?'已核销':'已过期')+'</span>')
-      + '</div></div></div>';
-  }).join('');
-}
-
 /* ============ 获券弹窗（系统发券触达） ============ */
 function showArrival(){
   document.getElementById('arrivalList').innerHTML = arrivedCoupons.map(c=>{
