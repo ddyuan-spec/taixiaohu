@@ -742,11 +742,15 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <thead><tr><th>按钮</th><th>显示条件</th><th>功能说明</th><th>权限</th></tr></thead>
 <tbody>
 <tr><td>查看</td><td>所有状态</td><td>进入 D1 券详情</td><td>直播运营</td></tr>
+<tr><td>增加发行量</td><td>所有状态（启用/下架均可）</td><td>弹「增加发行量」弹窗：显示当前总库存（=已领取+剩余）；输入增加数量（≥1 整数，必填）；实时显示增加后总库存；确认后剩余库存 += 增加数量（总库存随之提升），列表总库存列即时刷新，toast 提示结果</td><td>直播运营</td></tr>
 <tr><td>下架</td><td>状态=启用</td><td>将券置为「下架」状态（不可逆），列表即时刷新</td><td>直播运营</td></tr>
 <tr><td>删除</td><td>状态=下架</td><td>从列表删除该券（需二次确认）</td><td>直播运营</td></tr>
 </tbody>
 </table>
-<p>⚠️ 沿用既有设计：启用态券只能「下架」不能直接删除；下架后变为「删除」入口。与 D1 券详情页「下架」按钮逻辑一致。</p>
+<p>⚠️ 沿用既有设计：启用态券只能「下架」不能直接删除；下架后变为「删除」入口。与 D1 券详情页「下架」按钮逻辑一致。「增加发行量」入口置于本列表操作列（不在 D1 券详情页），便于运营在列表中快速追加单个券的发行量。</p>
+
+<p><b>增加发行量逻辑</b>：券模板发行量（总库存）上限 = 已领取 + 剩余。运营可对<b>单个券</b>追加发行：输入增加数量 N（≥1）→ 剩余库存 += N → 总库存自动同步提升。已领取数不变。平台端与商家端均支持（商家端数据按店铺隔离，仅可操作本店券）。</p>
+<p><img src="coupon-prd-assets/coupon-d1-increase-stock.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="增加发行量弹窗"></p>
 
 <h4>4.1.2 D1 券详情 <span class="tag y">本期新增</span></h4>
 <p><img src="coupon-prd-assets/coupon-d1-coupon-detail.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="平台端券详情页"></p>
@@ -774,13 +778,9 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <thead><tr><th>按钮</th><th>功能说明</th><th>权限</th><th>前置条件</th></tr></thead>
 <tbody>
 <tr><td>← 返回列表</td><td>返回 P1 优惠券管理列表</td><td>所有角色</td><td>—</td></tr>
-<tr><td>＋ 增加发行量</td><td>弹「增加发行量」弹窗：显示当前总库存（=已领取+剩余）；输入增加数量（≥1 整数，必填）；实时显示增加后总库存；确认后剩余库存 += 增加数量（总库存随之提升），刷新详情页与列表总库存列，toast 提示结果</td><td>直播运营</td><td>当前券未被删除（下架态亦可增加）</td></tr>
 <tr><td>下架</td><td>将当前券置为「已下架」状态（不可逆）</td><td>直播运营</td><td>当前状态=进行中；已发放券数=0 或用户确认强制下架</td></tr>
 </tbody>
 </table>
-
-<p><b>增加发行量逻辑</b>：券模板发行量（总库存）上限 = 已领取 + 剩余。运营可对<b>单个券</b>追加发行：输入增加数量 N（≥1）→ 剩余库存 += N → 总库存自动同步提升。已领取数不变。平台端与商家端均支持（商家端数据按店铺隔离，仅可操作本店券）。</p>
-<p><img src="coupon-prd-assets/coupon-d1-increase-stock.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="增加发行量弹窗"></p>
 
 <h4>4.1.3 D2 新建/编辑优惠券 <span class="tag y">本期新增</span></h4>
 <p><img src="coupon-prd-assets/coupon-d2-new-coupon.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="D2新建编辑优惠券"></p>
