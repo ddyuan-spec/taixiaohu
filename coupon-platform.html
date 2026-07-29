@@ -212,12 +212,11 @@
     <div class="gtitle open"><span class="arr">▶</span> 营销管理</div>
     <a id="navCoupon" class="active" onclick="go('list')">优惠券管理</a>
     <a id="navSend" onclick="go('send')">发券活动管理</a>
-    <a id="navClaim" onclick="go('claim')">领券活动</a>
     <a id="navBoard" onclick="go('board')">数据看板</a>
-    <a id="navWallet" onclick="go('wallet')">用户券查询</a>
     <div class="gtitle open"><span class="arr">▶</span> 订单管理</div>
     <div class="gtitle">库存管理</div>
     <div class="gtitle open"><span class="arr">▶</span> 用户管理</div>
+    <a id="navWallet" onclick="go('wallet')">用户券查询</a>
     <div class="gtitle open"><span class="arr">▶</span> 配置管理</div>
   </div>
 </nav>
@@ -313,43 +312,6 @@
 </div>
 
 
-<!-- ==================== P3: 领券活动列表 ==================== -->
-<div id="viewClaim" class="hidden">
-  <div class="crumb">营销后台 / <span>优惠券</span> / <span>领券活动</span></div>
-
-  <div class="filter-bar">
-    <input placeholder="活动名称" id="cfName">
-    <select id="cfStatus"><option value="">状态</option><option>进行中</option><option>未开始</option><option>已结束</option></select>
-    <button class="btn-primary btn-sm" onclick="renderClaims()">搜索</button>
-    <button class="btn-ghost btn-sm" onclick="$('cfName').value='';renderClaims()">重置</button>
-  </div>
-
-  <div style="margin-bottom:12px">
-    <button class="btn-primary btn-sm" onclick="go('claimEdit')">＋ 新建领券活动</button>
-  </div>
-
-  <div class="tbl-wrap">
-    <table class="tbl">
-      <thead>
-        <tr>
-          <th class="chk"><input type="checkbox"></th>
-          <th>活动名称</th>
-          <th>领券入口</th>
-          <th>关联券模板</th>
-          <th>领取规则</th>
-          <th>已领取/总量</th>
-          <th>每人限领</th>
-          <th>状态</th>
-          <th>创建时间</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody id="claimTbody"></tbody>
-    </table>
-  </div>
-</div>
-
-
 <!-- ==================== P4: 数据看板 ==================== -->
 <div id="viewBoard" class="hidden">
   <div class="crumb">营销后台 / <span>优惠券</span> / <span>数据看板</span></div>
@@ -382,12 +344,10 @@
   <div class="tab-bar">
     <div class="tab-item active" onclick="switchBoardTab(this,'coupon')">按券维度</div>
     <div class="tab-item" onclick="switchBoardTab(this,'issue')">按发放活动</div>
-    <div class="tab-item" onclick="switchBoardTab(this,'claim')">按领券活动</div>
     <div class="tab-item" onclick="switchBoardTab(this,'couponDetail')">券明细记录</div>
-    <div class="tab-item" onclick="switchBoardTab(this,'life')">券生命周期</div>
   </div>
 
-  <!-- Board Summary (按券/发放活动/领券活动) -->
+  <!-- Board Summary (按券/发放活动) -->
   <div id="boardSummary">
     <div class="tbl-wrap" style="margin-bottom:16px">
       <table class="tbl">
@@ -407,40 +367,43 @@
     </div>
   </div>
 
-  <!-- 券明细记录 (一行一张券，所有动作指标成列) -->
+  <!-- 券明细记录 (按券实例/券ID 维度，每行一条发放明细) -->
   <div id="boardDetail" class="hidden">
-    <div class="filter-bar" style="margin-bottom:12px">
-      <input placeholder="券名称" id="dtCoupon" style="width:180px">
+    <div class="filter-bar" style="margin-bottom:12px;flex-wrap:wrap;gap:8px;align-items:center">
+      <input placeholder="券ID" id="dtId" style="width:170px">
+      <select id="dtIssued" style="width:110px">
+        <option value="">是否发放</option>
+        <option value="是">是</option>
+        <option value="否">否</option>
+      </select>
+      <input type="date" id="dtStart" title="发放开始日期"> <span style="color:#909399">~</span> <input type="date" id="dtEnd" title="发放结束日期">
+      <input placeholder="接收用户(手机号)" id="dtUser" style="width:160px">
+      <select id="dtRedeemed" style="width:110px">
+        <option value="">是否核销</option>
+        <option value="是">是</option>
+        <option value="否">否</option>
+      </select>
+      <input placeholder="核销订单号" id="dtOrder" style="width:160px">
       <button class="btn-primary btn-sm" onclick="renderCouponDetail()">搜索</button>
-      <button class="btn-ghost btn-sm" onclick="$('dtCoupon').value='';renderCouponDetail()">重置</button>
+      <button class="btn-ghost btn-sm" onclick="['dtId','dtUser','dtOrder'].forEach(i=>$(i).value='');['dtIssued','dtRedeemed'].forEach(i=>$(i).value='');['dtStart','dtEnd'].forEach(i=>$(i).value='');renderCouponDetail()">重置</button>
     </div>
     <div class="tbl-wrap">
       <table class="tbl">
         <thead>
           <tr>
-            <th>券名称</th><th>类型</th><th>发放量</th><th>已领</th><th>已核销</th><th>核销率</th><th>核销金额</th>
+            <th>券ID</th><th>是否发放</th><th>发放时间</th><th>接收用户</th><th>是否核销</th><th>核销订单号</th>
           </tr>
         </thead>
         <tbody id="couponDetailTbody"></tbody>
       </table>
     </div>
   </div>
-
-  <!-- 券生命周期 (每张券生命周期漏斗) -->
-  <div id="boardLife" class="hidden">
-    <div class="filter-bar" style="margin-bottom:12px">
-      <input placeholder="券名称" id="lfCoupon" style="width:180px">
-      <button class="btn-primary btn-sm" onclick="renderLifecycle()">搜索</button>
-      <button class="btn-ghost btn-sm" onclick="$('lfCoupon').value='';renderLifecycle()">重置</button>
-    </div>
-    <div id="lifeList"></div>
-  </div>
 </div>
 
 
 <!-- ==================== P5: 用户券查询 ==================== -->
 <div id="viewWallet" class="hidden">
-  <div class="crumb">营销后台 / <span>优惠券</span> / <span>用户券查询</span></div>
+  <div class="crumb">用户管理 / <span>用户详情</span> / <span>用户券查询</span></div>
 
   <div class="filter-bar">
     <input placeholder="输入用户ID或手机号" id="wfUser" style="width:240px">
@@ -590,6 +553,13 @@
       </div>
     </div>
     <div class="form-row">
+      <label class="fr-label">是否与其他优惠共用</label>
+      <div class="fr-body radio-group">
+        <label class="radio-item"><input type="radio" name="cpStack" value="no" checked> 否（不与其他优惠叠加）</label>
+        <label class="radio-item"><input type="radio" name="cpStack" value="yes"> 是（允许与其他优惠叠加）</label>
+      </div>
+    </div>
+    <div class="form-row">
       <label class="fr-label">商品选择</label>
       <div class="fr-body radio-group">
         <label class="radio-item"><input type="radio" name="cpProd" value="all" checked onchange="cpToggleProd()"> 全部商品参与</label>
@@ -710,26 +680,6 @@
   </div>
 </div>
 
-<!-- ==================== D4: 领券活动 新建/编辑 独立页 ==================== -->
-<div id="viewClaimEdit" class="hidden">
-  <div class="phead">
-    <button class="btn-ghost btn-sm" onclick="go('claim')">← 返回</button>
-    <h2 id="claimFTitle">新建领券活动</h2>
-  </div>
-  <div class="form-section">
-    <div class="form-row"><label class="fr-label">活动名称</label><div class="fr-body"><input class="fr-input wide" id="clnName" placeholder="如：新人注册领券"></div></div>
-    <div class="form-row"><label class="fr-label">活动时间</label><div class="fr-body"><input class="fr-input" id="clnStart" type="date" style="width:150px"> 至 <input class="fr-input" id="clnEnd" type="date" style="width:150px"></div></div>
-    <div class="form-row"><label class="fr-label">领券入口</label><div class="fr-body"><label class="radio-item" style="margin-right:14px"><input type="checkbox" value="center"> 领券中心</label><label class="radio-item" style="margin-right:14px"><input type="checkbox" value="detail"> 商品详情页</label><label class="radio-item" style="margin-right:14px"><input type="checkbox" value="popup"> 获券弹窗</label><label class="radio-item"><input type="checkbox" value="share"> 分享链接</label></div></div>
-    <div class="form-row"><label class="fr-label">关联券模板</label><div class="fr-body"><div class="cp-pick-list" id="clnCouponPick"></div></div></div>
-    <div class="form-row"><label class="fr-label">领取规则</label><div class="fr-body"><div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span>总库存上限</span><input class="fr-input" id="clnTotal" type="number" value="0" style="width:80px"><span style="font-size:12px;color:#999">张（0 = 不限）</span><span style="margin-left:12px">每人限领</span><input class="fr-input" id="clnPerUser" type="number" value="1" style="width:70px"><span style="font-size:12px;color:#999">张</span><span style="margin-left:12px">冷却时间</span><input class="fr-input" id="clnCool" type="number" value="0" style="width:70px"><span style="font-size:12px;color:#999">小时（0 = 不限制）</span></div></div></div>
-    <div class="form-row"><label class="fr-label">防刷设置</label><div class="fr-body"><label class="radio-item"><input type="checkbox" id="clnAnti" checked> 开启防刷（同设备/IP 限领）</label></div></div>
-    <div class="form-row"><label class="fr-label">状态</label><div class="fr-body radio-group"><label class="radio-item"><input type="radio" name="clnStatus" value="active" checked> 启用</label><label class="radio-item"><input type="radio" name="clnStatus" value="paused"> 停用</label></div></div>
-  </div>
-  <div class="form-actions">
-    <button class="btn-ghost" onclick="go('claim')">取消</button>
-    <button class="btn-primary" onclick="saveClaimForm()">保存</button>
-  </div>
-</div>
 
 
 </main><!-- end mainArea -->
@@ -751,26 +701,23 @@ const toast=(msg,err)=>{
 /* ---------- Nav & View Switch ---------- */
 function go(page){
   const map={
-    list:'viewList', send:'viewSend', claim:'viewClaim',
+    list:'viewList', send:'viewSend',
     board:'viewBoard', wallet:'viewWallet', detail:'viewCouponDetail',
-    couponNew:'viewCouponNew', sendEdit:'viewSendEdit', claimEdit:'viewClaimEdit'
+    couponNew:'viewCouponNew', sendEdit:'viewSendEdit'
   };
   Object.keys(map).forEach(k=>$(map[k]).classList.toggle('hidden',k!==page));
   const navMap={
     list:'navCoupon', detail:'navCoupon', couponNew:'navCoupon',
     send:'navSend', sendEdit:'navSend',
-    claim:'navClaim', claimEdit:'navClaim',
     board:'navBoard', wallet:'navWallet'
   };
-  ['navCoupon','navSend','navClaim','navBoard','navWallet'].forEach(id=>{
+  ['navCoupon','navSend','navBoard','navWallet'].forEach(id=>{
     $(id).classList.toggle('active', navMap[page]===id);
   });
   if(page==='list') renderCoupons();
   if(page==='send') renderSends();
-  if(page==='claim') renderClaims();
   if(page==='couponNew') resetCouponNew();
   if(page==='sendEdit') resetSendForm();
-  if(page==='claimEdit') resetClaimForm();
   if(page==='board'){boardRender();drawTrend();}
 }
 
@@ -830,11 +777,6 @@ function buildCouponPick(wrapId,selected,multi){
   snUpdateCount();
 }
 function snUpdateCount(){$('snPickCount').textContent=[...$('snCouponPick').querySelectorAll('input:checked')].length;}
-
-let claims=[
-  {id:1,name:'新人注册领券',entries:['领券中心','获券弹窗'],coupon:'新人满99减20',rule:'限1张/人',used:156,total:500,perUser:1,status:'进行中',time:'2026-07-15 09:00'},
-  {id:2,name:'周末限时抢券',entries:['领券中心','商品详情页'],coupon:'全场8折券',rule:'限1张/人 冷却24h',used:78,total:200,perUser:1,status:'进行中',time:'2026-07-18 10:30'}
-];
 
 /* ==================== P1: 券列表 ==================== */
 function renderCoupons(){
@@ -1053,45 +995,6 @@ function fillSend(id){
   if(s.startTime){const dt=s.startTime.split(':');$('snStartTime').value=dt[0]||'';$('snStartSec').value=dt[1]||0;}
 }
 
-/* ==================== P3: 领券活动列表 ==================== */
-function renderClaims(){
-  $('claimTbody').innerHTML=claims.map(c=>`
-    <tr>
-      <td class="chk"><input type="checkbox"></td>
-      <td>${c.name}</td>
-      <td>${c.entries.join('、')}</td>
-      <td>${c.coupon}</td>
-      <td>${c.rule}</td>
-      <td>${c.used}/${c.total}</td>
-      <td>${c.perUser}</td>
-      <td><span class="tag tag-green">${c.status}</span></td>
-      <td>${c.time}</td>
-      <td class="act"><a class="btn-link" onclick="editClaim(${c.id})">编辑</a></td>
-    </tr>`).join('')||'<tr><td colspan="10" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
-}
-let editClaimId=null;
-function resetClaimForm(){
-  editClaimId=null;
-  $('claimFTitle').textContent='新建领券活动';
-  $('clnName').value='';$('clnStart').value='2026-08-01';$('clnEnd').value='2026-12-31';
-  buildCouponPick('clnCouponPick','',false);$('clnTotal').value=0;$('clnPerUser').value=1;$('clnCool').value=0;$('clnAnti').checked=true;
-  document.querySelectorAll('input[name=clnStatus]')[0].checked=true;
-  document.querySelectorAll('#viewClaimEdit input[type=checkbox]:not(#clnAnti)').forEach(cb=>cb.checked=false);
-}
-function saveClaimForm(){
-  const n=$('clnName').value.trim();if(!n){toast('请填写活动名称',true);return;}
-  const entries=[...document.querySelectorAll('#viewClaimEdit input[type=checkbox]:not(#clnAnti):checked')].map(e=>e.value);
-  const rec={id:editClaimId||Date.now(),name:n,entries:entries.length?entries:['-'],coupon:($('clnCouponPick').querySelector('input:checked')||{}).value||'-',rule:`限${$('clnPerUser').value}张/人${+$('clnCool').value?' 冷却'+$('clnCool').value+'h':''}`,used:0,total:+$('clnTotal').value||0,perUser:+$('clnPerUser').value,status:document.querySelector('input[name=clnStatus]:checked').value==='active'?'进行中':'停用',time:new Date().toISOString().slice(0,16).replace('T',' ')};
-  if(editClaimId){const i=claims.findIndex(x=>x.id===editClaimId);if(i>=0)claims[i]=rec;}else claims.unshift(rec);
-  go('claim');toast('已保存');
-}
-function editClaim(id){editClaimId=id;go('claimEdit');fillClaim(id);}
-function fillClaim(id){
-  const c=claims.find(x=>x.id===id);if(!c)return;
-  $('clnName').value=c.name;buildCouponPick('clnCouponPick',c.coupon,false);$('clnPerUser').value=c.perUser;
-  document.querySelectorAll('#viewClaimEdit input[type=checkbox]:not(#clnAnti)').forEach(cb=>{cb.checked=c.entries.includes(cb.value);});
-  if(c.status==='进行中')document.querySelectorAll('input[name=clnStatus]')[0].checked=true;else document.querySelectorAll('input[name=clnStatus]')[1].checked=true;
-}
 
 /* ==================== P4: 数据看板 ==================== */
 function switchBoardTab(el,dim){
@@ -1100,17 +1003,10 @@ function switchBoardTab(el,dim){
   if(dim==='couponDetail'){
     $('boardSummary').classList.add('hidden');
     $('boardDetail').classList.remove('hidden');
-    $('boardLife').classList.add('hidden');
     renderCouponDetail();
-  } else if(dim==='life'){
-    $('boardSummary').classList.add('hidden');
-    $('boardDetail').classList.add('hidden');
-    $('boardLife').classList.remove('hidden');
-    renderLifecycle();
   } else {
     $('boardSummary').classList.remove('hidden');
     $('boardDetail').classList.add('hidden');
-    $('boardLife').classList.add('hidden');
     boardRender(dim);
     if(dim==='coupon') drawTrend();
   }
@@ -1127,48 +1023,42 @@ function boardRender(dim){
   }
   $('boardTbody').innerHTML=rows||'<tr><td colspan="7" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
 }
+const couponDetails=[
+  {id:'CP-20260721-0001',issued:'是',issueTime:'2026-07-21 20:35',user:'138****0021',redeemed:'是',order:'ORD20260722A31'},
+  {id:'CP-20260721-0002',issued:'是',issueTime:'2026-07-21 20:36',user:'139****5523',redeemed:'是',order:'ORD20260722B08'},
+  {id:'CP-20260721-0003',issued:'是',issueTime:'2026-07-21 20:40',user:'137****8823',redeemed:'否',order:'-'},
+  {id:'CP-20260721-0004',issued:'是',issueTime:'2026-07-22 09:12',user:'135****1092',redeemed:'是',order:'ORD20260723B07'},
+  {id:'CP-20260725-0001',issued:'是',issueTime:'2026-07-25 19:35',user:'136****6610',redeemed:'否',order:'-'},
+  {id:'CP-20260725-0002',issued:'否',issueTime:'-',user:'-',redeemed:'否',order:'-'},
+  {id:'CP-20260725-0003',issued:'否',issueTime:'-',user:'-',redeemed:'否',order:'-'},
+  {id:'CP-20260726-0001',issued:'是',issueTime:'2026-07-26 14:50',user:'188****3344',redeemed:'是',order:'ORD20260726C12'}
+];
 function renderCouponDetail(){
-  const kw=$('dtCoupon').value.trim();
-  const list=coupons.filter(c=>(!kw||c.name.includes(kw)));
-  $('couponDetailTbody').innerHTML=list.map(c=>{
-    const total=c.claimed+c.left;
-    const rate=total?((c.claimed/total)*100).toFixed(1):0;
-    return `<tr><td>${c.name}</td><td>${c.type}</td><td>${total}</td><td>${c.claimed}</td><td>${Math.round(c.claimed*0.65)}</td><td>${rate}%</td><td>¥${(c.claimed*50).toLocaleString()}</td></tr>`;
-  }).join('')||'<tr><td colspan="7" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
-}
-function renderLifecycle(){
-  const kw=$('lfCoupon').value.trim();
-  const list=coupons.filter(c=>(!kw||c.name.includes(kw)));
-  $('lifeList').innerHTML=list.map(c=>{
-    const issued=c.claimed+c.left;
-    const claimed=c.claimed;
-    const redeemed=Math.round(claimed*0.65);
-    const expired=claimed-redeemed;
-    const claimRate=issued?((claimed/issued)*100).toFixed(1):0;
-    const redRate=claimed?((redeemed/claimed)*100).toFixed(1):0;
-    const expRate=claimed?((expired/claimed)*100).toFixed(1):0;
-    const pClaim=issued?((claimed/issued)*100):0;
-    const pRed=issued?((redeemed/issued)*100):0;
-    const pExp=issued?((expired/issued)*100):0;
-    const stage=(label,val,pct,color)=>`<div style="display:flex;align-items:center;gap:10px;margin:5px 0">
-      <span style="width:36px;font-size:12px;color:#606266;text-align:right">${label}</span>
-      <div style="flex:1;height:22px;background:#f4f4f5;border-radius:4px;overflow:hidden">
-        <div style="width:${pct}%;height:100%;background:${color};border-radius:4px"></div>
-      </div>
-      <span style="width:54px;font-size:12px;color:#303133;text-align:right;font-variant-numeric:tabular-nums">${val}</span>
-    </div>`;
-    return `<div style="border:1px solid #ebeef5;border-radius:8px;padding:14px 16px;margin-bottom:14px;background:#fff">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        <span style="font-weight:600;color:#303133">${c.name}</span>
-        <span style="font-size:12px;color:#909399;background:#f4f4f5;padding:1px 8px;border-radius:10px">${c.type}</span>
-      </div>
-      ${stage('发放',issued,100,'#534AB7')}
-      ${stage('领取',claimed,pClaim,'#3B82F6')}
-      ${stage('核销',redeemed,pRed,'#10B981')}
-      ${stage('过期',expired,pExp,'#F59E0B')}
-      <div style="margin-top:8px;font-size:12px;color:#909399">领取率 ${claimRate}% · 核销率 ${redRate}% · 过期率 ${expRate}% · 未领取 ${c.left}</div>
-    </div>`;
-  }).join('')||'<div style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</div>';
+  const id=$('dtId').value.trim().toLowerCase();
+  const iss=$('dtIssued').value;
+  const us=$('dtUser').value.trim();
+  const red=$('dtRedeemed').value;
+  const od=$('dtOrder').value.trim().toLowerCase();
+  const s=$('dtStart').value, e=$('dtEnd').value;
+  const list=couponDetails.filter(d=>
+    (!id||d.id.toLowerCase().includes(id)) &&
+    (!iss||d.issued===iss) &&
+    (!us||d.user.includes(us)) &&
+    (!red||d.redeemed===red) &&
+    (!od||d.order.toLowerCase().includes(od)) &&
+    (!s||(d.issueTime!=='-'&&d.issueTime>=s)) &&
+    (!e||(d.issueTime!=='-'&&d.issueTime<=(e+' 23:59')))
+  );
+  const tag=(v,color)=>`<span class="tag" style="background:${color};color:#fff">${v}</span>`;
+  $('couponDetailTbody').innerHTML=list.map(d=>`
+    <tr>
+      <td>${d.id}</td>
+      <td>${d.issued==='是'?tag('是','#67c23a'):tag('否','#c0c4cc')}</td>
+      <td>${d.issueTime}</td>
+      <td>${d.user}</td>
+      <td>${d.redeemed==='是'?tag('是','#67c23a'):tag('否','#c0c4cc')}</td>
+      <td>${d.order}</td>
+    </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
 }
 function drawTrend(){
   const svg=$('trendChart');
