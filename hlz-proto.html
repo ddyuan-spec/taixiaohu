@@ -48,10 +48,24 @@
 
   /* Filter Bar */
   .filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-  .filter-tags{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;background:#fafaff;border:1px solid #eceafc;border-radius:8px;margin-bottom:10px}
-  .filter-tags .ft-label{font-size:12px;font-weight:600;color:#555}
-  .filter-tags .ft-check{font-size:12px;color:#444;display:inline-flex;align-items:center;gap:3px;cursor:pointer}
-  .filter-tags .ft-check input{margin:0}
+  /* ===== 批量弹窗：统一筛选区 ===== */
+  .filter-zone{border:1px solid #eceafc;border-radius:8px;padding:14px 16px;background:#fafaff;margin-bottom:14px}
+  .filter-item{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .filter-item:last-of-type{margin-bottom:0}
+  .fi-label{width:84px;font-size:13px;color:#606266;text-align:right;flex-shrink:0}
+  .fi-body{flex:1;min-width:0;position:relative}
+  .filter-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px;padding-top:12px;border-top:1px dashed #e3e0f5}
+  /* 下拉多选（标签筛选项） */
+  .ms-wrap{display:flex;align-items:center;justify-content:space-between;height:34px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:13px;background:#fff;cursor:pointer;min-width:260px}
+  .ms-wrap:hover{border-color:#7C3AED}
+  .ms-placeholder{color:#c0c4cc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ms-placeholder.filled{color:#333}
+  .ms-arrow{color:#909399;font-size:12px;flex-shrink:0;margin-left:8px}
+  .ms-panel{display:none;position:absolute;top:40px;left:0;right:0;background:#fff;border:1px solid #dcdfe6;border-radius:6px;box-shadow:0 6px 20px rgba(0,0,0,.12);padding:8px 10px;z-index:20;max-height:200px;overflow:auto}
+  .ms-panel.show{display:block}
+  .ms-opt{display:flex;align-items:center;gap:6px;font-size:13px;color:#444;padding:5px 4px;cursor:pointer;border-radius:4px}
+  .ms-opt:hover{background:#f6f4ff}
+  .ms-opt input{margin:0}
   .req{color:#dc2626;font-weight:700}
   .op-remark{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .filter-bar input,.filter-bar select{height:32px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:12px;color:#333;line:none;background:#fff}
@@ -117,16 +131,11 @@
   /* 批量弹窗专用 */
   .batch-dlg{width:660px}
   .bstep{border:1px solid #f0f0f0;border-radius:6px;padding:14px 16px;margin-bottom:14px;background:#fafbfc}
-  .bstep-title{font-size:14px;font-weight:600;color:#222;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-  .bstep-no{width:22px;height:22px;border-radius:50%;background:#7C3AED;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+  .bstep-title{font-size:14px;font-weight:600;color:#222;margin-bottom:10px}
   .sel-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
   .sel-box{background:#fff;border:1px dashed #dcdfe6;border-radius:6px;padding:10px 12px;min-height:46px}
   .sel-count{font-size:12px;color:#666;margin-bottom:8px}
   .sel-count b{color:#7C3AED;font-size:14px}
-  .chips{display:flex;flex-wrap:wrap;gap:8px}
-  .chip{display:inline-flex;align-items:center;gap:6px;background:#f3f0ff;color:#7C3AED;border:1px solid #ede9fe;border-radius:14px;padding:4px 4px 4px 12px;font-size:12px}
-  .chip-x{background:none;border:none;color:#7C3AED;cursor:pointer;font-size:13px;line-height:1;padding:0 4px}
-  .chip-x:hover{color:#dc2626}
   .import-area{margin-top:12px;border-top:1px solid #f0f0f0;padding-top:12px}
   .import-tip{font-size:12px;color:#909399;margin-bottom:8px}
   .detail-meta{font-size:12px;color:#666;margin-bottom:12px;display:flex;gap:18px;flex-wrap:wrap}
@@ -203,7 +212,7 @@
 <body>
 
 <!-- ==================== 平台端后台 ==================== -->
-<div class="platform" id="platView">
+<div class="platform" id="platArea">
   <div class="topbar">
     <div class="logo">泰小虎后台</div>
     <span class="sys">运营管理</span>
@@ -253,7 +262,7 @@
     </div>
 
     <!-- 主内容区 -->
-    <div class="main">
+    <main class="main">
       <!-- 页面：App管理 / 虎力值管理（操作记录列表 + 批量赠扣） -->
       <div class="page active" id="page-hulizhi">
         <div class="crumb"><span>App管理</span> <span>/ 虎力值管理</span></div>
@@ -301,7 +310,7 @@
           <span class="pg-btn active">1</span>
         </div>
       </div>
-    </div><!-- /main -->
+    </main><!-- /main -->
   </div><!-- /layout -->
 </div><!-- /platform -->
 
@@ -314,36 +323,51 @@
       <button class="form-close" onclick="closeBatch()">✕</button>
     </div>
     <div class="form-body">
-      <!-- 步骤1 选择人员 -->
+      <!-- 选择人员 -->
       <div class="bstep">
-        <div class="bstep-title"><span class="bstep-no">1</span> 选择人员</div>
+        <div class="bstep-title">选择人员</div>
 
-        <!-- 标签筛选区：仅「搜索」「重置」两个按钮 -->
-        <div class="filter-tags">
-          <span class="ft-label">标签筛选</span>
-          <label class="ft-check"><input type="checkbox" class="tag-cb" value="高活跃"> 高活跃</label>
-          <label class="ft-check"><input type="checkbox" class="tag-cb" value="沉睡用户"> 沉睡用户</label>
-          <label class="ft-check"><input type="checkbox" class="tag-cb" value="新用户"> 新用户</label>
-          <label class="ft-check"><input type="checkbox" class="tag-cb" value="付费用户"> 付费用户</label>
-          <label class="ft-check"><input type="checkbox" class="tag-cb" value="VIP会员"> VIP会员</label>
-          <label class="ft-check"><input type="checkbox" class="tag-cb" value="风险用户"> 风险用户</label>
-          <button class="btn-primary btn-sm" onclick="tagSearch()">搜索</button>
-          <button class="btn-ghost btn-sm" onclick="tagReset()">重置</button>
+        <!-- 统一筛选区：多个筛选项先选，点「搜索」一次性触发 -->
+        <div class="filter-zone">
+          <div class="filter-item">
+            <label class="fi-label">标签</label>
+            <div class="fi-body">
+              <div class="ms-wrap" id="tagMs" onclick="toggleTagPanel(event)">
+                <span class="ms-placeholder" id="tagMsText">请选择标签（可多选）</span>
+                <span class="ms-arrow">▾</span>
+              </div>
+              <div class="ms-panel" id="tagMsPanel">
+                <label class="ms-opt"><input type="checkbox" class="ms-cb" value="高活跃" onchange="onTagCheck(this)"> 高活跃</label>
+                <label class="ms-opt"><input type="checkbox" class="ms-cb" value="沉睡用户" onchange="onTagCheck(this)"> 沉睡用户</label>
+                <label class="ms-opt"><input type="checkbox" class="ms-cb" value="新用户" onchange="onTagCheck(this)"> 新用户</label>
+                <label class="ms-opt"><input type="checkbox" class="ms-cb" value="付费用户" onchange="onTagCheck(this)"> 付费用户</label>
+                <label class="ms-opt"><input type="checkbox" class="ms-cb" value="VIP会员" onchange="onTagCheck(this)"> VIP会员</label>
+                <label class="ms-opt"><input type="checkbox" class="ms-cb" value="风险用户" onchange="onTagCheck(this)"> 风险用户</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-item">
+            <label class="fi-label">手机号/昵称</label>
+            <div class="fi-body"><input class="fr-input" id="inpPhone" placeholder="支持手机号或昵称模糊搜索"></div>
+          </div>
+
+          <div class="filter-item">
+            <label class="fi-label">用户ID</label>
+            <div class="fi-body"><input class="fr-input" id="inpIds" placeholder="多个用逗号隔开"></div>
+          </div>
+
+          <div class="filter-actions">
+            <button class="btn-primary btn-sm" onclick="runFilter()">搜索</button>
+            <button class="btn-ghost btn-sm" onclick="resetFilterAll()">重置</button>
+            <label class="btn-ghost btn-sm" style="cursor:pointer">批量导入表格
+              <input type="file" id="fileImport" accept=".csv,.xlsx,.xls,.txt" style="display:none" onchange="handleImport(event)">
+            </label>
+            <button class="btn-ghost btn-sm" onclick="downloadTemplate()">⬇ 下载导入模板</button>
+          </div>
         </div>
 
-        <!-- 手动 / 导入添加 -->
-        <div class="sel-tools">
-          <input class="fr-input" id="inpPhone" placeholder="手机号，多个用逗号隔开" style="width:190px">
-          <button class="btn-ghost btn-sm" onclick="addByPhone()">搜索添加</button>
-          <input class="fr-input" id="inpIds" placeholder="用户ID，多个用逗号隔开" style="width:210px">
-          <button class="btn-ghost btn-sm" onclick="addByIds()">添加</button>
-          <label class="btn-ghost btn-sm" style="cursor:pointer">批量导入表格
-            <input type="file" id="fileImport" accept=".csv,.xlsx,.xls,.txt" style="display:none" onchange="handleImport(event)">
-          </label>
-          <button class="btn-ghost btn-sm" onclick="downloadTemplate()">⬇ 下载导入模板</button>
-        </div>
-
-        <!-- 目标用户列表：标签命中 / 手动添加 / 导入 统一展示，直接作为待操作名单 -->
+        <!-- 目标用户列表：筛选/导入后直接显示，点击底部「确认」即批量赠送/扣除 -->
         <div class="sel-box">
           <div class="sel-count">目标用户：<b id="selCount">0</b> 人（筛选/导入后直接显示，点击底部「确认」即批量赠送/扣除）</div>
           <div class="tbl-wrap" style="max-height:200px;overflow:auto">
@@ -357,7 +381,7 @@
 
       <!-- 步骤2 选择理由 -->
       <div class="bstep">
-        <div class="bstep-title"><span class="bstep-no">2</span> 选择理由</div>
+        <div class="bstep-title">选择理由</div>
         <select class="fr-input" id="batchReason" style="width:320px">
           <option value="">请选择理由</option>
           <option value="客服补偿">客服补偿</option>
@@ -373,15 +397,15 @@
 
       <!-- 步骤3 填写数量 -->
       <div class="bstep">
-        <div class="bstep-title"><span class="bstep-no">3</span> 填写数量</div>
+        <div class="bstep-title">填写数量</div>
         <input class="fr-input" id="batchAmount" type="number" min="1" placeholder="每位用户统一获得的虎力值数量" style="width:320px">
         <div class="fr-hint" id="batchHint">将统一应用到上方所选全部人员</div>
       </div>
 
       <!-- 步骤4 填写备注 -->
       <div class="bstep">
-        <div class="bstep-title"><span class="bstep-no">4</span> 填写备注 <span class="req">*</span></div>
-        <textarea class="fr-input" id="batchRemark" maxlength="500" oninput="document.getElementById('remarkCount').textContent=this.value.length" style="width:100%;height:64px;resize:vertical" placeholder="必填，记录本次操作说明（如：双11活动补偿，客服工单#12345），最多 500 字"></textarea>
+        <div class="bstep-title">填写备注 <span class="req">*</span></div>
+        <textarea class="fr-input" id="batchRemark" maxlength="500" oninput="document.getElementById('remarkCount').textContent=this.value.length" style="width:100%;height:110px;resize:vertical" placeholder="必填，记录本次操作说明（如：双11活动补偿，客服工单#12345），最多 500 字"></textarea>
         <div class="fr-hint"><span id="remarkCount">0</span>/500</div>
       </div>
     </div>
@@ -416,7 +440,7 @@
 
 
 <!-- ==================== App 端预览 ==================== -->
-<div class="app-container" id="appView">
+<div class="app-container" id="appArea">
   <!-- 导航栏 -->
   <div class="app-nav">
     <button class="back" onclick="showAppScreen('task')">‹</button>
@@ -587,6 +611,10 @@
 
 
 <script>
+// 兼容环境兜底：部分运行环境未实现 createObjectURL（真实浏览器中已存在，不覆盖）
+if (typeof URL !== 'undefined' && typeof URL.createObjectURL !== 'function') {
+  URL.createObjectURL = function(){ return 'blob:safe'; };
+}
 // ========== 模拟用户库（用于搜索/全选/导入匹配） ==========
 const userBase = [
   {uid:'U_10001',name:'张三',phone:'138****1234'},
@@ -660,7 +688,8 @@ function resetFilter(){
 
 // ========== 批量赠送/扣除弹窗 ==========
 let batchType = 'grant';
-let selectedUsers = new Map();   // uid -> {uid,name,phone,source:'tag'|'manual'|'import'}
+let selectedUsers = new Map();   // uid -> {uid,name,phone,source:'filter'|'import'}
+let selectedTags = [];           // 标签下拉多选当前选中值
 
 function openBatch(type){
   batchType = type;
@@ -671,9 +700,12 @@ function openBatch(type){
   document.getElementById('batchAmount').value='';
   document.getElementById('inpPhone').value='';
   document.getElementById('inpIds').value='';
+  selectedTags=[];
+  document.querySelectorAll('.ms-cb').forEach(c=>c.checked=false);
+  updateTagText();
+  const tp=document.getElementById('tagMsPanel'); if(tp) tp.classList.remove('show');
   document.getElementById('batchRemark').value='';
   document.getElementById('remarkCount').textContent='0';
-  document.querySelectorAll('.tag-cb').forEach(c=>c.checked=false);
   renderTarget();
   const title = document.getElementById('batchTitle');
   const submit = document.getElementById('batchSubmit');
@@ -716,46 +748,67 @@ function removeUser(uid){
   selectedUsers.delete(uid);
   renderTarget();
 }
-function addByPhone(){
-  const v = document.getElementById('inpPhone').value.trim();
-  if(!v){ showToast('请输入手机号','err'); return; }
-  const phones = v.split(/[,，\s]+/).filter(Boolean);
-  let added=0; const miss=[];
-  phones.forEach(ph=>{
-    const u = userBase.find(x=>x.phone.includes(ph));
-    if(u){ addUser(u,'manual'); added++; } else { miss.push(ph); }
-  });
-  if(added) showToast('已添加 '+added+' 人'+(miss.length?'，未找到：'+miss.join(','):''), miss.length?'err':'success');
-  else if(miss.length) showToast('未找到：'+miss.join(','),'err');
+// ========== 标签下拉多选 ==========
+function toggleTagPanel(e){
+  if(e) e.stopPropagation();
+  const panel = document.getElementById('tagMsPanel');
+  if(panel) panel.classList.toggle('show');
 }
-function addByIds(){
-  const v = document.getElementById('inpIds').value.trim();
-  if(!v){ showToast('请输入用户ID','err'); return; }
-  const ids = v.split(/[,，\s]+/).filter(Boolean);
-  let added=0; const miss=[];
-  ids.forEach(id=>{
-    const u = userBase.find(x=>x.uid.toLowerCase()===id.toLowerCase());
-    if(u){ addUser(u,'manual'); added++; } else { miss.push(id); }
-  });
-  if(added) showToast('已添加 '+added+' 人'+(miss.length?'，未找到：'+miss.join(','):''), miss.length?'err':'success');
-  else if(miss.length) showToast('未找到：'+miss.join(','),'err');
+function onTagCheck(cb){
+  if(cb.checked){ if(!selectedTags.includes(cb.value)) selectedTags.push(cb.value); }
+  else { selectedTags = selectedTags.filter(t=>t!==cb.value); }
+  updateTagText();
 }
+function updateTagText(){
+  const el = document.getElementById('tagMsText');
+  if(!el) return;
+  el.textContent = selectedTags.length ? selectedTags.join('、') : '请选择标签（可多选）';
+  el.classList.toggle('filled', selectedTags.length>0);
+}
+// 点击空白处收起下拉
+document.addEventListener('click', function(e){
+  const wrap = document.getElementById('tagMs');
+  const panel = document.getElementById('tagMsPanel');
+  if(wrap && panel && !wrap.contains(e.target) && !panel.contains(e.target)){
+    panel.classList.remove('show');
+  }
+});
 
-// 标签筛选：仅「搜索」「重置」两个按钮，点击搜索直接向服务端查询并展示命中用户
-function tagSearch(){
-  const tags = [...document.querySelectorAll('.tag-cb')].filter(c=>c.checked).map(c=>c.value);
-  if(!tags.length){ showToast('请至少选择一个标签','err'); return; }
-  // 演示：以勾选标签模拟服务端筛选（实际调用 GET /api/admin/users?tags=标签列表）
-  const matched = userBase.filter((u,i)=> i < 4 + (tags.length % 3));
+// ========== 统一筛选：所有条件先选，点「搜索」一次性触发 ==========
+function runFilter(){
+  const phone = document.getElementById('inpPhone').value.trim();
+  const ids = document.getElementById('inpIds').value.trim();
+  const tags = selectedTags;
+  if(!tags.length && !phone && !ids){
+    showToast('请至少设置一个筛选条件','err'); return;
+  }
+  // 演示：模拟服务端 GET /api/admin/users?tags=&phone=&ids= 的命中结果
+  const idArr = ids ? ids.split(/[,，\s]+/).map(s=>s.toLowerCase()) : [];
+  const matched = userBase.filter((u,i)=>{
+    let ok = true;
+    if(tags.length){ ok = ok && (i < 4 + (tags.length % 3)); }            // 演示：按标签取模命中
+    if(phone){ ok = ok && (u.phone.includes(phone) || u.name.includes(phone)); }
+    if(idArr.length){ ok = ok && idArr.includes(u.uid.toLowerCase()); }
+    return ok;
+  });
   let added=0;
-  matched.forEach(u=>{ if(!selectedUsers.has(u.uid)){ addUser({...u},'tag'); added++; } });
-  showToast('标签「'+tags.join('/')+'」命中并加入 '+added+' 人', added?'success':'err');
+  matched.forEach(u=>{ if(!selectedUsers.has(u.uid)){ addUser({...u},'filter'); added++; } });
+  const cond=[];
+  if(tags.length) cond.push('标签['+tags.join('/')+']');
+  if(phone) cond.push('手机号/昵称['+phone+']');
+  if(idArr.length) cond.push('用户ID['+ids+']');
+  showToast('按 '+cond.join(' + ')+' 命中并加入 '+added+' 人', added?'success':'err');
 }
-function tagReset(){
-  document.querySelectorAll('.tag-cb').forEach(c=>c.checked=false);
-  [...selectedUsers.values()].forEach(u=>{ if(u.source==='tag') selectedUsers.delete(u.uid); });
+function resetFilterAll(){
+  document.getElementById('inpPhone').value='';
+  document.getElementById('inpIds').value='';
+  selectedTags=[];
+  document.querySelectorAll('.ms-cb').forEach(c=>c.checked=false);
+  updateTagText();
+  const tp=document.getElementById('tagMsPanel'); if(tp) tp.classList.remove('show');
+  [...selectedUsers.values()].forEach(u=>{ if(u.source==='filter') selectedUsers.delete(u.uid); });
   renderTarget();
-  showToast('已重置标签筛选','success');
+  showToast('已重置筛选条件','success');
 }
 
 // 理由 → 其他自定义
@@ -813,7 +866,7 @@ function parseCSV(text){
 
 // ========== 提交批量操作 ==========
 function submitBatch(){
-  if(selectedUsers.size===0){ showToast('请先选择人员（标签筛选/手动添加/导入）','err'); return; }
+  if(selectedUsers.size===0){ showToast('请先通过筛选或导入选择人员','err'); return; }
   const amt = parseInt(document.getElementById('batchAmount').value);
   if(!amt || amt<=0){ showToast('请输入有效的数量','err'); return; }
   const rsel = document.getElementById('batchReason').value;
@@ -913,8 +966,8 @@ function showAppScreen(name){
 
 // ========== 平台端 ↔ App 视图切换 ==========
 function toggleView(toApp){
-  const plat = document.getElementById('platView');
-  const app = document.getElementById('appView');
+  const plat = document.getElementById('platArea');
+  const app = document.getElementById('appArea');
   const switchBar = document.getElementById('switchBar');
   if(typeof toApp !== 'boolean'){
     toApp = plat.style.display !== 'none' ? true : false;
