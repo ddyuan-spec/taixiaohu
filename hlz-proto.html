@@ -48,6 +48,12 @@
 
   /* Filter Bar */
   .filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .filter-tags{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;background:#fafaff;border:1px solid #eceafc;border-radius:8px;margin-bottom:10px}
+  .filter-tags .ft-label{font-size:12px;font-weight:600;color:#555}
+  .filter-tags .ft-check{font-size:12px;color:#444;display:inline-flex;align-items:center;gap:3px;cursor:pointer}
+  .filter-tags .ft-check input{margin:0}
+  .req{color:#dc2626;font-weight:700}
+  .op-remark{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .filter-bar input,.filter-bar select{height:32px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:12px;color:#333;line:none;background:#fff}
   .filter-bar input:focus,.filter-bar select:focus{border-color:#7C3AED}
   .filter-bar input[type=text]{width:150px}
@@ -182,8 +188,8 @@
   .detail-reason{font-size:15px;font-weight:600;color:var(--t1);line-height:1.4}
   .detail-time{font-size:12px;color:var(--t3);margin-top:4px}
   .detail-val{font-size:18px;font-weight:800;white-space:nowrap;margin-left:12px}
-  .detail-val.plus{color:var(--red)}
-  .detail-val.minus{color:var(--green)}
+  .detail-val.plus{color:var(--green)}
+  .detail-val.minus{color:var(--red)}
   .detail-empty{text-align:center;padding:80px 20px;color:var(--t3);font-size:14px}
   .detail-divider{text-align:center;padding:20px 0;color:var(--t3);font-size:13px}
 
@@ -276,13 +282,14 @@
           <table class="tbl">
             <thead>
               <tr>
-                <th style="width:160px">操作时间</th>
-                <th style="width:90px">操作类型</th>
-                <th style="width:110px">操作人员</th>
-                <th style="width:120px">影响用户数</th>
-                <th style="width:120px">变动总虎力值</th>
+                <th style="width:150px">操作时间</th>
+                <th style="width:80px">操作类型</th>
+                <th style="width:100px">操作人员</th>
+                <th style="width:100px">影响用户数</th>
+                <th style="width:110px">变动总虎力值</th>
                 <th>理由</th>
-                <th style="width:80px">操作</th>
+                <th>备注</th>
+                <th style="width:140px">操作</th>
               </tr>
             </thead>
             <tbody id="opTbody"></tbody>
@@ -310,30 +317,40 @@
       <!-- 步骤1 选择人员 -->
       <div class="bstep">
         <div class="bstep-title"><span class="bstep-no">1</span> 选择人员</div>
+
+        <!-- 标签筛选区：仅「搜索」「重置」两个按钮 -->
+        <div class="filter-tags">
+          <span class="ft-label">标签筛选</span>
+          <label class="ft-check"><input type="checkbox" class="tag-cb" value="高活跃"> 高活跃</label>
+          <label class="ft-check"><input type="checkbox" class="tag-cb" value="沉睡用户"> 沉睡用户</label>
+          <label class="ft-check"><input type="checkbox" class="tag-cb" value="新用户"> 新用户</label>
+          <label class="ft-check"><input type="checkbox" class="tag-cb" value="付费用户"> 付费用户</label>
+          <label class="ft-check"><input type="checkbox" class="tag-cb" value="VIP会员"> VIP会员</label>
+          <label class="ft-check"><input type="checkbox" class="tag-cb" value="风险用户"> 风险用户</label>
+          <button class="btn-primary btn-sm" onclick="tagSearch()">搜索</button>
+          <button class="btn-ghost btn-sm" onclick="tagReset()">重置</button>
+        </div>
+
+        <!-- 手动 / 导入添加 -->
         <div class="sel-tools">
-          <input class="fr-input" id="inpPhone" placeholder="手机号，多个用逗号隔开" style="width:200px">
+          <input class="fr-input" id="inpPhone" placeholder="手机号，多个用逗号隔开" style="width:190px">
           <button class="btn-ghost btn-sm" onclick="addByPhone()">搜索添加</button>
-          <input class="fr-input" id="inpIds" placeholder="用户ID，多个用逗号隔开" style="width:220px">
+          <input class="fr-input" id="inpIds" placeholder="用户ID，多个用逗号隔开" style="width:210px">
           <button class="btn-ghost btn-sm" onclick="addByIds()">添加</button>
-          <button class="btn-ghost btn-sm" onclick="selectAll()">全选</button>
           <label class="btn-ghost btn-sm" style="cursor:pointer">批量导入表格
             <input type="file" id="fileImport" accept=".csv,.xlsx,.xls,.txt" style="display:none" onchange="handleImport(event)">
           </label>
           <button class="btn-ghost btn-sm" onclick="downloadTemplate()">⬇ 下载导入模板</button>
-          <a class="btn-link" onclick="loadSampleImport()" style="margin-left:auto">无文件？载入示例表格</a>
         </div>
+
+        <!-- 目标用户列表：标签命中 / 手动添加 / 导入 统一展示，直接作为待操作名单 -->
         <div class="sel-box">
-          <div class="sel-count">已选人员：<b id="selCount">0</b> 人</div>
-          <div class="chips" id="chips"></div>
-        </div>
-        <!-- 导入表格预览 -->
-        <div class="import-area" id="importArea" style="display:none">
-          <div class="import-tip">勾选需要赠送/扣除的人员，点击「确认选中」加入已选名单 · 每行至少填写一个字段（用户ID / 昵称 / 手机号）即可</div>
+          <div class="sel-count">目标用户：<b id="selCount">0</b> 人（筛选/导入后直接显示，点击底部「确认」即批量赠送/扣除）</div>
           <div class="tbl-wrap" style="max-height:200px;overflow:auto">
-            <table class="tbl" id="importTbl"><thead></thead><tbody></tbody></table>
-          </div>
-          <div style="margin-top:10px">
-            <button class="btn-purple btn-sm" onclick="confirmImport()">确认选中</button>
+            <table class="tbl" id="targetTbl">
+              <thead><tr><th>昵称</th><th>用户ID</th><th>手机号</th><th style="width:60px">操作</th></tr></thead>
+              <tbody id="targetTbody"></tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -359,6 +376,13 @@
         <div class="bstep-title"><span class="bstep-no">3</span> 填写数量</div>
         <input class="fr-input" id="batchAmount" type="number" min="1" placeholder="每位用户统一获得的虎力值数量" style="width:320px">
         <div class="fr-hint" id="batchHint">将统一应用到上方所选全部人员</div>
+      </div>
+
+      <!-- 步骤4 填写备注 -->
+      <div class="bstep">
+        <div class="bstep-title"><span class="bstep-no">4</span> 填写备注 <span class="req">*</span></div>
+        <textarea class="fr-input" id="batchRemark" maxlength="500" oninput="document.getElementById('remarkCount').textContent=this.value.length" style="width:100%;height:64px;resize:vertical" placeholder="必填，记录本次操作说明（如：双11活动补偿，客服工单#12345），最多 500 字"></textarea>
+        <div class="fr-hint"><span id="remarkCount">0</span>/500</div>
       </div>
     </div>
     <div class="form-footer">
@@ -577,15 +601,15 @@ const userBase = [
 
 // ========== 操作记录数据（本期新增） ==========
 let operations = [
-  {id:1,time:'2026-07-28 15:04:48',type:'grant',operator:'admin_zhang',count:3,total:300,reason:'客服补偿',
+  {id:1,time:'2026-07-28 15:04:48',type:'grant',operator:'admin_zhang',count:3,total:300,reason:'客服补偿',remark:'双11活动补偿，客服工单#88231',
     users:[{name:'张三',uid:'U_10001',phone:'138****1234',amt:100},{name:'王五',uid:'U_10003',phone:'137****9012',amt:100},{name:'赵六',uid:'U_10004',phone:'136****3456',amt:100}]},
-  {id:2,time:'2026-07-28 14:23:15',type:'deduct',operator:'admin_li',count:5,total:-100,reason:'违规处罚',
+  {id:2,time:'2026-07-28 14:23:15',type:'deduct',operator:'admin_li',count:5,total:-100,reason:'违规处罚',remark:'刷单违规处罚，风控单#R20260728',
     users:[{name:'李四',uid:'U_10002',phone:'139****5678',amt:20},{name:'周八',uid:'U_10006',phone:'134****2345',amt:20},{name:'吴九',uid:'U_10007',phone:'133****6789',amt:20},{name:'郑十',uid:'U_10008',phone:'132****0123',amt:20},{name:'孙七',uid:'U_10005',phone:'135****7890',amt:20}]},
-  {id:3,time:'2026-07-27 09:45:30',type:'grant',operator:'admin_wang',count:2,total:100,reason:'活动奖励补发',
+  {id:3,time:'2026-07-27 09:45:30',type:'grant',operator:'admin_wang',count:2,total:100,reason:'活动奖励补发',remark:'618复盘补发',
     users:[{name:'张三',uid:'U_10001',phone:'138****1234',amt:50},{name:'李四',uid:'U_10002',phone:'139****5678',amt:50}]},
-  {id:4,time:'2026-07-26 16:08:22',type:'deduct',operator:'admin_zhang',count:1,total:-200,reason:'系统调整',
+  {id:4,time:'2026-07-26 16:08:22',type:'deduct',operator:'admin_zhang',count:1,total:-200,reason:'系统调整',remark:'数据迁移回滚',
     users:[{name:'王五',uid:'U_10003',phone:'137****9012',amt:200}]},
-  {id:5,time:'2026-07-25 11:33:07',type:'grant',operator:'admin_zhang',count:4,total:120,reason:'体验回馈',
+  {id:5,time:'2026-07-25 11:33:07',type:'grant',operator:'admin_zhang',count:4,total:120,reason:'体验回馈',remark:'新版本体验回馈',
     users:[{name:'赵六',uid:'U_10004',phone:'136****3456',amt:30},{name:'孙七',uid:'U_10005',phone:'135****7890',amt:30},{name:'周八',uid:'U_10006',phone:'134****2345',amt:30},{name:'吴九',uid:'U_10007',phone:'133****6789',amt:30}]},
 ];
 
@@ -616,7 +640,11 @@ function renderOps(){
       <td><a class="btn-link" onclick="showDetail(${realIdx})">${o.count} 人 ▸</a></td>
       <td><strong style="color:${tColor}">${tSign}${o.total}</strong></td>
       <td>${o.reason}</td>
-      <td><button class="btn-link" onclick="showDetail(${realIdx})">明细</button></td>
+      <td class="op-remark" title="${o.remark||''}">${o.remark||'—'}</td>
+      <td>
+        <button class="btn-link" onclick="showDetail(${realIdx})">明细</button>
+        <button class="btn-link" onclick="downloadDetail(${realIdx})">下载明细</button>
+      </td>
     </tr>`;
   }).join('');
   document.getElementById('opCount').textContent = '共 '+list.length+' 条';
@@ -632,7 +660,7 @@ function resetFilter(){
 
 // ========== 批量赠送/扣除弹窗 ==========
 let batchType = 'grant';
-let selectedUsers = new Map();
+let selectedUsers = new Map();   // uid -> {uid,name,phone,source:'tag'|'manual'|'import'}
 
 function openBatch(type){
   batchType = type;
@@ -643,8 +671,10 @@ function openBatch(type){
   document.getElementById('batchAmount').value='';
   document.getElementById('inpPhone').value='';
   document.getElementById('inpIds').value='';
-  document.getElementById('importArea').style.display='none';
-  renderChips();
+  document.getElementById('batchRemark').value='';
+  document.getElementById('remarkCount').textContent='0';
+  document.querySelectorAll('.tag-cb').forEach(c=>c.checked=false);
+  renderTarget();
   const title = document.getElementById('batchTitle');
   const submit = document.getElementById('batchSubmit');
   const hint = document.getElementById('batchHint');
@@ -668,22 +698,23 @@ function closeBatch(){
   document.getElementById('batchOverlay').classList.remove('show');
 }
 
-// 已选人员渲染
-function renderChips(){
-  const box = document.getElementById('chips');
-  box.innerHTML = [...selectedUsers.values()].map(u=>
-    `<span class="chip">${u.name}（${u.uid}）<button class="chip-x" onclick="removeUser('${u.uid}')">✕</button></span>`
+// 目标用户列表（标签命中 / 手动添加 / 导入 统一展示，直接作为待操作名单）
+function renderTarget(){
+  const tbody = document.getElementById('targetTbody');
+  tbody.innerHTML = [...selectedUsers.values()].map(u=>
+    `<tr><td>${u.name}</td><td>${u.uid}</td><td>${u.phone||'-'}</td><td><button class="btn-link" onclick="removeUser('${u.uid}')">移除</button></td></tr>`
   ).join('');
   document.getElementById('selCount').textContent = selectedUsers.size;
 }
-function addUser(u){
+function addUser(u, source){
   if(!u) return;
+  u.source = source || 'manual';
   selectedUsers.set(u.uid, u);
-  renderChips();
+  renderTarget();
 }
 function removeUser(uid){
   selectedUsers.delete(uid);
-  renderChips();
+  renderTarget();
 }
 function addByPhone(){
   const v = document.getElementById('inpPhone').value.trim();
@@ -692,7 +723,7 @@ function addByPhone(){
   let added=0; const miss=[];
   phones.forEach(ph=>{
     const u = userBase.find(x=>x.phone.includes(ph));
-    if(u){ addUser(u); added++; } else { miss.push(ph); }
+    if(u){ addUser(u,'manual'); added++; } else { miss.push(ph); }
   });
   if(added) showToast('已添加 '+added+' 人'+(miss.length?'，未找到：'+miss.join(','):''), miss.length?'err':'success');
   else if(miss.length) showToast('未找到：'+miss.join(','),'err');
@@ -704,14 +735,27 @@ function addByIds(){
   let added=0; const miss=[];
   ids.forEach(id=>{
     const u = userBase.find(x=>x.uid.toLowerCase()===id.toLowerCase());
-    if(u){ addUser(u); added++; } else { miss.push(id); }
+    if(u){ addUser(u,'manual'); added++; } else { miss.push(id); }
   });
   if(added) showToast('已添加 '+added+' 人'+(miss.length?'，未找到：'+miss.join(','):''), miss.length?'err':'success');
   else if(miss.length) showToast('未找到：'+miss.join(','),'err');
 }
-function selectAll(){
-  userBase.forEach(u=>addUser(u));
-  showToast('已全选 '+userBase.length+' 人','success');
+
+// 标签筛选：仅「搜索」「重置」两个按钮，点击搜索直接向服务端查询并展示命中用户
+function tagSearch(){
+  const tags = [...document.querySelectorAll('.tag-cb')].filter(c=>c.checked).map(c=>c.value);
+  if(!tags.length){ showToast('请至少选择一个标签','err'); return; }
+  // 演示：以勾选标签模拟服务端筛选（实际调用 GET /api/admin/users?tags=标签列表）
+  const matched = userBase.filter((u,i)=> i < 4 + (tags.length % 3));
+  let added=0;
+  matched.forEach(u=>{ if(!selectedUsers.has(u.uid)){ addUser({...u},'tag'); added++; } });
+  showToast('标签「'+tags.join('/')+'」命中并加入 '+added+' 人', added?'success':'err');
+}
+function tagReset(){
+  document.querySelectorAll('.tag-cb').forEach(c=>c.checked=false);
+  [...selectedUsers.values()].forEach(u=>{ if(u.source==='tag') selectedUsers.delete(u.uid); });
+  renderTarget();
+  showToast('已重置标签筛选','success');
 }
 
 // 理由 → 其他自定义
@@ -744,12 +788,19 @@ function handleImport(e){
       const rows = parseCSV(ev.target.result);
       if(!rows.length){ showToast('表格为空','err'); return; }
       const first = rows[0].join('').toLowerCase();
-      let header, data;
+      let data;
       if(first.includes('id')||first.includes('昵称')||first.includes('手机')||first.includes('uid')){
-        header = rows[0]; data = rows.slice(1);
-      }else{ header = ['用户ID','昵称','手机号']; data = rows; }
-      renderImportTable([header, ...data]);
-      document.getElementById('importArea').style.display='block';
+        data = rows.slice(1);
+      }else{ data = rows; }
+      let added=0, skip=0;
+      data.forEach(r=>{
+        const uid=(r[0]||'').trim(), name=(r[1]||'').trim(), phone=(r[2]||'').trim();
+        if(!uid && !name && !phone){ skip++; return; }   // 每行至少填一个字段
+        const u = userBase.find(y=>y.uid.toLowerCase()===uid.toLowerCase());
+        addUser(u?{...u}:{uid,name,phone},'import');
+        added++;
+      });
+      showToast('已导入 '+added+' 人'+(skip?'（跳过 '+skip+' 行空白）':''), added?'success':'err');
     }catch(err){ showToast('表格解析失败','err'); }
   };
   reader.readAsText(file);
@@ -759,58 +810,19 @@ function parseCSV(text){
   const delim = text.includes('\t') ? '\t' : ',';
   return lines.map(l=>l.split(delim).map(c=>c.trim()));
 }
-function renderImportTable(rows){
-  const thead = document.querySelector('#importTbl thead');
-  const tbody = document.querySelector('#importTbl tbody');
-  const header = rows[0];
-  const data = rows.slice(1);
-  thead.innerHTML = '<tr><th style="width:40px"><input type="checkbox" id="impAll" onchange="toggleAllImport(this)"></th>'
-    + header.map(h=>`<th>${h}</th>`).join('') + '</tr>';
-  tbody.innerHTML = data.map((r,i)=>
-    `<tr><td><input type="checkbox" class="imp-check" data-i="${i}"></td>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`
-  ).join('');
-  window.__importData = data;
-}
-function toggleAllImport(cb){
-  document.querySelectorAll('.imp-check').forEach(x=>x.checked = cb.checked);
-}
-function confirmImport(){
-  const checks = [...document.querySelectorAll('.imp-check')].filter(x=>x.checked);
-  if(!checks.length){ showToast('请勾选人员','err'); return; }
-  let added=0, skip=0;
-  checks.forEach(x=>{
-    const r = window.__importData[+x.dataset.i];
-    const uid=(r[0]||'').trim(), name=(r[1]||'').trim(), phone=(r[2]||'').trim();
-    if(!uid && !name && !phone){ skip++; return; }   // 每行至少填一个字段
-    const u = userBase.find(y=>y.uid.toLowerCase()===uid.toLowerCase());
-    if(u) addUser(u); else addUser({uid, name, phone});
-    added++;
-  });
-  document.getElementById('importArea').style.display='none';
-  let msg = '已选中 '+added+' 人';
-  if(skip) msg += '（跳过 '+skip+' 行空白）';
-  showToast(msg,'success');
-}
-function loadSampleImport(){
-  const sample = [
-    ['用户ID','昵称','手机号'],
-    ['U_10002','李四','139****5678'],
-    ['U_10005','孙七','135****7890'],
-    ['U_10007','吴九','133****6789'],
-  ];
-  renderImportTable(sample);
-  document.getElementById('importArea').style.display='block';
-}
 
 // ========== 提交批量操作 ==========
 function submitBatch(){
-  if(selectedUsers.size===0){ showToast('请先选择人员','err'); return; }
+  if(selectedUsers.size===0){ showToast('请先选择人员（标签筛选/手动添加/导入）','err'); return; }
   const amt = parseInt(document.getElementById('batchAmount').value);
   if(!amt || amt<=0){ showToast('请输入有效的数量','err'); return; }
   const rsel = document.getElementById('batchReason').value;
   const other = document.getElementById('batchOther').value.trim();
   if(!rsel && !other){ showToast('请选择或填写理由','err'); return; }
   if(rsel==='__other__' && !other){ showToast('请输入自定义理由','err'); return; }
+  const remark = document.getElementById('batchRemark').value.trim();
+  if(!remark){ showToast('请填写备注（必填，最多 500 字）','err'); return; }
+  if(remark.length>500){ showToast('备注超出 500 字上限','err'); return; }
   const reason = rsel==='__other__' ? other : rsel;
   const sign = batchType==='grant' ? 1 : -1;
   const total = sign * amt * selectedUsers.size;
@@ -825,6 +837,7 @@ function submitBatch(){
     count: selectedUsers.size,
     total: total,
     reason: reason,
+    remark: remark,
     users: users
   });
   renderOps();
@@ -846,7 +859,8 @@ function showDetail(idx){
     `<span>操作时间：<b>${o.time}</b></span>`+
     `<span>操作人员：<b>${o.operator}</b></span>`+
     `<span>影响用户：<b>${o.count} 人</b></span>`+
-    `<span>变动总计：<b style="color:${tColor}">${o.total>=0?'+':''}${o.total}</b></span>`;
+    `<span>变动总计：<b style="color:${tColor}">${o.total>=0?'+':''}${o.total}</b></span>`+
+    `<span>备注：<b>${o.remark||'-'}</b></span>`;
   const tbody = document.getElementById('detailTbody');
   const sign = o.type==='grant' ? '+' : '-';
   const vColor = o.type==='grant' ? '#16a34a' : '#dc2626';
@@ -857,6 +871,21 @@ function showDetail(idx){
 }
 function closeDetail(){
   document.getElementById('detailOverlay').classList.remove('show');
+}
+
+// 下载本次操作的明细数据（受影响用户清单 CSV）
+function downloadDetail(idx){
+  const o = operations[idx];
+  if(!o) return;
+  const header = ['昵称','用户ID','手机号','虎力值变动'];
+  const rows = o.users.map(u=>[u.name,u.uid,u.phone||'', (o.type==='grant'?'+':'-')+u.amt]);
+  const csv = [header, ...rows].map(r=>r.map(c=>`"${c}"`).join(','));
+  const blob = new Blob(['﻿'+csv.join('\r\n')], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '操作明细_'+o.id+'_'+(o.type==='grant'?'赠送':'扣除')+'.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  showToast('已下载本次操作明细（'+o.users.length+' 人）','success');
 }
 
 // ========== Toast ==========
