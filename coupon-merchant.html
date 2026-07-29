@@ -513,7 +513,6 @@
 
   <div class="form-actions">
     <button class="btn-ghost" onclick="go('list')">← 返回列表</button>
-    <button class="btn-primary" onclick="openIncreaseStock()">＋ 增加发行量</button>
     <button class="btn-danger-ghost" id="cdBtnOffline" onclick="offlineCoupon()">下架</button>
   </div>
 </div>
@@ -822,6 +821,7 @@ function renderCoupons(){
       <td>${c.createDate}</td>
       <td class="act">
         <a class="btn-link" onclick="viewCoupon(${c.id})">查看</a>
+        <a class="btn-link blue" onclick="openIncreaseStockById(${c.id})">增加发行量</a>
         ${c.status==='启用'
           ? `<a class="btn-link warn" onclick="offlineCouponById(${c.id})">下架</a>`
           : `<a class="btn-link red" onclick="delCoupon(${c.id})">删除</a>`}
@@ -851,6 +851,7 @@ function offlineCouponById(id){const c=coupons.find(x=>x.id===id);if(!c)return;c
 function offlineCoupon(){toast('已下架');setTimeout(()=>go('list'),1200);}
 
 /* ---- 增加发行量 ---- */
+function openIncreaseStockById(id){ currentCouponId=id; openIncreaseStock(); }
 function openIncreaseStock(){
   const c=coupons.find(x=>x.id===currentCouponId);if(!c)return;
   const total=c.claimed+c.left;
