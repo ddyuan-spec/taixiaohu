@@ -383,24 +383,49 @@
     <div class="tab-item active" onclick="switchBoardTab(this,'coupon')">按券维度</div>
     <div class="tab-item" onclick="switchBoardTab(this,'issue')">按发放活动</div>
     <div class="tab-item" onclick="switchBoardTab(this,'claim')">按领券活动</div>
+    <div class="tab-item" onclick="switchBoardTab(this,'couponDetail')">券明细记录</div>
   </div>
 
-  <!-- Board Table -->
-  <div class="tbl-wrap" style="margin-bottom:16px">
-    <table class="tbl">
-      <thead>
-        <tr>
-          <th>券名称</th><th>类型</th><th>发放量</th><th>已领</th><th>已核销</th><th>核销率</th><th>核销金额</th>
-        </tr>
-      </thead>
-      <tbody id="boardTbody"></tbody>
-    </table>
+  <!-- Board Summary (按券/发放活动/领券活动) -->
+  <div id="boardSummary">
+    <div class="tbl-wrap" style="margin-bottom:16px">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>券名称</th><th>类型</th><th>发放量</th><th>已领</th><th>已核销</th><th>核销率</th><th>核销金额</th>
+          </tr>
+        </thead>
+        <tbody id="boardTbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Trend Chart -->
+    <div class="chart-area">
+      <div class="chart-title">近 7 日核销趋势</div>
+      <svg id="trendChart" width="100%" height="220" viewBox="0 0 800 220"></svg>
+    </div>
   </div>
 
-  <!-- Trend Chart -->
-  <div class="chart-area">
-    <div class="chart-title">近 7 日核销趋势</div>
-    <svg id="trendChart" width="100%" height="220" viewBox="0 0 800 220"></svg>
+  <!-- 券明细记录 (发放/核销合一，动作列区分) -->
+  <div id="boardDetail" class="hidden">
+    <div class="filter-bar" style="margin-bottom:12px">
+      <input placeholder="券名称" id="dtCoupon" style="width:150px">
+      <input placeholder="用户手机号" id="dtUser" style="width:150px">
+      <select id="dtAction"><option value="">动作</option><option value="发放">发放</option><option value="核销">核销</option></select>
+      <input type="date" id="dtStart" title="开始日期"> <span style="color:#909399">~</span> <input type="date" id="dtEnd" title="结束日期">
+      <button class="btn-primary btn-sm" onclick="renderCouponDetail()">搜索</button>
+      <button class="btn-ghost btn-sm" onclick="$('dtCoupon').value='';$('dtUser').value='';$('dtAction').value='';$('dtStart').value='';$('dtEnd').value='';renderCouponDetail()">重置</button>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>券名称</th><th>用户</th><th>动作</th><th>时间</th><th>关联订单</th><th>核销金额</th>
+          </tr>
+        </thead>
+        <tbody id="couponDetailTbody"></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -1064,7 +1089,16 @@ function fillClaim(id){
 function switchBoardTab(el,dim){
   document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-  boardRender(dim);
+  if(dim==='couponDetail'){
+    $('boardSummary').classList.add('hidden');
+    $('boardDetail').classList.remove('hidden');
+    renderCouponDetail();
+  } else {
+    $('boardSummary').classList.remove('hidden');
+    $('boardDetail').classList.add('hidden');
+    boardRender(dim);
+    if(dim==='coupon') drawTrend();
+  }
 }
 function boardRender(dim){
   dim=dim||'coupon';
@@ -1077,6 +1111,30 @@ function boardRender(dim){
     });
   }
   $('boardTbody').innerHTML=rows||'<tr><td colspan="7" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
+}
+const couponDetails=[
+  {coupon:'新人满99减20',user:'138****0021',action:'发放',time:'2026-07-21 20:35',order:'-',amt:'-'},
+  {coupon:'新人满99减20',user:'139****5523',action:'核销',time:'2026-07-22 11:02',order:'ORD20260722A31',amt:'¥20'},
+  {coupon:'无门槛5元代金',user:'137****8823',action:'发放',time:'2026-07-21 20:40',order:'-',amt:'-'},
+  {coupon:'无门槛5元代金',user:'135****1092',action:'核销',time:'2026-07-23 09:18',order:'ORD20260723B07',amt:'¥5'},
+  {coupon:'全场8折券',user:'136****6610',action:'发放',time:'2026-07-25 19:35',order:'-',amt:'-'},
+  {coupon:'全场8折券',user:'188****3344',action:'核销',time:'2026-07-26 14:50',order:'ORD20260726C12',amt:'¥39.2'},
+  {coupon:'新人满99减20',user:'133****7788',action:'发放',time:'2026-07-27 08:12',order:'-',amt:'-'}
+];
+function renderCouponDetail(){
+  const kw=$('dtCoupon').value.trim();
+  const us=$('dtUser').value.trim();
+  const ac=$('dtAction').value;
+  const list=couponDetails.filter(d=>(!kw||d.coupon.includes(kw))&&(!us||d.user.includes(us))&&(!ac||d.action===ac));
+  $('couponDetailTbody').innerHTML=list.map(d=>`
+    <tr>
+      <td>${d.coupon}</td>
+      <td>${d.user}</td>
+      <td><span class="tag" style="background:#ecf0ff;color:#534ab7">${d.action}</span></td>
+      <td>${d.time}</td>
+      <td>${d.order}</td>
+      <td>${d.amt}</td>
+    </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
 }
 function drawTrend(){
   const svg=$('trendChart');
