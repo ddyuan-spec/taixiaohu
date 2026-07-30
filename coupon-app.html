@@ -213,13 +213,13 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
   <a class="navbtn" onclick="go('p_mall')"><b>M</b>商城（商品列表）</a>
   <a class="navbtn" onclick="go('p_me')"><b>U</b>我的（资产入口）</a>
   <a class="navbtn" onclick="go('p_c2')"><b>C2</b>我的优惠券（券包）</a>
-  <a class="navbtn" onclick="go('p_c5')"><b>C5</b>商品详情领券</a>
+  <a class="navbtn" onclick="go('p_c5')"><b>C5</b>商品详情</a>
   <a class="navbtn" onclick="go('p_c6')"><b>C6</b>确认订单选券/核销</a>
   <a class="navbtn" onclick="showArrival()"><b>⚡</b>获券弹窗（系统发券触达）</a>
   <div class="desc">
-    <b>本期范围（App 端新增）</b>：获券弹窗（系统发券触达·可含多张）/ 商品详情领券 / 我的优惠券（三态）/ 确认订单选券与下单核销。<br>
+    <b>本期范围（App 端新增）</b>：获券弹窗（系统发券触达·可含多张）/ 我的优惠券（三态）/ 确认订单选券与下单核销。<br>
     <b>不做</b>：领券中心、消息中心（后台配置）、开屏三问、售后退券、用券规则详情页。<br>
-    <b>获券弹窗</b>对应后台「直播时长发券 / 指定发券 / 领券活动」—— 选中多个券模板时每种各发 1 张。<br>
+    <b>获券弹窗</b>对应后台「直播时长发券 / 指定发券」—— 选中多个券模板时每种各发 1 张。<br>
     复用 C 端原型（live-client.html）样式体系；埋点标注同 PRD F 板块。
   </div>
 </div>
@@ -295,42 +295,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
         <div class="nm">虾·泰香脆Q56 泰国香米脆脆虾 56g</div>
         <div class="pr">¥79<small> / 盒</small></div>
       </div>
-      <!-- 领券区：价格区下方（PRD 4.3.4 对齐） -->
-      <div class="pd-couponbar">
-        <div class="pd-coupon-fold" id="c5Fold" onclick="toggleC5Coupons()">
-          <span class="txt">🎁 领券立享 <b>新人立减15元</b> 等 <b id="c5CouponCount">3</b> 张可用</span>
-          <span class="arr">▸</span>
-        </div>
-        <div class="pd-coupon-list" id="c5CouponList">
-          <!-- 券1：新人立减（未领） -->
-          <div class="pd-ci" data-ci="MC002">
-            <div class="ci-amt">¥<span class="ci-val">15</span><small> 减</small></div>
-            <div class="ci-body">
-              <div class="ci-nm">新人立减券</div>
-              <div class="ci-cond">满 29 可用</div>
-              <button class="ci-lk claim" onclick="c5ClaimItem(this,'MC002',15)">立即领取</button>
-            </div>
-          </div>
-          <!-- 券2：满减券（未领） -->
-          <div class="pd-ci" data-ci="MC003">
-            <div class="ci-amt">¥<span class="ci-val">10</span><small> 减</small></div>
-            <div class="ci-body">
-              <div class="ci-nm">满额专享券</div>
-              <div class="ci-cond">满 99 可用</div>
-              <button class="ci-lk claim" onclick="c5ClaimItem(this,'MC003',10)">立即领取</button>
-            </div>
-          </div>
-          <!-- 券3：已领取示例 -->
-          <div class="pd-ci" data-ci="MC004">
-            <div class="ci-amt">¥<span class="ci-val">5</span><small> 减</small></div>
-            <div class="ci-body">
-              <div class="ci-nm">无门槛券</div>
-              <div class="ci-cond">无门槛</div>
-              <button class="ci-lk done" disabled>已领取</button>
-            </div>
-          </div>
-        </div>
-      </div>
       <div class="sec-t" style="margin:4px 16px 0">规格</div>
       <div class="spec">
         <div class="sp on" onclick="c5Spec(this)">56g 单盒</div>
@@ -341,7 +305,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       <div class="fixbar">
         <button class="btn" onclick="goC5Buy()">立即购买</button>
       </div>
-      <div class="beacon">product_coupon_hint_view ／ coupon_claim_click（商品详情领券）</div>
     </section>
 
     <!-- C6 确认订单 -->
@@ -471,7 +434,6 @@ function go(p){
   if(p==='p_home') renderHome();
   if(p==='p_mall') renderMall();
   if(p==='p_me') renderMe();
-  if(p==='p_c5') resetC5();
   if(p==='p_c6') renderC6();
   if(p==='p_goods') renderGoods();
   document.getElementById('screen').scrollTop = 0;
@@ -534,38 +496,7 @@ function showArrival(){
 }
 
 /* ============ C5 商品详情 ============ */
-function resetC5(){
-  // 重置所有券按钮
-  document.querySelectorAll('#c5CouponList .pd-ci').forEach(ci=>{
-    const lk = ci.querySelector('.ci-lk');
-    if(!lk.disabled){ lk.textContent='立即领取'; lk.classList.remove('done'); lk.classList.add('claim'); }
-  });
-  // 默认折叠
-  const fold=document.getElementById('c5Fold'); const list=document.getElementById('c5CouponList');
-  if(fold)fold.classList.remove('open'); if(list)list.classList.remove('show');
-}
 function c5Spec(el){ document.querySelectorAll('.spec .sp').forEach(s=>s.classList.remove('on')); el.classList.add('on'); }
-/* 折叠/展开券列表 */
-function toggleC5Coupons(){
-  const fold=document.getElementById('c5Fold');
-  const list=document.getElementById('c5CouponList');
-  if(!fold||!list)return;
-  const isOpen=list.classList.contains('show');
-  if(isOpen){ fold.classList.remove('open'); list.classList.remove('show'); }
-  else{ fold.classList.add('open'); list.classList.add('show'); }
-}
-/* 单张券领取 */
-function c5ClaimItem(btn, couponId, amt){
-  if(btn.classList.contains('done')) return;
-  // 模拟领取成功
-  btn.textContent='已领取';
-  btn.classList.remove('claim');
-  btn.classList.add('done');
-  btn.disabled=true;
-  // toast 气泡提示（不弹窗）
-  toast('领取成功！已放入您的卡包');
-}
-function c5Claim(){ /* 兼容旧调用 */ }
 
 /* C5 底栏「立即购买」→ 进 C6 */
 function goC5Buy(){
