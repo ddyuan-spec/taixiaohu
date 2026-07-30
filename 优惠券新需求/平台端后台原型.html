@@ -159,6 +159,17 @@
   .prod-selected-item .psi-name{color:#409eff}
   .prod-selected-item .psi-price{color:#f56c6c}
   .prod-selected-item .psi-del{color:#f56c6c;cursor:pointer;font-size:12px;border:none;background:none;padding:2px 6px}
+  .prod-selected-item .psi-main{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+  .prod-selected-item .psi-floor{display:flex;align-items:center;gap:4px;margin:0 12px}
+  .prod-selected-item .psi-floor-label{color:#606266;font-size:12px;white-space:nowrap}
+  .prod-selected-item .psi-cur{color:#f56c6c;font-size:13px}
+  .prod-selected-item .psi-floor-input{width:92px;height:28px;border:1px solid #dcdfe6;border-radius:3px;padding:0 8px;font-size:12px;outline:none}
+  .prod-selected-item .psi-floor-input:focus{border-color:#534AB7}
+  .prod-selected-item .psi-unit{color:#909399;font-size:12px}
+  .cd-prod-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid #f0f0f0;font-size:13px}
+  .cd-prod-row .psi-name{color:#409eff}
+  .cd-prod-row .psi-price{color:#f56c6c}
+  .cd-prod-row .psi-floor-val{color:#f56c6c;margin-left:auto}
 
   /* Form Actions */
   .form-actions{display:flex;justify-content:center;gap:12px;margin-top:24px;padding-top:16px;border-top:1px solid #f0f0f0}
@@ -570,6 +581,10 @@
         <label class="radio-item"><input type="radio" name="cdProd" disabled> 排除商品不参与</label>
       </div>
     </div>
+    <div class="form-row hidden" id="cdProdListRow">
+      <label class="fr-label"></label>
+      <div class="fr-body"><div id="cdProdList" class="prod-selected-list"></div></div>
+    </div>
 
     <div class="form-row">
       <label class="fr-label">发放方式</label>
@@ -828,7 +843,8 @@ let coupons=[
   {id:1,name:'福利直播满100减10',shop:'红门旗舰店',type:'满减券',rule:'满100减10',status:'启用',usageStatus:'进行中',ladder:false,share:'不共用',valid:'领取后 24 天内有效',claimed:0,left:1,date:'2026-07-01 ~ 2026-12-31',createDate:'2026-07-01'},
   {id:2,name:'老券满200减30',shop:'健康生活馆',type:'满减券',rule:'满200减30',status:'下架',usageStatus:'已结束',ladder:false,share:'不共用',valid:'领取后 24 天内有效',claimed:0,left:1,date:'2026-07-05 ~ 2026-12-31',createDate:'2026-07-05'},
   {id:3,name:'新人满99减20',shop:'红门旗舰店',type:'满减券',rule:'满99减20',status:'启用',usageStatus:'进行中',ladder:false,share:'臻享积分',valid:'固定 2026-07-15 ~ 2026-09-15',claimed:156,left:344,date:'2026-07-15 ~ 2026-09-15',createDate:'2026-07-15'},
-  {id:4,name:'阶梯每满300减100',shop:'泰山滋补专营店',type:'满减券',rule:'每满300减100（阶梯）',status:'启用',usageStatus:'未开始',ladder:true,share:'臻享积分、多盒多折',valid:'2026-08-15 ~ 2026-10-15',claimed:89,left:211,date:'2026-08-15 ~ 2026-10-15',createDate:'2026-07-10'}
+  {id:4,name:'阶梯每满300减100',shop:'泰山滋补专营店',type:'满减券',rule:'每满300减100（阶梯）',status:'启用',usageStatus:'未开始',ladder:true,share:'臻享积分、多盒多折',valid:'2026-08-15 ~ 2026-10-15',claimed:89,left:211,date:'2026-08-15 ~ 2026-10-15',createDate:'2026-07-10'},
+  {id:5,name:'老券满150减20',shop:'健康生活馆',type:'满减券',rule:'满150减20',status:'下架',usageStatus:'进行中',ladder:false,share:'不共用',valid:'领取后 24 天内有效',claimed:30,left:70,date:'2026-07-05 ~ 2026-12-31',createDate:'2026-07-05'}
 ];
 let currentCouponId=null;
 
@@ -903,7 +919,9 @@ function renderCoupons(){
         <a class="btn-link blue" onclick="openIncreaseStockById(${c.id})">增加发行量</a>
         ${c.status==='启用'
           ? `<a class="btn-link warn" onclick="offlineCouponById(${c.id})">下架</a>`
-          : `<a class="btn-link red" onclick="delCoupon(${c.id})">删除</a>`}
+          : (c.usageStatus!=='进行中'
+              ? `<a class="btn-link red" onclick="delCoupon(${c.id})">删除</a>`
+              : `<a class="btn-link" style="color:#c0c4cc;cursor:not-allowed" title="进行中不可删除，请先撤回">删除</a>`)}
         ${(c.usageStatus==='未开始'||c.usageStatus==='进行中') ? `<a class="btn-link red" onclick="revokeCoupon(${c.id})">撤回</a>` : ''}
       </td>
     </tr>`).join('');
@@ -929,9 +947,17 @@ function viewCoupon(id){
   $('cdIssueMode').textContent='手动领取';
   $('cdStatusTag').innerHTML='<span class="tag '+(c.status==='启用'?'tag-green':'tag-gray')+'">'+c.status+'</span>';
   $('cdUsageStatusTag').innerHTML='<span class="tag '+(c.usageStatus==='进行中'?'tag-green':c.usageStatus==='未开始'?'tag-yellow':c.usageStatus==='已结束'?'tag-gray':'tag-red')+'">'+c.usageStatus+'</span>';
+  const cdScope=c.productScope||'all';
+  const cdRadios=document.querySelectorAll('#cdProductScope input[name=cdProd]');
+  cdRadios.forEach(r=>{r.checked=r.parentNode.textContent.indexOf(cdScope==='spec'?'指定商品参与':cdScope==='exclude'?'排除商品不参与':'全部商品参与')>=0;});
+  const pl=$('cdProdList'),plRow=$('cdProdListRow');
+  if(cdScope==='spec'&&c.prods&&c.prods.length){
+    plRow.classList.remove('hidden');
+    pl.innerHTML=c.prods.map(p=>'<div class="cd-prod-row"><span class="psi-name">'+p.name+'</span><span class="psi-price">'+p.price+'</span><span class="psi-floor-val">底价 ¥'+(p.floorPrice?parseFloat(p.floorPrice).toFixed(2):'0.00')+' 元</span></div>').join('');
+  }else{plRow.classList.add('hidden');pl.innerHTML='';}
   go('detail');
 }
-function delCoupon(id){if(confirm('确认删除该券？')){coupons=coupons.filter(x=>x.id!==id);renderCoupons();toast('已删除');}}
+function delCoupon(id){const c=coupons.find(x=>x.id===id);if(!c)return;if(c.status!=='下架'){toast('仅下架状态的券可删除，请先下架',true);return;}if(c.usageStatus==='进行中'){toast('进行中的券不可删除，请先撤回',true);return;}if(confirm('确认删除该券？')){coupons=coupons.filter(x=>x.id!==id);renderCoupons();toast('已删除');}}
 function offlineCouponById(id){const c=coupons.find(x=>x.id===id);if(!c)return;c.status='下架';renderCoupons();toast('已下架');}
 function revokeCoupon(id){if(!confirm('确认撤回该券？撤回后所有已发放的用户券将立即失效，有效期截止至今天。'))return;const c=coupons.find(x=>x.id===id);if(!c)return;c.usageStatus='已结束';renderCoupons();toast('已撤回');}
 function offlineCoupon(){toast('已下架');setTimeout(()=>go('list'),1200);}
@@ -1006,7 +1032,7 @@ function saveCouponNew(){
     rule:(ladder?'每满':'满')+x+'减'+y,status:'启用',usageStatus:'进行中',
     ladder:ladder,share:share.length?share.join('、'):'不共用',
     valid:'固定 '+$('cpStart').value+' ~ '+$('cpEnd').value,
-    claimed:0,left:+$('cpTotal').value,date:$('cpStart').value+' ~ '+$('cpEnd').value,createDate:$('cpStart').value});
+    claimed:0,left:+$('cpTotal').value,date:$('cpStart').value+' ~ '+$('cpEnd').value,createDate:$('cpStart').value,productScope:document.querySelector('input[name=cpProd]:checked').value,prods:selectedProds.map(p=>({id:p.id,name:p.name,price:p.price,floorPrice:p.floorPrice||''}))});
   go('list');toast('已保存');
 }
 
@@ -1048,9 +1074,11 @@ function renderSelectedProds(){
   const el=$('cpSelectedProds');
   $('cpProdCount').textContent=selectedProds.length?'(已选择'+selectedProds.length+'项)':'';
   if(!selectedProds.length){el.innerHTML='<div style="padding:16px;text-align:center;color:#c0c4cc;font-size:12px">暂无数据</div>';return;}
-  el.innerHTML=selectedProds.map(p=>'<div class="prod-selected-item"><div><span class="psi-name">'+p.name+'</span> <span class="psi-price">'+p.price+'</span></div><button class="psi-del" onclick="removeSelectedProd(\''+p.id+'\')">删除</button></div>').join('');
+  el.innerHTML=selectedProds.map(p=>'<div class="prod-selected-item"><div class="psi-main"><span class="psi-name">'+p.name+'</span><span class="psi-price">'+p.price+'</span></div><div class="psi-floor"><span class="psi-floor-label">底价</span><span class="psi-cur">¥</span><input class="psi-floor-input" type="number" min="0" step="0.01" placeholder="0.00" value="'+(p.floorPrice||'')+'" oninput="setFloorPrice(\''+p.id+'\',this.value)" onblur="formatFloor(this)"><span class="psi-unit">元</span></div><button class="psi-del" onclick="removeSelectedProd(\''+p.id+'\')">删除</button></div>').join('');
 }
 function removeSelectedProd(id){selectedProds=selectedProds.filter(p=>p.id!==id);renderSelectedProds();}
+function setFloorPrice(id,val){const p=selectedProds.find(x=>x.id===id);if(p)p.floorPrice=val;}
+function formatFloor(el){if(el.value==='')return;const v=parseFloat(el.value);if(isNaN(v)||v<0){el.value='';return;}el.value=v.toFixed(2);}
 
 /* ==================== P2: 发券活动列表 ==================== */
 function renderSends(){
