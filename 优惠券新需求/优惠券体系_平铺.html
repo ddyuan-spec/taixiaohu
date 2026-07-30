@@ -68,7 +68,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 <div class="hd">
   <h1>📋 泰小虎 · 优惠券体系 · 页面平铺</h1>
   <span class="sub">按页面跳转逻辑 · 同一组上下排列，不同组横向分列 · 纯截图无框无标号 · 灰色虚框＝待补</span>
-  <span class="sub" style="color:#c0392b">⚠️ 本期范围：平台端后台 + App + 小程序/H5；<b>商家端后台本期不做</b>；<b>获券弹窗(系统发券触达)本期不做</b>（C端仅保留我的优惠券+确认订单核销）</span>
+  <span class="sub" style="color:#c0392b">⚠️ 本期范围：平台端后台 + App + 小程序/H5；<b>商家端后台本期不做</b>；<b>获券弹窗(系统发券触达)本期不做</b>；<b>领券(领券中心/用户主动领券入口)本期不做</b>（C端仅保留我的优惠券+确认订单核销）</span>
   <span class="tot">共 <strong id="tc">0</strong> 张</span>
 </div>
 
@@ -91,10 +91,9 @@ const SECTIONS = [
   {
     side:'C', key:'C', name:'C端',
     cols:[
-      {g:'App · 获券触达 ⚠️ 本期删除', items:[
+      {g:'App · 领券/获券触达 ⚠️ 本期删除', items:[
         {title:'获券弹窗（系统发券触达）⚠️ 本期不做', img:'coupon-prd-assets/coupon-app-arrival-modal.png', stale:true},
-        {title:'C5 商品详情领券入口', img:'coupon-prd-assets/app-c5-coupon-drawn.png'},
-        {title:'券规则说明弹窗', img:'coupon-prd-assets/app-coupon-rules-drawn.png'},
+        {title:'C5 商品详情领券入口 ⚠️ 本期不做', img:'coupon-prd-assets/app-c5-coupon-drawn.png', stale:true},
       ]},
       {g:'App · 我的优惠券', items:[
         {title:'C2 我的优惠券（三态）', img:'coupon-prd-assets/app-c2-coupons-drawn.png'},
@@ -105,6 +104,7 @@ const SECTIONS = [
         {title:'选券弹窗', img:'coupon-prd-assets/app-select-coupon-modal.png'},
         {title:'单SKU券作用于SKU行', img:'coupon-prd-assets/app-c6-order-single-sku-drawn.png'},
         {title:'多SKU券适用商品范围', img:'coupon-prd-assets/app-c6-coupon-sku-scope-drawn.png'},
+        {title:'券规则说明弹窗', img:'coupon-prd-assets/app-coupon-rules-drawn.png'},
       ]},
       {g:'小程序 / H5 ⚠️ 本期整节删除', items:[
         {title:'获券弹窗（两端外壳差异）⚠️ 本期不做', img:'coupon-prd-assets/coupon-mini-h5.png', stale:true},
