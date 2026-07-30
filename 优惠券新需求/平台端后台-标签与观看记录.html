@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎 · 平台端后台 — 标签管理与数据看板</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f5f6fa;color:#333;font-size:13px}
+  /* ===== Top Bar ===== */
+  .topbar{height:48px;background:#534AB7;color:#fff;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100}
+  .topbar .logo{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+  .topbar .logo::before{content:'';display:inline-block;width:20px;height:20px;border-radius:4px;background:rgba(255,255,255,.2)}
+  .topbar .sys{opacity:.75;font-size:12px}
+  .topbar .right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:18px;cursor:pointer}
+
+  /* ===== Layout ===== */
+  .layout{display:flex;min-height:calc(100vh - 48px)}
+
+  /* ===== Sidebar ===== */
+  .side{width:196px;background:#fff;border-right:1px solid #eaeaea;display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+  .side .group{padding:0}
+  .side .gtitle{font-size:11px;color:#999;padding:14px 16px 6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;display:flex;align-items:center;gap:4px}
+  .side .gtitle .arr{font-size:10px;transition:transform .2s}
+  .side .gtitle.open .arr{transform:rotate(90deg)}
+  .side a{display:block;padding:9px 16px 9px 28px;color:#555;text-decoration:none;font-size:13px;cursor:pointer;transition:background .15s,color .15s;position:relative}
+  .side a:hover{background:#f8f7ff;color:#534AB7}
+  .side a.active{background:#f3f0ff;color:#534AB7;font-weight:500;border-right:3px solid #534AB7}
+
+  /* ===== Main Content ===== */
+  .main{flex:1;padding:18px 24px 60px;min-width:0}
+  .hidden{display:none!important}
+
+  /* ===== Breadcrumb ===== */
+  .crumb{font-size:12px;color:#999;margin-bottom:14px}
+  .crumb span{color:#333}
+  .crumb a{color:#534AB7;cursor:pointer;text-decoration:none}
+
+  /* ===== Page Header ===== */
+  .phead{display:flex;align-items:center;margin-bottom:14px;gap:10px}
+  .phead h2{font-size:17px;font-weight:600;color:#222}
+
+  /* ===== Tabs (top of content) ===== */
+  .tabs-row{display:flex;gap:0;border-bottom:2px solid #eaeaea;margin-bottom:16px}
+  .tab-btn{padding:8px 20px;font-size:13px;color:#666;cursor:pointer;border:none;background:none;position:relative;transition:color .2s}
+  .tab-btn:hover{color:#534AB7}
+  .tab-btn.active{color:#534AB7;font-weight:600}
+  .tab-btn.active::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:#534AB7}
+
+  /* ===== Filter Bar ===== */
+  .filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .filter-bar input,.filter-bar select{height:32px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:12px;color:#333;outline:none;background:#fff;transition:border-color .2s}
+  .filter-bar input:focus,.filter-bar select:focus{border-color:#534AB7}
+  .filter-bar input{width:180px}
+  .filter-bar select{width:120px}
+  .fb-label{font-size:12px;color:#666;white-space:nowrap}
+
+  /* ===== Buttons ===== */
+  .btn-primary{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 16px;background:#534AB7;color:#fff;border:none;border-radius:4px;font-size:13px;cursor:pointer;white-space:nowrap;transition:background .2s}
+  .btn-primary:hover{background:#453da0}
+  .btn-ghost{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 16px;background:#fff;color:#666;border:1px solid #dcdfe6;border-radius:4px;font-size:13px;cursor:pointer;white-space:nowrap;transition:border-color .2s,color .2s}
+  .btn-ghost:hover{color:#534AB7;border-color:#534AB7}
+  .btn-sm{height:26px;padding:0 10px;font-size:12px}
+  .btn-danger-ghost{display:inline-flex;align-items:center;justify-content:center;height:26px;padding:0 10px;background:transparent;color:#f56c6c;border:1px solid #f56c6c;border-radius:4px;font-size:12px;cursor:pointer;white-space:nowrap}
+  .btn-danger-ghost:hover{background:#fef0f0}
+  .btn-link{background:none;border:none;color:#534AB7;cursor:pointer;font-size:12px;padding:0 4px}
+  .btn-link.red{color:#f56c6c}
+  .btn-link:hover{text-decoration:underline}
+
+  /* ===== Table ===== */
+  .tbl-wrap{background:#fff;border:1px solid #ebeef5;border-radius:4px;overflow:hidden}
+  .tbl{width:100%;border-collapse:collapse;font-size:12px}
+  .tbl thead th{background:#fafbfc;border-bottom:1px solid #ebeef5;color:#909399;font-weight:500;text-align:left;padding:10px 12px;white-space:nowrap;font-size:12px}
+  .tbl tbody td{border-bottom:1px solid #f0f0f0;padding:10px 12px;color:#333;vertical-align:middle}
+  .tbl tbody tr:hover{background:#fafbfc}
+  .tbl tbody tr:last-child td{border-bottom:none}
+  .tbl .chk{width:36px;text-align:center}
+  .tbl .act a{margin-right:8px}
+
+  /* ===== Pagination ===== */
+  .pagi{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:14px;font-size:12px;color:#666}
+  .pagi input{width:40px;height:28px;border:1px solid #dcdfe6;border-radius:4px;text-align:center;font-size:12px;outline:none}
+  .pagi select{height:28px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;outline:none}
+  .pagi .pg-btn{min-width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #dcdfe6;border-radius:4px;cursor:pointer;font-size:12px;color:#606266;background:#fff}
+  .pg-btn.active{background:#534AB7;color:#fff;border-color:#534AB7}
+  .pg-btn:hover:not(.active){color:#534AB7;border-color:#534AB7}
+
+  /* ===== Tags / Status ===== */
+  .tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11.5px;line-height:1.6}
+  .tag-green{background:#f0f9eb;color:#67c23a;border:1px solid #c2e7b0}
+  .tag-gray{background:#f4f4f5;color:#909399;border:1px solid #d3d4d6}
+  .tag-blue{background:#ecf5ff;color:#409eff;border:1px solid #b3d8ff}
+  .tag-orange{background:#fdf6ec;color:#e6a23c;border:1px solid #faecd8}
+  .tag-purple{background:#f0ecff;color:#7c3aed;border:1px solid #d4c8ff}
+
+  /* ===== Modal ===== */
+  .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:center;justify-content:center}
+  .modal-dlg{background:#fff;border-radius:6px;width:560px;max-width:92vw;box-shadow:0 8px 30px rgba(0,0,0,.18);display:flex;flex-direction:column}
+  .modal-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #ebeef5}
+  .modal-title{font-size:15px;font-weight:600;color:#222}
+  .modal-close{background:none;border:none;font-size:18px;color:#c0c4cc;cursor:pointer;padding:2px 6px;border-radius:3px}
+  .modal-close:hover{color:#606266;background:#f0f0f0}
+  .modal-body{padding:20px 24px}
+  .modal-footer{padding:12px 18px;border-top:1px solid #ebeef5;display:flex;justify-content:flex-end;gap:8px}
+
+  /* ===== Form in Modal ===== */
+  .form-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+  .fr-label{width:80px;font-size:13px;color:#606266;line-height:32px;flex-shrink:0;text-align:right;padding-right:8px}
+  .fr-label .req{color:#f56c6c;margin-right:2px}
+  .fr-body{flex:1;min-width:0}
+  .fr-input{height:32px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:13px;width:100%;outline:none;transition:border-color .2s}
+  .fr-input:focus{border-color:#534AB7}
+  textarea.fr-input{height:auto;min-height:60px;padding:8px 10px;resize:vertical;line-height:1.6}
+  select.fr-input{width:100%}
+
+  /* Dropdown for tag type */
+  .dropdown-wrap{position:relative}
+  .dropdown-list{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #e4e7ed;border-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,.1);z-index:10;margin-top:2px;max-height:200px;overflow-y:auto;display:none}
+  .dropdown-list.show{display:block}
+  .dropdown-list div{padding:8px 12px;font-size:13px;cursor:pointer;color:#333}
+  .dropdown-list div:hover{background:#f5f7fa;color:#534AB7}
+  .dropdown-list div.selected{color:#534AB7;font-weight:500}
+
+  /* Empty state */
+  .empty-state{text-align:center;padding:50px 0;color:#c0c4cc}
+  .empty-state .icon{font-size:48px;margin-bottom:10px;opacity:.35}
+
+  /* Highlight new items */
+  .new-badge{display:inline-block;background:#534AB7;color:#fff;font-size:10px;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle;font-weight:600}
+</style>
+</head>
+<body>
+
+<!-- ===== Top Bar ===== -->
+<div class="topbar">
+  <div class="logo">泰小虎后台</div>
+  <span class="sys">运营管理平台</span>
+  <div class="right"><span>🔔</span><span>👤</span></div>
+</div>
+
+<div class="layout">
+
+<!-- ===== Sidebar ===== -->
+<nav class="side" id="sidebar">
+  <!-- 营销管理 -->
+  <div class="group">
+    <div class="gtitle" onclick="toggleGroup(this)">▶ 营销管理</div>
+    <a href="#" onclick="go('couponList')">优惠券配置</a>
+    <a href="#" onclick="go('couponActivity')">发券活动</a>
+    <a href="#" onclick="go('tagManage')" id="nav_tagManage" class="active">标签管理</a>
+    <a href="#">活动配置</a>
+    <a href="#">积分</a>
+    <a href="#">拼团</a>
+    <a href="#">秒杀</a>
+    <a href="#">分销</a>
+    <a href="#">券包</a>
+  </div>
+
+  <!-- 会员管理 -->
+  <div class="group">
+    <div class="gtitle open" onclick="toggleGroup(this)">▼ 会员管理</div>
+    <a href="#">会员中心</a>
+    <a href="#">会员列表</a>
+    <a href="#" onclick="go('tagManage')">标签管理</a>
+    <a href="#">信息采集</a>
+  </div>
+
+  <!-- 订单管理 -->
+  <div class="group">
+    <div class="gtitle" onclick="toggleGroup(this)">▶ 订单管理</div>
+    <a href="#">订单列表</a>
+    <a href="#">售后工单</a>
+    <a href="#">采购订单</a>
+  </div>
+
+  <!-- 数据看板 -->
+  <div class="group">
+    <div class="gtitle open" onclick="toggleGroup(this)">▼ 数据看板</div>
+    <a href="#">粉丝画像</a>
+    <a href="#">APP画像</a>
+    <a href="#" onclick="go('liveViewLog')" id="nav_liveViewLog" style="color:#534AB7;font-weight:500;">直播观看记录<span class="new-badge">NEW</span></a>
+  </div>
+
+  <!-- 内容管理 -->
+  <div class="group">
+    <div class="gtitle" onclick="toggleGroup(this)">▶ 内容管理</div>
+    <a href="#">商品库</a>
+    <a href="#">直播间</a>
+    <a href="#">科普图文</a>
+  </div>
+
+  <!-- 智能客服 -->
+  <div class="group">
+    <div class="gtitle" onclick="toggleGroup(this)">▶ 智能客服</div>
+    <a href="#">知识库</a>
+    <a href="#">对话管理</a>
+    <a href="#">BadCase</a>
+  </div>
+
+  <!-- 系统设置 -->
+  <div class="group">
+    <div class="gtitle" onclick="toggleGroup(this)">▶ 系统</div>
+    <a href="#">账号权限</a>
+    <a href="#">操作日志</a>
+  </div>
+</nav>
+
+<!-- ===== Main Content ===== -->
+<div class="main" id="mainContent">
+
+  <!-- ==================== 页面1: 标签管理 ==================== -->
+  <div id="viewTagManage">
+    <div class="crumb"><a>首页</a> / <a>营销管理</a> / <span>标签管理</span></div>
+
+    <!-- Tabs -->
+    <div class="tabs-row">
+      <button class="tab-btn active" onclick="switchTab(this,'tagList')">标签管理</button>
+      <button class="tab-btn" onclick="switchTab(this,'tagNameList')">功能配置名单</button>
+      <button class="tab-btn" onclick="switchTab(this,'actionNameList')">动作白名单</button>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <input placeholder="输入人/处理方" id="tfName">
+      <select id="tfType" onchange="renderTags()">
+        <option value="">全部标签</option>
+        <option value="用户标签">用户标签</option>
+        <option value="活动标签">活动标签</option>
+        <option value="风控标签">风控标签</option>
+        <option value="直播标签">直播标签</option>
+      </select>
+      <button class="btn-primary" onclick="openAddTag()">+ 新增标签</button>
+      <button class="btn-ghost">重置</button>
+    </div>
+
+    <!-- Table -->
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th class="chk"><input type="checkbox"></th>
+            <th>序号</th>
+            <th>标签名称</th>
+            <th>标签描述</th>
+            <th>标签类型</th>
+            <th>创建方式</th>
+            <th>创建人</th>
+            <th>创建时间</th>
+            <th>状态</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="tagTbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagi">
+      共 <b>11</b> 条
+      <select><option>10条/页</option></select>
+      <span class="pg-btn active">1</span>
+      <span class="pg-btn">2</span>
+      <span class="pg-btn">3</span>
+      <span>跳至</span>
+      <input value="1">
+      <span>页</span>
+    </div>
+  </div>
+
+  <!-- ==================== 页面2: 直播观看记录 ==================== -->
+  <div id="viewLiveViewLog" class="hidden">
+    <div class="crumb"><a>首页</a> / <a>数据看板</a> / <span>直播观看记录</span></div>
+
+    <div class="phead">
+      <h2>直播观看记录</h2>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-row">
+      <button class="tab-btn active" onclick="switchTab2(this,'liveView')">直播间</button>
+      <button class="tab-btn" onclick="switchTab2(this,'liveGoods')">直播商品</button>
+      <button class="tab-btn" onclick="switchTab2(this,'liveVideo')">直播视频</button>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <span class="fb-label">状态:</span>
+      <select id="lvStatus">
+        <option value="">全部状态</option>
+        <option>观看中</option>
+        <option>已结束</option>
+      </select>
+      <input placeholder="关键字 输入人/名字" id="lvKeyword">
+      <button class="btn-primary" onclick="renderLiveView()">搜索</button>
+      <button class="btn-ghost" onclick="resetLiveView()">重置</button>
+    </div>
+
+    <!-- Table -->
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th class="chk"><input type="checkbox"></th>
+            <th>客户信息</th>
+            <th>用户ID</th>
+            <th>观看直播间ID</th>
+            <th>进入时间</th>
+            <th>退出时间</th>
+            <th>观看时长</th>
+            <th>观看日期</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="liveViewTbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagi">
+      共 <b>8</b> 条
+      <select><option>10条/页</option></select>
+      <span class="pg-btn active">1</span>
+      <span>pg-btn">2</span>
+      <span>跳至</span>
+      <input value="1">
+      <span>页</span>
+    </div>
+  </div>
+
+</div><!-- /mainContent -->
+</div><!-- /layout -->
+
+
+<!-- ========== 新增标签 Modal ========== -->
+<div class="modal-overlay hidden" id="addTagModal">
+  <div class="modal-dlg">
+    <div class="modal-header">
+      <span class="modal-title">新增标签</span>
+      <button class="modal-close" onclick="closeAddTag()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label class="fr-label"><span class="req">*</span>标签名称</label>
+        <div class="fr-body"><input class="fr-input" id="atName" placeholder="请输入标签名称" value=""></div>
+      </div>
+      <div class="form-row">
+        <label class="fr-label"><span class="req">*</span>标签描述</label>
+        <div class="fr-body"><input class="fr-input" id="atDesc" placeholder="请输入标签描述" value=""></div>
+      </div>
+      <div class="form-row">
+        <label class="fr-label"><span class="req">*</span>标签类型</label>
+        <div class="fr-body">
+          <div class="dropdown-wrap">
+            <select class="fr-input" id="atType">
+              <option value="">请选择</option>
+              <option value="用户标签">用户标签</option>
+              <option value="活动标签">活动标签</option>
+              <option value="风控标签">风控标签</option>
+              <option value="直播标签">直播标签</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeAddTag()">取消</button>
+      <button class="btn-primary" onclick="saveTag()">确定</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+/* ====== Sidebar toggle ====== */
+function toggleGroup(el){el.classList.toggle('open')}
+
+/* ====== Navigation ====== */
+function go(page){
+  document.querySelectorAll('#sidebar a').forEach(a=>a.classList.remove('active'));
+  var nav = document.getElementById('nav_'+page);
+  if(nav) nav.classList.add('active');
+
+  document.getElementById('viewTagManage').classList.add('hidden');
+  document.getElementById('viewLiveViewLog').classList.add('hidden');
+
+  if(page==='tagManage'){
+    document.getElementById('viewTagManage').classList.remove('hidden');
+    renderTags();
+  } else if(page==='liveViewLog'){
+    document.getElementById('viewLiveViewLog').classList.remove('hidden');
+    renderLiveView();
+  }
+}
+
+/* ====== Tab switch (标签管理) ====== */
+function switchTab(el, key){
+  el.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function switchTab2(el, key){
+  el.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ================================================================
+   PAGE 1: 标签管理 — Data & Render
+   ================================================================ */
+var tags = [
+  {id:1, name:'线上高购用户', desc:'线上购买用户，千万健康', type:'活动标签', method:'手动创建', creator:'超级管理员', time:'2026-07-24 09:05:17', status:'新建'},
+  {id:2, name:'测试', desc:'111', type:'用户标签', method:'手动创建', creator:'超级管理员', time:'2026-07-22 15:19:05', status:'关闭'},
+  {id:3, name:'用户标签', desc:'用户标签', type:'用户标签', method:'手动创建', creator:'超级管理员', time:'2026-07-29 14:07:46', status:'关闭'},
+  {id:4, name:'summer测试', desc:'summer测试', type:'活动标签', method:'手动创建', creator:'超级管理员', time:'2026-07-14 16:09:37', status:'关闭'},
+  {id:5, name:'活动标签2', desc:'活动标签2', type:'活动标签', method:'手动创建', creator:'omb', time:'2026-07-14 13:53:37', status:'关闭'},
+  {id:6, name:'活动标签', desc:'武西高风险的标签', type:'活动标签', method:'手动创建', creator:'omb', time:'2026-07-13 13:46:29', status:'关闭'},
+  {id:7, name:'Top500_1_1', desc:'Top500_1_1', type:'活动标签', method:'手动创建', creator:'Mebs', time:'2026-07-10 09:40:28', status:'关闭'},
+  {id:8, name:'黑白台布桌旗比', desc:'测选白台单', type:'活动标签', method:'手动创建', creator:'超级管理员', time:'2026-06-30 14:55:49', status:'关闭'},
+  {id:9, name:'黑色表布试', desc:'黑色表布测试27', type:'风控标签', method:'手动创建', creator:'', time:'2026-06-27 16:53:29', status:'关闭'},
+  {id:10, name:'白色表布试', desc:'白色表布测试327', type:'风控标签', method:'手动创建', creator:'', time:'2026-06-27 09:26:02', status:'关闭'},
+  {id:11, name:'福利直播', desc:'福利直播', type:'直播标签', method:'手动创建', creator:'超级管理员', time:'2026-07-30 14:00:00', status:'新建'},
+];
+
+function renderTags(){
+  var ft = $('tfType').value;
+  var fn = $('tfName').value.toLowerCase();
+  var rows = '';
+  var idx = 0;
+  tags.forEach(function(t){
+    if(ft && t.type!==ft) return;
+    if(fn && (t.name.indexOf(fn)<0 && t.desc.indexOf(fn)<0)) return;
+    idx++;
+    var typeCls = t.type==='直播标签'?'tag-purple':t.type==='风控标签'?'tag-orange':t.type==='活动标签'?'tag-blue':'tag-green';
+    rows += '<tr>'+
+      '<td class="chk"><input type="checkbox"></td>'+
+      '<td>'+idx+'</td>'+
+      '<td>'+(t.type==='直播标签'?'<b>'+t.name+'</b>':t.name)+'</td>'+
+      '<td>'+t.desc+'</td>'+
+      '<td><span class="tag '+typeCls+'">'+t.type+(t.type==='直播标签'?' <span class="new-badge">NEW</span>':'')+'</span></td>'+
+      '<td>'+t.method+'</td>'+
+      '<td>'+t.creator+'</td>'+
+      '<td>'+t.time+'</td>'+
+      '<td><span class="tag '+(t.status==='新建'?'tag-green':'tag-gray')+'">'+t.status+'</span></td>'+
+      '<td class="act"><a class="btn-link">编辑</a><a class="btn-link red">删除</a></td>'+
+      '</tr>';
+  });
+  $('tagTbody').innerHTML = rows || '<tr><td colspan="10" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
+}
+
+/* ====== Add Tag Modal ====== */
+function openAddTag(){
+  $('atName').value='';
+  $('atDesc').value='';
+  $('atType').value='';
+  $('addTagModal').classList.remove('hidden');
+}
+function closeAddTag(){$('addTagModal').classList.add('hidden')}
+function saveTag(){
+  var name=$('atName').value.trim(), desc=$('atDesc').value.trim(), type=$('atType').value;
+  if(!name||!type){alert('请填写必填项');return}
+  tags.unshift({
+    id:tags.length+1,
+    name:name,
+    desc:desc||name,
+    type:type,
+    method:'手动创建',
+    creator:'超级管理员',
+    time:new Date().toLocaleString().replace(/\//g,'-'),
+    status:'新建'
+  });
+  closeAddTag();
+  renderTags();
+}
+
+
+/* ================================================================
+   PAGE 2: 直播观看记录 — Data & Render
+   ================================================================ */
+var liveViewLogs = [
+  {id:1, customer:'张*明（138****1234）', userId:'U20260715001', roomId:'LIVE001', enterTime:'2026-07-29 19:00:12', exitTime:'2026-07-29 19:47:33', duration:'47分21秒', date:'2026-07-29'},
+  {id:2, customer:'李*芳（139****5678）', userId:'U20260716002', roomId:'LIVE001', enterTime:'2026-07-29 19:05:44', exitTime:'2026-07-29 19:22:10', duration:'16分26秒', date:'2026-07-29'},
+  {id:3, customer:'王*强（137****9012）', userId:'U20260717003', roomId:'LIVE002', enterTime:'2026-07-28 20:00:00', exitTime:'2026-07-28 21:15:30', duration:'1小时15分30秒', date:'2026-07-28'},
+  {id:4, customer:'赵*敏（136****3456）', userId:'U20260718004', roomId:'LIVE002', enterTime:'2026-07-28 20:10:22', exitTime:'2026-07-28 20:35:08', duration:'24分46秒', date:'2026-07-28'},
+  {id:5, customer:'陈*伟（135****7890）', userId:'U20260719005', roomId:'LIVE001', enterTime:'2026-07-27 19:30:15', exitTime:'2026-07-27 20:45:00', duration:'1小时14分45秒', date:'2026-07-27'},
+  {id:6, customer:'刘*芳（134****2345）', userId:'U20260720006', roomId:'LIVE003', enterTime:'2026-07-27 15:00:00', exitTime:'2026-07-27 15:08:33', duration:'8分33秒', date:'2026-07-27'},
+  {id:7, customer:'周*杰（133****6789）', userId:'U20260721007', roomId:'LIVE001', enterTime:'2026-07-26 19:00:05', exitTime:'2026-07-26 19:55:42', duration:'55分37秒', date:'2026-07-26'},
+  {id:8, customer:'吴*静（132****0123）', userId:'U20260722008', roomId:'LIVE003', enterTime:'2026-07-26 15:05:18', exitTime:'2026-07-26 16:30:00', duration:'1小时24分42秒', date:'2026-07-26'},
+];
+
+function renderLiveView(){
+  var st=$('lvStatus').value, kw=$('lvKeyword').value.toLowerCase();
+  var rows='';
+  liveViewLogs.forEach(function(v){
+    if(st && (st==='观看中'?false:true)); // mock: all ended
+    if(kw && v.customer.indexOf(kw)<0 && v.userId.indexOf(kw)<0) return;
+    rows+='<tr>'+
+      '<td class="chk"><input type="checkbox"></td>'+
+      '<td>'+v.customer+'</td>'+
+      '<td>'+v.userId+'</td>'+
+      '<td><span class="tag tag-blue">'+v.roomId+'</span></td>'+
+      '<td>'+v.enterTime+'</td>'+
+      '<td>'+v.exitTime+'</td>'+
+      '<td><span class="tag '+(parseInt(v.duration)>=30?'tag-green':'tag-orange')+'">'+v.duration+'</span></td>'+
+      '<td>'+v.date+'</td>'+
+      '<td class="act"><a class="btn-link">详情</a></td>'+
+      '</tr>';
+  });
+  $('liveViewTbody').innerHTML=rows||'<tr><td colspan="9" style="text-align:center;padding:50px"><div class="empty-state"><div class="icon">📭</div><div>暂无数据</div></div></td></tr>';
+}
+
+function resetLiveView(){$('lvStatus').value='';$('lvKeyword').value='';renderLiveView()}
+
+/* ====== Util ====== */
+function $(id){return document.getElementById(id)}
+
+/* ====== Init ====== */
+renderTags();
+</script>
+
+</body>
+</html>
