@@ -56,8 +56,7 @@ li{margin:4px 0}
 <tr><th>负责人</th><td>PM：⚠️ 待确认 @干系人 ｜ 技术 Owner：⚠️ 待确认 ｜ 测试：⚠️ 待确认</td></tr>
 <tr><th>文档状态</th><td>草稿（评审中）→ 已定稿 → 变更中</td></tr>
 <tr><th>关联原型</th><td>
-平台端后台：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-platform.html" target="_blank">coupon-platform.html</a> ｜
-商家端后台：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-merchant.html" target="_blank">coupon-merchant.html</a> ｜
+平台端后台：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-platform.html" target="_blank">coupon-platform.html</a>
 App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" target="_blank">coupon-app.html</a> ｜
 小程序/H5 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-mini-h5.html" target="_blank">coupon-mini-h5.html</a>
 </td></tr>
@@ -65,7 +64,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <table>
 <thead><tr><th>版本</th><th>修订日期</th><th>修订人</th><th>修订内容简述</th><th>状态</th></tr></thead>
 <tbody>
-<tr><td>V1.0</td><td>2026-07-27</td><td>AI 助理</td><td>基于四端可交互原型初稿撰写，含平台端/商家端后台 + App/小程序/H5 客户端功能</td><td>草稿</td></tr>
+<tr><td>V1.0</td><td>2026-07-27</td><td>AI 助理</td><td>基于可交互原型初稿撰写，含平台端后台 + App/小程序/H5 客户端功能</td><td>草稿</td></tr>
 </tbody>
 </table>
 <div class="smoke">原型均已通过 <code>proto_smoke.js</code> / <code>proto_smoke_client.js</code> 自动化冒烟测试（零空白页、零 JS 错误、选项无重复）。</div>
@@ -78,7 +77,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <p>现有优惠券体系仅支持最基础的券模板配置，缺少对<b>营销活动</b>的支撑：无法按用户行为（直播观看时长、支付完成、签到等）自动发放券，客户端缺失"系统发券触达"的获券弹窗。运营需在多个系统间手工操作，券的发放-核销全链路未打通，数据无法回溯。</p>
 <h3>2.2 项目目标</h3>
 <ul>
-<li><b>后台双端</b>：平台端 + <b>商家端</b>（为范围内）均可配置券、发券活动（规则引擎），数据按店铺隔离。</li>
+<li><b>后台</b>：平台端可配置券、发券活动（规则引擎），数据按店铺隔离。</li>
 <li><b>发券规则引擎</b>：支持 7 类触发源 + 动态阈值 + 会员等级限定 + 多券模板关联 + 每人每种限发上限。</li>
 <li><b>客户端获券触达</b>：App / 小程序 / H5 在触发条件满足时弹出"获券弹窗"，支持多张券（每种 1 张）。</li>
 <li><b>客户端用券闭环</b>：我的优惠券（三态）、确认订单选券/核销。</li>
@@ -101,8 +100,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <h3>3.1 本期范围与影响（端口 × 模块）</h3>
 <div class="sec">
-<p>本节明确<b>需求影响范围</b>（哪些功能模块覆盖哪些端口）与<b>涉及终端明细</b>（平台端后台 / 商家端后台 / App / 小程序 / H5）。</p>
-<p style="font-size:11px;color:#999"><b>本期包含商家端后台</b>（为范围内端口）。</p>
+<p>本节明确<b>需求影响范围</b>（哪些功能模块覆盖哪些端口）与<b>涉及终端明细</b>（平台端后台 / App / 小程序 / H5）。</p>
 <!-- ===== §3.1 范围映射表：SVG 绘制（规避 GitHub Pages HTML <table> 列错位） ===== -->
 <svg viewBox="0 0 1100 376" xmlns="http://www.w3.org/2000/svg" font-family="'Microsoft YaHei','PingFang SC',sans-serif" style="background:#fff;border:1px solid #e0e0e0;border-radius:8px;width:100%;height:auto;max-width:1100px;margin:12px 0;display:block;">
   <!-- 单元格颜色填充（✓ 绿 / — 灰 / 已有功能 红） -->
@@ -168,7 +166,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
   <g font-size="13" font-weight="bold" fill="#333" text-anchor="middle">
     <text x="152" y="49">功能模块</text>
     <text x="362" y="49">平台端后台</text>
-    <text x="530" y="49">商家端后台</text>
     <text x="698" y="49">App</text>
     <text x="854" y="49">小程序</text>
     <text x="1004" y="49">独立 H5</text>
@@ -188,45 +185,37 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
   <g font-size="13" text-anchor="middle">
     <!-- row0 -->
     <text x="362" y="97" fill="#2e7d32">✓</text>
-    <text x="530" y="87" fill="#2e7d32">✓</text>
-    <text x="530" y="103" font-size="9.5" fill="#999">新建无店铺选择</text>
     <text x="698" y="97" fill="#999">—</text>
     <text x="854" y="97" fill="#999">—</text>
     <text x="1004" y="97" fill="#999">—</text>
     <!-- row1 -->
     <text x="362" y="145" fill="#2e7d32">✓</text>
-    <text x="530" y="145" fill="#2e7d32">✓</text>
     <text x="698" y="145" fill="#999">—</text>
     <text x="854" y="145" fill="#999">—</text>
     <text x="1004" y="145" fill="#999">—</text>
     <!-- row2 -->
     <text x="362" y="193" fill="#2e7d32">✓</text>
-    <text x="530" y="231" fill="#999">—</text>
-    <text x="530" y="247" font-size="9.5" fill="#999">不开放（商家端仅管自身券）</text>
     <text x="698" y="193" fill="#999">—</text>
     <text x="854" y="193" fill="#999">—</text>
     <text x="1004" y="193" fill="#999">—</text>
     <!-- row3 -->
     <text x="362" y="241" fill="#999">—</text>
-    <text x="530" y="241" fill="#999">—</text>
     <text x="698" y="241" fill="#2e7d32">✓</text>
     <text x="854" y="241" fill="#2e7d32">✓</text>
     <text x="1004" y="241" fill="#2e7d32">✓</text>
     <!-- row4 -->
     <text x="362" y="289" fill="#999">—</text>
-    <text x="530" y="289" fill="#999">—</text>
     <text x="698" y="289" fill="#2e7d32">✓</text>
     <text x="854" y="289" fill="#c62828">已有功能</text>
     <text x="1004" y="289" fill="#c62828">已有功能</text>
     <!-- row5 -->
     <text x="362" y="337" fill="#999">—</text>
-    <text x="530" y="337" fill="#999">—</text>
     <text x="698" y="337" fill="#2e7d32">✓</text>
     <text x="854" y="337" fill="#c62828">已有功能</text>
     <text x="1004" y="337" fill="#c62828">已有功能</text>
   </g>
 </svg>
-<div class="ok">✅ 本期覆盖 <b>5 端口</b>（平台端后台 + <b>本期包含商家端后台</b> + App + 小程序 + H5），符合泰小虎端口基线。</div>
+<div class="ok">✅ 本期覆盖 <b>4 端口</b>（平台端后台 + App + 小程序 + H5），符合泰小虎端口基线。</div>
 <p style="font-size:11px;color:#999">本需求不涉及：<b>回放</b>；<b>不涉及</b>火山SaaS/火山引擎直播配置/<b>SaaS配置</b>。</p>
 </div>
 
@@ -255,8 +244,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
   <g font-size="13" font-weight="bold" fill="#37474f">
     <rect x="8" y="56" width="1224" height="160" fill="#fbfdff" stroke="#cfd8dc" rx="6"/>
     <text x="24" y="128" writing-mode="tb" letter-spacing="3">平台端后台</text>
-    <rect x="8" y="222" width="1224" height="160" fill="#fffdfa" stroke="#cfd8dc" rx="6"/>
-    <text x="24" y="292" writing-mode="tb" letter-spacing="3">商家端后台</text>
     <rect x="8" y="388" width="1224" height="118" fill="#fafbfc" stroke="#cfd8dc" rx="6"/>
     <text x="24" y="428" writing-mode="tb" letter-spacing="2">券服务·后端</text>
     <rect x="8" y="512" width="1224" height="68" fill="#fdfafe" stroke="#cfd8dc" rx="6"/>
@@ -269,7 +256,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
   <g font-size="12">
     <rect x="140" y="112" width="150" height="46" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
     <text x="215" y="131" text-anchor="middle" font-weight="bold">添加券 / 编辑券</text>
-    <text x="215" y="148" text-anchor="middle" fill="#2e7d32" font-size="10.5">新增（现仅商家端有）</text>
+    <text x="215" y="148" text-anchor="middle" fill="#2e7d32" font-size="10.5">本期新增</text>
 
     <rect x="318" y="112" width="130" height="46" rx="6" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.5"/>
     <text x="383" y="131" text-anchor="middle" font-weight="bold">查看 / 下架券</text>
@@ -286,25 +273,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
     <rect x="1064" y="112" width="158" height="46" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
     <text x="1143" y="131" text-anchor="middle" font-weight="bold">数据看板 / 用户券查询</text>
     <text x="1143" y="148" text-anchor="middle" fill="#2e7d32" font-size="10.5">新增</text>
-  </g>
-
-  <!-- ===== 商家端后台 ===== -->
-  <g font-size="12">
-    <rect x="140" y="276" width="150" height="50" rx="6" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.5"/>
-    <text x="215" y="295" text-anchor="middle" font-weight="bold">添加券</text>
-    <text x="215" y="312" text-anchor="middle" fill="#e65100" font-size="10.5">已有 · 拓展使用限制(首单等)</text>
-
-    <rect x="318" y="278" width="130" height="46" rx="6" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.5"/>
-    <text x="383" y="297" text-anchor="middle" font-weight="bold">查看 / 下架券</text>
-    <text x="383" y="314" text-anchor="middle" fill="#1565c0" font-size="10.5">已有功能</text>
-
-    <rect x="478" y="248" width="188" height="42" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
-    <text x="572" y="265" text-anchor="middle" font-weight="bold">创建发券活动（规则发券）</text>
-    <text x="572" y="281" text-anchor="middle" fill="#2e7d32" font-size="10.5">新增</text>
-
-    <rect x="1064" y="278" width="158" height="46" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
-    <text x="1143" y="297" text-anchor="middle" font-weight="bold">数据看板 / 用户券查询</text>
-    <text x="1143" y="314" text-anchor="middle" fill="#2e7d32" font-size="10.5">新增</text>
   </g>
 
   <!-- ===== 券服务 ===== -->
@@ -478,7 +446,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <thead><tr><th>层</th><th>职责</th><th>本期载体</th></tr></thead>
 <tbody>
 <tr><td>前端展示层</td><td>用户侧用券/核销交互</td><td>App / 小程序 / H5（获券弹窗 + 我的券 + 确认订单）</td></tr>
-<tr><td>后端配置层</td><td>券与活动 CRUD、发券规则引擎、触达下发</td><td>平台端后台 + 商家端后台（真实后端基于 gruul-mall addon-coupon）</td></tr>
+<tr><td>后端配置层</td><td>券与活动 CRUD、发券规则引擎、触达下发</td><td>平台端后台（真实后端基于 gruul-mall addon-coupon）</td></tr>
 <tr><td>数据层</td><td>券模板 / 活动 / 用户券 / 发放记录 / 核销记录</td><td>券表、发券活动表、用户券表、核销流水</td></tr>
 </tbody>
 </table>
@@ -494,7 +462,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <thead><tr><th style="width:80px">状态</th><th>含义</th><th>进入条件</th></tr></thead>
 <tbody>
 <tr><td><b>启用</b></td><td>券处于可被发券活动选中的状态；用户仍可正常领取和使用（受使用状态约束）</td><td>① 新建保存后默认进入<br>② 从「下架」手动重新启用</td></tr>
-<tr><td><b>下架</b></td><td>被手动下架后，<b>新用户无法再通过发券活动领到</b>该券；<b>已发放给用户的券仍可正常使用至过期</b>（受使用状态约束，不受上架状态影响）</td><td>「启用」→ 商家端下架 / 平台端违规下架</td></tr>
+<tr><td><b>下架</b></td><td>被手动下架后，<b>新用户无法再通过发券活动领到</b>该券；<b>已发放给用户的券仍可正常使用至过期</b>（受使用状态约束，不受上架状态影响）</td><td>「启用」→ 平台端下架 / 平台端违规下架</td></tr>
 </tbody>
 </table>
 <div class="note">⚠️ <b>下架逻辑要点</b>：下架仅控制「发券活动能否选中该券模板」，不影响已发放到用户钱包中的券实例。一张「下架」的券，只要其使用状态为「未开始」或「进行中」，已持券用户仍可正常核销使用。</div>
@@ -507,7 +475,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td><b>未开始</b></td><td>当前日期在有效时间<strong>之前</strong>，券尚未生效，用户无法使用</td><td>创建保存后，当前日期 &lt; 有效开始时间</td></tr>
 <tr><td><b>进行中</b></td><td>当前日期在有效时间<strong>之中</strong>，用户可领/可用；或「领取后立即生效」类型创建后直接进入</td><td>① 有效开始时间 ≤ 当前日期 ≤ 有效结束时间<br>② 或 券类型=领取后立即生效（创建即进入）</td></tr>
 <tr><td><b>已结束</b></td><td>当前日期在有效时间<strong>之后</strong>，券自然过期失效，或被运营主动撤回，用户无法再使用</td><td>① 当前日期 &gt; 有效结束时间（系统定时任务自动转入）<br>② 运营执行「撤回」操作（手动转入，见转换表）</td></tr>
-<tr><td><b>已删除</b></td><td>物理/逻辑删除，不可恢复</td><td>仅从「已下架」（上架状态=下架）且无已发放券实例时，运营手动删除（见上架状态转换表）</td></tr>
+<tr><td><b>已删除</b></td><td>物理/逻辑删除，不可恢复</td><td>仅当<b>上架状态=下架 且 使用状态≠「进行中」</b>时，运营手动删除（见上架状态转换表）；进行中的券须先「撤回」再删除</td></tr>
 </tbody>
 </table>
 <div class="warn">⚠️ <b>「已下架」不属于使用状态</b>：「已下架」是上架状态的值之一（见上表一），不要与使用状态混淆。使用状态仅包含：未开始 → 进行中 → 已结束 → 已删除 四态。</div>
@@ -517,11 +485,11 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <table>
 <thead><tr><th style="width:80px">起始状态</th><th style="width:90px">触发动作</th><th>操作方</th><th>前置条件</th><th style="width:80px">目标状态</th><th>原型按钮位置</th></tr></thead>
 <tbody>
-<tr><td>启用</td><td>下架</td><td>商家端</td><td>仅可下架<b>自己创建</b>的优惠券</td><td>下架</td><td>列表操作列「<span style="color:#d9363e">下架</span>」</td></tr>
+<tr><td>启用</td><td>下架</td><td>平台端</td><td>仅可下架<b>自己创建</b>的优惠券</td><td>下架</td><td>列表操作列「<span style="color:#d9363e">下架</span>」</td></tr>
 <tr><td>启用</td><td>违规下架</td><td>平台端</td><td>可下架<b>所有商家</b>的优惠券（违规处置）<br>弹窗「违规下架」→ 输入违规原因（<b>必填</b>，≤200字）→ 确定</td><td>下架</td><td>平台端列表操作列「<span style="color:#d9363e">违规下架</span>」→ 弹窗（标题"违规下架"，文本框 placeholder="请输入违规原因，必填"，取消/确定按钮）</td></tr>
-<tr><td>下架</td><td>删除</td><td>商家端 / 平台端</td><td>① 仅可删除<b>本端操作下架</b>的券<br>② confirm 弹窗二次确认</td><td>已删除(不可恢复)</td><td>列表操作列「<span style="color:#d9363e">删除」」（替换原「编辑」按钮，已下架行无编辑需求）</td></tr>
+<tr><td>下架</td><td>删除</td><td>平台端</td><td>① 仅可删除<b>上架状态=下架</b>的券<br>② <b>且使用状态 ≠「进行中」</b>（进行中的券不可删除，须先执行「撤回」使其变为「已结束」）<br>③ confirm 弹窗二次确认</td><td>已删除(不可恢复)</td><td>列表操作列「<span style="color:#d9363e">删除」」（替换原「编辑」按钮，已下架行无编辑需求）</td></tr>
 <tr><td>启用</td><td>—</td><td>—</td><td><b>禁止删除</b>，仅允许下架</td><td>—</td><td>—</td></tr>
-<tr><td>启用</td><td>编辑</td><td>商家端 / 平台端</td><td>仅编辑本端创建的券</td><td>启用（不变）</td><td>列表操作列「<span style="color:#d9363e">编辑」」</td></tr>
+<tr><td>启用</td><td>编辑</td><td>平台端</td><td>仅编辑本端创建的券</td><td>启用（不变）</td><td>列表操作列「<span style="color:#d9363e">编辑」」</td></tr>
 </tbody>
 </table>
 
@@ -635,7 +603,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tbody>
 <tr><td>优惠券名称</td><td>券模板名称</td><td>取《券模板表》name</td></tr>
 <tr><td>优惠券类型</td><td>固定为「满减券」（一期仅此一种类型，见 §3.5）</td><td>取 coupon_type；筛选器「优惠类型」下拉仅「满减券」一项</td></tr>
-<tr><td>店铺</td><td>所属店铺名</td><td>平台端可跨店；商家端写死自身店铺</td></tr>
+<tr><td>店铺</td><td>所属店铺名</td><td>平台端可跨店</td></tr>
 <tr><td>使用规则</td><td>券面额/门槛摘要（如"满99减20"）</td><td>取规则字段拼接</td></tr>
 <tr><td>上架状态</td><td>启用 / 下架</td><td>取 listing_status 枚举</td></tr>
 <tr><td>使用状态</td><td>未开始 / 进行中 / 已结束 / 已删除</td><td>系统根据有效期自动计算或运营手动撤回（与上架状态独立，详见 §3.4 状态机）</td></tr>
@@ -655,18 +623,19 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>增加发行量</td><td>所有状态（启用/下架均可）</td><td>弹「增加发行量」弹窗：显示当前总库存（=已领取+剩余）；输入增加数量（≥1 整数，必填）；实时显示增加后总库存；确认后剩余库存 += 增加数量（总库存随之提升），列表总库存列即时刷新，toast 提示结果</td><td>直播运营</td></tr>
 <tr><td>下架</td><td>上架状态=启用</td><td>将券置为「下架」状态（不可逆），列表即时刷新；仅影响发券活动可选性，不影响已发放用户券</td><td>直播运营</td></tr>
 <tr><td><b>撤回</b></td><td>使用状态=未开始 或 进行中</td><td><b>confirm 弹窗</b>："确认撤回该券？撤回后所有已发放的用户券将立即失效，有效期截止至今天。" → 确认后：<br>① 券模板使用状态强制变为「已结束」<br>② 有效期截止日期 = 当前操作日期<br>③ <b>已发放到用户钱包的该券实例同步失效</b>（不可恢复）<br>④ 列表使用状态 Tag 即时刷新为「已结束」<br>⑤ toast"已撤回"</td><td>直播运营</td></tr>
-<tr><td>删除</td><td>上架状态=下架</td><td>从列表删除该券（需二次 confirm 确认）</td><td>直播运营</td></tr>
+<tr><td>删除</td><td>上架状态=下架 <b>且</b> 使用状态≠进行中</td><td>从列表删除该券（需二次 confirm 确认）；<b>进行中的券不展示「删除」入口</b>（置灰禁用并提示"进行中不可删除，请先撤回"），须先「撤回」变为「已结束」后删除入口才可用</td><td>直播运营</td></tr>
 </tbody>
 </table>
 <p>⚠️ 沿用既有设计：启用态券只能「下架」不能直接删除；下架后变为「删除」入口。与 D1 券详情页「下架」按钮逻辑一致。「增加发行量」入口置于本列表操作列（不在 D1 券详情页），便于运营在列表中快速追加单个券的发行量。<b>「撤回」为独立于下架的操作——下架控制发券活动可选性，撤回控制已发放券的可用性。</b></p>
 
-<p><b>增加发行量逻辑</b>：券模板发行量（总库存）上限 = 已领取 + 剩余。运营可对<b>单个券</b>追加发行：输入增加数量 N（≥1）→ 剩余库存 += N → 总库存自动同步提升。已领取数不变。平台端与商家端均支持（商家端数据按店铺隔离，仅可操作本店券）。</p>
+<div class="note">📌 <b>删除前置条件（强制）</b>：列表「删除」入口仅在 <b>上架状态=下架 且 使用状态≠「进行中」</b> 时可见可用；使用状态=「进行中」的券不展示删除入口（置灰禁用，提示"进行中不可删除，请先撤回"）。典型闭环：<b>启用 → 下架 →（若进行中）撤回变已结束 → 删除</b>。</div>
+<p><b>增加发行量逻辑</b>：券模板发行量（总库存）上限 = 已领取 + 剩余。运营可对<b>单个券</b>追加发行：输入增加数量 N（≥1）→ 剩余库存 += N → 总库存自动同步提升。已领取数不变。平台端支持。</p>
 <p><img src="coupon-prd-assets/coupon-d1-increase-stock.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="增加发行量弹窗"></p>
 
 <h4>4.1.2 D1 券详情 <span class="tag y">本期新增</span></h4>
 <p><img src="coupon-prd-assets/coupon-d1-coupon-detail.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="平台端券详情页"></p>
 
-<p>平台端当前无独立券详情页（仅商家端有），本期新建。从 P1 列表点击「查看」进入。</p>
+<p>平台端当前无独立券详情页，本期新建。从 P1 列表点击「查看」进入。</p>
 
 <p><b>页面字段表</b></p>
 <table>
@@ -712,7 +681,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <h4>4.1.3 D2 新建/编辑优惠券 <span class="tag y">本期新增</span></h4>
 <p><img src="coupon-prd-assets/coupon-d2-new-coupon.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="D2新建编辑优惠券"></p>
 
-<p>平台端当前无制券能力（仅商家端有添加/编辑券功能），本期新建。与商家端的差异：平台端 D2 多「**店铺选择**」列（可指定全部或某商家店铺），商家端写死自身店铺。</p>
+<p>平台端当前无制券能力，本期新建。平台端 D2 含「**店铺选择**」列（可指定全部或某商家店铺）。</p>
 
 <p><b>D2 表单字段表</b></p>
 <table>
@@ -722,7 +691,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>有效时间类型</td><td>Radio 2 选 1</td><td>固定时间段 / 领取后生效</td><td>必选其一</td><td>切换时联动下方字段显隐</td></tr>
 <tr><td>固定时间段</td><td>日期范围</td><td>开始时间 ~ 结束时间</td><td>结束时间 > 开始时间；结束时间 > 当前时间</td><td>time_type=fixed 时显示</td></tr>
 <tr><td>领取后有效天数</td><td>数字输入</td><td>X 天内有效</td><td>≥1 整数；默认 24</td><td>time_type=after 时显示</td></tr>
-<tr><td>店铺</td><td>下拉选择</td><td>全部店铺 / 指定店铺（单选）</td><td>必选</td><td>⚠️ 平台端独有字段；商家端此列写死自身店铺</td></tr>
+<tr><td>店铺</td><td>下拉选择</td><td>全部店铺 / 指定店铺（单选）</td><td>必选</td><td>⚠️ 平台端独有字段</td></tr>
 <tr><td>优惠券类型</td><td><b>只读 Tag（非下拉）</b></td><td>固定展示「满减券」，不可选择、不可修改</td><td>—</td><td><span class="tag g">本期改动</span> 一期仅满减券，下拉已删除（见 §3.5 / §十一）</td></tr>
 <tr><td>优惠券规则</td><td>两个数字输入框</td><td>「满 <b>X</b> 元，减 <b>Y</b> 元」</td><td>X、Y 均必填且为 &gt;0 的数值；<b>Y &lt; X</b>（减免金额需小于门槛金额，否则提示「减免金额需小于门槛金额」）；X 空 → 「请填写满减门槛金额」；Y 空 → 「请填写减免金额」</td><td>cpFullAmt / cpCutAmt</td></tr>
 <tr><td>发行量（张）</td><td>数字输入</td><td>该券模板总发行量上限</td><td>≥1 整数；默认 1</td><td>—</td></tr>
@@ -969,41 +938,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <li>防刷控制：同一操作账号 1 秒内最多触发 1 次查询请求，超频→toast 提示"操作过于频繁，请稍后再试"。</li>
 <li>数据隔离：仅展示当前选中用户的券实例，不可跨用户查看；券状态下拉枚举与《用户券表》status 字段严格对齐（未使用/已使用/已过期）。</li>
 </ul>
-
-<!-- ===== 商家端后台 ===== -->
-<h3>4.2 商家端后台 <span class="tag y">本期新增</span></h3>
-<div class="sec">
-<p>原型示意：</p>
-<p><img src="coupon-prd-assets/coupon-merchant.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="商家端后台原型"></p>
-<p>商家端<b>首次具备券管理能力</b>（券 CRUD / 发券活动），本期新增；其交互与平台端一致，本节仅补充差异与数据隔离规则，通用逻辑引用平台端对应小节（券 CRUD 见 4.1.1~4.1.4 平台端对应结构、发券活动见 4.1.4）。</p>
-
-<h4>4.2.1 差异与范围（差异项 / 平台端 / 商家端）</h4>
-<table>
-<thead><tr><th>差异项</th><th>平台端</th><th>商家端</th></tr></thead>
-<tbody>
-<tr><td>新建券 D2 店铺列</td><td>可选全部店铺 / 指定店铺</td><td><b>删除店铺列</b>，店铺写死商家自身店铺</td></tr>
-<tr><td>券列表店铺列 / 筛选</td><td>显示 + 可筛选</td><td>保留（仅展示商家自身店铺数据）</td></tr>
-<tr><td>发券活动</td><td>同</td><td>同（仅限自身店铺）</td></tr>
-<tr><td>数据看板 / 用户券查询</td><td>有</td><td><b>不开放</b>（商家端无需全平台看板）</td></tr>
-</tbody>
-</table>
-
-<h4>4.2.2 券列表 / 新建 / 详情</h4>
-<p>交互、字段、按钮逻辑<b>同平台端 4.1 对应小节</b>；差异仅：新建券 D2 无「店铺」字段（写死自身店铺），列表/筛选仅含自身店铺数据。本节不再重述，避免冗余。</p>
-
-<h4>4.2.3 发券活动</h4>
-<p>表单、按钮、状态流转<b>同平台端 4.1.4</b>；差异仅：关联券模板范围限定为商家自身店铺创建的券模板。领券活动本期删除（见 4.1.5 下期规划）。</p>
-
-<h4>4.2.4 数据隔离规则（菜单权限 / 数据范围）</h4>
-<table>
-<thead><tr><th>规则</th><th>说明</th></tr></thead>
-<tbody>
-<tr><td>菜单权限</td><td>商家角色开通「优惠券管理」菜单（发券活动配置 / 券 CRUD）</td></tr>
-<tr><td>数据范围</td><td>商家端仅可见 / 操作<b>自身店铺</b>的券与活动；跨店铺数据不可见</td></tr>
-<tr><td>不开放</td><td>数据看板、用户券查询不授权给商家角色</td></tr>
-</tbody>
-</table>
-</div>
 
 <!-- ===== App 端 ===== -->
 <h3>4.3 App 端（全链路新增：获券弹窗 + 我的优惠券 + 下单核销）</h3>
@@ -1266,7 +1200,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tbody>
 <tr><td>发券规则引擎</td><td>运营新建发券活动，触发源=直播时长，阈值=30分钟，关联3个券模板，每人上限=1</td><td>用户观看直播满30分钟</td><td>系统发放3张券（每种1张）至用户券包，弹出获券弹窗</td></tr>
 <tr><td>券状态流转</td><td>用户持未使用券</td><td>支付成功</td><td>券状态→已使用（核销），看板核销量+1</td></tr>
-<tr><td>商家端隔离</td><td>商家A登录</td><td>查看券列表</td><td>仅见商家A店铺券（⚠️ 待确认隔离规则）</td></tr>
 </tbody>
 </table>
 </div>
