@@ -178,7 +178,7 @@
     <div class="gtitle open" onclick="toggleGroup(this)">▼ 数据看板</div>
     <a href="#">粉丝画像</a>
     <a href="#">APP画像</a>
-    <a href="#" onclick="go('liveViewLog')" id="nav_liveViewLog" style="color:#534AB7;font-weight:500;">直播观看记录<span class="new-badge">NEW</span></a>
+    <a href="#" onclick="go('liveViewLog')" id="nav_liveViewLog" style="color:#534AB7;font-weight:500;">直播观看记录</a>
   </div>
 
   <!-- 内容管理 -->
@@ -435,7 +435,7 @@ function renderTags(){
       '<td>'+idx+'</td>'+
       '<td>'+(t.type==='直播标签'?'<b>'+t.name+'</b>':t.name)+'</td>'+
       '<td>'+t.desc+'</td>'+
-      '<td><span class="tag '+typeCls+'">'+t.type+(t.type==='直播标签'?' <span class="new-badge">NEW</span>':'')+'</span></td>'+
+      '<td><span class="tag '+typeCls+'">'+t.type+'</span></td>'+
       '<td>'+t.method+'</td>'+
       '<td>'+t.creator+'</td>'+
       '<td>'+t.time+'</td>'+
