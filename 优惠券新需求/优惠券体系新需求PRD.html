@@ -79,7 +79,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <ul>
 <li><b>后台</b>：平台端可配置券、发券活动（规则引擎），数据按店铺隔离。</li>
 <li><b>发券规则引擎</b>：本期固定单一触发源=直播时长（阈值=观看满 X 分钟）+ 会员等级限定 + 多券模板关联 + 每人每种限发上限。</li>
-<li><b>客户端获券触达</b>：App / 小程序 / H5 在触发条件满足时弹出"获券弹窗"，支持多张券（每种 1 张）。</li>
+<li><b>客户端获券触达</b>：<span style="color:#c62828;text-decoration:line-through">App / 小程序 / H5 在触发条件满足时弹出"获券弹窗"，支持多张券（每种 1 张）</span> <b style="color:#c62828">⚠️ 本期不做（移至下期）</b>。</li>
 <li><b>客户端用券闭环</b>：我的优惠券（三态）、确认订单选券/核销。</li>
 </ul>
 <h3>2.3 衡量指标（KPI）</h3>
@@ -216,7 +216,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
   </g>
 </svg>
 <div class="ok">✅ 本期覆盖 <b>4 端口</b>（平台端后台 + App + 小程序 + H5），符合泰小虎端口基线。</div>
-<p style="font-size:11px;color:#999">本需求不涉及：<b>回放</b>；<b>不涉及</b>火山SaaS/火山引擎直播配置/<b>SaaS配置</b>；<b>商家端后台本期不做</b>（端口范围仅含平台端后台 + App + 小程序 + H5）。</p>
+<p style="font-size:11px;color:#999">本需求不涉及：<b>回放</b>；<b>不涉及</b>火山SaaS/火山引擎直播配置/<b>SaaS配置</b>；<b>商家端后台本期不做</b>；<b>获券弹窗(系统发券触达)本期不做</b>（C 端仅保留「我的优惠券」+「确认订单选券核销」，不含任何获券/领券弹窗UI）。端口范围仅含平台端后台 + App + 小程序 + H5）。</p>
 </div>
 
 <h3>3.2 业务流程图</h3>
@@ -445,7 +445,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <table>
 <thead><tr><th>层</th><th>职责</th><th>本期载体</th></tr></thead>
 <tbody>
-<tr><td>前端展示层</td><td>用户侧用券/核销交互</td><td>App / 小程序 / H5（获券弹窗 + 我的券 + 确认订单）</td></tr>
+<tr><td>前端展示层</td><td>用户侧用券/核销交互</td><td>App / 小程序 / H5（<span style="color:#c62828;text-decoration:line-through">获券弹窗</span> + 我的券 + 确认订单）<b style="color:#c62828;font-size:11px">⚠️ 获券弹窗本期不做</b></td></tr>
 <tr><td>后端配置层</td><td>券与活动 CRUD、发券规则引擎、触达下发</td><td>平台端后台（真实后端基于 gruul-mall addon-coupon）</td></tr>
 <tr><td>数据层</td><td>券模板 / 活动 / 用户券 / 发放记录 / 核销记录</td><td>券表、发券活动表、用户券表、核销流水</td></tr>
 </tbody>
@@ -1121,13 +1121,15 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 </div>
 
 <!-- ===== App 端 ===== -->
-<h3>4.3 App 端（全链路新增：获券弹窗 + 我的优惠券 + 下单核销）</h3>
+<h3>4.3 App 端（本期新增：我的优惠券 + 下单核销）<span class="tag r" style="background:#ffebee;color:#c62828">⚠️ 获券弹窗已移至下期</span></h3>
 <div class="sec">
 <p>原型示意：</p>
 <p><img src="coupon-prd-assets/coupon-app.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="App端原型"></p>
-<p><b>App 端为全链路新增</b>。本期 App 需新建：获券弹窗、我的优惠券页、确认订单选券/核销逻辑。以下逐页面逐功能点拆解。</p>
+<p><b>App 端为部分新增</b>。本期 App 需新建：<b>我的优惠券页</b>、<b>确认订单选券/核销逻辑</b>。<span class="tag r" style="background:#ffebee;color:#c62828">⚠️ 获券弹窗(系统发券触达)已移至下期，不在本期范围</span>。以下逐页面逐功能点拆解。</p>
 
-<h4>4.3.1 首页 · 获券弹窗入口 <span class="tag y">本期新增</span></h4>
+<h4>4.3.1 首页 · 获券弹窗入口 <span class="tag r">⚠️ 本期删除（移至下期）</span></h4>
+<div class="ok" style="background:#ffebee;border-left:4px solid #c62828;color:#c62828;padding:10px 14px;margin:10px 0;border-radius:4px;font-size:13px">⚠️ <b>本期删除</b>：首页获券弹窗入口不在本期范围内，移至下期规划。以下内容为保留参考。
+</div>
 <p><b>功能说明</b>：直播时长发券触发卡（「观看直播满 30 分钟，系统自动发放关联优惠券（每种 1 张）」）展示在 App 首页信息流；点「进入直播间」跳转直播页并触发发券条件计时。发券弹窗本身见 4.3.2。</p>
 <table>
 <thead><tr><th>项</th><th>说明</th></tr></thead>
@@ -1139,9 +1141,11 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 </tbody>
 </table>
 
-<h4>4.3.2 获券弹窗（系统发券触达）<span class="tag y">本期新增</span></h4>
+<h4>4.3.2 获券弹窗（系统发券触达）<span class="tag r">⚠️ 本期删除（移至下期）</span></h4>
 <h5>4.3.2.1 原型与交互示意</h5>
 <p><img src="coupon-prd-assets/coupon-app-arrival-modal.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="App获券弹窗"></p>
+<div class="ok" style="background:#ffebee;border-left:4px solid #c62828;color:#c62828;padding:10px 14px;margin:10px 0;border-radius:4px;font-size:13px">⚠️ <b>本期删除</b>：获券弹窗(系统发券触达)整节不在本期范围内，移至下期规划。以下内容为保留参考。
+</div>
 <p>弹窗从屏幕底部升起（半屏），展示本次系统发放的全部券（每种 1 张）；示意图见上方。</p>
 <h5>4.3.2.2 详细逻辑规则</h5>
 <p><b>界面与展示规则</b>：</p>
@@ -1378,10 +1382,12 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 </div>
 
 <!-- ===== 小程序 / H5 ===== -->
-<h3>4.4 小程序 / H5 端（获券弹窗新增）<span class="tag y">本期新增</span></h3>
+<h3>4.4 小程序 / H5 端（获券弹窗新增）<span class="tag r">⚠️ 本期整节删除（移至下期）</span></h3>
 <div class="sec">
 <p>原型示意：</p>
 <p><img src="coupon-prd-assets/coupon-mini-h5.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="小程序/H5端原型"></p>
+<div class="ok" style="background:#ffebee;border-left:4px solid #c62828;color:#c62828;padding:10px 14px;margin:10px 0;border-radius:4px;font-size:13px">⚠️ <b>本期整节删除</b>：小程序/H5 端获券弹窗不在本期范围内，移至下期规划。以下内容为保留参考。
+</div>
 <p>本期仅新增<b>获券弹窗</b>（系统发券触达），两端外壳不同；弹窗逻辑、按钮、数据来源、状态流转<b>同 App 端 4.3.2</b>，本节仅补充外壳差异。</p>
 <h4>4.4.1 外壳差异（端 / 外壳规范 / 获券弹窗）</h4>
 <table>
@@ -1405,16 +1411,16 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <table>
 <thead><tr><th>事件英文名</th><th>显示名</th><th>所属层</th><th>平台</th><th>触发时机</th><th>必含上报参数(友盟中文名)</th><th>备注</th></tr></thead>
 <tbody>
-<tr><td>popup_view</td><td>弹窗曝光</td><td>L2</td><td>Android/iOS/微信小程序/独立H5</td><td>获券弹窗展示时</td><td>弹窗名称、弹窗类型、触发来源</td><td>v2.3 既有</td></tr>
-<tr><td>popup_close</td><td>弹窗关闭</td><td>L2</td><td>同上</td><td>获券弹窗关闭</td><td>弹窗名称、停留时长、用户选择</td><td>v2.3 既有</td></tr>
-<tr><td>coupon_arrival_push</td><td>系统发券触达</td><td>L3</td><td>同上</td><td>系统发放券并弹窗</td><td>券模板ID、券类型、触发源</td><td>⚠️ 待对齐 v2.3</td></tr>
+<tr><td>popup_view</td><td>弹窗曝光</td><td>L2</td><td>Android/iOS/微信小程序/独立H5</td><td>获券弹窗展示时</td><td>弹窗名称、弹窗类型、触发来源</td><td><b style="color:#c62828">⚠️ 本期不做</b></td></tr>
+<tr><td>popup_close</td><td>弹窗关闭</td><td>L2</td><td>同上</td><td>获券弹窗关闭</td><td>弹窗名称、停留时长、用户选择</td><td><b style="color:#c62828">⚠️ 本期不做</b></td></tr>
+<tr><td>coupon_arrival_push</td><td>系统发券触达</td><td>L3</td><td>同上</td><td>系统发放券并弹窗</td><td>券模板ID、券类型、触发源</td><td><b style="color:#c62828">⚠️ 本期不做</b></td></tr>
 <tr><td>my_coupons_view</td><td>我的优惠券页曝光</td><td>L2</td><td>同上</td><td>进入我的优惠券</td><td>当前Tab(未使用/已使用/已过期)</td><td>⚠️ 待对齐</td></tr>
 </tbody>
 </table>
 
 <h3>5.2 性能 / 安全 / 兼容</h3>
 <ul>
-<li><b>性能</b>：券列表 / 活动列表分页（10/20/50/100/200/500）；获券弹窗下发异步，不阻塞主流程。</li>
+<li><b>性能</b>：券列表 / 活动列表分页（10/20/50/100/200/500）；<span style="color:#c62828;text-decoration:line-through">获券弹窗下发异步，不阻塞主流程</span>。<b style="color:#c62828;font-size:11px">⚠️ 获券弹窗本期不做</b></li>
 <li><b>安全</b>：发券规则引擎防重发（按用户+活动+券模板去重，每人每种限发上限），防刷拦截同设备/IP 重复领取。</li>
 <li><b>兼容</b>：App（iOS/Android）、微信小程序、独立 H5（移动浏览器）；后台 Chrome/Edge 最新版。</li>
 </ul>
@@ -1426,7 +1432,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <table>
 <thead><tr><th>场景</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
 <tbody>
-<tr><td>发券规则引擎</td><td>运营新建发券活动，触发源=直播时长，阈值=30分钟，关联3个券模板，每人上限=1</td><td>用户观看直播满30分钟</td><td>系统发放3张券（每种1张）至用户券包，弹出获券弹窗</td></tr>
+<tr><td>发券规则引擎</td><td>运营新建发券活动，触发源=直播时长，阈值=30分钟，关联3个券模板，每人上限=1</td><td>用户观看直播满30分钟</td><td>系统发放3张券（每种1张）至用户券包<span style="color:#c62828;text-decoration:line-through">，弹出获券弹窗</span> <b style="color:#c62828;font-size:11px">⚠️ 弹窗本期不做</b></td></tr>
 <tr><td>券状态流转</td><td>用户持未使用券</td><td>支付成功</td><td>券状态→已使用（核销），看板核销量+1</td></tr>
 </tbody>
 </table>
@@ -1436,10 +1442,10 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <h2>七、关键边界设计检查清单</h2>
 <div class="sec">
 <ul>
-<li>✅ 网络/异常：获券弹窗下发失败不影响用户当前操作；列表加载失败有空态提示。</li>
+<li>✅ 网络/异常：<span style="color:#c62828;text-decoration:line-through">获券弹窗下发失败不影响用户当前操作；</span>列表加载失败有空态提示。<b style="color:#c62828;font-size:11px">⚠️ 获券弹窗本期不做</b></li>
 <li>✅ 登录/游客：未登录进入我的优惠券→引导登录；登录后继续查看券包。</li>
 <li>✅ 极限/空态：券包为空显示"暂无券"；发行量/每人领取下限 1；券类型下拉无重复项。</li>
-<li>✅ 版本兼容：老版本无获券弹窗时，券仍入包，仅不弹窗（⚠️ 待确认老版本表现）。</li>
+<li>✅ 版本兼容：<span style="color:#c62828;text-decoration:line-through">老版本无获券弹窗时，券仍入包，仅不弹窗</span>（⚠️ 待确认老版本表现）。<b style="color:#c62828;font-size:11px">⚠️ 获券弹窗本期不做</b></li>
 <li>✅ 逆向流/退款：订单退款时券状态回退未使用（核销回滚），见流程图异常分支。</li>
 <li>✅ 高并发/防重：发券每人每种上限 + 去重，防重复发放；高并发下券发放幂等。</li>
 </ul>
