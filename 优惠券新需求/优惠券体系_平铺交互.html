@@ -3,261 +3,181 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>优惠券体系 · 页面评审</title>
+<title>优惠券体系 · 页面平铺</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f5f5;color:#333;font-size:13px}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f0f1f3;color:#333;font-size:13px}
 
-/* ===== Header ===== */
-.header{background:#fff;border-bottom:1px solid #e8e8e8;padding:14px 28px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50}
-.header h1{font-size:16px;font-weight:700;color:#222}
-.header .sub{font-size:12px;color:#999}
-.header .search{margin-left:auto}
-.header input{border:1px solid #d9d9d9;border-radius:6px;padding:7px 12px;width:220px;font-size:12.5px;outline:none;transition:border-color .2s}
-.header input:focus{border-color:#534AB7;box-shadow:0 0 0 2px rgba(83,74,183,.1)}
+/* Header */
+.hd{background:#fff;border-bottom:1px solid #e2e4e8;padding:14px 32px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:50}
+.hd h1{font-size:16px;font-weight:700;color:#1a1a2e}
+.hd .sub{font-size:12px;color:#999}
+.hd .search{margin-left:auto}
+.hd input{border:1px solid #d9d9d9;border-radius:6px;padding:7px 14px;width:200px;font-size:12px;outline:none}
+.hd input:focus{border-color:#534AB7;box-shadow:0 0 0 2px rgba(83,74,183,.12)}
 
-/* ===== Group Bar ===== */
-.group-bar{background:#fff;padding:10px 28px;border-bottom:1px solid #eee;display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:53px;z-index:40}
-.gbtn{padding:5px 14px;border-radius:16px;font-size:12px;cursor:pointer;border:1px solid #d9d9d9;background:#fff;color:#666;transition:all .15s}
-.gbtn:hover{border-color:#534AB7;color:#534AB7}
-.gbtn.active{background:#534AB7;color:#fff;border-color:#534AB7}
-.gbtn .cnt{font-size:10px;margin-left:3px;opacity:.75}
+/* Section */
+.sec{padding:24px 32px 16px}
+.sec-hd{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.sec-hd .dot{width:10px;height:10px;border-radius:3px}
+.sec-hd .dot-c{background:linear-gradient(135deg,#534AB7,#6C5CE7)}
+.sec-hd .dot-b{background:linear-gradient(135deg,#E8932B,#f6c77e)}
+.sec-hd h2{font-size:17px;font-weight:700;color:#1a1a2e}
+.sec-hd .cnt{font-size:12px;color:#aaa;background:#f5f5f5;padding:2px 10px;border-radius:10px}
 
-/* ===== Card Grid ===== */
-.grid-wrap{padding:24px 28px 60px}
-.grid{display:flex;flex-wrap:wrap;gap:20px;justify-content:flex-start}
+/* Grid */
+.grid{display:flex;flex-wrap:wrap;gap:18px}
 
-/* ===== Card ===== */
-.card{background:#fff;border-radius:10px;border:1px solid #e8e8e8;overflow:hidden;transition:box-shadow .2s,border-color .2s;width:260px;flex-shrink:0}
-.card:hover{box-shadow:0 4px 20px rgba(0,0,0,.08);border-color:#c0c0c0}
-.card-img-wrap{background:#fafafa;position:relative;padding:0;overflow:hidden}
-.card-img{width:100%;display:block;height:auto;max-height:420px;object-fit:contain;cursor:pointer;transition:transform .25s}
-.card-img:hover{transform:scale(1.03)}
+/* Card — 纯截图+名称+按钮 */
+.card{background:#fff;border-radius:10px;border:1px solid #e5e7eb;overflow:hidden;width:240px;flex-shrink:0;transition:box-shadow .2s,border-color .2s}
+.card:hover{box-shadow:0 6px 24px rgba(0,0,0,.09);border-color:#c5c8ce}
+.card-img-wrap{background:#fafbfc;overflow:hidden;cursor:pointer;line-height:0}
+.card-img{width:100%;height:auto;display:block;max-height:380px;object-fit:contain;transition:transform .2s}
+.card-img:hover{transform:scale(1.04)}
 .card-info{padding:10px 12px 12px}
-.card-name{font-size:13px;font-weight:600;color:#222;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card-id{font-size:11px;color:#999;font-family:"SF Mono",Consolas,monospace;margin-bottom:8px}
-.card-actions{display:flex;justify-content:flex-end}
-.btn-detail{font-size:11.5px;padding:5px 14px;border-radius:5px;cursor:pointer;border:1px solid #d9d9d9;background:#fff;color:#555;transition:all .15s}
-.btn-detail:hover{background:#534AB7;color:#fff;border-color:#534AB7}
+.card-name{font-size:13px;font-weight:600;color:#222;margin-bottom:8px;line-height:1.35}
+.card-btn-row{text-align:right}
+.btn-v{font-size:11.5px;padding:5px 16px;border-radius:5px;cursor:pointer;border:1px solid #d9d9d9;background:#fff;color:#555;transition:all .15s}
+.btn-v:hover{background:#534AB7;color:#fff;border-color:#534AB7}
 
-/* Tag dot */
-.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:middle}
-.dot-y{background:#f59e0b}.dot-r{background:#22c55e}.dot-g{background:#94a3b8}
-
-/* ===== Modal ===== */
-.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
-.modal-overlay.show{display:flex}
-.modal{background:#fff;border-radius:12px;width:880px;max-width:92vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2)}
-.modal-head{padding:16px 20px;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.modal-head h2{font-size:15px;font-weight:700}
-.modal-close{cursor:pointer;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:#999;border:none;background:none;transition:background .15s}
-.modal-close:hover{background:#f5f5f5;color:#333}
-.modal-body{overflow-y:auto;padding:20px 24px 28px;line-height:1.75;font-size:12.5px;flex:1}
-.modal-body h3{font-size:15px;font-weight:700;margin:16px 0 8px;color:#222}
-.modal-body h3:first-child{margin-top:0}
-.modal-body h4{font-size:13px;font-weight:700;margin:12px 0 5px;color:#534AB7}
-.modal-body p{margin:6px 0;color:#444}
-.modal-body table{width:100%;border-collapse:collapse;margin:8px 0;font-size:11.5px}
-.modal-body th,.modal-body td{border:1px solid #eee;padding:7px 10px;text-align:left}
-.modal-body th{background:#f8f8fc;font-weight:600;color:#666}
-.modal-body ul{padding-left:18px;margin:5px 0}
-.modal-body li{margin-bottom:2px}
-.modal-body img{max-width:100%;border-radius:8px;border:1px solid #eee;margin:8px 0;cursor:pointer}
-.modal-body img:hover{opacity:.85}
+/* Modal */
+.ov{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.ov.show{display:flex}
+.md{background:#fff;border-radius:12px;width:860px;max-width:94vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+.md-hd{padding:15px 20px;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.md-hd h3{font-size:15px;font-weight:700}
+.md-cl{cursor:pointer;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;color:#999;border:none;background:0 0;font-size:18px}
+.md-cl:hover{background:#f5f5f5;color:#333}
+.md-bd{overflow-y:auto;padding:18px 22px 26px;line-height:1.72;font-size:12.5px;flex:1}
+.md-bd h4{font-size:14px;font-weight:700;margin:14px 0 6px;color:#534AB7}
+.md-bd h4:first-child{margin-top:0}
+.md-bd p{margin:5px 0;color:#444}
+.md-bd table{width:100%;border-collapse:collapse;margin:8px 0;font-size:11.5px}
+.md-bd th,.md-bd td{border:1px solid #eee;padding:7px 10px;text-align:left}
+.md-bd th{background:#f8f8fc;font-weight:600;color:#666}
+.md-bd ul{padding-left:18px;margin:4px 0}
+.md-bd li{margin-bottom:2px}
+.md-bd img{max-width:100%;border-radius:8px;border:1px solid #eee;margin:8px 0;cursor:pointer}
+.md-bd img:hover{opacity:.85}
 
 /* Fullscreen img */
-.img-full{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:300;display:none;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px)}
-.img-full.show{display:flex}
-.img-full img{max-width:94vw;max-height:94vh;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.ifull{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.72);z-index:300;display:none;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px)}
+.ifull.show{display:flex}
+.ifull img{max-width:94vw;max-height:94vh;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
 
-/* Empty */
-.empty{text-align:center;padding:60px 20px;color:#bbb}
-.empty-icon{font-size:40px;margin-bottom:10px}
-
-/* Scrollbar */
+.empty{text-align:center;padding:60px 20px;color:#bbb;font-size:14px}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
 </style>
 </head>
 <body>
 
-<!-- Header -->
-<div class="header">
+<div class="hd">
   <h1>🎫 优惠券体系新需求</h1>
-  <span class="sub">页面评审 · 共 <strong id="totalCount">0</strong> 个页面</span>
-  <div class="search"><input id="searchInput" placeholder="搜索页面名称..." oninput="filterCards()"></div>
+  <span class="sub">共 <strong id="tc">0</strong> 个页面</span>
+  <div class="search"><input placeholder="搜索页面…" oninput="flt()" id="si"></div>
 </div>
 
-<!-- Group filter bar -->
-<div class="group-bar" id="groupBar"></div>
+<!-- ===== C端（用户侧）===== -->
+<div class="sec" id="secC">
+  <div class="sec-hd"><div class="dot dot-c"></div><h2>C端（用户侧）</h2><span class="cnt" id="cntC">0</span></div>
+  <div class="grid" id="gridC"></div>
+</div>
 
-<!-- Cards -->
-<div class="grid-wrap">
-  <div class="grid" id="grid"></div>
-  <div class="empty" id="empty" style="display:none">
-    <div class="empty-icon">🔍</div>
-    <p>没有匹配的页面</p>
+<!-- ===== 后台（管理侧）===== -->
+<div class="sec" id="secB">
+  <div class="sec-hd"><div class="dot dot-b"></div><h2>后台（管理侧）</h2><span class="cnt" id="cntB">0</span></div>
+  <div class="grid" id="gridB"></div>
+</div>
+
+<div class="empty" id="empty" style="display:none">没有匹配的页面</div>
+
+<!-- Modal -->
+<div class="ov" id="ov" onclick="if(event.target===this)cls()">
+  <div class="md">
+    <div class="md-hd"><h3 id="mt">详情</h3><button class="md-cl" onclick="cls()">✕</button></div>
+    <div class="md-bd" id="mb"></div>
   </div>
 </div>
 
-<!-- Detail Modal -->
-<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
-    <div class="modal-head">
-      <h2 id="modalTitle">需求详情</h2>
-      <button class="modal-close" onclick="closeModal()">✕</button>
-    </div>
-    <div class="modal-body" id="modalBody"></div>
-  </div>
-</div>
-
-<!-- Fullscreen Image -->
-<div class="img-full" id="imgFull" onclick="this.classList.remove('show')"></div>
+<div class="ifull" id="ifull" onclick="this.classList.remove('show')"></div>
 
 <script>
-// ========== Data ==========
-const PAGES = [
-  // ===== 平台端后台 (4.1) =====
-  {group:'平台端后台',id:'4.1.0',title:'平台端后台总览',tag:'r',img:'coupon-prd-assets/coupon-platform.png',
-   detail:`<h3>平台端后台总览</h3><p>原型示意：左侧导航菜单包含「优惠券管理」「发券活动管理」「数据看板」等模块。右侧内容区展示各功能页面的操作界面。</p><img src="coupon-prd-assets/coupon-platform.png" alt="平台端后台原型"><h4>模块清单</h4><ul><li>P1 优惠券管理列表（已有-沿用）— 券模板 CRUD，本期补充总库存/创建日期列</li><li>D1 券详情（本期新增）— 从列表点击查看进入，展示完整券配置信息</li><li>D2 新建/编辑优惠券（本期新增）— 规则引擎表单：面额/门槛/有效期/适用范围等</li><li>P2 发券活动管理列表（本期新增）— 按触发源筛选的活动列表</li><li>D3 新建/编辑发券活动·规则引擎（本期新增）— 配置触发源/阈值/等级/券模板/每人上限</li><li>P4 数据看板（本期新增）— 发放量/核销量/核销金额/趋势图 + 券明细记录 Tab</li><li>P5 用户券查询（本期新增）— 嵌入会员管理→用户详情 Tab，按用户查券实例</li></ul>`},
-  {group:'平台端后台',id:'4.1.1',title:'P1 优惠券管理列表',tag:'r',img:'coupon-prd-assets/coupon-platform.png',
-   detail:`<h3>P1 优惠券管理列表</h3><p>沿用现有功能，本期补充「总库存」「创建日期」列与下架/删除按钮逻辑。</p><h4>列表字段表</h4><table><thead><tr><th>字段名称</th><th>需求说明</th><th>备注</th></tr></thead><tbody><tr><td>优惠券名称</td><td>券模板名称</td><td>取《券模板表》name</td></tr><tr><td>优惠券类型</td><td>满减券 / 折扣券 / 代金券等</td><td>取 coupon_type</td></tr><tr><td>店铺</td><td>所属店铺名</td><td>平台端可跨店；商家端写死自身店铺</td></tr><tr><td>使用规则</td><td>券面额/门槛摘要（如"满99减20"）</td><td>取规则字段拼接</td></tr><tr><td>状态</td><td>启用 / 下架</td><td>取 status 枚举</td></tr><tr><td>有效期</td><td>固定时间段 / 领取后生效天数</td><td>取 time_type + 对应值</td></tr><tr><td>已领取</td><td>已发放券数</td><td>取《用户券表》count</td></tr><tr><td>剩余</td><td>总库存 − 已领取</td><td>实时计算</td></tr><tr><td>总库存</td><td>该券模板发行量上限</td><td>取《券模板表》total_stock；新增列</td></tr><tr><td>创建日期</td><td>券模板创建日期</td><td>取《券模板表》create_time；新增列</td></tr></tbody></table><h4>功能按钮（操作列）</h4><table><thead><tr><th>按钮</th><th>显示条件</th><th>功能说明</th><th>权限</th></tr></thead><tbody><tr><td>查看</td><td>所有状态</td><td>进入 D1 券详情</td><td>直播运营</td></tr><tr><td>增加发行量</td><td>所有状态</td><td>弹窗输入追加数量（≥1），确认后剩余+=N</td><td>直播运营</td></tr><tr><td>下架</td><td>状态=启用</td><td>置「下架」状态（不可逆）</td><td>直播运营</td></tr><tr><td>删除</td><td>状态=下架</td><td>从列表删除（需二次确认）</td><td>直播运营</td></tr></tbody></table>`},
-  {group:'平台端后台',id:'4.1.2',title:'D1 券详情',tag:'y',img:'coupon-prd-assets/coupon-d1-coupon-detail.png',
-   detail:`<h3>D1 券详情</h3><p>平台端当前无独立券详情页（仅商家端有），本期新建。从 P1 列表点击「查看」进入。</p><img src="coupon-prd-assets/coupon-d1-coupon-detail.png" alt="D1券详情"><h4>页面字段表</h4><table><thead><tr><th>字段/区域</th><th>需求说明</th><th>备注</th></tr></thead><tbody><tr><td>券配置名称</td><td>文本只读，显示券模板名称</td><td>取《券模板表》name</td></tr><tr><td>券编码提示</td><td>名称旁显示券编码（hint 文字）</td><td>取 template_code</td></tr><tr><td>有效时间类型</td><td>Radio 只读：固定时间段 / 领取后生效</td><td>取 time_type</td></tr><tr><td>固定时间段</td><td>日期范围：开始 ~ 结束，只读</td><td>time_type=fixed 时显示</td></tr><tr><td>领取后有效天数</td><td>数字只读：X 天内有效</td><td>time_type=after 时显示</td></tr><tr><td>活动范围</td><td>内嵌表格：店铺/券类型/发行量/每人限领</td><td>取关联规则配置</td></tr><tr><td>商品选择</td><td>Radio 只读：全部/指定参与/排除不参与</td><td>取 product_scope</td></tr><tr><td>发放方式</td><td>文本只读，显示发放渠道</td><td>取 issue_mode</td></tr><tr><td>状态</td><td>状态 Tag（未开始/进行中/已下架…）</td><td>取 status 枚举</td></tr></tbody></table><h4>详细逻辑规则</h4><p><b>界面与展示规则：</b></p><ul><li>入参校验：仅当从 P1 列表携带合法券ID进入；不存在或已删除→Toast「券不存在」并返回</li><li>极限值处理：券名超20字截断加「…」；未知状态枚举→显示「-」</li></ul><p><b>业务逻辑与边界条件：</b></p><ul><li>未登录拦截：需「直播运营」角色权限；无权限时 P1 不展示「查看」入口</li><li>交互反馈：点击「下架」→ 二次确认弹窗 → 确认后置下架 → 即时刷新 → Toast「已下架」</li><li>按钮状态切换：「下架」仅当前状态=进行中时可点；已发放=0 或用户确认强制下架</li><li>防刷控制：同一券 2 秒内最多 1 次下架操作</li></ul>`},
-  {group:'平台端后台',id:'4.1.3',title:'D2 新建/编辑优惠券',tag:'y',img:'coupon-prd-assets/coupon-d2-new-coupon.png',
-   detail:`<h3>D2 新建/编辑优惠券</h3><p>规则引擎表单页面，用于创建或修改券模板配置。</p><img src="coupon-prd-assets/coupon-d2-new-coupon.png" alt="D2新建编辑券"><h4>表单字段</h4><table><thead><tr><th>字段</th><th>逻辑说明</th><th>备注</th></tr></thead><tbody><tr><td>券名称</td><td>文本必填，最长 50 字符</td><td>空→提示"请填写券名称"</td></tr><tr><td>券类型</td><td>下拉：满减券 / 折扣券 / 代金券</td><td>决定后续面额/门槛字段形态</td></tr><tr><td>面额 / 折扣值</td><td>根据类型动态变化</td><td>满减=金额；折扣=百分比</td></tr><tr><td>使用门槛</td><td>无门槛 / 满 X 元可用</td><td>数值≥0</td></tr><tr><td>有效期类型</td><td>Radio：固定时间段 / 领取后生效</td><td>联动下方字段显隐</td></tr><tr><td>每人限领</td><td>数字 ≥ 1</td><td>默认 1</td></tr><tr><td>发行量</td><td>数字 ≥ 1</td><td>总库存上限</td></tr></tbody></table><h4>详细逻辑规则</h4><p><b>界面与展示规则：</b></p><ul><li>入参校验：所有必填项空值提交→对应字段红框+提示文案；券类型切换时动态校验关联字段</li><li>极限值处理：面额最大 99999；门槛最大 999999；发行量最大 999999</li><li>动态表单联动：券类型切换→面额/门槛 label 文本变化；有效期类型切换→时间段/天数字段显隐</li></ul><p><b>业务逻辑与边界条件：</b></p><ul><li>未登录拦截：同 D1，需直播运营权限</li><li>交互反馈：保存中按钮 disabled+loading"保存中..."防重复；成功→toast+跳转列表；失败→toast 显示错误</li><li>按钮状态切换：编辑模式仅「未开始」「已下架」状态的券可编辑；进行中不可改规则</li><li>防刷控制：2 秒内最多 1 次保存</li></ul>`},
-  {group:'平台端后台',id:'4.1.4',title:'P2 发券活动 + D3 规则引擎',tag:'y',img:'coupon-prd-assets/coupon-p2-send-list.png',
-   detail:`<h3>P2 发券活动管理列表 + D3 发券活动（规则引擎）</h3><p><b>P2 发券活动管理列表</b></p><img src="coupon-prd-assets/coupon-p2-send-list.png" alt="P2发券活动列表"><p><b>D3 新建/编辑发券活动（规则引擎）</b></p><img src="coupon-prd-assets/coupon-d3-send-edit.png" alt="D3规则引擎"><h4>D3 表单字段</h4><table><thead><tr><th>字段</th><th>逻辑说明</th><th>备注</th></tr></thead><tbody><tr><td>活动名称</td><td>文本必填</td><td>空→"请填写活动名称"</td></tr><tr><td>触发源</td><td>下拉 7 选 1：直播时长/支付完成/注册完成/首单完成/连续签到/浏览商品/分享活动</td><td>—</td></tr><tr><td>观看阈值</td><td>随触发源动态变化标签文本</td><td>注册完成/首单完成隐藏</td></tr><tr><td>关联直播标签</td><td>仅直播时长显示；取风控管理直播标签</td><td>其他触发源隐藏</td></tr><tr><td>适用会员等级</td><td>全部 / 指定等级(Lv1-8 多选)</td><td>—</td></tr><tr><td>每人限制发券上限</td><td>数字≥1，默认 1</td><td>多选券模板时每种独立限张</td></tr><tr><td>开始发券时间</td><td>datetime-local 精确到秒</td><td>异步发券，无冷却</td></tr><tr><td>关联券模板</td><td>多选，实时显示已选数</td><td>至少 1 个</td></tr></tbody></table><h4>详细逻辑规则</h4><p><b>界面与展示规则：</b></p><ul><li>入参校验(P2)：触发源单选筛选；时间区间；空条件默认查全部；无数据→空态</li><li>入参校验(D3)：活动名称必填；关联券模板≥1；每人上限≥1 数字；开始时间必填</li><li>动态联动：触发源切换→阈值字段显隐；直播时长→显示关联直播标签</li></ul><p><b>业务逻辑与边界条件：</b></p><ul><li>未登录拦截：需「直播运营」权限</li><li>交互反馈：保存中 disabled+loading；成功→toast+刷新列表(置顶)；失败→toast 错误</li><li>按钮状态：「编辑」仅未开始/暂停可点；「删除」需二次确认</li><li>防刷：2 秒内最多 1 次保存</li><li>数据一致性：删除活动不影响已发放券实例</li></ul>`},
-  {group:'平台端后台',id:'4.1.6',title:'P4 数据看板',tag:'y',img:'coupon-prd-assets/coupon-p4-dashboard.png',
-   detail:`<h3>P4 数据看板</h3><p>数据统计面板，支持三维度切换查看。</p><img src="coupon-prd-assets/coupon-p4-dashboard.png" alt="数据看板"><p><b>维度 Tab 第三项「券明细记录」</b>（评审第5点修订）：以券实例（券ID）为维度，每行一条发放明细。</p><img src="coupon-prd-assets/coupon-p4-coupon-detail.png" alt="券明细记录"><h4>看板元素</h4><table><thead><tr><th>字段名称</th><th>需求说明</th><th>备注</th></tr></thead><tbody><tr><td>总发放量</td><td>统计《用户券表》写入的券实例总数</td><td>按发放活动/券模板维度</td></tr><tr><td>总核销量</td><td>status=已使用 的券实例数</td><td>—</td></tr><tr><td>核销金额</td><td>Σ 已使用券的券面额</td><td>合计行</td></tr><tr><td>活动进行中</td><td>status=启用 且 now∈[开始,结束] 的活动数</td><td>—</td></tr><tr><td>近 7 日核销趋势</td><td>按天聚合核销数，SVG 折线</td><td>维度 Tab 切换</td></tr></tbody></table><h4>券明细记录字段表</h4><table><thead><tr><th>字段名称</th><th>需求说明</th><th>查询支持</th></tr></thead><tbody><tr><td>券ID</td><td>券实例唯一标识</td><td>模糊匹配</td></tr><tr><td>是否发放</td><td>已发放 / 未发放</td><td>下拉</td></tr><tr><td>发放时间</td><td>写入《用户券表》的时间</td><td>日期范围</td></tr><tr><td>接收用户</td><td>领取该券的用户</td><td>模糊匹配</td></tr><tr><td>是否核销</td><td>已核销 / 未核销</td><td>下拉</td></tr><tr><td>核销订单号</td><td>核销对应的订单号</td><td>模糊匹配</td></tr></tbody></table>`},
-  {group:'平台端后台',id:'4.1.7',title:'P5 用户券查询',tag:'y',img:'coupon-prd-assets/coupon-p5-user-coupon.png',
-   detail:`<h3>P5 用户券查询</h3><p>⚠️ <b>入口调整（评审第7点）</b>：不再作为独立一级菜单，改为<b>会员管理 → 用户详情页的一个 Tab</b>。</p><img src="coupon-prd-assets/coupon-p5-user-coupon.png" alt="P5用户券查询"><h4>查询条件</h4><table><thead><tr><th>查询条件</th><th>查询说明</th></tr></thead><tbody><tr><td>用户 ID / 手机号</td><td>二选一必填，支持精确查询</td></tr><tr><td>券状态</td><td>下拉：未使用/已使用/已过期/全部；默认全部</td></tr></tbody></table><h4>列表字段表</h4><table><thead><tr><th>字段名称</th><th>需求说明</th><th>备注</th></tr></thead><tbody><tr><td>券名称</td><td>取《券模板表》券名</td><td>—</td></tr><tr><td>券码</td><td>券实例唯一码</td><td>只读</td></tr><tr><td>获取来源</td><td>发放活动名 / 系统发券</td><td>—</td></tr><tr><td>领取时间</td><td>写入《用户券表》时间</td><td>—</td></tr><tr><td>有效期至</td><td>券 expire_time</td><td>—</td></tr><tr><td>状态</td><td>未使用 / 已使用 / 已过期</td><td>—</td></tr></tbody></table><h4>详细逻辑规则</h4><p><b>界面与展示规则：</b></p><ul><li>入参校验：用户ID/手机号二选一必填；手机号11位数字校验</li><li>极限值处理：单次查询≤1000条；分页20/50/100，默认20</li><li>显示位置：嵌入用户详情Tab；Tab切换不刷新其他Tab</li></ul><p><b>业务逻辑与边界条件：</b></p><ul><li>未登录拦截：需「用户管理」权限，无权→403</li><li>交互反馈：查询中loading骨架屏；无数据→空态"暂无优惠券记录"</li><li>按钮状态：查询按钮disabled防重复；重置清空筛选并重新查询</li><li>防刷：1秒内最多1次查询请求</li><li>数据隔离：仅当前选中用户的券实例</li></ul>`},
+// ========== 数据：side='C'=用户侧 / 'B'=后台 ==========
+const PG = [
+  // ── C端 ──
+  {side:'C',id:'App总览',title:'App 端原型总览',img:'coupon-prd-assets/coupon-app.png',
+   detail:`<h4>App 端原型总览</h4><p>App 端为全链路新增。本期新建：获券弹窗、我的优惠券页、确认订单选券/核销逻辑。</p><img src="coupon-prd-assets/coupon-app.png"><ul><li>H 首页 — 获券弹窗入口</li><li>M 商城 — 商品列表</li><li>U 我的 — 资产入口</li><li>C2 我的优惠券 — 券包三态</li><li>C5 商品详情 — 领券区</li><li>C6 确认订单 — 选券/核销</li><li>获券弹窗 — 系统发券触达</li></ul>`},
+  {side:'C',id:'获券弹窗',title:'获券弹窗（系统发券触达）',img:'coupon-prd-assets/coupon-app-arrival-modal.png',
+   detail:`<h4>获券弹窗（系统发券触达）</h4><p>满足发券活动触发条件时自动弹出。</p><img src="coupon-prd-assets/coupon-app-arrival-modal.png"><p>弹窗元素：顶部标题+图标 / 券列表（可含多张）/ 底部按钮「去使用」「查看我的券」</p>`},
+  {side:'C',id:'我的优惠券',title:'C2 我的优惠券（券包三态）',img:'coupon-prd-assets/coupon-c2-mycoupons.png',
+   detail:`<h4>C2 我的优惠券（券包三态）</h4><p>用户查看自己持有的全部优惠券，分三个 Tab 展示不同状态。</p><img src="coupon-prd-assets/coupon-c2-mycoupons.png"><table><tr><th>Tab</th><th>内容</th><th>空态</th></tr><tr><td>可使用</td><td>可用券卡片</td><td>暂无可用优惠券</td></tr><tr><td>已使用</td><td>已核销券（灰态）</td><td>暂无使用记录</td></tr><tr><td>已过期</td><td>过期券（灰态）</td><td>暂无过期券</td></tr></table>`},
+  {side:'C',id:'商品详情领券区',title:'C5 商品详情·领券区',img:'coupon-prd-assets/coupon-pd-coupon-list.png',
+   detail:`<h4>C5 商品详情 · 领券区</h4><p>价格区下方，折叠条 + 横向可滑动券列表。</p><img src="coupon-prd-assets/coupon-pd-coupon-list.png"><p>交互：默认折叠→点展开→横向滑动券卡片→每张「立即领取」按钮。</p>`},
+  {side:'C',id:'确认订单选券',title:'C6 确认订单·选券/核销',img:'coupon-prd-assets/coupon-c6-confirm-order.png',
+   detail:`<h4>C6 确认订单 · 选券/核销</h4><p>确认订单页价格摘要区「优惠券」可折叠行，点开展示可用券列表（Radio 单选）。</p><img src="coupon-prd-assets/coupon-c6-confirm-order.png"><p>默认选中推荐券（抵扣最大）；可选「不使用优惠券」；实时计算应付金额。</p>`},
+  {side:'C',id:'小程序H5',title:'小程序/H5 获券弹窗',img:'coupon-prd-assets/coupon-mini-h5.png',
+   detail:`<h4>小程序 / H5 端</h4><p>本期仅新增<b>获券弹窗</b>（同 App 端逻辑），外壳不同。</p><img src="coupon-prd-assets/coupon-mini-h5.png"><p>⚠️ 我的优惠券/下单核销为已有功能，本期不重做。</p>`},
 
-  // ===== 商家端后台 (4.2) =====
-  {group:'商家端后台',id:'4.2',title:'商家端后台',tag:'y',img:'coupon-prd-assets/coupon-merchant.png',
-   detail:`<h3>商家端后台</h3><p>商家端<b>首次具备券管理能力</b>（券 CRUD / 发券活动），本期新增；其交互与平台端一致，本节仅补充差异与数据隔离规则。</p><img src="coupon-prd-assets/coupon-merchant.png" alt="商家端后台原型"><h4>差异说明</h4><ul><li>券 CRUD：同平台端 4.1.1~4.1.4 结构</li><li>发券活动：同平台端 4.1.4 结构；差异仅关联券模板限定为商家自身店铺创建的券模板</li><li>领券活动：本期删除（见 4.1.5 下期规划）</li><li>数据隔离：商家端只能看到/操作本店铺的券模板和发券活动</li></ul>`},
-
-  // ===== App 端 (4.3) =====
-  {group:'App 端',id:'4.3.0',title:'App 端总览',tag:'y',img:'coupon-prd-assets/coupon-app.png',
-   detail:`<h3>App 端总览</h3><p>App 端为全链路新增。本期 App 需新建：获券弹窗、我的优惠券页、确认订单选券/核销逻辑。</p><img src="coupon-prd-assets/coupon-app.png" alt="App端原型总览"><h4>页面清单</h4><ul><li><b>H 首页</b>：获券弹窗入口（系统发券触达时弹出）</li><li><b>M 商城</b>：商品列表（去使用优惠券的目标页）</li><li><b>U 我的</b>：我的优惠券（未使用/已使用/已过期 三态 Tab）</li><li><b>C2 我的优惠券</b>：完整券包三态视图</li><li><b>C5 商品详情</b>：领券区（位置下移+滑动列表+折叠交互）</li><li><b>C6 确认订单</b>：选券/核销/价格计算</li></ul>`},
-  {group:'App 端',id:'4.3.2',title:'获券弹窗（系统发券触达）',tag:'y',img:'coupon-prd-assets/coupon-app-arrival-modal.png',
-   detail:`<h3>获券弹窗（系统发券触达）</h3><p>满足发券活动触发条件时自动弹出的获券通知。</p><img src="coupon-prd-assets/coupon-app-arrival-modal.png" alt="获券弹窗"><h4>弹窗元素</h4><ul><li>顶部：图标 + 标题"获得优惠券"</li><li>券列表：每张券显示面额/名称/门槛/有效期（可含多张）</li><li>底部：「去使用」（跳转商城）/ 「查看我的券」（跳转U页）</li></ul><h4>详细逻辑规则</h4><ul><li>触发时机：发券活动异步发放完成后前端收到推送/轮询结果时弹出</li><li>防重复：同一会话同一活动只弹一次；关闭后标记 session 不再弹</li><li>老版本兼容：不支持弹窗的老版本客户端，券仍入包但不弹窗</li></ul>`},
-  {group:'App 端',id:'4.3.3',title:'C2 我的优惠券（券包三态）',tag:'y',img:'coupon-prd-assets/coupon-app-my-coupons.png',
-   detail:`<h3>C2 我的优惠券（券包三态）</h3><p>用户查看自己持有的全部优惠券，分三个 Tab 展示不同状态。</p><img src="coupon-prd-assets/coupon-app-my-coupons.png" alt="我的优惠券"><h4>三态 Tab 说明</h4><table><thead><tr><th>Tab</th><th>内容</th><th>空态文案</th></tr></thead><tbody><tr><td>未使用</td><td>可用券：面额/名称/门槛/有效期/去使用</td><td>"暂无可用优惠券，去逛逛吧~"</td></tr><tr><td>已使用</td><td>已核销：券名/核销时间/抵扣金额/订单号</td><td>"暂无使用记录"</td></tr><tr><td>已过期</td><td>过期券（灰态）</td><td>"暂无过期券"</td></tr></tbody></table><h4>详细逻辑规则</h4><ul><li>数据来源：调接口查《用户券表》，按 user_id + status 分组</li><li>默认选中「未使用」Tab</li><li>「去使用」跳转商城商品列表页</li></ul>`},
-  {group:'App 端',id:'4.3.5',title:'C6 确认订单选券/核销',tag:'y',img:'coupon-prd-assets/coupon-c6-confirm-order.png',
-   detail:`<h3>C6 确认订单选券 / 核销</h3><p>确认订单页价格摘要区「优惠券」可折叠行，点开展示可用券列表（Radio 单选）。</p><img src="coupon-prd-assets/coupon-c6-confirm-order.png" alt="确认订单选券"><h4>列表字段表</h4><table><thead><tr><th>字段</th><th>需求说明</th><th>备注</th></tr></thead><tbody><tr><td>券名 / 面额 / 门槛</td><td>取《券模板表》</td><td>—</td></tr><tr><td>有效期</td><td>券 expire_time</td><td>过期不出现在可用列表</td></tr><tr><td>单选 Radio</td><td>选中状态</td><td>默认「推荐」券</td></tr><tr><td>不适用原因</td><td>不满足门槛/适用范围时置灰+红字</td><td>如"未满100元可用"</td></tr></tbody></table><h4>详细逻辑规则</h4><p><b>界面与展示规则：</b></p><ul><li>入口：确认订单页价格摘要区「优惠券」可折叠行（默认展开）</li><li>可用券列表：券名/面额/门槛/有效期/Radio；默认选中推荐券（抵扣最大）；可选「不使用优惠券」</li><li>实时计算：选中后 应付=总价−面额，展示优惠明细</li></ul><p><b>业务逻辑与边界条件：</b></p><ul><li>预占/释放：提交→后端预占（未使用→已预占）；支付失败/取消→回退未使用</li><li>并发防抢占：支付期间被占用→返回冲突→提示"已被使用"→刷新列表</li><li>核销时机：支付网关回调成功→置「已使用」+写《核销流水表》</li></ul><h4>【提交订单】功能</h4><table><thead><tr><th>项</th><th>说明</th></tr></thead><tbody><tr><td>前置条件</td><td>已登录；购物车/商品已加入待结算；持有≥1张未使用券且满足门槛</td></tr><tr><td>功能实现</td><td>① 校验所选券仍有效 ② 调创建订单接口(传selected_coupon_id) → 后端预占 ③ 跳转收银台 ④ 支付成功→置已使用+写流水+toast ⑤ 失败→回退未使用</td></tr></tbody></table><h4>状态流转</h4><p>未使用 ──(提交订单)──▶ 已预占 ──(支付成功)──▶ 已使用；已预占 ──(支付失败/取消)──▶ 未使用</p>`},
-
-  // ===== 小程序 / H5 (4.4) =====
-  {group:'小程序/H5',id:'4.4',title:'小程序/H5 获券弹窗',tag:'y',img:'coupon-prd-assets/coupon-mini-h5.png',
-   detail:`<h3>小程序 / H5 端（获券弹窗新增）</h3><p>本期仅新增<b>获券弹窗</b>（系统发券触达），两端外壳不同；弹窗逻辑、按钮、数据来源、状态流转<b>同 App 端 4.3.2</b>。</p><img src="coupon-prd-assets/coupon-mini-h5.png" alt="小程序/H5端原型"><h4>外壳差异</h4><table><thead><tr><th>端</th><th>外壳规范</th><th>获券弹窗</th></tr></thead><tbody><tr><td>微信小程序</td><td>微信导航栏 + 胶囊 + tabBar</td><td>同 4.3.2；跳转已有页(toast 示意)</td></tr><tr><td>独立 H5</td><td>移动浏览器地址栏 + 头部标题</td><td>同 4.3.2；同上</td></tr></tbody></table><h4>范围声明</h4><p>✅ 我的优惠券 / 下单核销 在两端为<b>已有功能</b>，本期不重做（原型以 toast 示意跳转，逻辑见各自线上实现）。</p>`}
+  // ── 后台 ──
+  {side:'B',id:'平台端总览',title:'平台端后台总览',img:'coupon-prd-assets/coupon-platform.png',
+   detail:`<h4>平台端后台总览</h4><p>左侧导航包含「优惠券管理」「发券活动管理」「数据看板」等模块。</p><img src="coupon-prd-assets/coupon-platform.png"><ul><li>P1 优惠券管理列表（沿用+补充列）</li><li>D1 券详情（新增）</li><li>D2 新建/编辑券（新增）</li><li>P2 发券活动列表（新增）</li><li>D3 规则引擎（新增）</li><li>P4 数据看板（新增）</li><li>P5 用户券查询（新增，嵌入会员管理）</li></ul>`},
+  {side:'B',id:'P1券列表',title:'P1 优惠券管理列表',img:'coupon-prd-assets/coupon-platform.png',
+   detail:`<h4>P1 优惠券管理列表</h4><p>沿用现有功能，本期补充「总库存」「创建日期」列与下架/删除按钮逻辑。</p>`},
+  {side:'B',id:'D1券详情',title:'D1 券详情',img:'coupon-prd-assets/coupon-d1-coupon-detail.png',
+   detail:`<h4>D1 券详情</h4><p>从 P1 列表点击「查看」进入。展示完整券配置信息（只读）。</p><img src="coupon-prd-assets/coupon-d1-coupon-detail.png"><p>含：券配置名称/编码/有效期/活动范围/商品选择/发放方式/状态。底部操作按钮：下架（进行中状态可点）。</p>`},
+  {side:'B',id:'D2新建编辑券',title:'D2 新建/编辑优惠券',img:'coupon-prd-assets/coupon-d2-new-coupon.png',
+   detail:`<h4>D2 新建/编辑优惠券</h4><p>规则引擎表单：券名称/类型/面额门槛/有效期/每人限领/发行量/适用范围。</p><img src="coupon-prd-assets/coupon-d2-new-coupon.png"><p>动态联动：券类型切换→面额门槛 label 变化；有效期类型切换→字段显隐。</p>`},
+  {side:'B',id:'P2发券活动',title:'P2 发券活动 + D3 规则引擎',img:'coupon-prd-assets/coupon-p2-send-list.png',
+   detail:`<h4>P2 发券活动 + D3 规则引擎</h4><p>P2：按触发源筛选的活动列表。</p><img src="coupon-prd-assets/coupon-p2-send-list.png"><p>D3：配置触发源/阈值/等级/券模板/每人上限/开始时间。</p><img src="coupon-prd-assets/coupon-d3-send-edit.png">`},
+  {side:'B',id:'P4数据看板',title:'P4 数据看板',img:'coupon-prd-assets/coupon-p4-dashboard.png',
+   detail:`<h4>P4 数据看板</h4><p>三维度 Tab：发放量/核销量/趋势图 + 券明细记录。</p><img src="coupon-prd-assets/coupon-p4-dashboard.png"><img src="coupon-prd-assets/coupon-p4-coupon-detail.png">`},
+  {side:'B',id:'P5用户券查询',title:'P5 用户券查询',img:'coupon-prd-assets/coupon-p5-user-coupon.png',
+   detail:`<h4>P5 用户券查询</h4><p>嵌入会员管理→用户详情页 Tab。按用户 ID/手机号查券实例。</p><img src="coupon-prd-assets/coupon-p5-user-coupon.png">`},
+  {side:'B',id:'商家端',title:'商家端后台',img:'coupon-prd-assets/coupon-merchant.png',
+   detail:`<h4>商家端后台</h4><p>首次具备券管理能力。交互同平台端，差异：数据隔离（仅本店铺券模板/活动）。</p><img src="coupon-prd-assets/coupon-merchant.png">`},
 ];
 
-// ========== Render ==========
-const grid = document.getElementById('grid');
-const groupBar = document.getElementById('groupBar');
-const empty = document.getElementById('empty');
-const modalOverlay = document.getElementById('modalOverlay');
-const modalTitle = document.getElementById('modalTitle');
-const modalBody = document.getElementById('modalBody');
-const imgFull = document.getElementById('imgFull');
+const $=id=>document.getElementById(id);
+const gC=$('gridC'),gB=$('gridB'),ov=$('ov'),mt=$('mt'),mb=$('mb'),ifull=$('ifull');
+let q='';
 
-let activeGroup = '';
-let filteredPages = [...PAGES];
-
-document.getElementById('totalCount').textContent = PAGES.length;
-
-function getGroups() {
-  const m = {};
-  PAGES.forEach(p => { if(!m[p.group]) m[p.group]=[]; m[p.group].push(p); });
-  return m;
+function cardHTML(p){
+  return `<div class="card" data-id="${p.id}">
+    <div class="card-img-wrap"><img class="card-img" src="${p.img}" alt="${p.title}" loading="lazy" onclick="full('${p.img}')"></div>
+    <div class="card-info">
+      <div class="card-name">${p.title}</div>
+      <div class="card-btn-row"><button class="btn-v" onclick="openD('${p.id}')">查看详情</button></div>
+    </div></div>`;
 }
 
-function renderGroups() {
-  const groups = getGroups();
-  let html = '<button class="gbtn' + (!activeGroup?' active':'') + '" onclick="setGroup(\'\')">全部</button>';
-  Object.keys(groups).forEach(g => {
-    const cnt = groups[g].length;
-    html += `<button class="gbtn${activeGroup===g?' active':''}" onclick="setGroup('${g}')">${g}<span class="cnt">${cnt}</span></button>`;
-  });
-  groupBar.innerHTML = html;
+function render(){
+  const f=PG.filter(p=>!q||p.title.includes(q)||p.id.includes(q));
+  const c=f.filter(p=>p.side==='C'),b=f.filter(p=>p.side==='B');
+  gC.innerHTML=c.map(cardHTML).join('');
+  gB.innerHTML=b.map(cardHTML).join('');
+  $('cntC').textContent=c.length;$('cntB').textContent=b.length;
+  $('tc').textContent=f.length;
+  $('empty').style.display=f.length?'none':'block';
+  $('secC').style.display=c.length?'':'none';
+  $('secB').style.display=b.length?'':'none';
 }
 
-function renderCards() {
-  if(filteredPages.length === 0) {
-    grid.style.display = 'none';
-    empty.style.display = 'block';
-    return;
-  }
-  grid.style.display = 'flex';
-  empty.style.display = 'none';
-  grid.innerHTML = filteredPages.map(p => `
-    <div class="card" data-id="${p.id}">
-      <div class="card-img-wrap">
-        <img class="card-img" src="${p.img}" alt="${p.title}" loading="lazy"
-          onclick="showFullImg('${p.img}')">
-      </div>
-      <div class="card-info">
-        <div class="card-name"><span class="dot dot-${p.tag}"></span>${p.title}</div>
-        <div class="card-id">${p.id}</div>
-        <div class="card-actions">
-          <button class="btn-detail" onclick="openDetail('${p.id}')">查看详情</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
+function flt(){q=$('si').value.trim();render()}
 
-function setGroup(g) {
-  activeGroup = g;
-  renderGroups();
-  applyFilter();
+function openD(id){
+  const p=PG.find(x=>x.id===id);if(!p)return;
+  mt.textContent=p.title;mb.innerHTML=p.detail;
+  mb.querySelectorAll('img').forEach(im=>im.onclick=e=>{e.stopPropagation();full(im.src)});
+  ov.classList.add('show');
 }
+function cls(){ov.classList.remove('show')}
+function full(src){ifull.innerHTML=`<img src="${src}">`;ifull.classList.add('show')}
 
-function filterCards() {
-  applyFilter();
-}
-
-function applyFilter() {
-  const q = document.getElementById('searchInput').value.trim().toLowerCase();
-  filteredPages = PAGES.filter(p => {
-    const matchGroup = !activeGroup || p.group === activeGroup;
-    const matchQ = !q || p.title.toLowerCase().includes(q) || p.id.toLowerCase().includes(q);
-    return matchGroup && matchQ;
-  });
-  renderCards();
-}
-
-function openDetail(id) {
-  const p = PAGES.find(x=>x.id===id);
-  if(!p) return;
-  modalTitle.textContent = `${p.id} ${p.title}`;
-  modalBody.innerHTML = p.detail;
-  // Bind image clicks in modal
-  modalBody.querySelectorAll('img').forEach(img => {
-    img.onclick = (e) => { e.stopPropagation(); showFullImg(img.src); };
-  });
-  modalOverlay.classList.add('show');
-}
-
-function closeModal() {
-  modalOverlay.classList.remove('show');
-}
-
-function showFullImg(src) {
-  imgFull.innerHTML = `<img src="${src}" alt="full">`;
-  imgFull.classList.add('show');
-}
-
-// Keyboard shortcut
-document.addEventListener('keydown', e => {
-  if(e.key === 'Escape') {
-    if(imgFull.classList.contains('show')) imgFull.classList.remove('show');
-    else if(modalOverlay.classList.contains('show')) closeModal();
-  }
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if(ifull.classList.contains('show'))ifull.classList.remove('show');else cls()}
 });
 
-// Init
-renderGroups();
-renderCards();
+render();
 </script>
 </body>
 </html>
