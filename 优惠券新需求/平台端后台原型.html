@@ -613,6 +613,10 @@
       <div class="fr-body" id="cdUsageStatusTag">-</div>
     </div>
     <div class="form-row">
+      <label class="fr-label">券可使用端口</label>
+      <div class="fr-body" id="cdPorts">-</div>
+    </div>
+    <div class="form-row">
       <label class="fr-label">券规则说明</label>
       <div class="fr-body"><div class="rich-view" id="cdRuleDesc">-</div></div>
     </div>
@@ -692,6 +696,14 @@
         <div style="margin-bottom:8px;font-size:13px;color:#606266">商品信息<span id="cpProdCount" style="color:#534AB7;margin-left:4px"></span></div>
         <button class="btn-ghost btn-sm" onclick="openProductPicker()" id="cpAddProdBtn">＋ 添加商品</button>
         <div id="cpSelectedProds" class="prod-selected-list"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="fr-label">券可使用端口<span style="color:#f56c6c">*</span></label>
+      <div class="fr-body">
+        <label class="radio-item"><input type="checkbox" name="cpPort" value="app" checked> 泰小虎App</label>
+        <label class="radio-item"><input type="checkbox" name="cpPort" value="h5"> 泰尔超优惠H5</label>
+        <label class="radio-item"><input type="checkbox" name="cpPort" value="mini"> 泰尔超优会小程序</label>
       </div>
     </div>
     <div class="form-row">
@@ -964,6 +976,8 @@ function viewCoupon(id){
   $('cdPerLimit').textContent='1';
   $('cdShare').textContent=c.share||'不共用';
   $('cdRuleDesc').innerHTML=c.ruleDesc?c.ruleDesc:'<span style="color:#c0c4cc">—</span>';
+  const ptMap={app:'泰小虎App',h5:'泰尔超优惠H5',mini:'泰尔超优会小程序'};
+  $('cdPorts').textContent=(c.usablePorts&&c.usablePorts.length)?c.usablePorts.map(p=>ptMap[p]||p).join('、'):'-';
   $('cdLadder').innerHTML=c.ladder
     ? '<span class="tag tag-purple">已开启</span>'
     : '<span class="tag tag-gray">未开启</span>';
@@ -1046,6 +1060,7 @@ function resetCouponNew(){
   $('cpShop').value='';
   $('cpFullAmt').value='';$('cpCutAmt').value='';
   document.querySelectorAll('input[name=cpShare]').forEach(cb=>cb.checked=false);
+  document.querySelectorAll('input[name=cpPort]').forEach(cb=>cb.checked=(cb.value==='app'));
   $('cpLadder').checked=false;cpUpdateLadderPreview();
   $('cpTotal').value=1;$('cpPerUser').value=1;
   document.querySelectorAll('input[name=cpProd]')[0].checked=true;cpToggleProd();
@@ -1082,6 +1097,8 @@ function saveCouponNew(){
   const ruleLen=($('cpRuleDesc').textContent||'').trim().length;
   if(!ruleLen){toast('请填写券规则说明',true);return;}
   if(ruleLen>2000){toast('券规则说明最多 2000 字',true);return;}
+  const ports=[...document.querySelectorAll('input[name=cpPort]:checked')].map(e=>e.value);
+  if(!ports.length){toast('请至少选择一个可使用端口',true);return;}
   const ladder=$('cpLadder').checked;
   const share=[...document.querySelectorAll('input[name=cpShare]:checked')].map(cb=>cb.parentNode.textContent.trim());
   const shopSel=$('cpShop');const shop=shopSel.value?shopSel.options[shopSel.selectedIndex].text:'全部店铺';
@@ -1089,6 +1106,7 @@ function saveCouponNew(){
     rule:(ladder?'每满':'满')+x+'减'+y,status:'启用',usageStatus:'进行中',
     ladder:ladder,share:share.length?share.join('、'):'不共用',
     ruleDesc:ruleDesc,
+    usablePorts:ports,
     valid:'固定 '+$('cpStart').value+' ~ '+$('cpEnd').value,
     claimed:0,left:+$('cpTotal').value,date:$('cpStart').value+' ~ '+$('cpEnd').value,createDate:$('cpStart').value,productScope:document.querySelector('input[name=cpProd]:checked').value,prods:selectedProds.map(p=>({id:p.id,name:p.name,price:p.price,floorPrice:p.floorPrice||''}))});
   go('list');toast('已保存');
