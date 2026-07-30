@@ -741,7 +741,7 @@ function renderCoupons(){
         <a class="btn-link blue" onclick="openIncreaseStockById(${c.id})">增加发行量</a>
         ${c.status==='启用'
           ? `<a class="btn-link warn" onclick="offlineCouponById(${c.id})">下架</a>`
-          : (c.usageStatus!=='进行中' ? `<a class="btn-link red" onclick="delCoupon(${c.id})">删除</a>` : `<a class="btn-link" style="color:#c0c4cc;cursor:not-allowed" title="进行中不可删除，请先撤回">删除</a>`)
+          : (c.usageStatus!=='进行中' ? `<a class="btn-link red" onclick="delCoupon(${c.id})">删除</a>` : `<a class="btn-link" style="color:#c0c4cc;cursor:not-allowed" title="进行中不可删除，请先撤回">删除</a>`)}
         ${(c.usageStatus==='未开始'||c.usageStatus==='进行中') ? `<a class="btn-link red" onclick="revokeCoupon(${c.id})">撤回</a>` : ''}
       </td>
     </tr>`).join('');
