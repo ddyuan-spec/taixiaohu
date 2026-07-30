@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎 · 自动打标规则配置</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f5f6fa;color:#333;font-size:13px}
+
+  /* Top Bar */
+  .topbar{height:48px;background:#534AB7;color:#fff;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100}
+  .topbar .logo{font-weight:700;font-size:15px}
+  .topbar .sys{opacity:.75;font-size:12px}
+  .topbar .right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:18px;cursor:pointer}
+
+  /* Layout */
+  .layout{display:flex;min-height:calc(100vh - 48px)}
+
+  /* Sidebar */
+  .side{width:196px;background:#fff;border-right:1px solid #eaeaea;display:flex;flex-direction:column;flex-shrink:0}
+  .side .group{padding:0}
+  .side .gtitle{font-size:11px;color:#999;padding:14px 16px 6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;display:flex;align-items:center;gap:4px}
+  .side a{display:block;padding:9px 16px 9px 28px;color:#555;text-decoration:none;font-size:13px;cursor:pointer;transition:background .15s,color .15s}
+  .side a:hover{background:#f8f7ff;color:#534AB7}
+  .side a.active{background:#f3f0ff;color:#534AB7;font-weight:500;border-right:3px solid #534AB7}
+
+  /* Main */
+  .main{flex:1;padding:18px 24px 60px;min-width:0}
+  .hidden{display:none!important}
+
+  /* Breadcrumb */
+  .crumb{font-size:12px;color:#999;margin-bottom:14px}
+  .crumb span{color:#333}
+  .crumb a{color:#534AB7;cursor:pointer;text-decoration:none}
+
+  /* Page Header */
+  .phead{display:flex;align-items:center;margin-bottom:14px;gap:10px}
+  .phead h2{font-size:17px;font-weight:600;color:#222}
+
+  /* Filter Bar */
+  .filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .filter-bar input,.filter-bar select{height:32px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:12px;color:#333;outline:none;background:#fff}
+  .filter-bar input:focus,.filter-bar select:focus{border-color:#534AB7}
+  .filter-bar input{width:180px}
+  .filter-bar select{width:120px}
+
+  /* Buttons */
+  .btn-primary{display:inline-flex;align-items:center;height:32px;padding:0 16px;background:#534AB7;color:#fff;border:none;border-radius:4px;font-size:13px;cursor:pointer;white-space:nowrap}
+  .btn-primary:hover{background:#453da0}
+  .btn-ghost{display:inline-flex;align-items:center;height:32px;padding:0 16px;background:#fff;color:#666;border:1px solid #dcdfe6;border-radius:4px;font-size:13px;cursor:pointer}
+  .btn-ghost:hover{color:#534AB7;border-color:#534AB7}
+  .btn-sm{height:26px;padding:0 10px;font-size:12px}
+  .btn-danger-ghost{height:26px;padding:0 10px;background:transparent;color:#f56c6c;border:1px solid #f56c6c;border-radius:4px;font-size:12px;cursor:pointer}
+  .btn-link{background:none;border:none;color:#534AB7;cursor:pointer;font-size:12px;padding:0 4px}
+  .btn-link.red{color:#f56c6c}
+  .btn-link:hover{text-decoration:underline}
+
+  /* Table */
+  .tbl-wrap{background:#fff;border:1px solid #ebeef5;border-radius:4px;overflow:hidden}
+  .tbl{width:100%;border-collapse:collapse;font-size:12px}
+  .tbl thead th{background:#fafbfc;border-bottom:1px solid #ebeef5;color:#909399;font-weight:500;text-align:left;padding:10px 12px;white-space:nowrap}
+  .tbl tbody td{border-bottom:1px solid #f0f0f0;padding:10px 12px;color:#333;vertical-align:middle}
+  .tbl tbody tr:hover{background:#fafbfc}
+  .tbl .act a{margin-right:8px}
+
+  /* Pagination */
+  .pagi{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:14px;font-size:12px;color:#666}
+  .pagi input{width:40px;height:28px;border:1px solid #dcdfe6;border-radius:4px;text-align:center;font-size:12px}
+  .pagi select{height:28px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px}
+  .pagi .pg-btn{min-width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #dcdfe6;border-radius:4px;cursor:pointer;font-size:12px;color:#606266;background:#fff}
+  .pg-btn.active{background:#534AB7;color:#fff;border-color:#534AB7}
+
+  /* Tags */
+  .tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11.5px;line-height:1.6}
+  .tag-green{background:#f0f9eb;color:#67c23a;border:1px solid #c2e7b0}
+  .tag-gray{background:#f4f4f5;color:#909399;border:1px solid #d3d4d6}
+  .tag-purple{background:#f0ecff;color:#7c3aed;border:1px solid #d4c8ff}
+  .tag-blue{background:#ecf5ff;color:#409eff;border:1px solid #b3d8ff}
+
+  /* Modal */
+  .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:center;justify-content:center}
+  .modal-dlg{background:#fff;border-radius:6px;width:680px;max-width:92vw;box-shadow:0 8px 30px rgba(0,0,0,.18);display:flex;flex-direction:column}
+  .modal-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #ebeef5}
+  .modal-title{font-size:15px;font-weight:600;color:#222}
+  .modal-close{background:none;border:none;font-size:18px;color:#c0c4cc;cursor:pointer;padding:2px 6px;border-radius:3px}
+  .modal-close:hover{color:#606266;background:#f0f0f0}
+  .modal-body{padding:20px 24px;max-height:70vh;overflow-y:auto}
+  .modal-footer{padding:12px 18px;border-top:1px solid #ebeef5;display:flex;justify-content:flex-end;gap:8px}
+
+  /* Form */
+  .form-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+  .fr-label{width:90px;font-size:13px;color:#606266;line-height:32px;flex-shrink:0;text-align:right;padding-right:8px}
+  .fr-label .req{color:#f56c6c;margin-right:2px}
+  .fr-body{flex:1;min-width:0}
+  .fr-input{height:32px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:13px;width:100%;outline:none}
+  .fr-input:focus{border-color:#534AB7}
+  textarea.fr-input{min-height:60px;padding:8px 10px;resize:vertical;line-height:1.6}
+  select.fr-input{width:100%}
+
+  /* Multi-select room picker */
+  .room-picker{border:1px solid #dcdfe6;border-radius:4px;padding:8px;min-height:80px;max-height:160px;overflow-y:auto;background:#fafbfc}
+  .room-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:3px;cursor:pointer;transition:background .15s}
+  .room-item:hover{background:#f0ecff}
+  .room-item.selected{background:#f3f0ff;border:1px solid #d4c8ff}
+  .room-item input[type=checkbox]{accent-color:#534AB7}
+  .room-item .rname{font-size:13px;flex:1}
+  .room-item .rid{font-size:11px;color:#999}
+
+  /* Rule summary card in table */
+  .rule-detail{font-size:11.5px;color:#666;line-height:1.7}
+  .rule-detail b{color:#333}
+
+  /* Switch toggle */
+  .switch{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0}
+  .switch input{opacity:0;width:0;height:0}
+  .slider{position:absolute;inset:0;background:#ccc;border-radius:22px;cursor:pointer;transition:.2s}
+  .slider::before{content:'';position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
+  input:checked+.slider{background:#534AB7}
+  input:checked+.slider::before{transform:translateX(18px)}
+
+  /* Info tip */
+  .tip{font-size:12px;color:#909399;margin-top:4px}
+  .tip-icon{color:#e6a23c;margin-right:3px}
+
+  .new-badge{display:inline-block;background:#534AB7;color:#fff;font-size:10px;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle;font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">泰小虎后台</div>
+  <span class="sys">运营管理平台 — 自动打标规则配置</span>
+  <div class="right"><span>🔔</span><span>👤</span></div>
+</div>
+
+<div class="layout">
+<nav class="side">
+  <div class="group">
+    <div class="gtitle">▶ 营销管理</div>
+    <a href="#">优惠券配置</a>
+    <a href="#">发券活动</a>
+    <a href="#">标签管理</a>
+  </div>
+  <div class="group">
+    <div class="gtitle" style="color:#534AB7">▼ 智能运营</div>
+    <a href="#" class="active">自动打标<span class="new-badge">NEW</span></a>
+  </div>
+  <div class="group">
+    <div class="gtitle">▶ 数据看板</div>
+    <a href="#">粉丝画像</a>
+    <a href="#">直播观看记录</a>
+  </div>
+  <div class="group"><div class="gtitle">▶ 系统设置</div><a href="#">账号权限</a></div>
+</nav>
+
+<div class="main">
+  <div class="crumb"><a>首页</a> / <a>智能运营</a> / <span>自动打标规则</span></div>
+
+  <div class="phead">
+    <h2>自动打标规则</h2>
+    <div style="margin-left:auto;display:flex;gap:8px">
+      <button class="btn-primary" onclick="openRuleModal()">+ 新建规则</button>
+    </div>
+  </div>
+
+  <!-- Filter -->
+  <div class="filter-bar">
+    <input placeholder="规则名称" id="rfName">
+    <select id="rfStatus">
+      <option value="">全部状态</option>
+      <option>启用</option>
+      <option>停用</option>
+    </select>
+    <button class="btn-primary" onclick="renderRules()">搜索</button>
+    <button class="btn-ghost" onclick="$('rfName').value='';$('rfStatus').value='';renderRules()">重置</button>
+  </div>
+
+  <!-- Table -->
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th style="width:36px"><input type="checkbox"></th>
+          <th>序号</th>
+          <th>规则名称</th>
+          <th>关联直播间</th>
+          <th>观看时长阈值</th>
+          <th>目标标签</th>
+          <th>状态</th>
+          <th>创建时间</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="ruleTbody"></tbody>
+    </table>
+  </div>
+
+  <div class="pagi">
+    共 <b id="ruleCount">3</b> 条
+    <select><option>10条/页</option></select>
+    <span class="pg-btn active">1</span>
+  </div>
+</div>
+</div>
+
+
+<!-- ========== 新建/编辑规则 Modal ========== -->
+<div class="modal-overlay hidden" id="ruleModal">
+  <div class="modal-dlg">
+    <div class="modal-header">
+      <span class="modal-title" id="ruleModalTitle">新建打标规则</span>
+      <button class="modal-close" onclick="closeRuleModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <!-- 规则名称 -->
+      <div class="form-row">
+        <label class="fr-label"><span class="req">*</span>规则名称</label>
+        <div class="fr-body">
+          <input class="fr-input" id="rmName" placeholder="请输入规则名称，如「福利直播深度观众」">
+          <div class="tip"><span class="tip-icon">💡</span>建议使用可识别的描述性名称</div>
+        </div>
+      </div>
+
+      <!-- 关联直播间（多选） -->
+      <div class="form-row">
+        <label class="fr-label"><span class="req">*</span>关联直播间</label>
+        <div class="fr-body">
+          <input class="fr-input" id="rmRoomSearch" placeholder="搜索直播间名称或ID..." oninput="filterRooms(this.value)" style="margin-bottom:6px">
+          <div class="room-picker" id="roomPicker"></div>
+          <div class="tip"><span class="tip-icon">ℹ️</span>多选：用户在任一已选直播间满足时长条件即触发打标</div>
+        </div>
+      </div>
+
+      <!-- 观看时长阈值 -->
+      <div class="form-row">
+        <label class="fr-label"><span class="req">*</span>观看时长阈值</label>
+        <div class="fr-body">
+          <div style="display:flex;align-items:center;gap:8px">
+            <input class="fr-input" id="rmMinutes" type="number" min="1" value="30" style="width:120px">
+            <span style="font-size:13px;color:#606266">分钟</span>
+          </div>
+          <div class="tip"><span class="tip-icon">⏱️</span>用户单次在所选直播间的累计观看时长 ≥ 此值时，自动为目标标签打标</div>
+        </div>
+      </div>
+
+      <!-- 目标标签（仅显示直播标签类型） -->
+      <div class="form-row">
+        <label class="fr-label"><span class="req">*</span>目标标签</label>
+        <div class="fr-body">
+          <select class="fr-input" id="rmTag">
+            <option value="">请选择目标标签</option>
+            <option value="福利直播">福利直播</option>
+            <option value="高活跃观众">高活跃观众</option>
+            <option value="潜在购买意向">潜在购买意向</option>
+          </select>
+          <div class="tip"><span class="tip-icon">🏷️</span>仅可选择「直播标签」类型的标签作为打标目标</div>
+        </div>
+      </div>
+
+      <!-- 启用状态 -->
+      <div class="form-row">
+        <label class="fr-label">启用状态</label>
+        <div class="fr-body">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#606266">
+            <span id="switchLabel">启用</span>
+            <label class="switch">
+              <input type="checkbox" id="rmEnabled" checked onchange="document.getElementById('switchLabel').textContent=this.checked?'启用':'停用'">
+              <span class="slider"></span>
+            </label>
+          </label>
+          <div class="tip">停用后规则不执行但保留配置</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeRuleModal()">取消</button>
+      <button class="btn-primary" onclick="saveRule()">保存</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+function $(id){return document.getElementById(id)}
+
+/* ====== Mock Data ====== */
+var allRooms = [
+  {id:'LIVE001',name:'泰小虎健康福利直播'},
+  {id:'LIVE002',name:'夏季养生专场'},
+  {id:'LIVE003',name:'新品首发·营养补剂'},
+  {id:'LIVE004',name:'中医调理干货分享'},
+  {id:'LIVE005',name:'运动健身指导课'},
+];
+
+var rules = [
+  {
+    id:1,
+    name:'福利直播深度观众',
+    rooms:['LIVE001','LIVE003'],
+    minutes:30,
+    tag:'福利直播',
+    enabled:true,
+    time:'2026-07-29 10:00:00',
+  },
+  {
+    id:2,
+    name:'高活跃直播观众',
+    rooms:['LIVE001','LIVE002','LIVE004'],
+    minutes:60,
+    tag:'高活跃观众',
+    enabled:true,
+    time:'2026-07-28 16:30:00',
+  },
+  {
+    id:3,
+    name:'潜在购买意向(测试)',
+    rooms:['LIVE005'],
+    minutes:15,
+    tag:'潜在购买意向',
+    enabled:false,
+    time:'2026-07-27 09:15:00',
+  },
+];
+
+var editingId = null;
+
+/* ====== Render Rules Table ====== */
+function renderRules(){
+  var fn=$('rfName').value.toLowerCase(), st=$('rfStatus').value;
+  var rows='', idx=0, filtered=[];
+
+  rules.forEach(function(r){
+    if(fn && r.name.toLowerCase().indexOf(fn)<0) return;
+    if(st){
+      if(st==='启用' && !r.enabled) return;
+      if(st==='停用' && r.enabled) return;
+    }
+    filtered.push(r);
+  });
+
+  filtered.forEach(function(r){
+    idx++;
+    var roomNames = r.rooms.map(function(rid){
+      var room = allRooms.find(function(x){return x.id===rid});
+      return room ? room.name : rid;
+    }).join('、');
+
+    rows += '<tr>'+
+      '<td><input type="checkbox"></td>'+
+      '<td>'+idx+'</td>'+
+      '<td><b>'+r.name+'</b></td>'+
+      '<td><div class="rule-detail">'+r.rooms.length+' 个直播间<br><b style="color:#534AB7">'+roomNames+'</b></div></td>'+
+      '<td><span class="tag tag-orange">≥ '+r.minutes+' 分钟</span></td>'+
+      '<td><span class="tag tag-purple">'+r.tag+'</span></td>'+
+      '<td>'+(r.enabled?'<span class="tag tag-green">启用</span>':'<span class="tag tag-gray">停用</span>')+'</td>'+
+      '<td>'+r.time+'</td>'+
+      '<td class="act">'+
+        '<a class="btn-link" onclick="editRule('+r.id+')">编辑</a>'+
+        (r.enabled?'<a class="btn-link red" onclick="toggleRuleStatus('+r.id+',false)">停用</a>':'<a class="btn-link" onclick="toggleRuleStatus('+r.id+',true)">启用</a>')+
+        '<a class="btn-link red" onclick="deleteRule('+r.id+')">删除</a>'+
+      '</td>'+
+      '</tr>';
+  });
+
+  $('ruleTbody').innerHTML = rows || '<tr><td colspan="9" style="text-align:center;padding:40px;color:#c0c4cc">暂无规则数据</td></tr>';
+  $('ruleCount').textContent = filtered.length;
+}
+
+/* ====== Room Picker (Multi-select) ====== */
+function renderRoomPicker(selectedIds){
+  selectedIds = selectedIds || [];
+  var html = '';
+  allRooms.forEach(function(room){
+    var checked = selectedIds.indexOf(room.id)>=0 ? 'checked' : '';
+    var cls = checked ? 'selected' : '';
+    html += '<div class="room-item '+cls+'" onclick="toggleRoom(this,\''+room.id+'\')">'+
+      '<input type="checkbox" '+checked+' id="chk_'+room.id+'">'+
+      '<span class="rname">'+room.name+'</span>'+
+      '<span class="rid">'+room.id+'</span>'+
+      '</div>';
+  });
+  $('roomPicker').innerHTML = html || '<div style="padding:20px;text-align:center;color:#c0c4cc">暂无直播间</div>';
+}
+
+function filterRooms(keyword){
+  keyword = (keyword||'').toLowerCase();
+  var items = document.querySelectorAll('.room-item');
+  items.forEach(function(item){
+    var text = item.textContent.toLowerCase();
+    item.style.display = (text.indexOf(keyword)>=0)?'':'none';
+  });
+}
+
+function toggleRoom(el, roomId){
+  var chk = el.querySelector('input[type=checkbox]');
+  chk.checked = !chk.checked;
+  el.classList.toggle('selected', chk.checked);
+}
+
+function getSelectedRoomIds(){
+  var ids = [];
+  document.querySelectorAll('#room-picker .room-item.selected').forEach(function(item){
+    ids.push(item.querySelector('.rid').textContent);
+  });
+  return ids;
+}
+
+/* ====== Rule Modal ====== */
+function openRuleModal(){
+  editingId = null;
+  $('ruleModalTitle').textContent = '新建打标规则';
+  $('rmName').value='';
+  $('rmMinutes').value='30';
+  $('rmTag').value='';
+  $('rmEnabled').checked=true;
+  document.getElementById('switchLabel').textContent='启用';
+  $('rmRoomSearch').value='';
+  renderRoomPicker([]);
+  $('ruleModal').classList.remove('hidden');
+}
+
+function closeRuleModal(){$('ruleModal').classList.add('hidden')}
+
+function editRule(id){
+  var r = rules.find(function(x){return x.id===id});
+  if(!r) return;
+  editingId = id;
+  $('ruleModalTitle').textContent = '编辑打标规则';
+  $('rmName').value=r.name;
+  $('rmMinutes').value=r.minutes;
+  $('rmTag').value=r.tag;
+  $('rmEnabled').checked=r.enabled;
+  document.getElementById('switchLabel').textContent=r.enabled?'启用':'停用';
+  $('rmRoomSearch').value='';
+  renderRoomPicker(r.rooms);
+  $('ruleModal').classList.remove('hidden');
+}
+
+function saveRule(){
+  var name=$('rmName').value.trim(),
+      mins=parseInt($('rmMinutes').value),
+      tag=$('rmTag').value,
+      rooms=getSelectedRoomIds();
+
+  if(!name){alert('请输入规则名称');return}
+  if(isNaN(mins)||mins<=0){alert('请输入有效的时长阈值');return}
+  if(!tag){alert('请选择目标标签');return}
+  if(rooms.length===0){alert('请至少选择一个关联直播间');return}
+
+  if(editingId){
+    var r = rules.find(function(x){return x.id===editingId});
+    if(r){r.name=name;r.rooms=rooms;r.minutes=mins;r.tag=tag;r.enabled=$('rmEnabled').checked}
+  } else {
+    rules.unshift({
+      id:rules.length?Math.max.apply(null,rules.map(function(x){return x.id}))+1:1,
+      name:name, rooms:rooms, minutes:mins, tag:tag,
+      enabled:$('rmEnabled').checked,
+      time:new Date().toLocaleString().replace(/\//g,'-')
+    });
+  }
+
+  closeRuleModal();
+  renderRules();
+}
+
+function toggleRuleStatus(id,enabled){
+  var r = rules.find(function(x){return x.id===id});
+  if(r){r.enabled=enabled;renderRules()}
+}
+
+function deleteRule(id){
+  if(!confirm('确定删除该规则？')) return;
+  rules = rules.filter(function(x){return x.id!==id});
+  renderRules();
+}
+
+/* ====== Init ====== */
+renderRules();
+</script>
+
+</body>
+</html>
