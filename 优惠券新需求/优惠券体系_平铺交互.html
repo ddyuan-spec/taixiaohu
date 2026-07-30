@@ -31,7 +31,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .cols{display:flex;gap:36px;overflow-x:auto;padding-bottom:20px}
 .col{flex:0 0 auto;display:flex;flex-direction:column}
 .col.col-c{width:280px}          /* C端：手机窄图，缩窄 */
-.col.col-b{width:700px}          /* 后台：桌面宽图，加宽 */
+.col.col-b{width:780px}          /* B端：桌面宽图 */
 .col-hd{
   font-size:15px;font-weight:700;color:#333;
   padding:0 0 4px;margin-bottom:14px;
@@ -45,7 +45,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 /* 列内：上下堆叠的页面 */
 .flow{display:flex;flex-direction:column}
 .node{margin-bottom:20px}
-.node .name{font-size:14px;font-weight:600;color:#333;padding:0 0 8px}
+.node .name{font-size:14px;font-weight:600;color:#333;padding:0 0 8px;display:flex;align-items:center;gap:6px}
+.node .name .stale-badge{font-size:11px;font-weight:600;color:#E6A23C;background:#FFF4E0;padding:1px 7px;border-radius:4px;flex-shrink:0;white-space:nowrap}
 .node img{width:100%;height:auto;display:block;cursor:pointer}
 .node .ph{width:100%;aspect-ratio:400/819;background:#eef0f3;border:2px dashed #c8ccd4;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#9aa0a8;gap:7px;margin-top:2px}
 .node .ph .big{font-size:16px;font-weight:700;color:#8b9199;letter-spacing:3px}
@@ -120,22 +121,22 @@ const SECTIONS = [
     side:'B', key:'B', name:'后台（管理侧）',
     cols:[
       {g:'平台端·优惠券管理', items:[
-        {title:'P1 优惠券管理列表', img:'coupon-prd-assets/coupon-platform-new-form.png'},
+        {title:'P1 优惠券管理列表', img:'coupon-prd-assets/coupon-platform-new-form.png', stale:true},
         {title:'P1 列表（双状态版·上架+使用状态）', img:'coupon-prd-assets/pf-dual-status.png'},
-        {title:'D1 券详情', img:'coupon-prd-assets/coupon-d1-coupon-detail.png'},
-        {title:'D2 新建/编辑优惠券', img:'coupon-prd-assets/coupon-d2-new-coupon.png'},
+        {title:'D1 券详情', img:'coupon-prd-assets/coupon-d1-coupon-detail.png', stale:true},
+        {title:'D2 新建/编辑优惠券', img:'coupon-prd-assets/coupon-d2-new-coupon.png', stale:true},
         {title:'加库存弹窗（增加发行量）', img:'coupon-prd-assets/coupon-d1-increase-stock.png'},
       ]},
       {g:'平台端·发券活动', items:[
-        {title:'P2 发券活动列表', img:'coupon-prd-assets/coupon-p2-send-list.png'},
-        {title:'D3 新建/编辑发券活动', img:'coupon-prd-assets/coupon-d3-send-edit.png'},
+        {title:'P2 发券活动列表', img:'coupon-prd-assets/coupon-p2-send-list.png', stale:true},
+        {title:'D3 新建/编辑发券活动', img:'coupon-prd-assets/coupon-d3-send-edit.png', stale:true},
       ]},
       {g:'平台端·数据看板', items:[
-        {title:'P4 数据看板', img:'coupon-prd-assets/coupon-p4-dashboard.png'},
-        {title:'P4 券明细记录', img:'coupon-prd-assets/coupon-p4-coupon-detail.png'},
+        {title:'P4 数据看板', img:'coupon-prd-assets/coupon-p4-dashboard.png', stale:true},
+        {title:'P4 券明细记录', img:'coupon-prd-assets/coupon-p4-coupon-detail.png', stale:true},
       ]},
       {g:'平台端·用户券查询', items:[
-        {title:'P5 用户券查询', img:'coupon-prd-assets/coupon-p5-user-coupon.png'},
+        {title:'P5 用户券查询', img:'coupon-prd-assets/coupon-p5-user-coupon.png', stale:true},
       ]},
       {g:'商家端后台', items:[
         {title:'商家端·优惠券管理列表', img:'coupon-prd-assets/coupon-merchant.png'},
@@ -145,11 +146,9 @@ const SECTIONS = [
         {title:'商家端·新建发券活动', img:'coupon-prd-assets/coupon-merchant.png'},
         {title:'商家端·用户券查询', img:'coupon-prd-assets/coupon-merchant.png'},
       ]},
-      {g:'平台端·直播观看记录', items:[
+      {g:'平台端·直播观看记录与自动打标', items:[
         {title:'直播观看记录', img:'coupon-prd-assets/pf-live-view-log.png'},
-      ]},
-      {g:'平台端·自动打标规则', items:[
-        {title:'自动打标规则', img:'coupon-prd-assets/pf-auto-tag.png'},
+        {title:'自动打标规则列表', img:'coupon-prd-assets/pf-auto-tag.png'},
       ]},
     ]
   },
@@ -161,11 +160,12 @@ let total=0;
 
 function nodeHTML(p, i){
   const it = p.items[i];
+  const staleBadge = it.stale ? '<span class="stale-badge">⚠ 截图待更新</span>' : '';
   const body = it.ph
     ? `<div class="ph"><div class="big">待补</div><div class="sm">${it.title}</div></div>`
-    : `<img src="${it.img}" alt="${it.title}" loading="lazy" onclick="full('${it.img}')">`;
+    : `<img src="${it.img}" alt="${it.title}" loading="lazy" onclick="full('${p.img || it.img}')">`;
   return `<div class="node">
-    <div class="name">${it.title}</div>
+    <div class="name">${it.title}${staleBadge}</div>
     ${body}
   </div>`;
 }
