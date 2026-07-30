@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>泰小虎 · 平台端后台 — 直播观看记录</title>
+<title>泰小虎 · 平台端后台 — 直播观看记录 / 自动打标规则</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f5f6fa;color:#333;font-size:13px}
@@ -54,6 +54,7 @@
   .btn-ghost{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 16px;background:#fff;color:#666;border:1px solid #dcdfe6;border-radius:4px;font-size:13px;cursor:pointer;white-space:nowrap;transition:border-color .2s,color .2s}
   .btn-ghost:hover{color:#534AB7;border-color:#534AB7}
   .btn-link{background:none;border:none;color:#534AB7;cursor:pointer;font-size:12px;padding:0 4px}
+  .btn-link.red{color:#f56c6c}
   .btn-link:hover{text-decoration:underline}
 
   /* ===== Table ===== */
@@ -92,6 +93,40 @@
   .info-cell{padding:12px 16px;border-bottom:1px solid #f0f0f0;border-right:1px solid #f0f0f0}
   .info-cell .k{font-size:12px;color:#909399;margin-bottom:4px}
   .info-cell .v{font-size:13px;color:#333}
+
+  /* ===== Form (独立编辑页) ===== */
+  .form-card{background:#fff;border:1px solid #ebeef5;border-radius:4px;padding:24px 28px;max-width:720px}
+  .form-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:18px}
+  .fr-label{width:110px;font-size:13px;color:#606266;line-height:32px;flex-shrink:0;text-align:right;padding-right:8px}
+  .fr-label .req{color:#f56c6c;margin-right:2px}
+  .fr-body{flex:1;min-width:0}
+  .fr-input{height:32px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:13px;width:100%;outline:none}
+  .fr-input:focus{border-color:#534AB7}
+  select.fr-input{width:100%}
+  .tip{font-size:12px;color:#909399;margin-top:4px}
+  .tip-icon{color:#e6a23c;margin-right:3px}
+  .form-actions{display:flex;gap:10px;margin-top:24px;padding-left:130px}
+
+  /* Multi-select room picker */
+  .room-picker{border:1px solid #dcdfe6;border-radius:4px;padding:8px;min-height:80px;max-height:180px;overflow-y:auto;background:#fafbfc}
+  .room-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:3px;cursor:pointer;transition:background .15s}
+  .room-item:hover{background:#f0ecff}
+  .room-item.selected{background:#f3f0ff}
+  .room-item input[type=checkbox]{accent-color:#534AB7;pointer-events:none}
+  .room-item .rname{font-size:13px;flex:1}
+  .room-item .rid{font-size:11px;color:#999}
+
+  /* Rule summary in table */
+  .rule-detail{font-size:11.5px;color:#666;line-height:1.7}
+  .rule-detail b{color:#333}
+
+  /* Switch toggle */
+  .switch{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0}
+  .switch input{opacity:0;width:0;height:0}
+  .slider{position:absolute;inset:0;background:#ccc;border-radius:22px;cursor:pointer;transition:.2s}
+  .slider::before{content:'';position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
+  input:checked+.slider{background:#534AB7}
+  input:checked+.slider::before{transform:translateX(18px)}
 </style>
 </head>
 <body>
@@ -114,6 +149,7 @@
     <a href="#">发券活动</a>
     <a href="#">标签管理</a>
     <a href="#" onclick="go('liveViewLog')" id="nav_liveViewLog" class="active">直播观看记录</a>
+    <a href="#" onclick="go('autoTag')" id="nav_autoTag">自动打标规则</a>
     <a href="#">活动配置</a>
     <a href="#">积分</a>
     <a href="#">拼团</a>
@@ -170,7 +206,7 @@
 </nav>
 
 <!-- ===== Main Content ===== -->
-<div class="main" id="mainContent">
+<main class="main" id="mainContent">
 
   <!-- ==================== 直播观看记录（列表） ==================== -->
   <div id="viewLiveViewLog">
@@ -242,7 +278,133 @@
     <div class="info-grid" id="dtGrid"></div>
   </div>
 
-</div><!-- /mainContent -->
+  <!-- ==================== 自动打标规则（列表） ==================== -->
+  <div id="viewAutoTag" class="hidden">
+    <div class="crumb"><a>首页</a> / <a>营销管理</a> / <span>自动打标规则</span></div>
+
+    <div class="phead">
+      <h2>自动打标规则</h2>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="btn-primary" onclick="openRuleEdit()">+ 新建规则</button>
+      </div>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-bar">
+      <input placeholder="规则名称" id="rfName">
+      <select id="rfStatus">
+        <option value="">全部状态</option>
+        <option>启用</option>
+        <option>停用</option>
+      </select>
+      <button class="btn-primary" onclick="renderRules()">搜索</button>
+      <button class="btn-ghost" onclick="resetRuleFilter()">重置</button>
+    </div>
+
+    <!-- Table -->
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th class="chk"><input type="checkbox"></th>
+            <th>序号</th>
+            <th>规则名称</th>
+            <th>关联直播间</th>
+            <th>观看时长阈值</th>
+            <th>目标标签</th>
+            <th>状态</th>
+            <th>创建时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="ruleTbody"></tbody>
+      </table>
+    </div>
+
+    <div class="pagi">
+      共 <b id="ruleCount">3</b> 条
+      <select><option>10条/页</option></select>
+      <span class="pg-btn active">1</span>
+    </div>
+  </div>
+
+  <!-- ==================== 自动打标规则 · 新建/编辑（独立页） ==================== -->
+  <div id="viewAutoTagEdit" class="hidden">
+    <div class="crumb"><a>首页</a> / <a>营销管理</a> / <a onclick="go('autoTag')">自动打标规则</a> / <span id="ruleEditCrumb">新建规则</span></div>
+
+    <div class="phead">
+      <span class="dt-back" onclick="go('autoTag')">← 返回列表</span>
+      <h2 id="ruleEditTitle">新建打标规则</h2>
+    </div>
+
+    <div class="form-card">
+      <!-- 规则名称 -->
+      <div class="form-row">
+        <label class="fr-label"><span class="req">*</span>规则名称</label>
+        <div class="fr-body">
+          <input class="fr-input" id="rmName" placeholder="请输入规则名称，如「福利直播深度观众」">
+        </div>
+      </div>
+
+      <!-- 关联直播间（多选） -->
+      <div class="form-row">
+        <label class="fr-label"><span class="req">*</span>关联直播间</label>
+        <div class="fr-body">
+          <input class="fr-input" id="rmRoomSearch" placeholder="搜索直播间名称或ID..." oninput="filterRooms(this.value)" style="margin-bottom:6px">
+          <div class="room-picker" id="roomPicker"></div>
+          <div class="tip"><span class="tip-icon">ℹ️</span>多选：用户在任一已选直播间满足时长条件即触发打标</div>
+        </div>
+      </div>
+
+      <!-- 观看时长阈值 -->
+      <div class="form-row">
+        <label class="fr-label"><span class="req">*</span>观看时长阈值</label>
+        <div class="fr-body">
+          <div style="display:flex;align-items:center;gap:8px">
+            <input class="fr-input" id="rmMinutes" type="number" min="1" value="30" style="width:120px">
+            <span style="font-size:13px;color:#606266">分钟</span>
+          </div>
+          <div class="tip"><span class="tip-icon">⏱️</span>用户单次在所选直播间的累计观看时长 ≥ 此值时，自动为其打上目标标签</div>
+        </div>
+      </div>
+
+      <!-- 目标标签（仅直播标签类型） -->
+      <div class="form-row">
+        <label class="fr-label"><span class="req">*</span>目标标签</label>
+        <div class="fr-body">
+          <select class="fr-input" id="rmTag">
+            <option value="">请选择目标标签</option>
+            <option value="福利直播">福利直播</option>
+            <option value="高活跃观众">高活跃观众</option>
+            <option value="潜在购买意向">潜在购买意向</option>
+          </select>
+          <div class="tip"><span class="tip-icon">🏷️</span>仅可选择「直播标签」类型的标签作为打标目标</div>
+        </div>
+      </div>
+
+      <!-- 启用状态 -->
+      <div class="form-row">
+        <label class="fr-label">启用状态</label>
+        <div class="fr-body">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#606266">
+            <span id="switchLabel">启用</span>
+            <label class="switch">
+              <input type="checkbox" id="rmEnabled" checked onchange="document.getElementById('switchLabel').textContent=this.checked?'启用':'停用'">
+              <span class="slider"></span>
+            </label>
+          </label>
+          <div class="tip">停用后规则不执行但保留配置</div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-primary" onclick="saveRule()">保存</button>
+        <button class="btn-ghost" onclick="go('autoTag')">取消</button>
+      </div>
+    </div>
+  </div>
+
+</main><!-- /mainContent -->
 </div><!-- /layout -->
 
 <script>
@@ -253,13 +415,10 @@ function $(id){return document.getElementById(id)}
 function toggleGroup(el){el.classList.toggle('open')}
 
 /* ====== Navigation ====== */
+var PAGES = ['viewLiveViewLog','viewLiveViewDetail','viewAutoTag','viewAutoTagEdit'];
 function go(page){
   document.querySelectorAll('#sidebar a').forEach(function(a){a.classList.remove('active')});
-  var nav = document.getElementById('nav_'+page);
-  if(nav) nav.classList.add('active');
-
-  $('viewLiveViewLog').classList.add('hidden');
-  $('viewLiveViewDetail').classList.add('hidden');
+  PAGES.forEach(function(p){$(p).classList.add('hidden')});
 
   if(page==='liveViewLog'){
     $('viewLiveViewLog').classList.remove('hidden');
@@ -268,6 +427,13 @@ function go(page){
   } else if(page==='liveViewDetail'){
     $('viewLiveViewDetail').classList.remove('hidden');
     $('nav_liveViewLog').classList.add('active');
+  } else if(page==='autoTag'){
+    $('viewAutoTag').classList.remove('hidden');
+    $('nav_autoTag').classList.add('active');
+    renderRules();
+  } else if(page==='autoTagEdit'){
+    $('viewAutoTagEdit').classList.remove('hidden');
+    $('nav_autoTag').classList.add('active');
   }
 }
 
@@ -347,8 +513,180 @@ function viewDetail(id){
   go('liveViewDetail');
 }
 
-/* ====== Init ====== */
-renderLiveView();
+/* ================================================================
+   自动打标规则 — Data & Render
+   ================================================================ */
+var allRooms = [
+  {id:'LIVE001',name:'泰小虎健康福利直播'},
+  {id:'LIVE002',name:'夏季养生专场'},
+  {id:'LIVE003',name:'新品首发·营养补剂'},
+  {id:'LIVE004',name:'中医调理干货分享'},
+  {id:'LIVE005',name:'运动健身指导课'},
+];
+
+var rules = [
+  {id:1, name:'福利直播深度观众', rooms:['LIVE001','LIVE003'], minutes:30, tag:'福利直播', enabled:true, time:'2026-07-29 10:00:00'},
+  {id:2, name:'高活跃直播观众', rooms:['LIVE001','LIVE002','LIVE004'], minutes:60, tag:'高活跃观众', enabled:true, time:'2026-07-28 16:30:00'},
+  {id:3, name:'潜在购买意向(测试)', rooms:['LIVE005'], minutes:15, tag:'潜在购买意向', enabled:false, time:'2026-07-27 09:15:00'},
+];
+
+var editingId = null;
+
+function renderRules(){
+  var fn=$('rfName').value.toLowerCase(), st=$('rfStatus').value;
+  var rows='', idx=0, filtered=[];
+
+  rules.forEach(function(r){
+    if(fn && r.name.toLowerCase().indexOf(fn)<0) return;
+    if(st){
+      if(st==='启用' && !r.enabled) return;
+      if(st==='停用' && r.enabled) return;
+    }
+    filtered.push(r);
+  });
+
+  filtered.forEach(function(r){
+    idx++;
+    var roomNames = r.rooms.map(function(rid){
+      var room = allRooms.find(function(x){return x.id===rid});
+      return room ? room.name : rid;
+    }).join('、');
+
+    rows += '<tr>'+
+      '<td class="chk"><input type="checkbox"></td>'+
+      '<td>'+idx+'</td>'+
+      '<td><b>'+r.name+'</b></td>'+
+      '<td><div class="rule-detail">'+r.rooms.length+' 个直播间<br><b style="color:#534AB7">'+roomNames+'</b></div></td>'+
+      '<td><span class="tag tag-orange">≥ '+r.minutes+' 分钟</span></td>'+
+      '<td><span class="tag tag-purple">'+r.tag+'</span></td>'+
+      '<td>'+(r.enabled?'<span class="tag tag-green">启用</span>':'<span class="tag tag-gray">停用</span>')+'</td>'+
+      '<td>'+r.time+'</td>'+
+      '<td class="act">'+
+        '<a class="btn-link" onclick="editRule('+r.id+')">编辑</a>'+
+        (r.enabled?'<a class="btn-link red" onclick="toggleRuleStatus('+r.id+',false)">停用</a>':'<a class="btn-link" onclick="toggleRuleStatus('+r.id+',true)">启用</a>')+
+        '<a class="btn-link red" onclick="deleteRule('+r.id+')">删除</a>'+
+      '</td>'+
+      '</tr>';
+  });
+
+  $('ruleTbody').innerHTML = rows || '<tr><td colspan="9" style="text-align:center;padding:40px;color:#c0c4cc">暂无规则数据</td></tr>';
+  $('ruleCount').textContent = filtered.length;
+}
+
+function resetRuleFilter(){
+  $('rfName').value='';
+  $('rfStatus').value='';
+  renderRules();
+}
+
+/* ====== Room Picker (Multi-select) ====== */
+function renderRoomPicker(selectedIds){
+  selectedIds = selectedIds || [];
+  var html = '';
+  allRooms.forEach(function(room){
+    var checked = selectedIds.indexOf(room.id)>=0 ? 'checked' : '';
+    var cls = checked ? 'selected' : '';
+    html += '<div class="room-item '+cls+'" onclick="toggleRoom(this)">'+
+      '<input type="checkbox" '+checked+'>'+
+      '<span class="rname">'+room.name+'</span>'+
+      '<span class="rid">'+room.id+'</span>'+
+      '</div>';
+  });
+  $('roomPicker').innerHTML = html || '<div style="padding:20px;text-align:center;color:#c0c4cc">暂无直播间</div>';
+}
+
+function filterRooms(keyword){
+  keyword = (keyword||'').toLowerCase();
+  document.querySelectorAll('#roomPicker .room-item').forEach(function(item){
+    var text = item.textContent.toLowerCase();
+    item.style.display = (text.indexOf(keyword)>=0)?'':'none';
+  });
+}
+
+function toggleRoom(el){
+  var chk = el.querySelector('input[type=checkbox]');
+  chk.checked = !chk.checked;
+  el.classList.toggle('selected', chk.checked);
+}
+
+function getSelectedRoomIds(){
+  var ids = [];
+  document.querySelectorAll('#roomPicker .room-item.selected').forEach(function(item){
+    ids.push(item.querySelector('.rid').textContent);
+  });
+  return ids;
+}
+
+/* ====== 新建/编辑（独立页） ====== */
+function openRuleEdit(){
+  editingId = null;
+  $('ruleEditTitle').textContent = '新建打标规则';
+  $('ruleEditCrumb').textContent = '新建规则';
+  $('rmName').value='';
+  $('rmMinutes').value='30';
+  $('rmTag').value='';
+  $('rmEnabled').checked=true;
+  $('switchLabel').textContent='启用';
+  $('rmRoomSearch').value='';
+  renderRoomPicker([]);
+  go('autoTagEdit');
+}
+
+function editRule(id){
+  var r = rules.find(function(x){return x.id===id});
+  if(!r) return;
+  editingId = id;
+  $('ruleEditTitle').textContent = '编辑打标规则';
+  $('ruleEditCrumb').textContent = '编辑规则';
+  $('rmName').value=r.name;
+  $('rmMinutes').value=r.minutes;
+  $('rmTag').value=r.tag;
+  $('rmEnabled').checked=r.enabled;
+  $('switchLabel').textContent=r.enabled?'启用':'停用';
+  $('rmRoomSearch').value='';
+  renderRoomPicker(r.rooms);
+  go('autoTagEdit');
+}
+
+function saveRule(){
+  var name=$('rmName').value.trim(),
+      mins=parseInt($('rmMinutes').value),
+      tag=$('rmTag').value,
+      rooms=getSelectedRoomIds();
+
+  if(!name){alert('请输入规则名称');return}
+  if(isNaN(mins)||mins<=0){alert('请输入有效的时长阈值');return}
+  if(!tag){alert('请选择目标标签');return}
+  if(rooms.length===0){alert('请至少选择一个关联直播间');return}
+
+  if(editingId){
+    var r = rules.find(function(x){return x.id===editingId});
+    if(r){r.name=name;r.rooms=rooms;r.minutes=mins;r.tag=tag;r.enabled=$('rmEnabled').checked}
+  } else {
+    rules.unshift({
+      id:rules.length?Math.max.apply(null,rules.map(function(x){return x.id}))+1:1,
+      name:name, rooms:rooms, minutes:mins, tag:tag,
+      enabled:$('rmEnabled').checked,
+      time:new Date().toLocaleString().replace(/\//g,'-')
+    });
+  }
+  go('autoTag');
+}
+
+function toggleRuleStatus(id,enabled){
+  var r = rules.find(function(x){return x.id===id});
+  if(r){r.enabled=enabled;renderRules()}
+}
+
+function deleteRule(id){
+  if(!confirm('确定删除该规则？')) return;
+  rules = rules.filter(function(x){return x.id!==id});
+  renderRules();
+}
+
+/* ====== Init（支持 #autoTag 直达，便于截图/分享） ====== */
+if(location.hash==='#autoTag'){ go('autoTag'); }
+else { renderLiveView(); }
 </script>
 
 </body>
