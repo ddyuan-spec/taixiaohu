@@ -6,178 +6,197 @@
 <title>优惠券体系 · 页面平铺</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f0f1f3;color:#333;font-size:13px}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f0f1f5;color:#333}
 
 /* Header */
-.hd{background:#fff;border-bottom:1px solid #e2e4e8;padding:14px 32px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:50}
-.hd h1{font-size:16px;font-weight:700;color:#1a1a2e}
-.hd .sub{font-size:12px;color:#999}
-.hd .search{margin-left:auto}
-.hd input{border:1px solid #d9d9d9;border-radius:6px;padding:7px 14px;width:200px;font-size:12px;outline:none}
-.hd input:focus{border-color:#534AB7;box-shadow:0 0 0 2px rgba(83,74,183,.12)}
+.hd{
+  background:#fff;border-bottom:1px solid #e2e4e8;
+  padding:16px 40px;display:flex;align-items:center;gap:14px;
+  position:sticky;top:0;z-index:50;
+}
+.hd h1{font-size:18px;font-weight:700;color:#1a1a2e}
+.hd .sub{font-size:13px;color:#999}
+.tot{font-size:13px;color:#888;margin-left:auto}
 
 /* Section */
-.sec{padding:24px 32px 16px}
+.sec{padding:26px 40px 8px}
 .sec-hd{display:flex;align-items:center;gap:10px;margin-bottom:18px}
-.sec-hd .dot{width:10px;height:10px;border-radius:3px}
-.sec-hd .dot-c{background:linear-gradient(135deg,#534AB7,#6C5CE7)}
-.sec-hd .dot-b{background:linear-gradient(135deg,#E8932B,#f6c77e)}
-.sec-hd h2{font-size:17px;font-weight:700;color:#1a1a2e}
-.sec-hd .cnt{font-size:12px;color:#aaa;background:#f5f5f5;padding:2px 10px;border-radius:10px}
+.sec-hd .dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.dot-c{background:linear-gradient(135deg,#534AB7,#6C5CE7)}
+.dot-b{background:linear-gradient(135deg,#E8932B,#f6c77e)}
+.sec-hd h2{font-size:18px;font-weight:700;color:#1a1a2e}
+.sec-hd .cnt{font-size:12.5px;color:#aaa;background:#f0f0f0;padding:3px 11px;border-radius:10px;font-weight:500}
 
-/* Grid */
-.grid{display:flex;flex-wrap:wrap;gap:18px}
+/* 横向分列 */
+.cols{display:flex;gap:36px;overflow-x:auto;padding-bottom:20px}
+.col{flex:0 0 auto;display:flex;flex-direction:column}
+.col.col-c{width:280px}          /* C端：手机窄图，缩窄 */
+.col.col-b{width:700px}          /* 后台：桌面宽图，加宽 */
+.col-hd{
+  font-size:15px;font-weight:700;color:#333;
+  padding:0 0 4px;margin-bottom:14px;
+  border-bottom:2px solid #d9dbe0;
+  display:flex;align-items:center;gap:8px;
+}
+.col-hd .tag{font-size:11px;padding:1px 7px;border-radius:4px;font-weight:600;flex-shrink:0}
+.tag-c{background:#EDE9FB;color:#534AB7}
+.tag-b{background:#FFF4E0;color:#B07A00}
 
-/* Card — 纯截图+名称+按钮 */
-.card{background:#fff;border-radius:10px;border:1px solid #e5e7eb;overflow:hidden;width:240px;flex-shrink:0;transition:box-shadow .2s,border-color .2s}
-.card:hover{box-shadow:0 6px 24px rgba(0,0,0,.09);border-color:#c5c8ce}
-.card-img-wrap{background:#fafbfc;overflow:hidden;cursor:pointer;line-height:0}
-.card-img{width:100%;height:auto;display:block;max-height:380px;object-fit:contain;transition:transform .2s}
-.card-img:hover{transform:scale(1.04)}
-.card-info{padding:10px 12px 12px}
-.card-name{font-size:13px;font-weight:600;color:#222;margin-bottom:8px;line-height:1.35}
-.card-btn-row{text-align:right}
-.btn-v{font-size:11.5px;padding:5px 16px;border-radius:5px;cursor:pointer;border:1px solid #d9d9d9;background:#fff;color:#555;transition:all .15s}
-.btn-v:hover{background:#534AB7;color:#fff;border-color:#534AB7}
+/* 列内：上下堆叠的页面 */
+.flow{display:flex;flex-direction:column}
+.node{margin-bottom:20px}
+.node .name{font-size:14px;font-weight:600;color:#333;padding:0 0 8px}
+.node img{width:100%;height:auto;display:block;cursor:pointer}
+.node .ph{width:100%;aspect-ratio:400/819;background:#eef0f3;border:2px dashed #c8ccd4;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#9aa0a8;gap:7px;margin-top:2px}
+.node .ph .big{font-size:16px;font-weight:700;color:#8b9199;letter-spacing:3px}
+.node .ph .sm{font-size:12px;color:#aab0b8;padding:0 10px;text-align:center;line-height:1.5}
 
-/* Modal */
-.ov{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
-.ov.show{display:flex}
-.md{background:#fff;border-radius:12px;width:860px;max-width:94vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.18)}
-.md-hd{padding:15px 20px;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.md-hd h3{font-size:15px;font-weight:700}
-.md-cl{cursor:pointer;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;color:#999;border:none;background:0 0;font-size:18px}
-.md-cl:hover{background:#f5f5f5;color:#333}
-.md-bd{overflow-y:auto;padding:18px 22px 26px;line-height:1.72;font-size:12.5px;flex:1}
-.md-bd h4{font-size:14px;font-weight:700;margin:14px 0 6px;color:#534AB7}
-.md-bd h4:first-child{margin-top:0}
-.md-bd p{margin:5px 0;color:#444}
-.md-bd table{width:100%;border-collapse:collapse;margin:8px 0;font-size:11.5px}
-.md-bd th,.md-bd td{border:1px solid #eee;padding:7px 10px;text-align:left}
-.md-bd th{background:#f8f8fc;font-weight:600;color:#666}
-.md-bd ul{padding-left:18px;margin:4px 0}
-.md-bd li{margin-bottom:2px}
-.md-bd img{max-width:100%;border-radius:8px;border:1px solid #eee;margin:8px 0;cursor:pointer}
-.md-bd img:hover{opacity:.85}
-
-/* Fullscreen img */
-.ifull{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.72);z-index:300;display:none;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px)}
+/* Fullscreen */
+.ifull{
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,.72);z-index:300;
+  display:none;align-items:center;justify-content:center;
+  cursor:pointer;backdrop-filter:blur(4px)
+}
 .ifull.show{display:flex}
-.ifull img{max-width:94vw;max-height:94vh;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.ifull img{max-width:96vw;max-height:96vh;border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
 
-.empty{text-align:center;padding:60px 20px;color:#bbb;font-size:14px}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+.empty{text-align:center;padding:80px 20px;color:#bbb;font-size:15px}
+::-webkit-scrollbar{height:7px;width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
 </style>
 </head>
 <body>
 
 <div class="hd">
-  <h1>🎫 优惠券体系新需求</h1>
-  <span class="sub">共 <strong id="tc">0</strong> 个页面</span>
-  <div class="search"><input placeholder="搜索页面…" oninput="flt()" id="si"></div>
+  <h1>🎫 优惠券体系新需求 · 页面平铺</h1>
+  <span class="sub">按页面跳转逻辑 · 同一组列表/详情上下排列，不同组横向分列 · 灰色虚框＝待补截图</span>
+  <span class="tot">共 <strong id="tc">0</strong> 张</span>
 </div>
 
-<!-- ===== C端（用户侧）===== -->
+<!-- C端 -->
 <div class="sec" id="secC">
   <div class="sec-hd"><div class="dot dot-c"></div><h2>C端（用户侧）</h2><span class="cnt" id="cntC">0</span></div>
-  <div class="grid" id="gridC"></div>
+  <div class="cols" id="colsC"></div>
 </div>
 
-<!-- ===== 后台（管理侧）===== -->
+<!-- 后台 -->
 <div class="sec" id="secB">
   <div class="sec-hd"><div class="dot dot-b"></div><h2>后台（管理侧）</h2><span class="cnt" id="cntB">0</span></div>
-  <div class="grid" id="gridB"></div>
+  <div class="cols" id="colsB"></div>
 </div>
 
 <div class="empty" id="empty" style="display:none">没有匹配的页面</div>
 
-<!-- Modal -->
-<div class="ov" id="ov" onclick="if(event.target===this)cls()">
-  <div class="md">
-    <div class="md-hd"><h3 id="mt">详情</h3><button class="md-cl" onclick="cls()">✕</button></div>
-    <div class="md-bd" id="mb"></div>
-  </div>
-</div>
-
 <div class="ifull" id="ifull" onclick="this.classList.remove('show')"></div>
 
 <script>
-// ========== 数据：side='C'=用户侧 / 'B'=后台 ==========
-const PG = [
-  // ── C端 ──
-  {side:'C',id:'App总览',title:'App 端原型总览',img:'coupon-prd-assets/coupon-app.png',
-   detail:`<h4>App 端原型总览</h4><p>App 端为全链路新增。本期新建：获券弹窗、我的优惠券页、确认订单选券/核销逻辑。</p><img src="coupon-prd-assets/coupon-app.png"><ul><li>H 首页 — 获券弹窗入口</li><li>M 商城 — 商品列表</li><li>U 我的 — 资产入口</li><li>C2 我的优惠券 — 券包三态</li><li>C5 商品详情 — 领券区</li><li>C6 确认订单 — 选券/核销</li><li>获券弹窗 — 系统发券触达</li></ul>`},
-  {side:'C',id:'获券弹窗',title:'获券弹窗（系统发券触达）',img:'coupon-prd-assets/coupon-app-arrival-modal.png',
-   detail:`<h4>获券弹窗（系统发券触达）</h4><p>满足发券活动触发条件时自动弹出。</p><img src="coupon-prd-assets/coupon-app-arrival-modal.png"><p>弹窗元素：顶部标题+图标 / 券列表（可含多张）/ 底部按钮「去使用」「查看我的券」</p>`},
-  {side:'C',id:'我的优惠券',title:'C2 我的优惠券（券包三态）',img:'coupon-prd-assets/coupon-c2-mycoupons.png',
-   detail:`<h4>C2 我的优惠券（券包三态）</h4><p>用户查看自己持有的全部优惠券，分三个 Tab 展示不同状态。</p><img src="coupon-prd-assets/coupon-c2-mycoupons.png"><table><tr><th>Tab</th><th>内容</th><th>空态</th></tr><tr><td>可使用</td><td>可用券卡片</td><td>暂无可用优惠券</td></tr><tr><td>已使用</td><td>已核销券（灰态）</td><td>暂无使用记录</td></tr><tr><td>已过期</td><td>过期券（灰态）</td><td>暂无过期券</td></tr></table>`},
-  {side:'C',id:'商品详情领券区',title:'C5 商品详情·领券区',img:'coupon-prd-assets/coupon-pd-coupon-list.png',
-   detail:`<h4>C5 商品详情 · 领券区</h4><p>价格区下方，折叠条 + 横向可滑动券列表。</p><img src="coupon-prd-assets/coupon-pd-coupon-list.png"><p>交互：默认折叠→点展开→横向滑动券卡片→每张「立即领取」按钮。</p>`},
-  {side:'C',id:'确认订单选券',title:'C6 确认订单·选券/核销',img:'coupon-prd-assets/coupon-c6-confirm-order.png',
-   detail:`<h4>C6 确认订单 · 选券/核销</h4><p>确认订单页价格摘要区「优惠券」可折叠行，点开展示可用券列表（Radio 单选）。</p><img src="coupon-prd-assets/coupon-c6-confirm-order.png"><p>默认选中推荐券（抵扣最大）；可选「不使用优惠券」；实时计算应付金额。</p>`},
-  {side:'C',id:'小程序H5',title:'小程序/H5 获券弹窗',img:'coupon-prd-assets/coupon-mini-h5.png',
-   detail:`<h4>小程序 / H5 端</h4><p>本期仅新增<b>获券弹窗</b>（同 App 端逻辑），外壳不同。</p><img src="coupon-prd-assets/coupon-mini-h5.png"><p>⚠️ 我的优惠券/下单核销为已有功能，本期不重做。</p>`},
-
-  // ── 后台 ──
-  {side:'B',id:'平台端总览',title:'平台端后台总览',img:'coupon-prd-assets/coupon-platform.png',
-   detail:`<h4>平台端后台总览</h4><p>左侧导航包含「优惠券管理」「发券活动管理」「数据看板」等模块。</p><img src="coupon-prd-assets/coupon-platform.png"><ul><li>P1 优惠券管理列表（沿用+补充列）</li><li>D1 券详情（新增）</li><li>D2 新建/编辑券（新增）</li><li>P2 发券活动列表（新增）</li><li>D3 规则引擎（新增）</li><li>P4 数据看板（新增）</li><li>P5 用户券查询（新增，嵌入会员管理）</li></ul>`},
-  {side:'B',id:'P1券列表',title:'P1 优惠券管理列表',img:'coupon-prd-assets/coupon-platform.png',
-   detail:`<h4>P1 优惠券管理列表</h4><p>沿用现有功能，本期补充「总库存」「创建日期」列与下架/删除按钮逻辑。</p>`},
-  {side:'B',id:'D1券详情',title:'D1 券详情',img:'coupon-prd-assets/coupon-d1-coupon-detail.png',
-   detail:`<h4>D1 券详情</h4><p>从 P1 列表点击「查看」进入。展示完整券配置信息（只读）。</p><img src="coupon-prd-assets/coupon-d1-coupon-detail.png"><p>含：券配置名称/编码/有效期/活动范围/商品选择/发放方式/状态。底部操作按钮：下架（进行中状态可点）。</p>`},
-  {side:'B',id:'D2新建编辑券',title:'D2 新建/编辑优惠券',img:'coupon-prd-assets/coupon-d2-new-coupon.png',
-   detail:`<h4>D2 新建/编辑优惠券</h4><p>规则引擎表单：券名称/类型/面额门槛/有效期/每人限领/发行量/适用范围。</p><img src="coupon-prd-assets/coupon-d2-new-coupon.png"><p>动态联动：券类型切换→面额门槛 label 变化；有效期类型切换→字段显隐。</p>`},
-  {side:'B',id:'P2发券活动',title:'P2 发券活动 + D3 规则引擎',img:'coupon-prd-assets/coupon-p2-send-list.png',
-   detail:`<h4>P2 发券活动 + D3 规则引擎</h4><p>P2：按触发源筛选的活动列表。</p><img src="coupon-prd-assets/coupon-p2-send-list.png"><p>D3：配置触发源/阈值/等级/券模板/每人上限/开始时间。</p><img src="coupon-prd-assets/coupon-d3-send-edit.png">`},
-  {side:'B',id:'P4数据看板',title:'P4 数据看板',img:'coupon-prd-assets/coupon-p4-dashboard.png',
-   detail:`<h4>P4 数据看板</h4><p>三维度 Tab：发放量/核销量/趋势图 + 券明细记录。</p><img src="coupon-prd-assets/coupon-p4-dashboard.png"><img src="coupon-prd-assets/coupon-p4-coupon-detail.png">`},
-  {side:'B',id:'P5用户券查询',title:'P5 用户券查询',img:'coupon-prd-assets/coupon-p5-user-coupon.png',
-   detail:`<h4>P5 用户券查询</h4><p>嵌入会员管理→用户详情页 Tab。按用户 ID/手机号查券实例。</p><img src="coupon-prd-assets/coupon-p5-user-coupon.png">`},
-  {side:'B',id:'商家端',title:'商家端后台',img:'coupon-prd-assets/coupon-merchant.png',
-   detail:`<h4>商家端后台</h4><p>首次具备券管理能力。交互同平台端，差异：数据隔离（仅本店铺券模板/活动）。</p><img src="coupon-prd-assets/coupon-merchant.png">`},
+// ========== 按跳转逻辑分组：col = 一组导航（列表→详情上下排列）；不同 col 横向排列 ==========
+const SECTIONS = [
+  {
+    side:'C', key:'C', name:'C端（用户侧）',
+    cols:[
+      {g:'我的 / 资产线', items:[
+        {title:'U 我的（资产入口）', img:'coupon-prd-assets/app-my-profile.png'},
+        {title:'C2 我的优惠券（空态）', img:'coupon-prd-assets/app-my-coupons-empty.png'},
+        {title:'C2 我的优惠券（可使用 / 已使用 / 已过期 三态）', ph:true},
+        {title:'我的订单列表', img:'coupon-prd-assets/app-my-orders.png'},
+      ]},
+      {g:'商城购买线', items:[
+        {title:'C5 商品详情', img:'coupon-prd-assets/app-product-detail.png'},
+        {title:'C5 商品详情·领券区', ph:true},
+        {title:'C5 优惠套餐选择弹窗', img:'coupon-prd-assets/app-product-deal-modal.png'},
+        {title:'C6 确认订单（无券态）', img:'coupon-prd-assets/app-confirm-order.png'},
+        {title:'C6 确认订单（含优惠券）', img:'coupon-prd-assets/app-confirm-order-with-coupon.png'},
+        {title:'收银台（支付方式）', img:'coupon-prd-assets/app-payment.png'},
+        {title:'支付成功', img:'coupon-prd-assets/app-payment-success.png'},
+      ]},
+      {g:'获券触达（系统发券）', items:[
+        {title:'获券弹窗（App 端系统发券触达）', ph:true},
+        {title:'获券弹窗（小程序 / H5 端）', ph:true},
+      ]},
+    ]
+  },
+  {
+    side:'B', key:'B', name:'后台（管理侧）',
+    cols:[
+      {g:'平台端·优惠券管理', items:[
+        {title:'P1 优惠券管理列表', img:'coupon-prd-assets/coupon-platform-new-form.png'},
+        {title:'P1 列表（双状态版·上架+使用状态）', img:'coupon-prd-assets/pf-dual-status.png'},
+        {title:'D1 券详情', img:'coupon-prd-assets/coupon-d1-coupon-detail.png'},
+        {title:'D2 新建/编辑优惠券', img:'coupon-prd-assets/coupon-d2-new-coupon.png'},
+        {title:'加库存弹窗（增加发行量）', img:'coupon-prd-assets/coupon-d1-increase-stock.png'},
+      ]},
+      {g:'平台端·发券活动', items:[
+        {title:'P2 发券活动列表', img:'coupon-prd-assets/coupon-p2-send-list.png'},
+        {title:'D3 新建/编辑发券活动', img:'coupon-prd-assets/coupon-d3-send-edit.png'},
+      ]},
+      {g:'平台端·数据看板', items:[
+        {title:'P4 数据看板', img:'coupon-prd-assets/coupon-p4-dashboard.png'},
+        {title:'P4 券明细记录', img:'coupon-prd-assets/coupon-p4-coupon-detail.png'},
+      ]},
+      {g:'平台端·用户券查询', items:[
+        {title:'P5 用户券查询', img:'coupon-prd-assets/coupon-p5-user-coupon.png'},
+      ]},
+      {g:'商家端后台', items:[
+        {title:'商家端·优惠券管理列表', img:'coupon-prd-assets/coupon-merchant.png'},
+        {title:'商家端·券详情', img:'coupon-prd-assets/coupon-merchant.png'},
+        {title:'商家端·新建优惠券', img:'coupon-prd-assets/coupon-merchant.png'},
+        {title:'商家端·发券活动列表', img:'coupon-prd-assets/coupon-merchant.png'},
+        {title:'商家端·新建发券活动', img:'coupon-prd-assets/coupon-merchant.png'},
+        {title:'商家端·用户券查询', img:'coupon-prd-assets/coupon-merchant.png'},
+      ]},
+      {g:'平台端·直播观看记录', items:[
+        {title:'直播观看记录', img:'coupon-prd-assets/pf-live-view-log.png'},
+      ]},
+      {g:'平台端·自动打标规则', items:[
+        {title:'自动打标规则', img:'coupon-prd-assets/pf-auto-tag.png'},
+      ]},
+    ]
+  },
 ];
 
 const $=id=>document.getElementById(id);
-const gC=$('gridC'),gB=$('gridB'),ov=$('ov'),mt=$('mt'),mb=$('mb'),ifull=$('ifull');
-let q='';
+const ifull=$('ifull');
+let total=0;
 
-function cardHTML(p){
-  return `<div class="card" data-id="${p.id}">
-    <div class="card-img-wrap"><img class="card-img" src="${p.img}" alt="${p.title}" loading="lazy" onclick="full('${p.img}')"></div>
-    <div class="card-info">
-      <div class="card-name">${p.title}</div>
-      <div class="card-btn-row"><button class="btn-v" onclick="openD('${p.id}')">查看详情</button></div>
-    </div></div>`;
+function nodeHTML(p, i){
+  const it = p.items[i];
+  const body = it.ph
+    ? `<div class="ph"><div class="big">待补</div><div class="sm">${it.title}</div></div>`
+    : `<img src="${it.img}" alt="${it.title}" loading="lazy" onclick="full('${it.img}')">`;
+  return `<div class="node">
+    <div class="name">${it.title}</div>
+    ${body}
+  </div>`;
 }
 
-function render(){
-  const f=PG.filter(p=>!q||p.title.includes(q)||p.id.includes(q));
-  const c=f.filter(p=>p.side==='C'),b=f.filter(p=>p.side==='B');
-  gC.innerHTML=c.map(cardHTML).join('');
-  gB.innerHTML=b.map(cardHTML).join('');
-  $('cntC').textContent=c.length;$('cntB').textContent=b.length;
-  $('tc').textContent=f.length;
-  $('empty').style.display=f.length?'none':'block';
-  $('secC').style.display=c.length?'':'none';
-  $('secB').style.display=b.length?'':'none';
+function colHTML(c, side){
+  const tagCls = side==='C'?'tag-c':'tag-b';
+  const label = side==='C'?'C':'B';
+  const cls = side==='C'?'col-c':'col-b';
+  const flow = c.items.map((_,i)=>nodeHTML(c,i)).join('');
+  return `<div class="col ${cls}">
+    <div class="col-hd"><span class="tag ${tagCls}">${label}</span>${c.g}</div>
+    <div class="flow">${flow}</div>
+  </div>`;
 }
 
-function flt(){q=$('si').value.trim();render()}
+function realCount(cols){return cols.reduce((s,c)=>s+c.items.filter(i=>!i.ph).length,0);}
 
-function openD(id){
-  const p=PG.find(x=>x.id===id);if(!p)return;
-  mt.textContent=p.title;mb.innerHTML=p.detail;
-  mb.querySelectorAll('img').forEach(im=>im.onclick=e=>{e.stopPropagation();full(im.src)});
-  ov.classList.add('show');
+function renderSection(sec){
+  const html = sec.cols.map(c=>colHTML(c, sec.side)).join('');
+  total += realCount(sec.cols);
+  return html;
 }
-function cls(){ov.classList.remove('show')}
-function full(src){ifull.innerHTML=`<img src="${src}">`;ifull.classList.add('show')}
 
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){if(ifull.classList.contains('show'))ifull.classList.remove('show');else cls()}
-});
+$('colsC').innerHTML = renderSection(SECTIONS[0]);
+$('colsB').innerHTML = renderSection(SECTIONS[1]);
+$('cntC').textContent = realCount(SECTIONS[0].cols);
+$('cntB').textContent = realCount(SECTIONS[1].cols);
+$('tc').textContent = total;
 
-render();
+function full(src){ifull.innerHTML=`<img src="${src}" onclick="event.stopPropagation()">`;ifull.classList.add('show')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')ifull.classList.remove('show')});
 </script>
 </body>
 </html>
