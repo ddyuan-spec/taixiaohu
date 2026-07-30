@@ -3,596 +3,100 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>优惠券体系 · App 端（用户侧）交互原型</title>
+<title>优惠券体系 · App 端原型</title>
 <style>
-:root{
-  --p:#534AB7; --p2:#6C5CE7; --pg:#ECE9FB; --ok:#1FA971; --warn:#E8932B; --bad:#E5484D;
-  --bg:#F4F5F9; --card:#fff; --t1:#534AB7; --t2:#1FA971; --t3:#E8932B; --t4:#8A8F9C; --line:#ECECF1;
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#f0f1f5;color:#23252b;
+  padding:32px 24px;
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#e9eaf0;color:#23252b;
-  display:flex;justify-content:center;gap:24px;padding:24px;align-items:flex-start;flex-wrap:wrap}
-/* 手机壳 */
-.phone{width:390px;height:844px;background:#fff;border:10px solid #15151f;border-radius:46px;
-  position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(20,20,40,.25)}
-.statusbar{height:44px;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:space-between;
-  padding:0 22px;font-size:13px;font-weight:600;flex:0 0 auto}
-.statusbar .r{display:flex;gap:6px;align-items:center}
-.statusbar .bat{width:22px;height:11px;border:1.5px solid #fff;border-radius:3px;position:relative;display:inline-block}
-.statusbar .bat::after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:5px;background:#fff;border-radius:0 1px 1px 0}
-.statusbar .bat::before{content:"";position:absolute;left:1.5px;top:1.5px;bottom:1.5px;width:13px;background:#fff;border-radius:1px}
-.screen{flex:1;overflow-y:auto;background:var(--bg);position:relative;scrollbar-width:thin}
-.screen::-webkit-scrollbar{width:0}
-.page{display:none}.page.active{display:block}
-/* 导航条 */
-.navbar{height:48px;background:var(--p);color:#fff;display:flex;align-items:center;padding:0 12px;
-  position:sticky;top:0;z-index:6;font-size:16px;font-weight:600;flex:0 0 auto}
-.navbar .back{font-size:22px;cursor:pointer;width:30px;line-height:1;user-select:none}
-.navbar .title{flex:1;text-align:center;margin-right:30px}
-.navbar .right{width:30px;text-align:right;font-size:13px;opacity:.9}
-/* 底部 tab */
-.tabbar{height:58px;background:#fff;border-top:1px solid var(--line);display:flex;flex:0 0 auto}
-.tabbar .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-  font-size:11px;color:#9aa0ad;cursor:pointer}
-.tabbar .tab .ic{font-size:20px;line-height:1}
-.tabbar .tab.on{color:var(--p)}
-.tabbar .tab.on .ic{transform:translateY(-1px)}
-/* 通用卡片/区块 */
-.sec{padding:12px}
-.sec-t{font-size:13px;color:var(--t4);margin:4px 4px 8px;font-weight:600}
-.card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(30,30,50,.05)}
-.tag{display:inline-block;padding:1px 7px;border-radius:6px;font-size:11px;font-weight:600;line-height:1.6}
-.tag.t1{background:var(--pg);color:var(--t1)}
-.tag.t2{background:#E6F7F0;color:var(--t2)}
-.tag.t3{background:#FDF1E3;color:var(--t3)}
-.tag.t4{background:#F0F1F4;color:var(--t4)}
-.btn{display:block;width:100%;border:none;border-radius:24px;padding:13px;font-size:15px;font-weight:700;
-  background:var(--p);color:#fff;cursor:pointer;text-align:center}
-.btn.ghost{background:#fff;color:var(--p);border:1px solid var(--p)}
-.btn.disabled{background:#cfd2db;color:#fff;cursor:not-allowed}
-.btn.sm{padding:8px 16px;width:auto;font-size:13px;border-radius:18px}
-/* 首页 */
-.search{margin:12px;border-radius:20px;background:#fff;padding:9px 14px;font-size:13px;color:#b6bac3;box-shadow:0 1px 3px rgba(30,30,50,.05)}
-.banner{margin:0 12px 12px;border-radius:16px;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:20px 18px}
-.banner .t{font-size:17px;font-weight:800}
-.banner .s{font-size:12.5px;opacity:.9;margin-top:6px}
-.demo-card{background:#fff;border-radius:14px;margin:0 12px 12px;padding:16px;box-shadow:0 1px 3px rgba(30,30,50,.05);border:1px dashed var(--p)}
-.demo-card .dh{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
-.demo-card .ds{font-size:12px;color:var(--t4);margin:6px 0 12px;line-height:1.6}
-.demo-btn{display:inline-block;background:var(--p);color:#fff;font-size:13px;font-weight:700;padding:10px 18px;border-radius:20px;cursor:pointer}
-.goods-grid{display:flex;flex-wrap:wrap;gap:10px;padding:0 12px}
-.gi{width:calc(50% - 5px);background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(30,30,50,.05);cursor:pointer}
-.gi .img{height:110px;background:linear-gradient(135deg,#ffd9a0,#ffb5c2);display:flex;align-items:center;justify-content:center;font-size:46px}
-.gi .nm{padding:8px 10px 2px;font-size:13px;font-weight:600;line-height:1.3}
-.gi .pr{padding:0 10px 10px;font-size:15px;color:var(--bad);font-weight:800}
-.gi .pr small{font-size:11px}
-/* 我的 */
-.profile{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:20px 16px 26px}
-.profile .av{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.25);font-size:24px;
-  display:flex;align-items:center;justify-content:center;margin-bottom:10px}
-.profile .nm{font-size:19px;font-weight:700}
-.profile .sub{font-size:12px;opacity:.85;margin-top:3px}
-.asset-row{display:flex;background:#fff;margin:-16px 12px 0;border-radius:14px;padding:14px 0;position:relative;
-  box-shadow:0 4px 14px rgba(30,30,50,.08)}
-.asset-row .it{flex:1;text-align:center;cursor:pointer}
-.asset-row .it .v{font-size:18px;font-weight:700;color:var(--p)}
-.asset-row .it .l{font-size:11px;color:var(--t4);margin-top:2px}
-.menu{background:#fff;margin:12px;border-radius:14px;overflow:hidden}
-.menu .mi{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer}
-.menu .mi:last-child{border-bottom:none}
-.menu .mi .ic{width:26px;font-size:18px;color:var(--p)}
-.menu .mi .tx{flex:1;font-size:14px}
-.menu .mi .ar{color:#c4c8d0;font-size:14px}
-/* 券包 */
-.tabs{display:flex;background:#fff;position:sticky;top:48px;z-index:5;border-bottom:1px solid var(--line)}
-.tabs .tb{flex:1;text-align:center;padding:13px 0;font-size:14px;color:#7a7f8c;position:relative;cursor:pointer}
-.tabs .tb.on{color:var(--p);font-weight:700}
-.tabs .tb.on::after{content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:28px;height:3px;background:var(--p);border-radius:2px}
-.coupon{display:flex;background:#fff;border-radius:14px;margin:10px 12px;overflow:hidden;box-shadow:0 1px 3px rgba(30,30,50,.05);position:relative}
-.coupon .lft{width:96px;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;display:flex;
-  flex-direction:column;align-items:center;justify-content:center;padding:12px 4px;position:relative}
-.coupon .lft .amt{font-size:26px;font-weight:800;line-height:1}
-.coupon .lft .amt small{font-size:13px;font-weight:700}
-.coupon .lft .cond{font-size:11px;opacity:.9;margin-top:4px;text-align:center}
-.coupon .lft::after{content:"";position:absolute;right:-6px;top:0;bottom:0;width:12px;
-  background:radial-gradient(circle at 6px 6px,transparent 5px,var(--bg) 5px) 0 0/12px 14px repeat-y}
-.coupon .rgt{flex:1;padding:12px 12px 12px 16px;display:flex;flex-direction:column}
-.coupon .rgt .nm{font-size:15px;font-weight:700}
-.coupon .rgt .ds{font-size:11.5px;color:var(--t4);margin-top:3px;flex:1}
-.coupon .rgt .bot{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
-.coupon .rgt .exp{font-size:11px;color:var(--t4)}
-.coupon .urg{position:absolute;top:8px;right:8px;background:var(--bad);color:#fff;font-size:10px;padding:1px 6px;border-radius:6px;font-weight:700}
-.coupon.gray{filter:grayscale(.9);opacity:.7}
-.coupon.gray .lft{background:#aeb2bd}
-/* 商城商品列表 */
-.gi-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border-radius:14px;margin:10px 12px;cursor:pointer;box-shadow:0 1px 3px rgba(30,30,50,.05)}
-.gi-item .img{width:50px;height:50px;border-radius:8px;background:var(--pg);display:flex;align-items:center;justify-content:center;font-size:22px}
-.gi-item .info{flex:1}
-.gi-item .info .nm{font-size:14px;font-weight:600}
-.gi-item .info .tag{margin-top:3px}
-.gi-item .pr{font-size:15px;font-weight:800;color:var(--bad)}
-/* 商品详情 */
-.pd-hero{height:240px;background:linear-gradient(135deg,#ffd9a0,#ffb5c2);display:flex;align-items:center;justify-content:center;font-size:64px}
-/* 商品详情 - 领券区（价格区下方，折叠条 + 横向可滑动券列表） */
-.pd-couponbar{margin:0 0 10px}
-.pd-coupon-fold{display:flex;align-items:center;background:linear-gradient(135deg,#fff3e6,#ffe9ef);margin:10px 12px;padding:12px 14px;border-radius:12px;border:1px dashed var(--warn);cursor:pointer;user-select:none}
-.pd-coupon-fold .txt{flex:1;font-size:13px;color:#7a4a1e}
-.pd-coupon-fold .txt b{color:var(--bad)}
-.pd-coupon-fold .arr{font-size:12px;color:var(--t4);transition:transform .2s;margin-left:4px}
-.pd-coupon-fold.open .arr{transform:rotate(180deg)}
-.pd-coupon-list{display:none;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:10px 12px 14px;gap:10px}
-.pd-coupon-list.show{display:flex}
-.pd-coupon-list::-webkit-scrollbar{height:4px}
-.pd-coupon-list::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px}
-.pd-ci{flex:0 0 auto;width:160px;background:linear-gradient(135deg,#fff,#fef9f3);border-radius:12px;border:1px solid #f0e0d0;overflow:hidden;position:relative}
-.pd-ci::before{content:'';position:absolute;top:0;left:0;right:0;height:28px;background:linear-gradient(135deg,#E5484D,#ff6b6a);border-radius:12px 12px 0 0}
-.pd-ci .ci-amt{position:relative;padding:6px 10px 0;color:#fff;font-size:20px;font-weight:800;z-index:1;line-height:1}
-.pd-ci .ci-amt small{font-size:11px;font-weight:400}
-.pd-ci .ci-body{padding:8px 10px 10px}
-.pd-ci .ci-nm{font-size:12px;font-weight:600;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pd-ci .ci-cond{font-size:11px;color:#888;margin-top:2px}
-.pd-ci .ci-lk{display:block;width:100%;margin-top:8px;border:none;border-radius:14px;padding:6px 0;font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all .15s}
-.pd-ci .ci-lk.claim{background:var(--bad);color:#fff}
-.pd-ci .ci-lk.claim:hover{background:#d63a40}
-.pd-ci .ci-lk.done{background:#eee;color:#aaa;cursor:default}
-.pd-info{padding:14px 16px}
-.pd-info .nm{font-size:18px;font-weight:700}
-.pd-info .pr{font-size:22px;color:var(--bad);font-weight:800;margin-top:6px}
-.pd-info .pr small{font-size:13px}
-.spec{display:flex;gap:8px;padding:10px 16px;flex-wrap:wrap}
-.spec .sp{padding:7px 14px;border:1px solid var(--line);border-radius:8px;font-size:13px;cursor:pointer}
-.spec .sp.on{border-color:var(--p);background:var(--pg);color:var(--p);font-weight:600}
-.fixbar{position:sticky;bottom:0;background:#fff;padding:10px 12px;border-top:1px solid var(--line);display:flex;gap:10px}
-/* 确认订单 */
-.co-goods{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}
-.co-goods .img{width:50px;height:50px;border-radius:8px;background:var(--pg);display:flex;align-items:center;justify-content:center;font-size:22px}
-.co-goods .nm{flex:1;font-size:13px}
-.co-goods .pr{font-size:14px;font-weight:700}
-.co-coupon .ci{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer}
-.co-coupon .ci .ck{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);margin-right:12px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px}
-.co-coupon .ci.on .ck{background:var(--p);border-color:var(--p)}
-.co-coupon .ci .amt{color:var(--bad);font-weight:700;font-size:15px;width:62px;flex:0 0 auto}
-.co-coupon .ci .nm{flex:1;font-size:13px}
-.co-coupon .ci .rec{font-size:10px;color:var(--ok);border:1px solid var(--ok);padding:0 5px;border-radius:5px;margin-left:6px}
-.co-line{display:flex;justify-content:space-between;padding:9px 14px;font-size:13px}
-.co-line .v{font-weight:600}
-.co-line.disc .v{color:var(--bad)}
-.co-pay{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 12px;display:flex;align-items:center;gap:12px}
-.co-pay .tot{flex:1;font-size:13px;color:var(--t4)}
-.co-pay .tot b{font-size:19px;color:var(--bad)}
-/* 弹窗 */
-.modal{position:absolute;inset:0;background:rgba(20,20,40,.5);display:none;align-items:center;justify-content:center;z-index:30}
-.modal.show{display:flex}
-.modal .box{background:#fff;border-radius:18px;width:280px;padding:24px 22px;text-align:center}
-.modal .box .em{width:56px;height:56px;border-radius:50%;background:#07c160;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
-.modal .box .em::after{content:'✓';color:#fff;font-size:30px;font-weight:700}
-.modal .box .t{font-size:17px;font-weight:700;margin:10px 0 6px}
-.modal .box .s{font-size:13px;color:var(--t4);margin-bottom:18px}
-/* 获券弹窗（系统发券触达，可多张） */
-.arrival .box{width:300px;padding:0;overflow:hidden}
-.arrival .box .hd{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:18px 20px;text-align:left}
-.arrival .box .hd .h1{font-size:16px;font-weight:800}
-.arrival .box .hd .h2{font-size:12px;opacity:.9;margin-top:4px}
-.arrival .box .list{padding:12px 14px;max-height:260px;overflow-y:auto}
-.arrival .ac{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:12px;margin-bottom:8px}
-.arrival .ac .amt{width:64px;flex:0 0 auto;text-align:center}
-.arrival .ac .amt b{font-size:20px;color:var(--bad);font-weight:800;line-height:1}
-.arrival .ac .amt span{display:block;font-size:10px;color:var(--t4)}
-.arrival .ac .info{flex:1}
-.arrival .ac .info .nm{font-size:13px;font-weight:600}
-.arrival .ac .info .cond{font-size:11px;color:var(--t4);margin-top:2px}
-.arrival .box .acts{padding:0 14px 16px;display:flex;gap:10px}
-.arrival .box .acts .btn{font-size:14px;padding:11px}
-/* toast */
-.toast{position:absolute;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(30,30,45,.92);color:#fff;
-  font-size:13px;padding:10px 18px;border-radius:22px;z-index:50;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap}
-.toast.show{opacity:1}
-/* 埋点标注 */
-.beacon{position:absolute;right:6px;bottom:6px;background:rgba(83,74,183,.12);color:var(--p);font-size:9px;
-  padding:1px 6px;border-radius:5px;font-weight:600;z-index:8;pointer-events:none}
-.empty{text-align:center;color:#b6bac3;font-size:13px;padding:50px 0}
-/* 侧栏 */
-.side{width:264px;background:#fff;border-radius:14px;padding:16px 14px;box-shadow:0 10px 30px rgba(20,20,40,.08);align-self:flex-start}
-.side h3{font-size:14px;margin-bottom:10px;color:var(--p)}
-.side .navbtn{display:block;width:100%;text-align:left;padding:9px 12px;border-radius:9px;color:#3a3d45;cursor:pointer;
-  font-size:13px;margin-bottom:5px;border:1px solid transparent}
-.side .navbtn:hover{background:var(--pg);border-color:var(--p)}
-.side .navbtn b{color:var(--p);margin-right:6px}
-.side .desc{font-size:11.5px;color:var(--t4);line-height:1.6;margin-top:8px;border-top:1px dashed var(--line);padding-top:10px}
-.side .desc b{color:#3a3d45}
-.webview-note{font-size:12px;color:#909399;background:#f4f4f5;padding:10px 14px;line-height:1.5}
-.webview{width:100%;flex:1;border:0;min-height:520px;background:#fff}
+.hd{text-align:center;margin-bottom:28px}
+.hd h1{font-size:20px;font-weight:700;color:#1a1a2e}
+.hd .sub{font-size:13px;color:#888;margin-top:4px}
+
+.grid{
+  display:flex;flex-wrap:wrap;gap:20px;justify-content:center;
+  max-width:1600px;margin:0 auto;
+}
+.card{
+  background:#fff;border-radius:12px;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+  overflow:hidden;width:320px;flex-shrink:0;
+}
+.card .name{
+  font-size:13px;font-weight:600;color:#444;
+  padding:10px 14px 8px;background:#fafbfc;
+  border-bottom:1px solid #eee;text-align:center;line-height:1.3;
+}
+.card img{
+  width:100%;height:auto;display:block;
+}
 </style>
 </head>
 <body>
 
-<!-- ============ 侧栏导航 ============ -->
-<div class="side">
-  <h3>优惠券体系 · App 端原型</h3>
-  <a class="navbtn" onclick="go('p_home')"><b>H</b>首页（获券弹窗入口）</a>
-  <a class="navbtn" onclick="go('p_mall')"><b>M</b>商城（商品列表）</a>
-  <a class="navbtn" onclick="go('p_me')"><b>U</b>我的（资产入口）</a>
-  <a class="navbtn" onclick="go('p_c2')"><b>C2</b>我的优惠券（券包）</a>
-  <a class="navbtn" onclick="go('p_c5')"><b>C5</b>商品详情</a>
-  <a class="navbtn" onclick="go('p_c6')"><b>C6</b>确认订单选券/核销</a>
-  <a class="navbtn" onclick="showArrival()"><b>⚡</b>获券弹窗（系统发券触达）</a>
-  <div class="desc">
-    <b>本期范围（App 端新增）</b>：获券弹窗（系统发券触达·可含多张）/ 我的优惠券（三态）/ 确认订单选券与下单核销。<br>
-    <b>不做</b>：消息中心（后台配置）、开屏三问、售后退券、用券规则详情页。<br>
-    <b>获券弹窗</b>对应后台「直播时长发券 / 指定发券」—— 选中多个券模板时每种各发 1 张。<br>
-    复用 C 端原型（live-client.html）样式体系；埋点标注同 PRD F 板块。
-  </div>
+<div class="hd">
+  <h1>🎫 优惠券体系 · App 端原型</h1>
+  <span class="sub">用户侧 — 实际截图</span>
 </div>
 
-<!-- ============ 手机壳 ============ -->
-<div class="phone">
-  <div class="statusbar">
-    <span>9:41</span>
-    <span class="r"><span>📶</span><span>🔋</span><span class="bat"></span></span>
-  </div>
-  <div class="screen" id="screen">
+<div class="grid">
 
-    <!-- 首页 H -->
-    <section class="page active" id="p_home">
-      <div class="search" onclick="toast('搜索（占位）')">🔍 搜索健康好物</div>
-      <div class="banner">
-        <div class="t">健康好物节</div>
-        <div class="s">领券下单更划算 · 全场券可叠加</div>
-      </div>
-      <div class="demo-card">
-        <div class="dh">⚡ 直播时长发券（满 30 分钟）</div>
-        <div class="ds">观看直播满 30 分钟，系统自动发放关联优惠券（每种 1 张）。</div>
-        <span class="demo-btn" onclick="showArrival()">进入直播间</span>
-      </div>
-      <div class="sec-t" style="margin:4px 16px 6px">为你推荐</div>
-      <div class="goods-grid" id="homeGoods"></div>
-      <div style="height:20px"></div>
-      <div class="beacon">home_view ／ coupon_arrival_push（系统发券触达）</div>
-    </section>
-
-    <!-- 商城 M -->
-    <section class="page" id="p_mall">
-      <div class="navbar"><div class="back" onclick="back()">‹</div><div class="title">商城</div></div>
-      <div class="sec-t" style="margin:8px 16px 4px">全部商品</div>
-      <div id="mallList"></div>
-      <div style="height:20px"></div>
-      <div class="beacon">mall_view ／ goods_click（进商品详情）</div>
-    </section>
-
-    <!-- 我的 U -->
-    <section class="page" id="p_me">
-      <div class="profile">
-        <div class="av">🐯</div>
-        <div class="nm">泰小虎用户</div>
-        <div class="sub">Lv4 · 健康生活家</div>
-      </div>
-      <div class="asset-row">
-        <div class="it" onclick="go('p_c2')"><div class="v" id="meCouponCnt">0</div><div class="l">我的优惠券</div></div>
-        <div class="it" onclick="toast('积分页面（占位）')"><div class="v">1280</div><div class="l">积分</div></div>
-        <div class="it" onclick="toast('卡包（占位）')"><div class="v">3</div><div class="l">卡包</div></div>
-      </div>
-      <div class="menu">
-        <div class="mi" onclick="go('p_c2')"><span class="ic">🎟️</span><span class="tx">我的优惠券</span><span class="ar">›</span></div>
-        <div class="mi" onclick="toast('我的订单（占位）')"><span class="ic">📦</span><span class="tx">我的订单</span><span class="ar">›</span></div>
-        <div class="mi" onclick="toast('设置（占位）')"><span class="ic">⚙️</span><span class="tx">设置</span><span class="ar">›</span></div>
-      </div>
-      <div class="beacon">mine_view ／ my_coupons_entry_click</div>
-    </section>
-
-    <!-- C2 我的优惠券（券包） -->
-    <section class="page" id="p_c2">
-      <div class="navbar"><div class="back" onclick="back()">‹</div><div class="title">我的优惠券</div></div>
-      <div class="tabs" id="c2Tabs">
-        <div class="tb on" data-st="unused" onclick="renderC2('unused')">可使用</div>
-        <div class="tb" data-st="used" onclick="renderC2('used')">已使用</div>
-        <div class="tb" data-st="expired" onclick="renderC2('expired')">已过期</div>
-      </div>
-      <div id="c2List"></div>
-      <div class="beacon">my_coupons_view</div>
-    </section>
-
-    <!-- C5 商品详情 -->
-    <section class="page" id="p_c5">
-      <div class="navbar"><div class="back" onclick="back()">‹</div><div class="title">商品详情</div></div>
-      <div class="pd-hero">🦐</div>
-      <div class="pd-info">
-        <div class="nm">虾·泰香脆Q56 泰国香米脆脆虾 56g</div>
-        <div class="pr">¥79<small> / 盒</small></div>
-      </div>
-      <div class="sec-t" style="margin:4px 16px 0">规格</div>
-      <div class="spec">
-        <div class="sp on" onclick="c5Spec(this)">56g 单盒</div>
-        <div class="sp" onclick="c5Spec(this)">112g 双盒装</div>
-        <div class="sp" onclick="c5Spec(this)">礼盒装</div>
-      </div>
-      <div style="height:70px"></div>
-      <div class="fixbar">
-        <button class="btn" onclick="goC5Buy()">立即购买</button>
-      </div>
-    </section>
-
-    <!-- C6 确认订单 -->
-    <section class="page" id="p_c6">
-      <div class="navbar"><div class="back" onclick="back()">‹</div><div class="title">确认订单</div></div>
-      <div class="card">
-        <div class="sec-t" style="margin:0 0 4px">商品</div>
-        <div class="co-goods">
-          <div class="img">🦐</div>
-          <div class="nm">虾·泰香脆Q56 56g<br><span style="color:#9aa0ad;font-size:11px">规格：56g 单盒</span></div>
-          <div class="pr">¥239</div>
-        </div>
-        <div class="co-line"><span>商品总价</span><span class="v">¥239.00</span></div>
-      </div>
-      <div class="card co-coupon">
-        <div class="sec-t" style="margin:0 0 4px">优惠券 <span style="font-weight:400;color:#9aa0ad">（手动勾选，系统已为你推荐最大抵扣）</span></div>
-        <div id="c6Coupons"></div>
-      </div>
-      <div class="card" style="margin-bottom:70px">
-        <div class="co-line disc"><span>优惠券抵扣</span><span class="v" id="c6Disc">-¥0.00</span></div>
-        <div class="co-line"><span>运费</span><span class="v">¥0.00</span></div>
-        <div class="co-line"><span>实付金额</span><span class="v" id="c6Total" style="color:var(--bad);font-size:18px">¥239.00</span></div>
-      </div>
-      <div class="co-pay">
-        <div class="tot">合计：<b id="c6Pay">¥239.00</b></div>
-        <button class="btn sm" id="c6Btn" onclick="c6Submit()" style="width:150px">领券购买</button>
-      </div>
-      <div class="beacon">order_coupon_buy_click（确认订单用券点击）</div>
-    </section>
-
-    <!-- 商品列表（去使用跳转目标） -->
-    <section class="page" id="p_goods">
-      <div class="navbar"><div class="back" onclick="back()">‹</div><div class="title">可用商品</div></div>
-      <div class="sec-t" style="margin:8px 16px 4px">以下商品可使用当前优惠券</div>
-      <div id="goodsList"></div>
-      <div style="height:70px"></div>
-      <div class="fixbar">
-        <button class="btn" onclick="go('p_c5')">去选购</button>
-      </div>
-    </section>
-
-  </div><!-- /screen -->
-
-  <!-- 领取成功弹窗（商品详情主动领券） -->
-  <div class="modal" id="claimModal">
-    <div class="box">
-      <div class="em"></div>
-      <div class="t">领取成功</div>
-      <div class="s" id="claimModalSub">恭喜！已放入您的卡包</div>
-      <div id="claimModalBtns"></div>
-    </div>
-  </div>
-
-  <!-- 获券弹窗（系统发券触达，可多张） -->
-  <div class="modal arrival" id="arrivalModal">
-    <div class="box">
-      <div class="hd">
-        <div class="h1">🎉 获得新优惠券</div>
-        <div class="h2" id="arrivalSub">直播观看满 30 分钟 · 已发放至卡包</div>
-      </div>
-      <div class="list" id="arrivalList"></div>
-      <div class="acts">
-        <button class="btn ghost" onclick="closeModal('arrivalModal');go('p_c2')">查看我的券</button>
-        <button class="btn" onclick="closeModal('arrivalModal');go('p_c5')">去使用</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 通用确认 toast -->
-  <div class="toast" id="toast"></div>
-
-  <!-- 底部 tab -->
-  <div class="tabbar">
-    <div class="tab on" id="tab_home" onclick="go('p_home')"><div class="ic">🏠</div><div>首页</div></div>
-    <div class="tab" id="tab_mall" onclick="go('p_mall')"><div class="ic">🛍️</div><div>商城</div></div>
-    <div class="tab" id="tab_me" onclick="go('p_me')"><div class="ic">👤</div><div>我的</div></div>
-  </div>
+<!-- ① 我的（个人中心） -->
+<div class="card">
+  <div class="name">U 我的（资产入口）</div>
+  <img src="coupon-prd-assets/app-my-profile.png" alt="我的">
 </div>
 
-<script>
-/* ============ 数据模型 ============ */
-// 我的券（已领取），status: unused/used/expired
-const myCoupons = [
-  {id:'MC001', name:'满200减40', type:'manjian', amt:40, cond:'满200元可用', scope:'全场通用',
-   conds:[{type:'订单金额(无优惠)满', value:200, unit:'元'}],
-   expire:'2026-07-20', status:'unused'},
-  {id:'MC002', name:'新人立减15', type:'cash', amt:15, cond:'无门槛', scope:'全场通用',
-   conds:[{type:'无使用门槛', value:'', unit:''}],
-   expire:'2026-08-15', status:'unused'},
-  {id:'MC003', name:'9折券(最高减30)', type:'discount', amt:30, cond:'满100元享9折', scope:'零食专区',
-   conds:[{type:'订单金额(无优惠)满', value:100, unit:'元'}, {type:'最高抵扣金额', value:30, unit:'元'}],
-   expire:'2026-07-18', status:'unused'},
-  {id:'MC004', name:'满150减20', type:'manjian', amt:20, cond:'满150元可用', scope:'全场通用',
-   conds:[{type:'订单金额(无优惠)满', value:150, unit:'元'}],
-   expire:'2026-06-30', status:'expired'},
-  {id:'MC005', name:'满99减10', type:'manjian', amt:10, cond:'满99元可用', scope:'全场通用',
-   conds:[{type:'订单金额(无优惠)满', value:99, unit:'元'}],
-   expire:'2026-07-10', status:'used'}
-];
-// 商品列表
-const goodsItems = [
-  {id:'G001',icon:'🦐',name:'虾·泰香脆Q56 泰国香米脆脆虾 56g',price:79},
-  {id:'G002',icon:'🍿',name:'零食大礼包 综合装（含坚果+果干）',price:129},
-  {id:'G003',icon:'🥛',name:'泰国香米 5kg 新米茉莉香米',price:59},
-  {id:'G004',icon:'🧴',name:'天然椰子油 冷压初榨 500ml',price:39}
-];
-// 确认订单
-const orderGoodsPrice = 239;
-let orderSel = [];
-// 获券弹窗数据（系统发券触达，每种 1 张，对应后台关联多券模板）
-const arrivedCoupons = [
-  {name:'新人立减15', type:'cash', amt:15, cond:'无门槛'},
-  {name:'满99减10', type:'manjian', amt:10, cond:'满99元可用'},
-  {name:'全场8折券', type:'discount', amt:20, cond:'满88元享8折'}
-];
+<!-- ② 我的优惠券（空态） -->
+<div class="card">
+  <div class="name">C2 我的优惠券（空态）</div>
+  <img src="coupon-prd-assets/app-my-coupons-empty.png" alt="我的优惠券">
+</div>
 
-/* ============ 路由 ============ */
-const stack = ['p_home'];
-function go(p){
-  document.querySelectorAll('.page').forEach(s=>s.classList.remove('active'));
-  const el = document.getElementById(p);
-  if(el) el.classList.add('active');
-  document.getElementById('tab_home').classList.toggle('on', p==='p_home');
-  document.getElementById('tab_mall').classList.toggle('on', p==='p_mall');
-  document.getElementById('tab_me').classList.toggle('on', p==='p_me'||p==='p_c2');
-  if(p!=='p_home') stack.push(p);
-  if(p==='p_home') renderHome();
-  if(p==='p_mall') renderMall();
-  if(p==='p_me') renderMe();
-  if(p==='p_c6') renderC6();
-  if(p==='p_c2') renderC2('unused');
-  if(p==='p_goods') renderGoods();
-  document.getElementById('screen').scrollTop = 0;
-}
-function back(){
-  stack.pop();
-  const prev = stack[stack.length-1] || 'p_home';
-  go(prev);
-}
-function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove('show'), 1800);
-}
-function closeModal(id){document.getElementById(id).classList.remove('show');}
+<!-- ③ 商品详情 -->
+<div class="card">
+  <div class="name">C5 商品详情</div>
+  <img src="coupon-prd-assets/app-product-detail.png" alt="商品详情">
+</div>
 
-/* ============ 首页 ============ */
-function renderHome(){
-  document.getElementById('homeGoods').innerHTML = goodsItems.map(g=>
-    '<div class="gi" onclick="go(\'p_c5\')">'
-    + '<div class="img">'+g.icon+'</div>'
-    + '<div class="nm">'+g.name+'</div>'
-    + '<div class="pr">¥'+g.price+'<small> / 起</small></div></div>'
-  ).join('');
-}
-/* ============ 商城 ============ */
-function renderMall(){
-  document.getElementById('mallList').innerHTML = goodsItems.map(g=>
-    '<div class="gi-item" onclick="go(\'p_c5\')">'
-    + '<div class="img">'+g.icon+'</div>'
-    + '<div class="info"><div class="nm">'+g.name+'</div><span class="tag t1">可用券</span></div>'
-    + '<div class="pr">¥'+g.price+'</div></div>'
-  ).join('');
-}
-/* ============ 我的 ============ */
-function renderMe(){
-  const n = myCoupons.filter(c=>c.status==='unused').length;
-  document.getElementById('meCouponCnt').textContent = n;
-}
-/* ============ C2 券包 ============ */
-let c2CurTab = 'unused';
-function renderC2(st){
-  c2CurTab = st || c2CurTab;
-  // update tabs
-  document.querySelectorAll('#c2Tabs .tb').forEach(t=>{
-    t.classList.toggle('on', t.dataset.st === c2CurTab);
-  });
-  // filter & render
-  const list = myCoupons.filter(c => c.status === c2CurTab);
-  const box = document.getElementById('c2List');
-  if(!list.length){
-    box.innerHTML = '<div class="empty">'+(c2CurTab==='unused'?'暂无可用优惠券':c2CurTab==='used'?'暂无已使用券':'暂无已过期券')+'</div>';
-    return;
-  }
-  box.innerHTML = list.map(c => {
-    const isGray = (c2CurTab !== 'unused');
-    const urg = (c.status==='unused' && new Date(c.expire) - new Date() < 3*86400000)
-      ? '<div class="urg">即将过期</div>' : '';
-    return '<div class="coupon'+(isGray?' gray':'')+'">'
-      + '<div class="lft"><div class="amt">¥'+c.amt+'</div><div class="cond">'+c.cond+'</div></div>'
-      + '<div class="rgt"><div class="nm">'+c.name+'</div>'
-      + '<div class="ds">适用：'+c.scope+'</div>'
-      + '<div class="bot"><span class="exp">有效期至 '+c.expire+'</span>'
-      + (c2CurTab==='unused'?'<span class="tag t1" style="font-size:10px;padding:1px 6px">去使用</span>':'')
-      + '</div></div>'+urg+'</div>';
-  }).join('');
-}
-/* ============ 获券弹窗（系统发券触达） ============ */
-function showArrival(){
-  document.getElementById('arrivalList').innerHTML = arrivedCoupons.map(c=>{
-    const amtHtml = c.type==='discount'
-      ? '<b>'+c.cond.replace(/[^\d折]/g,'').slice(0,2)+'折</b><span>折扣券</span>'
-      : '<b>¥'+c.amt+'</b><span>'+(c.type==='cash'?'无门槛':'满减')+'</span>';
-    return '<div class="ac"><div class="amt">'+amtHtml+'</div>'
-      + '<div class="info"><div class="nm">'+c.name+'</div><div class="cond">'+c.cond+'</div></div></div>';
-  }).join('');
-  document.getElementById('arrivalModal').classList.add('show');
-  // 同步放入我的券（每种 1 张）
-  arrivedCoupons.forEach(c=>{
-    const newId = 'MC'+(1000+myCoupons.length+1);
-    const exp = new Date('2026-07-17'); exp.setDate(exp.getDate()+30);
-    myCoupons.unshift({id:newId, name:c.name, type:c.type, amt:c.amt, cond:c.cond, scope:'全场通用',
-      conds:[], expire:exp.toISOString().slice(0,10), status:'unused'});
-  });
-  renderMe();
-}
+<!-- ④ 优惠套餐弹窗 -->
+<div class="card">
+  <div class="name">C5 优惠套餐选择弹窗</div>
+  <img src="coupon-prd-assets/app-product-deal-modal.png" alt="优惠套餐弹窗">
+</div>
 
-/* ============ C5 商品详情 ============ */
-function c5Spec(el){ document.querySelectorAll('.spec .sp').forEach(s=>s.classList.remove('on')); el.classList.add('on'); }
+<!-- ⑤ 确认订单（无券） -->
+<div class="card">
+  <div class="name">C6 确认订单（无券态）</div>
+  <img src="coupon-prd-assets/app-confirm-order.png" alt="确认订单无券">
+</div>
 
-/* C5 底栏「立即购买」→ 进 C6 */
-function goC5Buy(){
-  const claimed = myCoupons.filter(c=>c.status==='unused' && c.id==='MC002');
-  orderSel = claimed.length ? ['MC002'] : [];
-  go('p_c6');
-}
+<!-- ⑥ 确认订单（含券） -->
+<div class="card">
+  <div class="name">C6 确认订单（含优惠券）</div>
+  <img src="coupon-prd-assets/app-confirm-order-with-coupon.png" alt="确认订单含券">
+</div>
 
-/* ============ C6 确认订单 ============ */
-function renderC6(){
-  const avail = myCoupons.filter(c=>c.status==='unused' && orderGoodsPrice>=parseInt(c.cond.replace(/\D/g,'')));
-  const box = document.getElementById('c6Coupons');
-  if(!avail.length){ box.innerHTML='<div style="padding:14px;color:#9aa0ad;font-size:13px">暂无可用优惠券</div>'; }
-  else{
-    let maxId=null,maxAmt=0;
-    avail.forEach(c=>{ if(c.amt>maxAmt){maxAmt=c.amt;maxId=c.id;} });
-    box.innerHTML = avail.map(c=>{
-      const on = orderSel.includes(c.id);
-      const rec = (c.id===maxId)?'<span class="rec">推荐</span>':'';
-      return '<div class="ci'+(on?' on':'')+'" onclick="toggleOrderCoupon(\''+c.id+'\')">'
-        + '<div class="ck">'+(on?'✓':'')+'</div>'
-        + '<div class="amt">¥'+c.amt+'</div>'
-        + '<div class="nm">'+c.name+'<br><span style="font-size:11px;color:#9aa0ad">'+c.cond+'</span>'+rec+'</div>'
-        + '</div>';
-    }).join('');
-  }
-  c6Calc();
-}
-function toggleOrderCoupon(id){
-  if(orderSel.includes(id)) orderSel = orderSel.filter(x=>x!==id);
-  else orderSel.push(id);
-  renderC6();
-}
-function c6Calc(){
-  const sel = myCoupons.filter(c=>orderSel.includes(c.id));
-  const disc = sel.reduce((s,c)=>s+c.amt,0);
-  const total = orderGoodsPrice - disc;
-  document.getElementById('c6Disc').textContent = '-¥'+disc.toFixed(2);
-  document.getElementById('c6Total').textContent = '¥'+total.toFixed(2);
-  document.getElementById('c6Pay').textContent = '¥'+total.toFixed(2);
-  const btn = document.getElementById('c6Btn');
-  btn.classList.remove('disabled');
-  btn.textContent = sel.length?'领券购买':'确认购买';
-}
-function c6Submit(){
-  const sel = myCoupons.filter(c=>orderSel.includes(c.id));
-  const disc = sel.reduce((s,c)=>s+c.amt,0);
-  sel.forEach(c=>{ c.status='used'; });
-  toast('下单成功，已核销 '+(sel.length?sel.length+' 张券':'无券')+'，抵扣 ¥'+disc.toFixed(2));
-  orderSel = [];
-  setTimeout(()=>go('p_me'), 700);
-}
+<!-- ⑦ 我的订单 -->
+<div class="card">
+  <div class="name">我的订单列表</div>
+  <img src="coupon-prd-assets/app-my-orders.png" alt="我的订单">
+</div>
 
-/* ============ 商品列表（去使用目标） ============ */
-function renderGoods(){
-  document.getElementById('goodsList').innerHTML = goodsItems.map(g=>
-    '<div class="gi-item" onclick="go(\'p_c5\')">'
-    + '<div class="img">'+g.icon+'</div>'
-    + '<div class="info"><div class="nm">'+g.name+'</div></div>'
-    + '<div class="pr">¥'+g.price+'</div></div>'
-  ).join('');
-}
+<!-- ⑧ 收银台 -->
+<div class="card">
+  <div class="name">收银台（支付方式）</div>
+  <img src="coupon-prd-assets/app-payment.png" alt="收银台">
+</div>
 
-/* 初始化 */
-renderHome();
-</script>
+<!-- ⑨ 支付成功 -->
+<div class="card">
+  <div class="name">支付成功</div>
+  <img src="coupon-prd-assets/app-payment-success.png" alt="支付成功">
+</div>
+
+</div>
 </body>
 </html>
