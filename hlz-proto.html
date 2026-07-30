@@ -55,17 +55,6 @@
   .fi-label{width:84px;font-size:13px;color:#606266;text-align:right;flex-shrink:0}
   .fi-body{flex:1;min-width:0;position:relative}
   .filter-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px;padding-top:12px;border-top:1px dashed #e3e0f5}
-  /* 下拉多选（标签筛选项） */
-  .ms-wrap{display:flex;align-items:center;justify-content:space-between;height:34px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:13px;background:#fff;cursor:pointer;min-width:260px}
-  .ms-wrap:hover{border-color:#7C3AED}
-  .ms-placeholder{color:#c0c4cc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .ms-placeholder.filled{color:#333}
-  .ms-arrow{color:#909399;font-size:12px;flex-shrink:0;margin-left:8px}
-  .ms-panel{display:none;position:absolute;top:40px;left:0;right:0;background:#fff;border:1px solid #dcdfe6;border-radius:6px;box-shadow:0 6px 20px rgba(0,0,0,.12);padding:8px 10px;z-index:20;max-height:200px;overflow:auto}
-  .ms-panel.show{display:block}
-  .ms-opt{display:flex;align-items:center;gap:6px;font-size:13px;color:#444;padding:5px 4px;cursor:pointer;border-radius:4px}
-  .ms-opt:hover{background:#f6f4ff}
-  .ms-opt input{margin:0}
   .req{color:#dc2626;font-weight:700}
   .op-remark{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .filter-bar input,.filter-bar select{height:32px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:12px;color:#333;line:none;background:#fff}
@@ -327,34 +316,26 @@
       <div class="bstep">
         <div class="bstep-title">选择人员</div>
 
-        <!-- 统一筛选区：多个筛选项先选，点「搜索」一次性触发 -->
+        <!-- 统一筛选区：活动标签（单选）或手机号，二选一搜索 -->
         <div class="filter-zone">
           <div class="filter-item">
-            <label class="fi-label">标签</label>
+            <label class="fi-label">活动标签</label>
             <div class="fi-body">
-              <div class="ms-wrap" id="tagMs" onclick="toggleTagPanel(event)">
-                <span class="ms-placeholder" id="tagMsText">请选择标签（可多选）</span>
-                <span class="ms-arrow">▾</span>
-              </div>
-              <div class="ms-panel" id="tagMsPanel">
-                <label class="ms-opt"><input type="checkbox" class="ms-cb" value="高活跃" onchange="onTagCheck(this)"> 高活跃</label>
-                <label class="ms-opt"><input type="checkbox" class="ms-cb" value="沉睡用户" onchange="onTagCheck(this)"> 沉睡用户</label>
-                <label class="ms-opt"><input type="checkbox" class="ms-cb" value="新用户" onchange="onTagCheck(this)"> 新用户</label>
-                <label class="ms-opt"><input type="checkbox" class="ms-cb" value="付费用户" onchange="onTagCheck(this)"> 付费用户</label>
-                <label class="ms-opt"><input type="checkbox" class="ms-cb" value="VIP会员" onchange="onTagCheck(this)"> VIP会员</label>
-                <label class="ms-opt"><input type="checkbox" class="ms-cb" value="风险用户" onchange="onTagCheck(this)"> 风险用户</label>
-              </div>
+              <select class="fr-input" id="inpTag" style="width:260px">
+                <option value="">请选择活动标签</option>
+                <option value="双11大促">双11大促</option>
+                <option value="周年庆">周年庆</option>
+                <option value="新人专享">新人专享</option>
+                <option value="会员日">会员日</option>
+                <option value="沉睡唤醒">沉睡唤醒</option>
+                <option value="618复盘">618复盘</option>
+              </select>
             </div>
           </div>
 
           <div class="filter-item">
-            <label class="fi-label">手机号/昵称</label>
-            <div class="fi-body"><input class="fr-input" id="inpPhone" placeholder="支持手机号或昵称模糊搜索"></div>
-          </div>
-
-          <div class="filter-item">
-            <label class="fi-label">用户ID</label>
-            <div class="fi-body"><input class="fr-input" id="inpIds" placeholder="多个用逗号隔开"></div>
+            <label class="fi-label">手机号</label>
+            <div class="fi-body"><input class="fr-input" id="inpPhone" placeholder="请输入手机号" style="width:260px"></div>
           </div>
 
           <div class="filter-actions">
@@ -390,9 +371,7 @@
           <option value="违规处罚">违规处罚</option>
           <option value="系统调整">系统调整</option>
           <option value="误操作退回">误操作退回</option>
-          <option value="__other__">其他（自定义）</option>
         </select>
-        <input class="fr-input" id="batchOther" placeholder="请输入自定义理由" style="width:320px;display:none;margin-top:10px" maxlength="50">
       </div>
 
       <!-- 步骤3 填写数量 -->
@@ -617,28 +596,28 @@ if (typeof URL !== 'undefined' && typeof URL.createObjectURL !== 'function') {
 }
 // ========== 模拟用户库（用于搜索/全选/导入匹配） ==========
 const userBase = [
-  {uid:'U_10001',name:'张三',phone:'138****1234'},
-  {uid:'U_10002',name:'李四',phone:'139****5678'},
-  {uid:'U_10003',name:'王五',phone:'137****9012'},
-  {uid:'U_10004',name:'赵六',phone:'136****3456'},
-  {uid:'U_10005',name:'孙七',phone:'135****7890'},
-  {uid:'U_10006',name:'周八',phone:'134****2345'},
-  {uid:'U_10007',name:'吴九',phone:'133****6789'},
-  {uid:'U_10008',name:'郑十',phone:'132****0123'},
+  {uid:'U_10001',name:'张三',phone:'13812341234'},
+  {uid:'U_10002',name:'李四',phone:'13912345678'},
+  {uid:'U_10003',name:'王五',phone:'13712349012'},
+  {uid:'U_10004',name:'赵六',phone:'13612343456'},
+  {uid:'U_10005',name:'孙七',phone:'13512347890'},
+  {uid:'U_10006',name:'周八',phone:'13412342345'},
+  {uid:'U_10007',name:'吴九',phone:'13312346789'},
+  {uid:'U_10008',name:'郑十',phone:'13212340123'},
 ];
 
 // ========== 操作记录数据（本期新增） ==========
 let operations = [
   {id:1,time:'2026-07-28 15:04:48',type:'grant',operator:'admin_zhang',count:3,total:300,reason:'客服补偿',remark:'双11活动补偿，客服工单#88231',
-    users:[{name:'张三',uid:'U_10001',phone:'138****1234',amt:100},{name:'王五',uid:'U_10003',phone:'137****9012',amt:100},{name:'赵六',uid:'U_10004',phone:'136****3456',amt:100}]},
+    users:[{name:'张三',uid:'U_10001',phone:'13812341234',amt:100},{name:'王五',uid:'U_10003',phone:'13712349012',amt:100},{name:'赵六',uid:'U_10004',phone:'13612343456',amt:100}]},
   {id:2,time:'2026-07-28 14:23:15',type:'deduct',operator:'admin_li',count:5,total:-100,reason:'违规处罚',remark:'刷单违规处罚，风控单#R20260728',
-    users:[{name:'李四',uid:'U_10002',phone:'139****5678',amt:20},{name:'周八',uid:'U_10006',phone:'134****2345',amt:20},{name:'吴九',uid:'U_10007',phone:'133****6789',amt:20},{name:'郑十',uid:'U_10008',phone:'132****0123',amt:20},{name:'孙七',uid:'U_10005',phone:'135****7890',amt:20}]},
+    users:[{name:'李四',uid:'U_10002',phone:'13912345678',amt:20},{name:'周八',uid:'U_10006',phone:'13412342345',amt:20},{name:'吴九',uid:'U_10007',phone:'13312346789',amt:20},{name:'郑十',uid:'U_10008',phone:'13212340123',amt:20},{name:'孙七',uid:'U_10005',phone:'13512347890',amt:20}]},
   {id:3,time:'2026-07-27 09:45:30',type:'grant',operator:'admin_wang',count:2,total:100,reason:'活动奖励补发',remark:'618复盘补发',
-    users:[{name:'张三',uid:'U_10001',phone:'138****1234',amt:50},{name:'李四',uid:'U_10002',phone:'139****5678',amt:50}]},
+    users:[{name:'张三',uid:'U_10001',phone:'13812341234',amt:50},{name:'李四',uid:'U_10002',phone:'13912345678',amt:50}]},
   {id:4,time:'2026-07-26 16:08:22',type:'deduct',operator:'admin_zhang',count:1,total:-200,reason:'系统调整',remark:'数据迁移回滚',
-    users:[{name:'王五',uid:'U_10003',phone:'137****9012',amt:200}]},
+    users:[{name:'王五',uid:'U_10003',phone:'13712349012',amt:200}]},
   {id:5,time:'2026-07-25 11:33:07',type:'grant',operator:'admin_zhang',count:4,total:120,reason:'体验回馈',remark:'新版本体验回馈',
-    users:[{name:'赵六',uid:'U_10004',phone:'136****3456',amt:30},{name:'孙七',uid:'U_10005',phone:'135****7890',amt:30},{name:'周八',uid:'U_10006',phone:'134****2345',amt:30},{name:'吴九',uid:'U_10007',phone:'133****6789',amt:30}]},
+    users:[{name:'赵六',uid:'U_10004',phone:'13612343456',amt:30},{name:'孙七',uid:'U_10005',phone:'13512347890',amt:30},{name:'周八',uid:'U_10006',phone:'13412342345',amt:30},{name:'吴九',uid:'U_10007',phone:'13312346789',amt:30}]},
 ];
 
 // ========== 侧栏高亮 ==========
@@ -689,21 +668,14 @@ function resetFilter(){
 // ========== 批量赠送/扣除弹窗 ==========
 let batchType = 'grant';
 let selectedUsers = new Map();   // uid -> {uid,name,phone,source:'filter'|'import'}
-let selectedTags = [];           // 标签下拉多选当前选中值
 
 function openBatch(type){
   batchType = type;
   selectedUsers.clear();
   document.getElementById('batchReason').value='';
-  document.getElementById('batchOther').style.display='none';
-  document.getElementById('batchOther').value='';
   document.getElementById('batchAmount').value='';
+  document.getElementById('inpTag').value='';
   document.getElementById('inpPhone').value='';
-  document.getElementById('inpIds').value='';
-  selectedTags=[];
-  document.querySelectorAll('.ms-cb').forEach(c=>c.checked=false);
-  updateTagText();
-  const tp=document.getElementById('tagMsPanel'); if(tp) tp.classList.remove('show');
   document.getElementById('batchRemark').value='';
   document.getElementById('remarkCount').textContent='0';
   renderTarget();
@@ -748,73 +720,36 @@ function removeUser(uid){
   selectedUsers.delete(uid);
   renderTarget();
 }
-// ========== 标签下拉多选 ==========
-function toggleTagPanel(e){
-  if(e) e.stopPropagation();
-  const panel = document.getElementById('tagMsPanel');
-  if(panel) panel.classList.toggle('show');
-}
-function onTagCheck(cb){
-  if(cb.checked){ if(!selectedTags.includes(cb.value)) selectedTags.push(cb.value); }
-  else { selectedTags = selectedTags.filter(t=>t!==cb.value); }
-  updateTagText();
-}
-function updateTagText(){
-  const el = document.getElementById('tagMsText');
-  if(!el) return;
-  el.textContent = selectedTags.length ? selectedTags.join('、') : '请选择标签（可多选）';
-  el.classList.toggle('filled', selectedTags.length>0);
-}
-// 点击空白处收起下拉
-document.addEventListener('click', function(e){
-  const wrap = document.getElementById('tagMs');
-  const panel = document.getElementById('tagMsPanel');
-  if(wrap && panel && !wrap.contains(e.target) && !panel.contains(e.target)){
-    panel.classList.remove('show');
-  }
-});
-
-// ========== 统一筛选：所有条件先选，点「搜索」一次性触发 ==========
+// ========== 统一筛选：活动标签（单选）或手机号，二选一搜索 ==========
 function runFilter(){
+  const tag = document.getElementById('inpTag').value.trim();
   const phone = document.getElementById('inpPhone').value.trim();
-  const ids = document.getElementById('inpIds').value.trim();
-  const tags = selectedTags;
-  if(!tags.length && !phone && !ids){
-    showToast('请至少设置一个筛选条件','err'); return;
+  // 活动标签与手机号互斥：不可同时作为搜索条件
+  if(tag && phone){
+    showToast('活动标签与手机号不可同时搜索，请只保留一种方式','err'); return;
   }
-  // 演示：模拟服务端 GET /api/admin/users?tags=&phone=&ids= 的命中结果
-  const idArr = ids ? ids.split(/[,，\s]+/).map(s=>s.toLowerCase()) : [];
-  const matched = userBase.filter((u,i)=>{
-    let ok = true;
-    if(tags.length){ ok = ok && (i < 4 + (tags.length % 3)); }            // 演示：按标签取模命中
-    if(phone){ ok = ok && (u.phone.includes(phone) || u.name.includes(phone)); }
-    if(idArr.length){ ok = ok && idArr.includes(u.uid.toLowerCase()); }
-    return ok;
-  });
+  if(!tag && !phone){
+    showToast('请选择活动标签或输入手机号','err'); return;
+  }
+  // 演示：模拟服务端查询 GET /api/admin/users?tag= 或 ?phone=
+  let matched;
+  if(tag){
+    matched = userBase.filter((u,i)=> i < 4 + (tag.length % 3));   // 演示：按标签取模命中
+  }else{
+    matched = userBase.filter(u=> u.phone.includes(phone));
+  }
   let added=0;
   matched.forEach(u=>{ if(!selectedUsers.has(u.uid)){ addUser({...u},'filter'); added++; } });
-  const cond=[];
-  if(tags.length) cond.push('标签['+tags.join('/')+']');
-  if(phone) cond.push('手机号/昵称['+phone+']');
-  if(idArr.length) cond.push('用户ID['+ids+']');
-  showToast('按 '+cond.join(' + ')+' 命中并加入 '+added+' 人', added?'success':'err');
+  const cond = tag ? ('活动标签['+tag+']') : ('手机号['+phone+']');
+  showToast('按 '+cond+' 命中并加入 '+added+' 人', added?'success':'err');
 }
 function resetFilterAll(){
+  document.getElementById('inpTag').value='';
   document.getElementById('inpPhone').value='';
-  document.getElementById('inpIds').value='';
-  selectedTags=[];
-  document.querySelectorAll('.ms-cb').forEach(c=>c.checked=false);
-  updateTagText();
-  const tp=document.getElementById('tagMsPanel'); if(tp) tp.classList.remove('show');
   [...selectedUsers.values()].forEach(u=>{ if(u.source==='filter') selectedUsers.delete(u.uid); });
   renderTarget();
   showToast('已重置筛选条件','success');
 }
-
-// 理由 → 其他自定义
-document.getElementById('batchReason').addEventListener('change', function(){
-  document.getElementById('batchOther').style.display = this.value==='__other__' ? 'block' : 'none';
-});
 
 // ========== 批量导入表格 ==========
 function downloadTemplate(){
@@ -870,13 +805,11 @@ function submitBatch(){
   const amt = parseInt(document.getElementById('batchAmount').value);
   if(!amt || amt<=0){ showToast('请输入有效的数量','err'); return; }
   const rsel = document.getElementById('batchReason').value;
-  const other = document.getElementById('batchOther').value.trim();
-  if(!rsel && !other){ showToast('请选择或填写理由','err'); return; }
-  if(rsel==='__other__' && !other){ showToast('请输入自定义理由','err'); return; }
+  if(!rsel){ showToast('请选择理由','err'); return; }
   const remark = document.getElementById('batchRemark').value.trim();
   if(!remark){ showToast('请填写备注（必填，最多 500 字）','err'); return; }
   if(remark.length>500){ showToast('备注超出 500 字上限','err'); return; }
-  const reason = rsel==='__other__' ? other : rsel;
+  const reason = rsel;
   const sign = batchType==='grant' ? 1 : -1;
   const total = sign * amt * selectedUsers.size;
   const users = [...selectedUsers.values()].map(u=>({name:u.name, uid:u.uid, phone:u.phone, amt}));
