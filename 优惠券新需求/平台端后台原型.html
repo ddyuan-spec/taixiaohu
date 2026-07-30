@@ -112,6 +112,18 @@
   .fr-input:focus{border-color:#534AB7}
   .fr-input.wide{width:400px}
   textarea.fr-input{height:auto;min-height:72px;padding:8px 10px;resize:vertical;line-height:1.6}
+  /* ===== 券规则说明 富文本编辑器 ===== */
+  .rich-box{border:1px solid #dcdfe6;border-radius:4px;overflow:hidden;background:#fff}
+  .rich-toolbar{display:flex;align-items:center;gap:8px;padding:6px 10px;background:#fafafa;border-bottom:1px solid #ebeef5}
+  .rich-toolbar button{height:26px;min-width:30px;padding:0 8px;border:1px solid #dcdfe6;background:#fff;border-radius:3px;cursor:pointer;font-size:12px;color:#606266}
+  .rich-toolbar button:hover{color:#534AB7;border-color:#534AB7}
+  .rich-editor{min-height:120px;max-height:360px;overflow:auto;padding:10px 12px;line-height:1.7;font-size:13px;outline:none}
+  .rich-editor:empty:before{content:attr(data-placeholder);color:#c0c4cc}
+  .rich-editor img{max-width:100%;border-radius:4px;margin:4px 0;display:block}
+  .rich-count{text-align:right;font-size:12px;color:#909399;padding:4px 10px;background:#fafafa;border-top:1px solid #ebeef5}
+  .rich-count.over{color:#f56c6c}
+  .rich-view{min-height:40px;padding:10px 12px;line-height:1.7;font-size:13px;border:1px solid #ebeef5;border-radius:4px;background:#fafafa}
+  .rich-view img{max-width:100%;border-radius:4px;margin:4px 0;display:block}
   select.fr-input{width:auto;min-width:140px}
 
   /* Radio Group */
@@ -356,7 +368,7 @@
 
   <div class="filter-bar">
     <input placeholder="活动名称" id="sfName">
-    <select id="sfType"><option value="">触发源</option><option>直播时长</option><option>支付完成</option><option>注册完成</option><option>首单完成</option><option>连续签到</option><option>浏览商品</option><option>分享活动</option></select>
+    <select id="sfType"><option value="">触发源</option><option value="live">直播时长</option></select>
     <select id="sfStatus"><option value="">状态</option><option>进行中</option><option>未开始</option><option>已结束</option></select>
     <button class="btn-primary btn-sm" onclick="renderSends()">搜索</button>
     <button class="btn-ghost btn-sm" onclick="$('sfName').value='';renderSends()">重置</button>
@@ -429,7 +441,7 @@
       <table class="tbl">
         <thead>
           <tr>
-            <th>券名称</th><th>类型</th><th>发放量</th><th>已领</th><th>已核销</th><th>核销率</th><th>核销金额</th>
+            <th>券名称</th><th>类型</th><th>发放量</th><th>已领</th><th>已核销</th><th>核销率</th><th>核销金额</th><th>已支付（笔）</th><th>退单（量/金额）</th>
           </tr>
         </thead>
         <tbody id="boardTbody"></tbody>
@@ -600,6 +612,10 @@
       <label class="fr-label">使用状态</label>
       <div class="fr-body" id="cdUsageStatusTag">-</div>
     </div>
+    <div class="form-row">
+      <label class="fr-label">券规则说明</label>
+      <div class="fr-body"><div class="rich-view" id="cdRuleDesc">-</div></div>
+    </div>
   </div>
 
   <div class="form-actions">
@@ -618,7 +634,7 @@
     <div class="fs-title">基本信息</div>
     <div class="form-row">
       <label class="fr-label">券配置名称</label>
-      <div class="fr-body"><input class="fr-input wide" id="cpName" placeholder="请填写"><span class="fr-hint">该配置名称不展示给用户仅作内部识别用</span></div>
+      <div class="fr-body"><input class="fr-input wide" id="cpName" placeholder="请填写"></div>
     </div>
     <div class="form-row">
       <label class="fr-label">有效时间</label>
@@ -653,14 +669,12 @@
         <label class="radio-item"><input type="checkbox" name="cpShare" value="zhenxiang_points"> 臻享积分</label>
         <label class="radio-item"><input type="checkbox" name="cpShare" value="multi_box"> 多盒多折</label>
         <label class="radio-item"><input type="checkbox" name="cpShare" value="same_coupon"> 同名券</label>
-        <span class="fr-hint">默认全部不选中，即该券不与任何其他优惠共用；勾选后可与所选优惠叠加计算</span>
       </div>
     </div>
     <div class="form-row">
       <label class="fr-label">阶梯优惠券</label>
       <div class="fr-body">
         <label class="radio-item"><input type="checkbox" id="cpLadder" onchange="cpUpdateLadderPreview()"> 开启阶梯优惠（每满即减，可叠加计算）</label>
-        <div class="fr-hint">默认不选中。勾选后按「每满 X 元减 Y 元」循环计算，订单金额每达到一个 X 的整数倍即多减一份 Y。</div>
         <div id="cpLadderPreview" class="hidden" style="margin-top:8px;padding:10px 12px;background:#f7f6ff;border:1px solid #e2ddff;border-radius:4px;font-size:12px;color:#606266;line-height:1.9"></div>
       </div>
     </div>
@@ -678,6 +692,21 @@
         <div style="margin-bottom:8px;font-size:13px;color:#606266">商品信息<span id="cpProdCount" style="color:#534AB7;margin-left:4px"></span></div>
         <button class="btn-ghost btn-sm" onclick="openProductPicker()" id="cpAddProdBtn">＋ 添加商品</button>
         <div id="cpSelectedProds" class="prod-selected-list"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="fr-label">券规则说明<span style="color:#f56c6c">*</span></label>
+      <div class="fr-body">
+        <div class="rich-box">
+          <div class="rich-toolbar">
+            <button type="button" onclick="document.execCommand('bold')"><b>B</b></button>
+            <button type="button" onclick="document.execCommand('insertUnorderedList')">• 列表</button>
+            <button type="button" onclick="$('cpRuleImg').click()">🖼 图片</button>
+            <input type="file" id="cpRuleImg" accept="image/*" style="display:none" onchange="cpInsertRuleImg(this)">
+          </div>
+          <div class="rich-editor" id="cpRuleDesc" contenteditable="true" data-placeholder="请输入本券的使用规则说明（支持文本与图片，最多 2000 字）" oninput="cpUpdateRuleCount()"></div>
+          <div class="rich-count" id="cpRuleCount">0 / 2000</div>
+        </div>
       </div>
     </div>
   </div>
@@ -758,16 +787,8 @@
     <div class="form-row"><label class="fr-label">活动名称</label><div class="fr-body"><input class="fr-input wide" id="snName" placeholder="如：7月直播时长发券"></div></div>
 
     <div class="fs-sub">发券规则</div>
-    <div class="form-row"><label class="fr-label">触发源</label><div class="fr-body"><select class="fr-input" id="snTrigger" onchange="snToggleThreshold()">
-      <option value="live">直播时长</option>
-      <option value="pay">支付完成</option>
-      <option value="register">注册完成</option>
-      <option value="firstorder">首单完成</option>
-      <option value="sign">连续签到</option>
-      <option value="browse">浏览商品</option>
-      <option value="share">分享活动</option>
-    </select></div></div>
-    <div class="form-row" id="snThresholdRow"><label class="fr-label" id="snThresholdLabel">观看阈值</label><div class="fr-body" id="snThresholdBody"></div></div>
+    <div class="form-row"><label class="fr-label">触发源</label><div class="fr-body"><span class="tag" style="background:#e8f3ff;color:#1e88e5;border:1px solid #bcdcff;padding:3px 10px;border-radius:4px;font-size:13px;display:inline-block">直播时长</span><input type="hidden" id="snTrigger" value="live"></div></div>
+    <div class="form-row" id="snThresholdRow"><label class="fr-label" id="snThresholdLabel">观看阈值</label><div class="fr-body" id="snThresholdBody">观看满 <input class="fr-input" id="snThVal" type="number" value="30" min="1" style="width:80px"> 分钟</div></div>
     <div class="form-row" id="snLiveRow"><label class="fr-label">关联直播标签</label><div class="fr-body"><select class="fr-input" id="snLive" style="width:260px"><option value="">选择直播标签</option><option value="welfare" title="可发券直播">福利直播</option></select></div></div>
     <div class="form-row"><label class="fr-label">适用会员等级</label><div class="fr-body"><div class="radio-group" style="margin-bottom:8px"><label class="radio-item"><input type="radio" name="snLevel" value="all" checked onchange="snLevelToggle()"> 全部会员</label><label class="radio-item"><input type="radio" name="snLevel" value="part" onchange="snLevelToggle()"> 指定等级</label></div><div id="snLevelBox" class="level-box hidden"></div></div></div>
     <div class="form-row"><label class="fr-label">每人限制</label><div class="fr-body"><span>每人限制发券上限（每种）</span><input class="fr-input" id="snPerUser" type="number" value="1" min="1" style="width:64px"><span style="margin:0 6px">张</span></div></div>
@@ -866,16 +887,11 @@ function snThresholdText(v,val){
   return '无阈值';
 }
 function snToggleThreshold(){
-  const v=$('snTrigger').value;
-  const isLive=v==='live';
+  const isLive=$('snTrigger').value==='live';
   $('snLiveRow').classList.toggle('hidden',!isLive);
   const label=$('snThresholdLabel'),body=$('snThresholdBody');
-  if(v==='live'){label.textContent='观看阈值';body.innerHTML='观看满 <input class="fr-input" id="snThVal" type="number" value="30" min="1" style="width:80px"> 分钟';}
-  else if(v==='pay'){label.textContent='支付阈值';body.innerHTML='单次支付满 <input class="fr-input" id="snThVal" type="number" value="99" min="0" style="width:80px"> 元';}
-  else if(v==='sign'){label.textContent='签到阈值';body.innerHTML='连续签到 <input class="fr-input" id="snThVal" type="number" value="3" min="1" style="width:80px"> 天';}
-  else if(v==='browse'){label.textContent='浏览阈值';body.innerHTML='浏览满 <input class="fr-input" id="snThVal" type="number" value="5" min="1" style="width:80px"> 分钟';}
-  else if(v==='share'){label.textContent='分享阈值';body.innerHTML='分享 <input class="fr-input" id="snThVal" type="number" value="1" min="1" style="width:80px"> 次';}
-  else {label.textContent='触发阈值';body.innerHTML='<span style="color:#909399;font-size:12px">该触发源无需设置阈值</span>';}
+  label.textContent='观看阈值';
+  body.innerHTML='观看满 <input class="fr-input" id="snThVal" type="number" value="30" min="1" style="width:80px"> 分钟';
 }
 function snLevelToggle(){
   const part=document.querySelector('input[name=snLevel]:checked').value==='part';
@@ -885,12 +901,18 @@ function snLevelToggle(){
     box.innerHTML=SEND_LEVELS.map(l=>`<label class="lv-chip"><input type="checkbox" value="${l}"> ${l}</label>`).join('');
   }
 }
+// 发券活动可选券：仅上架状态=启用的券（只能选上架的券）
+function sendCouponOptions(selected){
+  const enabled=SEND_COUPONS.filter(n=>{const c=coupons.find(x=>x.name===n);return !c||c.status==='启用';});
+  return [...new Set([...(selected||[]), ...enabled])];
+}
 function buildCouponPick(wrapId,selected,multi){
   const wrap=$(wrapId);
+  const opts=sendCouponOptions(selected);
   if(multi){
-    wrap.innerHTML=SEND_COUPONS.map(c=>`<label class="cp-pick-item"><input type="checkbox" value="${c}" ${(selected&&selected.includes(c))?'checked':''} onchange="snUpdateCount()"> <span class="cp-name">${c}</span></label>`).join('');
+    wrap.innerHTML=opts.map(c=>`<label class="cp-pick-item"><input type="checkbox" value="${c}" ${(selected&&selected.includes(c))?'checked':''} onchange="snUpdateCount()"> <span class="cp-name">${c}</span></label>`).join('');
   }else{
-    wrap.innerHTML=SEND_COUPONS.map(c=>`<label class="cp-pick-item"><input type="radio" name="${wrapId}Radio" value="${c}" ${selected===c?'checked':''}> <span class="cp-name">${c}</span></label>`).join('');
+    wrap.innerHTML=opts.map(c=>`<label class="cp-pick-item"><input type="radio" name="${wrapId}Radio" value="${c}" ${selected===c?'checked':''}> <span class="cp-name">${c}</span></label>`).join('');
   }
   snUpdateCount();
 }
@@ -941,8 +963,9 @@ function viewCoupon(id){
   $('cdTotalQty').textContent=c.claimed+c.left;
   $('cdPerLimit').textContent='1';
   $('cdShare').textContent=c.share||'不共用';
+  $('cdRuleDesc').innerHTML=c.ruleDesc?c.ruleDesc:'<span style="color:#c0c4cc">—</span>';
   $('cdLadder').innerHTML=c.ladder
-    ? '<span class="tag tag-purple">已开启</span> <span style="font-size:12px;color:#909399;margin-left:6px">按「'+c.rule+'」循环计算，订单金额每达一个整数倍多减一份</span>'
+    ? '<span class="tag tag-purple">已开启</span>'
     : '<span class="tag tag-gray">未开启</span>';
   $('cdIssueMode').textContent='手动领取';
   $('cdStatusTag').innerHTML='<span class="tag '+(c.status==='启用'?'tag-green':'tag-gray')+'">'+c.status+'</span>';
@@ -958,9 +981,23 @@ function viewCoupon(id){
   go('detail');
 }
 function delCoupon(id){const c=coupons.find(x=>x.id===id);if(!c)return;if(c.status!=='下架'){toast('仅下架状态的券可删除，请先下架',true);return;}if(c.usageStatus==='进行中'){toast('进行中的券不可删除，请先撤回',true);return;}if(confirm('确认删除该券？')){coupons=coupons.filter(x=>x.id!==id);renderCoupons();toast('已删除');}}
-function offlineCouponById(id){const c=coupons.find(x=>x.id===id);if(!c)return;c.status='下架';renderCoupons();toast('已下架');}
+// 校验某券是否被未开始/进行中的发券活动引用
+function sendActivitiesReferencing(couponName){
+  return sends.filter(s=>(s.status==='进行中'||s.status==='未开始') && (s.coupons||[]).includes(couponName));
+}
+function offlineCouponById(id){
+  const c=coupons.find(x=>x.id===id);if(!c)return;
+  const refs=sendActivitiesReferencing(c.name);
+  if(refs.length){toast('该券正被 '+refs.length+' 个发券活动引用，请先删除相关发券活动后再下架',true);return;}
+  c.status='下架';renderCoupons();toast('已下架');
+}
 function revokeCoupon(id){if(!confirm('确认撤回该券？撤回后所有已发放的用户券将立即失效，有效期截止至今天。'))return;const c=coupons.find(x=>x.id===id);if(!c)return;c.usageStatus='已结束';renderCoupons();toast('已撤回');}
-function offlineCoupon(){toast('已下架');setTimeout(()=>go('list'),1200);}
+function offlineCoupon(){
+  const c=coupons.find(x=>x.id===currentCouponId);if(!c)return;
+  const refs=sendActivitiesReferencing(c.name);
+  if(refs.length){toast('该券正被 '+refs.length+' 个发券活动引用，请先删除相关发券活动后再下架',true);return;}
+  toast('已下架');setTimeout(()=>go('list'),1200);
+}
 
 /* ---- 增加发行量 ---- */
 function openIncreaseStockById(id){ currentCouponId=id; openIncreaseStock(); }
@@ -986,6 +1023,21 @@ function confirmIncreaseStock(){
 }
 
 /* ==================== D2: 新增券 独立页 ==================== */
+/* ---- 券规则说明 富文本 ---- */
+function cpUpdateRuleCount(){
+  const el=$('cpRuleDesc');
+  const len=(el.textContent||'').length;
+  const cnt=$('cpRuleCount');
+  cnt.textContent=len+' / 2000';
+  cnt.classList.toggle('over', len>2000);
+}
+function cpInsertRuleImg(input){
+  const file=input.files&&input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{ document.execCommand('insertHTML', false, '<img src="'+reader.result+'" alt="rule-img">'); cpUpdateRuleCount(); };
+  reader.readAsDataURL(file);
+  input.value='';
+}
 function resetCouponNew(){
   $('cnTitle').textContent='新建优惠券';
   $('cpName').value='';
@@ -998,6 +1050,7 @@ function resetCouponNew(){
   $('cpTotal').value=1;$('cpPerUser').value=1;
   document.querySelectorAll('input[name=cpProd]')[0].checked=true;cpToggleProd();
   selectedProds=[];renderSelectedProds();
+  $('cpRuleDesc').innerHTML='';cpUpdateRuleCount();
 }
 function cpToggleTime(){
   const isFixed=document.querySelector('input[name=cpTimeType]:checked').value==='fixed';
@@ -1013,7 +1066,7 @@ function cpUpdateLadderPreview(){
   if(x<=0||y<=0){box.innerHTML='请先填写完整的「满 X 元，减 Y 元」规则，此处将展示阶梯优惠试算示例。';return;}
   let rows='';
   for(let k=1;k<=3;k++) rows+=`订单满 ${x*k} 元 → 减 ${y*k} 元<br>`;
-  box.innerHTML='<b>阶梯试算（每满 '+x+' 元减 '+y+' 元）</b><br>'+rows+'…… 以此类推，减免上限见下方说明';
+  box.innerHTML='<b>阶梯试算（每满 '+x+' 元减 '+y+' 元）</b><br>'+rows+'…… 以此类推';
 }
 function cpToggleProd(){
   const v=document.querySelector('input[name=cpProd]:checked').value;
@@ -1025,12 +1078,17 @@ function saveCouponNew(){
   if(!(x>0)){toast('请填写满减门槛金额',true);return;}
   if(!(y>0)){toast('请填写减免金额',true);return;}
   if(y>=x){toast('减免金额需小于门槛金额',true);return;}
+  const ruleDesc=$('cpRuleDesc').innerHTML.trim();
+  const ruleLen=($('cpRuleDesc').textContent||'').trim().length;
+  if(!ruleLen){toast('请填写券规则说明',true);return;}
+  if(ruleLen>2000){toast('券规则说明最多 2000 字',true);return;}
   const ladder=$('cpLadder').checked;
   const share=[...document.querySelectorAll('input[name=cpShare]:checked')].map(cb=>cb.parentNode.textContent.trim());
   const shopSel=$('cpShop');const shop=shopSel.value?shopSel.options[shopSel.selectedIndex].text:'全部店铺';
   coupons.unshift({id:Date.now(),name:n,shop:shop,type:'满减券',
     rule:(ladder?'每满':'满')+x+'减'+y,status:'启用',usageStatus:'进行中',
     ladder:ladder,share:share.length?share.join('、'):'不共用',
+    ruleDesc:ruleDesc,
     valid:'固定 '+$('cpStart').value+' ~ '+$('cpEnd').value,
     claimed:0,left:+$('cpTotal').value,date:$('cpStart').value+' ~ '+$('cpEnd').value,createDate:$('cpStart').value,productScope:document.querySelector('input[name=cpProd]:checked').value,prods:selectedProds.map(p=>({id:p.id,name:p.name,price:p.price,floorPrice:p.floorPrice||''}))});
   go('list');toast('已保存');
@@ -1163,10 +1221,14 @@ function boardRender(dim){
     coupons.forEach(c=>{
       const total=c.claimed+c.left;
       const rate=total?((c.claimed/total)*100).toFixed(1):0;
-      rows+=`<tr><td>${c.name}</td><td>${c.type}</td><td>${total}</td><td>${c.claimed}</td><td>${Math.round(c.claimed*0.65)}</td><td>${rate}%</td><td>¥${(c.claimed*50).toLocaleString()}</td></tr>`;
+      const used=Math.round(c.claimed*0.65);
+      const paid=Math.round(c.claimed*0.85);
+      const refundQty=Math.round(c.claimed*0.08);
+      const refundAmt=refundQty*50;
+      rows+=`<tr><td>${c.name}</td><td>${c.type}</td><td>${total}</td><td>${c.claimed}</td><td>${used}</td><td>${rate}%</td><td>¥${(c.claimed*50).toLocaleString()}</td><td>${paid}</td><td><div>退单量：${refundQty} 笔</div><div>退单金额：¥${refundAmt.toLocaleString()}</div></td></tr>`;
     });
   }
-  $('boardTbody').innerHTML=rows||'<tr><td colspan="7" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
+  $('boardTbody').innerHTML=rows||'<tr><td colspan="9" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
 }
 const couponDetails=[
   {id:'CP-20260721-0001',issued:'是',issueTime:'2026-07-21 20:35',user:'138****0021',redeemed:'是',order:'ORD20260722A31'},
