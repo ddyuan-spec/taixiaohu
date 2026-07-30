@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>泰小虎 · 优惠券体系 · 页面平铺</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f6f8;color:#333;padding:24px}
+
+.hd{margin-bottom:28px}
+.hd h1{font-size:22px;font-weight:800;color:#111;margin-bottom:6px}
+.hd .sub{font-size:13px;color:#888;display:block;margin-bottom:4px}
+.hd .tot{font-size:13px;color:#666}
+.hd .tot strong{color:#534AB7}
+
+.sec{margin-bottom:40px}
+.sec-hd{font-size:16px;font-weight:700;color:#222;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dot-c{background:#7C6BE0}.dot-b{background:#E6A23C}
+
+.cols{display:flex;gap:44px;overflow-x:auto;padding-bottom:20px}
+.col{flex:0 0 auto;display:flex;flex-direction:column}
+.col-c{width:280px}
+.col-b{width:780px}
+
+.col-hd{
+  font-size:15px;font-weight:700;color:#333;
+  padding:0 0 12px;
+  display:flex;align-items:center;gap:8px;
+  border-bottom:2px solid #e8eaed;margin-bottom:16px;
+}
+.tag{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:700;flex-shrink:0}
+.tag-c{background:#EDE9FB;color:#534AB7}
+.tag-b{background:#FFF4E0;color:#B07A00}
+
+.flow{display:flex;flex-direction:column}
+.node{margin-bottom:20px}
+.node .name{font-size:14px;font-weight:600;color:#333;padding:0 0 8px;display:flex;align-items:center;gap:6px}
+.node .name .stale-badge{font-size:11px;font-weight:600;color:#E6A23C;background:#FFF4E0;padding:1px 7px;border-radius:4px;flex-shrink:0;white-space:nowrap}
+.node img{width:100%;height:auto;display:block;cursor:pointer}
+.node .ph{
+  width:100%;aspect-ratio:400/819;
+  background:#eef0f3;border:2px dashed #c8ccd4;border-radius:10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:#9aa0a8;gap:7px;margin-top:2px
+}
+.node .ph .big{font-size:18px;font-weight:700;color:#8b9199;letter-spacing:4px}
+.node .ph .sm{font-size:12px;color:#aab0b8;padding:0 10px;text-align:center;line-height:1.5}
+
+.ifull{
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,.72);z-index:300;
+  display:none;align-items:center;justify-content:center;
+  cursor:pointer;backdrop-filter:blur(4px)
+}
+.ifull.show{display:flex}
+.ifull img{max-width:96vw;max-height:96vh;border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+
+.empty{text-align:center;padding:80px 20px;color:#bbb;font-size:15px}
+::-webkit-scrollbar{height:7px;width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <h1>📋 泰小虎 · 优惠券体系 · 页面平铺</h1>
+  <span class="sub">按页面跳转逻辑 · 同一组上下排列，不同组横向分列 · 纯截图无框无标号 · 灰色虚框＝待补</span>
+  <span class="sub" style="color:#c0392b">⚠️ 本期范围：平台端后台 + App + 小程序/H5；<b>商家端后台本期不做</b>（不纳入平铺与交付）</span>
+  <span class="tot">共 <strong id="tc">0</strong> 张</span>
+</div>
+
+<div class="sec" id="secC">
+  <div class="sec-hd"><span class="dot dot-c"></span>C端（用户侧 · App / 小程序 / H5）</div>
+  <div class="cols" id="colsC"></div>
+</div>
+
+<div class="sec" id="secB">
+  <div class="sec-hd"><span class="dot dot-b"></span>后台（管理侧 · 平台端）</div>
+  <div class="cols" id="colsB"></div>
+</div>
+
+<div class="ifull" id="ifull" onclick="this.classList.remove('show')"><img id="ifullImg" src=""></div>
+
+<script>
+const $=id=>document.getElementById(id);
+
+const SECTIONS = [
+  {
+    side:'C', key:'C', name:'C端',
+    cols:[
+      {g:'App · 获券触达', items:[
+        {title:'获券弹窗（系统发券触达）', img:'coupon-prd-assets/coupon-app-arrival-modal.png'},
+        {title:'C5 商品详情领券入口', img:'coupon-prd-assets/app-c5-coupon-drawn.png'},
+        {title:'券规则说明弹窗', img:'coupon-prd-assets/app-coupon-rules-drawn.png'},
+      ]},
+      {g:'App · 我的优惠券', items:[
+        {title:'C2 我的优惠券（三态）', img:'coupon-prd-assets/app-c2-coupons-drawn.png'},
+        {title:'跨端口置灰券 + 点击提示', img:'coupon-prd-assets/app-c2-port-restrict-drawn.png'},
+      ]},
+      {g:'App · 确认订单核销', items:[
+        {title:'C6 确认订单（带券）', img:'coupon-prd-assets/app-confirm-order-with-coupon.png'},
+        {title:'选券弹窗', img:'coupon-prd-assets/app-select-coupon-modal.png'},
+        {title:'单SKU券作用于SKU行', img:'coupon-prd-assets/app-c6-order-single-sku-drawn.png'},
+        {title:'多SKU券适用商品范围', img:'coupon-prd-assets/app-c6-coupon-sku-scope-drawn.png'},
+      ]},
+      {g:'小程序 / H5', items:[
+        {title:'获券弹窗（两端外壳差异）', img:'coupon-prd-assets/coupon-mini-h5.png'},
+      ]},
+    ],
+  },
+  {
+    side:'B', key:'B', name:'后台',
+    cols:[
+      {g:'优惠券管理', items:[
+        {title:'P1 优惠券列表', img:'coupon-prd-assets/pf-p1-list.png'},
+        {title:'D1 券详情', img:'coupon-prd-assets/pf-d1-detail.png'},
+        {title:'D2 新建 / 编辑券', img:'coupon-prd-assets/pf-d2-new-coupon.png'},
+        {title:'D3 发券活动编辑', img:'coupon-prd-assets/pf-d3-send-edit.png'},
+        {title:'库存弹窗', img:'coupon-prd-assets/pf-stock-modal.png'},
+      ]},
+      {g:'发券活动', items:[
+        {title:'P2 发券活动列表', img:'coupon-prd-assets/pf-p2-send-list.png'},
+      ]},
+      {g:'用户券（P5）', items:[
+        {title:'P5 用户券查询', img:'coupon-prd-assets/pf-p5-user-coupon.png'},
+      ]},
+      {g:'数据看板（P4）', items:[
+        {title:'P4 数据看板', img:'coupon-prd-assets/pf-p4-dashboard.png'},
+        {title:'券明细', img:'coupon-prd-assets/pf-p4-coupon-detail.png'},
+      ]},
+      {g:'会员管理', items:[
+        {title:'M1 会员列表', img:'coupon-prd-assets/member-batch-send.png'},
+        {title:'批量送券弹窗', img:'coupon-prd-assets/member-batch-send-modal.png'},
+      ]},
+      {g:'标签管理', items:[
+        {title:'标签管理列表', img:'coupon-prd-assets/pf-tag-manage.png'},
+        {title:'自动打标规则', img:'coupon-prd-assets/pf-auto-tag.png'},
+        {title:'自动打标编辑', img:'coupon-prd-assets/pf-auto-tag-edit.png'},
+      ]},
+      {g:'直播观看记录', items:[
+        {title:'直播观看记录', img:'coupon-prd-assets/pf-live-view-log.png'},
+      ]},
+    ],
+  },
+];
+
+let total=0;
+
+function nodeHTML(p,i){
+  const it=p.items[i];
+  const staleBadge=it.stale?'<span class="stale-badge">⚠ 截图待更新</span>':'';
+  const body=it.ph
+    ?`<div class="ph"><div class="big">待补</div><div class="sm">${it.title}</div></div>`
+    :`<img src="${it.img}" alt="${it.title}" loading="lazy" onclick="full('${it.img}')">`;
+  return `<div class="node"><div class="name">${it.title}${staleBadge}</div>${body}</div>`;
+}
+
+function colHTML(c,side){
+  const tagCls=side==='C'?'tag-c':'tag-b';
+  const label=side==='C'?'C':'B';
+  const cls=side==='C'?'col-c':'col-b';
+  return `<div class="col ${cls}">
+    <div class="col-hd"><span class="tag ${tagCls}">${label}</span>${c.g}</div>
+    <div class="flow">${c.items.map((_,i)=>nodeHTML(c,i)).join('')}</div>
+  </div>`;
+}
+
+function realCount(cols){return cols.reduce((s,c)=>s+c.items.filter(i=>!i.ph).length,0)}
+
+function renderSection(sec){
+  $('cols'+sec.key).innerHTML=sec.cols.map(c=>colHTML(c,sec.side)).join('');
+  total+=realCount(sec.cols);
+}
+
+function full(src){$('ifullImg').src=src;$('ifull').classList.add('show')}
+
+SECTIONS.forEach(renderSection);
+$('tc').textContent=total;
+if(total===0)$('secC').innerHTML='<div class="empty">暂无内容</div>';
+</script>
+</body>
+</html>
