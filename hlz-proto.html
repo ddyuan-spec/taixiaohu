@@ -347,7 +347,7 @@
           <div class="sel-count">目标用户：<b id="selCount">0</b> 人（筛选后直接显示，点击底部「确认」即批量赠送/扣除）</div>
           <div class="tbl-wrap" style="max-height:200px;overflow:auto">
             <table class="tbl" id="targetTbl">
-              <thead><tr><th>昵称</th><th>用户ID</th><th>手机号</th><th style="width:60px">操作</th></tr></thead>
+              <thead><tr><th>昵称</th><th>用户ID</th><th>手机号</th></tr></thead>
               <tbody id="targetTbody"></tbody>
             </table>
           </div>
@@ -700,7 +700,7 @@ function closeBatch(){
 function renderTarget(){
   const tbody = document.getElementById('targetTbody');
   tbody.innerHTML = [...selectedUsers.values()].map(u=>
-    `<tr><td>${u.name}</td><td>${u.uid}</td><td>${u.phone||'-'}</td><td><button class="btn-link" onclick="removeUser('${u.uid}')">移除</button></td></tr>`
+    `<tr><td>${u.name}</td><td>${u.uid}</td><td>${u.phone||'-'}</td></tr>`
   ).join('');
   document.getElementById('selCount').textContent = selectedUsers.size;
 }
@@ -708,10 +708,6 @@ function addUser(u, source){
   if(!u) return;
   u.source = source || 'manual';
   selectedUsers.set(u.uid, u);
-  renderTarget();
-}
-function removeUser(uid){
-  selectedUsers.delete(uid);
   renderTarget();
 }
 // ========== 统一筛选：活动标签（单选）或手机号，二选一搜索 ==========
