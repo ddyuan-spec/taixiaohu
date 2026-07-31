@@ -557,7 +557,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <table>
 <thead><tr><th>接口</th><th>方法</th><th>说明</th><th>状态</th></tr></thead>
 <tbody>
-<tr><td>/coupon/template</td><td>CRUD</td><td>券模板配置（新建/编辑/下架/删除）</td><td>⚠️ 待技术补全</td></tr>
+<tr><td>/coupon/template</td><td>CRUD</td><td>券模板配置（新建/下架/删除）</td><td>⚠️ 待技术补全</td></tr>
 <tr><td>/coupon/activity/send</td><td>CRUD</td><td>发券活动（规则引擎参数）</td><td>⚠️ 待技术补全</td></tr>
 <tr><td>/coupon/grant</td><td>POST</td><td>系统发券触达（每次触发多券模板每种 1 张；活动生命周期内单用户单券模板累计不超「每人上限」）</td><td>⚠️ 待技术补全</td></tr>
 <tr><td>/coupon/redeem</td><td>POST</td><td>确认订单用券 + 核销</td><td>⚠️ 待技术补全</td></tr>
@@ -794,7 +794,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <li><b>来源</b>：<b>运营在券配置中手动录入</b>（以后台原型为准，<b>非</b>商品域接口只读）。原型中每个已选商品行带「底价 ¥」数字输入框（min=0，step=0.01，默认留空）。</li>
 <li><b>字段</b>：存《券模板表》适用商品集合的 <code>floor_price</code>；<b>空值 / 0.00 = 无底价（即不限制）</b>，C 端该商品不做底价不击穿校验。</li>
 <li><b>校验</b>：≥0 数值；可留空；<b>不强制必填</b>。</li>
-<li><b>编辑态</b>：<b>底价不支持修改</b>（用户裁定）。编辑券模板时底价字段<b>只读/禁用</b>（灰显），仅可在新建时录入一次；已发放与未发放的券模板均不可改底价。故不存在「已发放券改底价影响 C 端结算」问题。</li>
 </ul>
 <p><b>C 端「严格不击穿底价」保护规则（本期实现）</b>：</p>
 <ul>
