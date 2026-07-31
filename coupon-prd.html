@@ -448,7 +448,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <thead><tr><th style="width:80px">状态</th><th>含义</th><th>进入条件</th></tr></thead>
 <tbody>
 <tr><td><b>启用</b></td><td>券处于可被发券活动选中的状态；用户仍可正常领取和使用（受使用状态约束）</td><td>① 新建保存后默认进入<br>② 从「下架」手动重新启用</td></tr>
-<tr><td><b>下架</b></td><td>被手动下架后，<b>新用户无法再通过发券活动领到</b>该券；<b>已发放给用户的券仍可正常使用至过期</b>（受使用状态约束，不受上架状态影响）</td><td>「启用」→ 平台端下架 / 平台端违规下架</td></tr>
+<tr><td><b>下架</b></td><td>被手动下架后，<b>新用户无法再通过发券活动领到</b>该券；<b>已发放给用户的券仍可正常使用至过期</b>（受使用状态约束，不受上架状态影响）</td><td>「启用」→ 平台端「下架」（弹窗填写下架原因，必填）</td></tr>
 </tbody>
 </table>
 <div class="note">⚠️ <b>下架逻辑要点</b>：下架仅控制「发券活动能否选中该券模板」，不影响已发放到用户钱包中的券实例。一张「下架」的券，只要其使用状态为「未开始」或「进行中」，已持券用户仍可正常核销使用。</div>
@@ -471,8 +471,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <table>
 <thead><tr><th style="width:80px">起始状态</th><th style="width:90px">触发动作</th><th>操作方</th><th>前置条件</th><th style="width:80px">目标状态</th><th>原型按钮位置</th></tr></thead>
 <tbody>
-<tr><td>启用</td><td>下架</td><td>平台端</td><td>① 仅可下架<b>自己创建</b>的优惠券<br>② <b>下架前校验活动引用（硬拦截）</b>：系统检查是否存在状态=「未开始 / 进行中」的<b>发券活动</b>关联本券（跨"优惠券管理"与"发券活动管理"两模块校验）；若存在，<b>禁止下架</b>并提示"该券正被 N 个发券活动引用，请先删除相关发券活动后再下架"，必须将引用活动删除或置为「已结束」后方可下架（发券活动侧约束见 §4.5）<br>③ <b>下架仅停止后续发放</b>：已发放且使用状态≠「已结束」的用户券<b>仍可正常使用至自然到期</b>——"能否使用"由<b>使用状态</b>判定，与上架状态正交（见一、二）</td><td>下架</td><td>列表操作列「<span style="color:#d9363e">下架</span>」</td></tr>
-<tr><td>启用</td><td>违规下架</td><td>平台端</td><td>可下架<b>所有商家</b>的优惠券（违规处置）<br>弹窗「违规下架」→ 输入违规原因（<b>必填</b>，≤200字）→ 确定</td><td>下架</td><td>平台端列表操作列「<span style="color:#d9363e">违规下架</span>」→ 弹窗（标题"违规下架"，文本框 placeholder="请输入违规原因，必填"，取消/确定按钮）</td></tr>
+<tr><td>启用</td><td>下架</td><td>平台端</td><td>① <b>下架前校验活动引用（硬拦截）</b>：系统检查是否存在状态=「未开始 / 进行中」的<b>发券活动</b>关联本券（跨"优惠券管理"与"发券活动管理"两模块校验）；若存在，<b>禁止下架</b>并提示"该券正被 N 个发券活动引用，请先删除相关发券活动后再下架"，必须将引用活动删除或置为「已结束」后方可下架（发券活动侧约束见 §4.5）<br>② <b>弹窗「下架优惠券」→ 必填下架原因（≤200字）→ 确定</b>：下架原因作为下架操作记录留存（供违规处置追溯）；平台端可下架<b>任意商家</b>的优惠券（含跨商家违规处置）<br>③ <b>下架仅停止后续发放</b>：已发放且使用状态≠「已结束」的用户券<b>仍可正常使用至自然到期</b>——"能否使用"由<b>使用状态</b>判定，与上架状态正交（见一、二）</td><td>下架</td><td>列表操作列「<span style="color:#d9363e">下架</span>」→ 弹窗（标题"下架优惠券"，文本框 placeholder="请输入下架原因（必填，≤200字）"，取消/确定按钮）；D1 券详情页「下架」按钮同逻辑</td></tr>
 <tr><td>下架</td><td>删除</td><td>平台端</td><td>① 仅可删除<b>上架状态=下架</b>的券<br>② <b>且使用状态 ≠「进行中」</b>（进行中的券不可删除，须先执行「撤回」使其变为「已结束」）<br>③ confirm 弹窗二次确认</td><td>已删除(不可恢复)</td><td>列表操作列「<span style="color:#d9363e">删除」」（替换原「编辑」按钮，已下架行无编辑需求）</td></tr>
 <tr><td>启用</td><td>—</td><td>—</td><td><b>禁止删除</b>，仅允许下架</td><td>—</td><td>—</td></tr>
 <tr><td>启用</td><td>编辑</td><td>平台端</td><td>仅编辑本端创建的券</td><td>启用（不变）</td><td>列表操作列「<span style="color:#d9363e">编辑」」</td></tr>
@@ -610,7 +609,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tbody>
 <tr><td>查看</td><td>所有状态</td><td>进入 D1 券详情</td><td>直播运营</td></tr>
 <tr><td>增加发行量</td><td>各状态（启用/下架均可）</td><td>弹「增加发行量」弹窗：显示当前总库存（=已领取+剩余）；输入增加数量（≥1 整数，必填）；实时显示增加后总库存；确认后剩余库存 += 增加数量（总库存随之提升），列表总库存列即时刷新，toast 提示结果</td><td>直播运营</td></tr>
-<tr><td>下架</td><td>上架状态=启用</td><td>将券置为「下架」状态（不可逆），列表即时刷新；仅影响发券活动可选性，不影响已发放用户券</td><td>直播运营</td></tr>
+<tr><td>下架</td><td>上架状态=启用</td><td>点击「下架」→ 弹窗「下架优惠券」→ 必填下架原因（≤200字）→ 确定 → 将券置为「下架」状态（不可逆），列表即时刷新；仅影响发券活动可选性，不影响已发放用户券</td><td>直播运营</td></tr>
 <tr><td><b>撤回</b></td><td>使用状态=未开始 或 进行中</td><td><b>confirm 弹窗</b>："确认撤回该券？撤回后所有已发放的用户券将立即失效，有效期截止至今天。" → 确认后：<br>① 券模板使用状态强制变为「已结束」<br>② 有效期截止日期 = 当前操作日期<br>③ <b>已发放到用户钱包的该券实例同步失效</b>（不可恢复）<br>④ 列表使用状态 Tag 即时刷新为「已结束」<br>⑤ toast"已撤回"</td><td>直播运营</td></tr>
 <tr><td>删除</td><td>上架状态=下架 <b>且</b> 使用状态≠进行中</td><td>从列表删除该券（需二次 confirm 确认）；<b>进行中的券不展示「删除」入口</b>（置灰禁用并提示"进行中不可删除，请先撤回"），须先「撤回」变为「已结束」后删除入口才可用</td><td>直播运营</td></tr>
 </tbody>
@@ -650,7 +649,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <thead><tr><th>按钮</th><th>功能说明</th><th>权限</th><th>前置条件</th></tr></thead>
 <tbody>
 <tr><td>← 返回列表</td><td>返回 P1 优惠券管理列表</td><td>所有角色</td><td>—</td></tr>
-<tr><td>下架</td><td>将当前券置为「下架」状态（不可逆）；仅影响发券活动可选性，已发放用户券不受影响</td><td>直播运营</td><td>上架状态=启用</td></tr>
+<tr><td>下架</td><td>点击「下架」→ 弹窗「下架优惠券」→ 必填下架原因（≤200字）→ 确定 → 将当前券置为「下架」状态（不可逆）；仅影响发券活动可选性，已发放用户券不受影响</td><td>直播运营</td><td>上架状态=启用</td></tr>
 </tbody>
 </table>
 
@@ -663,7 +662,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <p><b>业务逻辑与边界条件</b></p>
 <ul>
 <li><b>未登录拦截</b>：后台页面，需「直播运营」角色权限；无权限时 P1 列表不展示「查看」入口，直接 403 提示。</li>
-<li><b>交互反馈</b>：点击「下架」→ 二次确认弹窗（提示不可逆）→ 确认后接口置下架 → 列表与详情页状态 Tag 即时刷新 → Toast「已下架」。</li>
+<li><b>交互反馈</b>：点击「下架」→ 弹窗「下架优惠券」→ 填写下架原因（必填，≤200字）→ 确定后接口置下架 → 列表与详情页状态 Tag 即时刷新 → Toast「已下架」。</li>
 <li><b>按钮状态切换逻辑</b>（由后端 status 实时判断）：上架状态=启用 → 显示「下架」可点；上架状态=下架 → 隐藏「下架」按钮（仅保留「返回列表」）。</li>
 <li><b>防刷控制</b>：下架为破坏性操作，确认弹窗未点确认前不发起请求；防止连续点击造成重复下架。</li>
 </ul>
@@ -921,22 +920,8 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <h4>4.1.7 P5 用户券查询 <span class="tag y">本期新增</span></h4>
 <p><b>页面原型与交互示意</b></p>
-<p><img src="coupon-prd-assets/coupon-p5-user-coupon.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="P5用户券查询-查询入口"></p>
+<p><img src="coupon-prd-assets/coupon-p5-user-coupon.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="P5用户券查询"></p>
 <p>⚠️ <b>入口调整（评审第7点）</b>：用户券查询不再作为平台端后台独立一级菜单，改为<b>会员管理（用户管理）模块 → 用户详情页的一个 Tab</b>（与用户基本信息 / 订单 / 资产并列）。导航路径：用户管理 / 用户详情 / 用户券查询。下方查询条件与列表字段不变。</p>
-
-<h5>4.1.7.0 优惠券详情展示 <span class="tag y">本期新增</span></h5>
-<p><b>页面原型与交互示意</b>：输入用户 ID 或手机号并点击「查询」后，展示该用户的券账户详情页。页面分为上下两区域：</p>
-<p><img src="coupon-prd-assets/coupon-p5-coupon-detail.png" style="max-width:100%;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="P5优惠券详情展示"></p>
-<table>
-<thead><tr><th>区域</th><th>内容说明</th></tr></thead>
-<tbody>
-<tr><td><b>用户信息头部</b></td><td>展示用户头像、ID（如 U6492）、性别、手机号、会员级别；下方元数据行：会员等级（VIP）、成单量、积分、注册时间、消费金额、储值余额、标签等。</td></tr>
-<tr><td><b>Tab 栏</b></td><td>充值明细 / 储值明细 / 积分明细 / 分销信息 / AOT签到记录 / 管理功能；默认停留在「充值明细」（即券交易记录）Tab。</td></tr>
-<tr><td><b>交易记录列表</b></td><td>列：交易时间、口袋编号（订单号）、商品活动、优惠金额、实付金额、支付方式；按交易时间倒序排列；支持分页（默认 20 条/页）。</td></tr>
-<tr><td><b>操作按钮</b></td><td>顶部右侧：解绑设备 / 解冻用户账户 / 询单验证（快捷操作入口）。</td></tr>
-</tbody>
-</table>
-
 <h5>4.1.7.1 查询条件（查询条件 / 查询说明）</h5>
 <table>
 <thead><tr><th>查询条件</th><th>查询说明</th></tr></thead>
@@ -1450,10 +1435,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <thead><tr><th style="width:60px">编号</th><th style="width:180px">关联需求名称</th><th style="width:130px">归属模块</th><th style="width:80px">是否出原型</th><th>说明</th></tr></thead>
 <tbody>
 <tr><td>10.1</td><td>标签管理新增「直播标签」类型</td><td>平台端后台 · 营销管理 / 会员管理 → 标签管理</td><td>否</td><td>既有页面新增枚举值 + 1 条初始数据，详见 10.1</td></tr>
-<tr><td>10.2</td><td>会员中心-批量送券</td><td>平台端后台 · 会员中心</td><td>是</td><td>按标签圈选批量发券，原型详见 10.2</td></tr>
-<tr><td>10.3</td><td>关联直播原型</td><td>平台端后台 · 直播间管理 / 直播商品池</td><td>是</td><td>直播间绑定券模板，原型详见 10.3</td></tr>
-<tr><td>10.4</td><td>订单关联优惠券</td><td>平台端后台 · 订单 / 优惠券</td><td>是</td><td>券与订单映射看板，原型详见 10.4</td></tr>
-<tr><td>10.7</td><td>优惠券关联业绩报表</td><td>平台端后台 · 业绩报表 ⚠️ 菜单路径待确认</td><td>否</td><td>付款完成计优惠金额入业绩，退款不冲减，详见 10.7</td></tr>
 </tbody>
 </table>
 
@@ -1545,57 +1526,22 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <img src="https://ddyuan-spec.github.io/taixiaohu/coupon-prd-assets/assoc-order-relate.png" alt="订单关联优惠券原型" />
 </div>
 
-<h3>10.7 优惠券关联业绩报表</h3>
+<h3>10.5 会员直接发券</h3>
 <div class="sec">
-<p><b>功能说明</b>：业绩报表需体现优惠券对订单业绩的贡献。订单完成「下单 + 付款」后，业绩报表按订单维度生成/更新业绩记录，并将该订单使用的优惠券抵扣金额计入报表对应订单的业绩金额中（即「优惠金额」增加对应订单金额）。含优惠券的订单发生退款时，业绩报表<b>不回滚、不扣减</b>原业绩记录。</p>
+<p><b>功能说明</b>：平台端后台为运营提供「针对单个会员直接发券」的能力。运营在用户详情页或会员列表中，选择目标用户和券模板，一键发放。适用于客服补偿、运营手动触达等单点场景。</p>
+<p><b>与优惠券体系的关系</b>：直接发券是批量送券的「单条」版本，同样调用券模板发券接口写入用户券账户；单条发放不做标签筛选，直接指定用户 ID。</p>
+<p><b>原型短链</b>：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-direct-send.html" target="_blank">https://ddyuan-spec.github.io/taixiaohu/coupon-direct-send.html</a></p>
+<p><b>原型截图</b>：</p>
+<img src="https://ddyuan-spec.github.io/taixiaohu/coupon-prd-assets/assoc-direct-send.png" alt="会员直接发券原型" />
+</div>
 
-<p><b>归属位置</b></p>
-<table>
-<thead><tr><th>项</th><th>说明</th></tr></thead>
-<tbody>
-<tr><td>端口</td><td>平台端后台</td></tr>
-<tr><td>页面路径</td><td>⚠️ 待确认 @干系人（业绩报表在平台端后台的归属菜单，如「数据 / 业绩报表」或「财务 / 业绩报表」）</td></tr>
-<tr><td>页面性质</td><td><b>既有页面增量</b>，本期在业绩报表中新增「优惠金额」口径说明，不出原型</td></tr>
-<tr><td>改动范围</td><td>业绩报表订单业绩口径纳入优惠券抵扣金额；明确退款不回冲业绩</td></tr>
-</tbody>
-</table>
-
-<p><b>需求点 1：订单付款完成，优惠金额计入业绩报表</b></p>
-<table>
-<thead><tr><th style="width:140px">项</th><th>需求说明</th></tr></thead>
-<tbody>
-<tr><td>触发时点</td><td>订单状态变为<b>「已支付」（付款完成）</b>时，业绩报表新增/更新该订单业绩记录</td></tr>
-<tr><td>优惠金额取值</td><td>该订单使用的<b>全部优惠券抵扣金额之和</b>（多券叠加时求和）</td></tr>
-<tr><td>业绩金额口径</td><td>业绩报表该订单行的业绩金额 = <b>订单实付金额 + 优惠金额</b>（即按订单应付总额口径，优惠部分计入业绩）；⚠️ 待确认 @干系人（业绩报表是否统一展示「实付金额 / 优惠金额 / 业绩总额」三列，或仅调整总额口径）</td></tr>
-<tr><td>数据来源</td><td>优惠金额取自订单关联优惠券的抵扣记录（关联需求 10.4 订单关联优惠券），非实时重算</td></tr>
-</tbody>
-</table>
-
-<p><b>需求点 2：含优惠券订单退款不影响业绩报表</b></p>
-<table>
-<thead><tr><th style="width:140px">项</th><th>需求说明</th></tr></thead>
-<tbody>
-<tr><td>退款场景</td><td>订单全额或部分退款（含优惠券抵扣部分）完成后</td></tr>
-<tr><td>业绩报表处理</td><td><b>不回滚、不扣减</b>该订单原业绩记录；优惠金额对应业绩保留，不因退款冲减</td></tr>
-<tr><td>说明</td><td>优惠券退款仅影响券账户（按既有退券/返还规则），与业绩报表解耦；业绩报表以「付款完成」为唯一记账时点</td></tr>
-</tbody>
-</table>
-
-<p><b>业务规则</b></p>
-<ul>
-<li>记账时点唯一：仅「订单付款完成」触发业绩报表记账，后续状态变更（发货 / 确认收货 / 退款）不再改动该业绩记录。</li>
-<li>优惠金额口径：业绩报表中的优惠金额 = 该订单券抵扣总额，与 10.4 订单关联优惠券的抵扣金额一致。</li>
-<li>退款解耦：退款仅处理券账户与资金流，业绩报表保持「付款即记账、退款不冲减」。</li>
-</ul>
-
-<p><b>验收标准</b></p>
-<ul>
-<li>AC-10.7-1：订单付款完成后，业绩报表出现该订单记录，且「优惠金额」= 该订单使用的券抵扣总额。</li>
-<li>AC-10.7-2：业绩报表该订单业绩金额 = 订单实付金额 + 优惠金额，口径一致、可对账。</li>
-<li>AC-10.7-3：含优惠券订单发起退款并完成退款后，业绩报表中原记录不变（优惠金额不扣减、不退减）。</li>
-</ul>
-
-<div class="warn">⚠️ <b>本节待确认项</b>：① 业绩报表在平台端后台的归属菜单路径（@干系人）；② 业绩报表列展示方式（实付 / 优惠 / 总额三列 vs 仅总额口径调整，@干系人）。</div>
+<h3>10.6 直播观看记录</h3>
+<div class="sec">
+<p><b>功能说明</b>：平台端后台展示用户在直播间的观看时长记录，支持按直播间、用户、时间段筛选。为「时长发券」提供数据依据——运营可查看哪些用户满足「观看满 X 分钟」条件，校验发券名单的准确性。</p>
+<p><b>与优惠券体系的关系</b>：直播观看记录是「时长发券」的前置数据源，发券规则中的「累计观看时长 ≥ X」条件依赖此记录计算；同时，已发券用户的观看记录可辅助验证发券覆盖范围。</p>
+<p><b>原型短链</b>：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-live-viewlog.html" target="_blank">https://ddyuan-spec.github.io/taixiaohu/coupon-live-viewlog.html</a></p>
+<p><b>原型截图</b>：</p>
+<img src="https://ddyuan-spec.github.io/taixiaohu/coupon-prd-assets/assoc-live-viewlog.png" alt="直播观看记录原型" />
 </div>
 
 <!-- ==================== 十一、二期待办清单 ==================== -->
