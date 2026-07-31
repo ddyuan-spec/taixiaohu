@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎优惠券 · 技术基线校准（需求梳理 × 现有后端实现）</title>
+<style>
+  :root{
+    --bg:#f5f7fa; --card:#fff; --ink:#1f2d3d; --sub:#5a6b7b; --line:#e3e8ef;
+    --blue:#2f74e0; --green:#1f9d55; --orange:#e08a1e; --grey:#8a94a6; --red:#d8453b;
+    --blue-bg:#eaf2fe; --green-bg:#e7f6ee; --orange-bg:#fdf1e0; --grey-bg:#eef1f5; --red-bg:#fbeae8;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6;}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 22px 60px;}
+  h1{font-size:25px;margin:0 0 4px;}
+  h2{font-size:19px;margin:34px 0 14px;padding-left:11px;border-left:4px solid var(--blue);}
+  h3{font-size:15.5px;margin:20px 0 8px;color:var(--sub);}
+  .meta{color:var(--sub);font-size:13px;margin-bottom:18px;}
+  .lead{background:var(--blue-bg);border:1px solid #cfe0fb;border-radius:12px;padding:16px 18px;font-size:14.5px;}
+  .lead b{color:var(--blue);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:6px;}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px;}
+  .kpi .t{font-size:12.5px;color:var(--sub);}
+  .kpi .v{font-size:17px;font-weight:700;margin-top:3px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-top:14px;}
+  table{border-collapse:collapse;width:100%;font-size:12.8px;margin-top:8px;}
+  th,td{border:1px solid var(--line);padding:7px 9px;vertical-align:top;text-align:left;}
+  th{background:#f0f3f8;font-weight:600;white-space:nowrap;}
+  td .port{font-weight:700;}
+  .tag{display:inline-block;padding:1px 8px;border-radius:20px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+  .t-blue{background:var(--blue-bg);color:var(--blue);}
+  .t-green{background:var(--green-bg);color:var(--green);}
+  .t-orange{background:var(--orange-bg);color:var(--orange);}
+  .t-grey{background:var(--grey-bg);color:var(--grey);}
+  .t-red{background:var(--red-bg);color:var(--red);}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 2px;font-size:12.5px;color:var(--sub);}
+  .legend span{display:inline-flex;align-items:center;gap:5px;}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+  .note{font-size:12.5px;color:var(--sub);}
+  .sec{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-top:12px;}
+  .sec h3{margin-top:4px;}
+  .sec ul{margin:6px 0 2px;padding-left:20px;}
+  .sec li{margin:6px 0;}
+  .num{display:inline-block;min-width:22px;height:22px;line-height:22px;text-align:center;background:var(--blue);color:#fff;border-radius:6px;font-size:12px;font-weight:700;margin-right:7px;}
+  .risk{background:var(--red-bg);border:1px solid #f3c9c4;border-radius:10px;padding:11px 14px;margin-top:10px;font-size:13px;}
+  .risk b{color:var(--red);}
+  code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:12px;color:#b5337a;}
+  .foot{margin-top:26px;color:var(--sub);font-size:12px;border-top:1px solid var(--line);padding-top:12px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>泰小虎优惠券 · 技术基线校准</h1>
+  <div class="meta">需求梳理（线下定稿）× 技术分享《优惠券功能分享》对照 · 生成日期 2026-07-27</div>
+
+  <div class="lead">
+    <b>一句话结论：</b>需求梳理的「已有 / 暂无 / 待扩展」判定在 <b>产品端（UI / 功能有无）</b> 层面基本成立；但本技术分享首次揭示真实后端底座 = <b>gruul-mall 的 <code>addon-coupon</code> 独立模块</b>（订单服务通过扩展点调用，不直接写券表）。因此所有「待扩展 / 新增」必须再切一层：<b>改后端 addon-coupon</b> vs <b>仅补前端</b>。下文给出逐项校准、关键技术约束与对范围判定的修正建议。
+  </div>
+
+  <h2>一、技术现状基线（来自《优惠券功能分享》）</h2>
+  <div class="grid">
+    <div class="kpi"><div class="t">核心表</div><div class="v">5 张</div></div>
+    <div class="kpi"><div class="t">券类型枚举</div><div class="v">4 种</div></div>
+    <div class="kpi"><div class="t">状态枚举</div><div class="v">3 种</div></div>
+    <div class="kpi"><div class="t">生效方式</div><div class="v">2 种</div></div>
+    <div class="kpi"><div class="t">商品范围</div><div class="v">4 种</div></div>
+    <div class="kpi"><div class="t">每满减支持</div><div class="v" style="color:var(--red)">❌ 不支持</div></div>
+  </div>
+
+  <div class="card">
+    <h3>架构与核心表</h3>
+    <p class="note">优惠券数据由 <code>addon-coupon</code> 独立维护，订单服务（<code>gruul-mall-order</code>）通过 addon 扩展点调用，<b>不直接写优惠券表</b>。主要表：</p>
+    <ul class="note" style="margin:4px 0">
+      <li><code>t_coupon</code>：券定义（店铺/类型/状态/生效方式/门槛/优惠/库存/限领/商品范围）</li>
+      <li><code>t_coupon_user</code>：用户领取后<b>快照</b>（用户/店铺/原券id/状态/有效期/规则快照/商品范围快照）</li>
+      <li><code>t_coupon_product</code>：券与指定/排除商品关系</li>
+      <li><code>t_coupon_order_record</code>：订单用券记录（PK <code>order_no</code>，<code>coupons</code>=店铺id→用户券id 的 map，<b>平台券店铺id=0</b>）</li>
+      <li><code>t_coupon_calculate</code>：结算页临时计算表（<code>bid</code> 关联本次金额）</li>
+    </ul>
+
+    <h3>枚举</h3>
+    <p class="note">
+      <b>CouponType：</b> PRICE_REDUCE 无门槛现金 · PRICE_DISCOUNT 无门槛折扣 · REQUIRED_PRICE_REDUCE 满减 · REQUIRED_PRICE_DISCOUNT 满折<br>
+      <b>CouponStatus：</b> OK（前端按日期/库存派生 未开始/进行中/已结束）· BANED 平台下架 · SHOP_BANED 店铺下架<br>
+      <b>EffectType：</b> PERIOD 固定日期段 · IMMEDIATELY 领取后 N 天<br>
+      <b>CouponProductType：</b> ALL 平台全部 · SHOP_ALL 店铺全部 · ASSIGNED 指定可用 · ASSIGNED_NOT 指定不可用
+    </p>
+
+    <h3>生命周期与关键机制</h3>
+    <p class="note">制券 → 领券（Redis 扣库存 + 异步 DB + 生成 <code>t_coupon_user</code> 快照）→ 结算页查可用券 → 下单核销（校验 used/有效期/商品范围/门槛，锁券置 used=true）→ 关单返还（MQ <code>coupon.order.closed</code> 恢复 used=false）。<br>
+    <b>关键机制：</b>领取后下单使用的是 <code>t_coupon_user</code> 上的<b>规则快照</b>，而非实时读 <code>t_coupon</code>。订单侧只消费 <code>OrderDiscount.sourceAmount</code>，优惠分摊逻辑（3 轮分摊）可复用。</p>
+
+    <h3>已知限制 / BUG（直接影响需求范围）</h3>
+    <div class="sec" style="margin-top:8px">
+      <p style="margin:2px 0"><span class="tag t-red">限制</span> <b>不支持每满减</b>：满 200 减 50，下单 400 仍只减 50。根因 <code>validCouponUser</code> 只校验一次门槛、<code>getDiscountAmount</code> 返回 <code>min(total, amount)</code>。需新增 <code>rule_mode</code>（SINGLE / EVERY_FULL）字段。</p>
+      <p style="margin:8px 0"><span class="tag t-orange">限制</span> <b>平台/后台赠送无法指定店铺 / 商品</b>：<code>giftsToUser</code> 调用 <code>newCouponUser(..., null)</code>，<code>productIds</code> 为 null，不保存商品范围快照。</p>
+      <p style="margin:8px 0"><span class="tag t-red">BUG</span> <b>店铺级关单返还误恢复</b>：<code>orderClose</code> 在 SHOP 关闭时把<b>整单</b> <code>coupons</code> map 传给 <code>unlockUserCouponBatch</code>，会遍历把<b>未关闭店铺券、甚至平台券也恢复为未使用</b>。多店铺 / 平台券场景有资损风险。</p>
+      <p style="margin:8px 0"><span class="tag t-green">一致</span> <b>售后（AFS）不退券</b>：与需求梳理「不做售后退券」完全一致。</p>
+    </div>
+  </div>
+
+  <h2>二、需求梳理 × 技术基线 对照表</h2>
+  <div class="legend">
+    <span><i class="dot" style="background:var(--blue)"></i>🔵 已有（后端+端都有）</span>
+    <span><i class="dot" style="background:var(--orange)"></i>🟠 待扩展</span>
+    <span><i class="dot" style="background:var(--green)"></i>🟢 新增</span>
+    <span><i class="dot" style="background:var(--grey)"></i>⚪ 写死/不做</span>
+    <span><i class="dot" style="background:var(--red)"></i>❗ 风险/待确认</span>
+  </div>
+  <div style="overflow-x:auto">
+  <table>
+    <thead>
+      <tr><th>端口</th><th>功能</th><th>需求梳理原判定</th><th>技术基线支撑</th><th>校准结论</th><th>缺口类型</th><th>备注</th></tr>
+    </thead>
+    <tbody>
+      <!-- 平台端 -->
+      <tr><td class="port" rowspan="10">平台端</td><td>制券-添加券</td><td>暂无，仅商家端有</td><td><code>newCoupon</code> 强制 <code>shopId</code>，无平台制券定义；平台券仅走 gifts</td><td><span class="tag t-grey">成立</span></td><td>后端设计约束</td><td>平台发券 = 指定发券，非制券</td></tr>
+      <tr><td>制券-编辑券</td><td>暂无，仅商家端有</td><td>同上</td><td><span class="tag t-grey">成立</span></td><td>—</td><td></td></tr>
+      <tr><td>券管理-下架券</td><td>已有</td><td>BANED / SHOP_BANED 支持</td><td><span class="tag t-blue">成立</span></td><td>—</td><td></td></tr>
+      <tr><td>券管理-查看券</td><td>已有</td><td><code>t_coupon</code> 查询</td><td><span class="tag t-blue">成立</span></td><td>—</td><td></td></tr>
+      <tr><td>券管理-删除券</td><td>暂无</td><td>后端无硬删除（仅下架状态）</td><td><span class="tag t-grey">成立</span></td><td>后端无删除接口</td><td>与「删除券不画」确认点一致</td></tr>
+      <tr><td>发券配置-创建发券活动</td><td>暂无，需新增（本期仅直播时长写死）</td><td>后端无发券活动实体；直播时长发券需新引擎</td><td><span class="tag t-green">成立·净新增</span></td><td>后端+前端</td><td>触发源=火山引擎直播时长</td></tr>
+      <tr><td>发券配置-指定发券</td><td>已有，待扩展（无法指定店铺/商品）</td><td>gifts <code>productIds=null</code></td><td><span class="tag t-orange">成立·待扩展</span></td><td>后端改 addon-coupon</td><td>补商品范围快照逻辑</td></tr>
+      <tr><td>领券配置-新建领券活动</td><td>暂无，需新增</td><td>无领券活动实体；仅订单详情有领用按钮</td><td><span class="tag t-green">成立·净新增</span></td><td>后端+前端</td><td></td></tr>
+      <tr><td>数据看板</td><td>暂无，需新增</td><td>有 <code>t_coupon_user</code> 数据，无聚合看板</td><td><span class="tag t-green">成立</span></td><td>前端为主+可能新查询API</td><td></td></tr>
+      <tr><td>用户券查询</td><td>暂无，需新增</td><td><code>t_coupon_user</code> 可查，无管理端页</td><td><span class="tag t-green">成立</span></td><td>前端为主</td><td></td></tr>
+      <!-- 商家端 -->
+      <tr><td class="port" rowspan="9">商家端</td><td>制券-添加券</td><td>已有，待拓展（仅类型无其他限制如首单）</td><td>CouponType 仅 4 种，无首单约束</td><td><span class="tag t-orange">成立·待扩展=首单</span></td><td>后端改 addon-coupon</td><td>需新增首单字段/校验</td></tr>
+      <tr><td>制券-编辑券</td><td>暂无</td><td>后端 <code>AdminCouponServiceImpl</code> 有编辑能力，商家端 UI 无入口</td><td><span class="tag t-orange">部分成立</span></td><td>前端为主</td><td>待确认是否补编辑入口</td></tr>
+      <tr><td>管理券-查看券</td><td>已有</td><td><code>t_coupon</code> 查询</td><td><span class="tag t-blue">成立</span></td><td>—</td><td></td></tr>
+      <tr><td>管理券-下架券</td><td>已有</td><td>BANED / SHOP_BANED</td><td><span class="tag t-blue">成立</span></td><td>—</td><td></td></tr>
+      <tr><td>管理券-删除券</td><td>暂无</td><td>无硬删除</td><td><span class="tag t-grey">成立</span></td><td>后端无删除</td><td></td></tr>
+      <tr><td>发券配置-创建发券活动</td><td>暂无，需新增</td><td>无实体</td><td><span class="tag t-green">成立</span></td><td>后端+前端</td><td></td></tr>
+      <tr><td>领券配置-新建领券活动</td><td>暂无，需新增</td><td>无实体</td><td><span class="tag t-green">成立</span></td><td>后端+前端</td><td></td></tr>
+      <tr><td>数据看板</td><td>暂无</td><td>无</td><td><span class="tag t-green">成立</span></td><td>前端为主</td><td></td></tr>
+      <tr><td>用户券查询</td><td>暂无</td><td>无管理端页</td><td><span class="tag t-green">成立</span></td><td>前端为主</td><td></td></tr>
+      <!-- APP -->
+      <tr><td class="port" rowspan="8">APP</td><td>触达-消息中心</td><td>暂无，后台配置消息</td><td>后端无消息中心配置实体</td><td><span class="tag t-green">成立</span></td><td>后端+前端</td><td></td></tr>
+      <tr><td>触达-领券中心</td><td>暂无，本期不考虑</td><td>后端有领券入口，无中心页</td><td><span class="tag t-grey">成立（不做）</span></td><td>前端</td><td></td></tr>
+      <tr><td>触达-获券弹窗</td><td>暂无，需新增</td><td>前端弹窗，后端有发券/领券能力</td><td><span class="tag t-green">成立</span></td><td>前端</td><td></td></tr>
+      <tr><td>领券-领券中心</td><td>暂无，本期不做</td><td>—</td><td><span class="tag t-grey">成立</span></td><td>前端</td><td></td></tr>
+      <tr><td>领券-商品详情领券</td><td>暂无，需新增</td><td>后端 <code>collectCoupon</code> 已支持；App UI 缺</td><td><span class="tag t-orange">成立·前端缺口</span></td><td>前端</td><td></td></tr>
+      <tr><td>持券-我的优惠券</td><td>暂无，需新增</td><td>后端 <code>t_coupon_user</code> 已支持；App UI 缺</td><td><span class="tag t-orange">成立·前端缺口</span></td><td>前端</td><td></td></tr>
+      <tr><td>下单核销</td><td>暂无，需新增</td><td>后端 useCoupon / 分摊已支持；App 调用缺</td><td><span class="tag t-orange">成立·前端缺口</span></td><td>前端(调用)</td><td></td></tr>
+      <tr><td>售后退券</td><td>不做（未支付/后台关闭返还已有）</td><td>后端：未支付 & AFS 忽略 / ORDER_CLOSE FULL 返还</td><td><span class="tag t-blue">成立</span></td><td>—</td><td>但 SHOP bug 风险见 §三.5</td></tr>
+      <!-- 小程序 / H5 合并说明 -->
+      <tr><td class="port" rowspan="3">小程序<br>H5</td><td>商品详情领券 / 我的优惠券 / 下单核销</td><td>已有（小程序/H5）</td><td>后端 + 既有端 UI 都有</td><td><span class="tag t-blue">成立</span></td><td>—</td><td>三端中仅小程序/H5 已落地</td></tr>
+      <tr><td>获券弹窗</td><td>暂无，需新增</td><td>前端弹窗</td><td><span class="tag t-green">成立</span></td><td>前端</td><td></td></tr>
+      <tr><td>消息中心 / 领券中心 / 售后退券</td><td>消息中心后台配 / 领券中心不做 / 售后不退</td><td>与 APP 同判</td><td><span class="tag t-grey">成立</span></td><td>前端/后端</td><td></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>三、关键发现与待决策</h2>
+
+  <div class="sec">
+    <h3><span class="num">1</span>平台端「无制券」的本质 = 后端设计约束</h3>
+    <p class="note"><code>AdminCouponController.newCoupon</code> 强制取 <code>getShopId()</code>，券定义必带店铺作用域；平台券只能走 <code>giftsToUser</code>（不落 <code>t_coupon</code> 主券，直接批量生成 <code>t_coupon_user</code> 快照，平台券在 <code>t_coupon_order_record.coupons</code> 中 key=0）。<b>→ 平台端「发券」= 指定发券，不是制券。</b>需求梳理判定正确，且现在有了技术依据。</p>
+  </div>
+
+  <div class="sec">
+    <h3><span class="num">2</span>每满减缺口（新增技术约束）</h3>
+    <p class="note">现有引擎只支持「满减一次」。若本期任何满减券需支持「每满递减（满200减50，400减100）」，属 🟠待扩展，需改 addon-coupon：<code>t_coupon</code>/<code>t_coupon_user</code> 增 <code>rule_mode</code>(SINGLE/EVERY_FULL) + 校验/结算SQL/前端「计算模式」选项。<b>需求梳理未显式提及每满减，需确认本期是否纳入。</b></p>
+  </div>
+
+  <div class="sec">
+    <h3><span class="num">3</span>首单限制缺口</h3>
+    <p class="note">商家端制券「待拓展：首单」→ 后端 CouponType / 校验逻辑无首单约束字段，需新增。属 🟠待扩展（后端改 addon-coupon）。</p>
+  </div>
+
+  <div class="sec">
+    <h3><span class="num">4</span>指定发券商品范围</h3>
+    <p class="note">gifts 当前 <code>productIds=null</code>，平台/后台赠送无法指定店铺/商品。补「商品范围快照逻辑」即可，中等工作量，复用 <code>t_coupon_product</code>。<b>这与需求梳理「指定发券待扩展」完全对应，技术路径已明确。</b></p>
+  </div>
+
+  <div class="sec">
+    <h3><span class="num">5</span>关单返还 SHOP 级 BUG 风险 ❗</h3>
+    <div class="risk"><b>资损风险：</b>店铺级关单时当前实现把整单 <code>coupons</code> map 传入解锁，会把<b>未关闭店铺券、甚至平台券也恢复为未使用</b>。若本期涉及多店铺订单 / 平台券 + 后台关闭返还，需研发先修此 BUG，否则「后台关闭订单可返还（已有功能无改动）」的判定在多店铺场景不成立。建议列为<b>依赖项 / 待确认</b>。</div>
+  </div>
+
+  <div class="sec">
+    <h3><span class="num">6</span>App 端「暂无」实为前端缺口</h3>
+    <p class="note">后端 <code>ConsumerCouponServiceImpl</code>（collectCoupon / orderShopCouponPage / useCoupon）已完整支持领券、结算、核销。App 的「我的优惠券 / 商品详情领券 / 下单核销 暂无」是<b>客户端 UI / 调用缺口，非后端缺口</b>。→ App 相关项工作量低于「后端新增」，排期应区别于平台端发券活动类需求。</p>
+  </div>
+
+  <div class="sec">
+    <h3><span class="num">7</span>直播时长发券 = 净新增引擎（复用 gifts）</h3>
+    <p class="note">需求梳理「本期仅直播时长发券写死规则」是净新增触发源：火山引擎直播进入/退出时间 → 时长 &gt; x 的用户列表 → 批量调 <code>giftsToUser</code> 发券。后端无此活动实体，需新引擎；发券动作复用现有 gifts 接口。<b>关键依赖 = 火山引擎接口（需确认返回字段）。</b></p>
+  </div>
+
+  <h2>四、对范围判定的修正建议</h2>
+  <div class="card">
+    <ul style="margin:4px 0">
+      <li><b>维持：</b>平台端无制券、售后不退券、小程序/H5 已有功能、删除券本期不做。</li>
+      <li><b>细化：</b>所有「待扩展 / 新增」在原判定后追加<b>缺口类型</b>（改后端 addon-coupon / 仅前端），便于研发排期与工作量评估（见 §二 末列）。</li>
+      <li><b>新增待确认（技术驱动）：</b>
+        <ol style="margin:6px 0">
+          <li>本期是否纳入<b>每满减</b>（rule_mode）？</li>
+          <li>商家端制券是否补<b>首单限制</b>？</li>
+          <li>关单返还 SHOP 级 BUG 是否在本期<b>顺带修复</b>（多店铺/平台券场景）？</li>
+          <li>商家端「编辑券」是否补 UI 入口（后端已有能力）？</li>
+        </ol>
+      </li>
+      <li><b>历史判定修正：</b>之前四象限「现有体系全是原型无后端」指的是<b>泰小虎自有 Flask 后端（admin_service.py 零券代码）</b>；真实券引擎在 <b>gruul-mall addon-coupon</b>。需求梳理的「已有」应理解为「gruul-mall 已支撑 + 某端已落地 UI」，二者不矛盾，但须在 PRD 中写清底座归属。</li>
+    </ul>
+  </div>
+
+  <div class="foot">
+    输入源：D:\梯子\优惠券需求梳理.md（线下定稿，2026-07-27）+ D:\梯子\优惠券分享.md（技术分享，赖旭文，20260715）。<br>
+    本校准仅做范围/技术可行性对照，不替代 PRD；进入 Step3 原型前需先关闭 §四 的 4 项待确认。
+  </div>
+</div>
+</body>
+</html>
