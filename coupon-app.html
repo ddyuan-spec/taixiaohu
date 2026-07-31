@@ -3,57 +3,144 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>优惠券体系 · App 端原型</title>
+<title>优惠券体系 · App 端原型（可交互）</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{
-  font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
-  background:#f0f1f5;color:#23252b;
-  padding:32px 24px;
-}
-.hd{display:none}
-.hd h1{font-size:20px;font-weight:700;color:#1a1a2e}
-.hd .sub{font-size:13px;color:#888;margin-top:4px}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#eef0f4;color:#23252b}
+/* 布局：左侧导航 + 中间手机 */
+.layout{display:flex;min-height:100vh}
+.sidebar{width:240px;flex-shrink:0;background:#1f2330;color:#cfd3dc;padding:18px 0;overflow-y:auto;max-height:100vh;position:sticky;top:0}
+.sidebar h2{font-size:14px;font-weight:700;color:#fff;padding:0 18px 12px;letter-spacing:.5px}
+.sidebar .grp{font-size:11px;color:#7c8395;padding:14px 18px 6px;text-transform:uppercase;letter-spacing:1px}
+.sidebar a{display:block;padding:9px 18px;font-size:13px;color:#cfd3dc;cursor:pointer;border-left:3px solid transparent;text-decoration:none}
+.sidebar a:hover{background:#2b3040;color:#fff}
+.sidebar a.active{background:#343a4d;color:#fff;border-left-color:#534ab7}
+.stage{flex:1;display:flex;justify-content:center;align-items:flex-start;padding:32px 16px;overflow-x:auto}
 
-.grid{
-  display:flex;flex-wrap:wrap;gap:20px;justify-content:center;
-  max-width:1600px;margin:0 auto;
-}
-.card{
-  background:#fff;border-radius:12px;
-  box-shadow:0 2px 12px rgba(0,0,0,.08);
-  overflow:hidden;width:320px;flex-shrink:0;
-}
-.card .name{display:none}
-.card .name .drawn-badge{
-  font-size:11px;font-weight:600;color:#07c160;
-  background:#e8f9ef;padding:1px 6px;border-radius:4px;
-  margin-left:6px;white-space:nowrap;
-}
-.card img{
-  width:100%;height:auto;display:block;
-}
+/* 手机框 */
+.phone{width:390px;height:844px;background:#fff;border-radius:44px;box-shadow:0 12px 40px rgba(0,0,0,.18);border:10px solid #111;position:relative;overflow:hidden;flex-shrink:0}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:28px;background:#111;border-radius:0 0 16px 16px;z-index:60}
+.screen{position:absolute;inset:0;top:0;background:#f6f7f9;overflow-y:auto;display:none}
+.screen.active{display:block}
+.statusbar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:13px;font-weight:600;color:#111;background:#fff}
+.navbar{height:48px;display:flex;align-items:center;justify-content:center;position:relative;background:#fff;border-bottom:1px solid #eee;font-size:16px;font-weight:600}
+.navbar .back{position:absolute;left:14px;font-size:22px;color:#222;cursor:pointer;line-height:1}
+.navbar .more{position:absolute;right:14px;font-size:18px;color:#222;cursor:pointer}
+.content{padding:0;background:#f6f7f9;min-height:calc(100% - 92px)}
 
-.group-title{display:none}
+/* 通用卡片 */
+.coupon-card{background:#fff;border-radius:12px;margin:12px;padding:14px;position:relative;overflow:hidden;border:1px solid #f0f0f0}
+.coupon-card .left{display:flex;align-items:baseline;gap:4px}
+.coupon-card .amt{font-size:30px;font-weight:800;color:#ff4d4f}
+.coupon-card .amt small{font-size:14px}
+.coupon-card .cond{font-size:12px;color:#999;margin-top:2px}
+.coupon-card .name{font-size:15px;font-weight:600;margin-top:8px;color:#222}
+.coupon-card .scope{display:inline-block;font-size:11px;color:#534ab7;background:#efeafc;border-radius:4px;padding:1px 6px;margin-top:6px}
+.coupon-card .date{font-size:11px;color:#aaa;margin-top:6px}
+.coupon-card .use-btn{position:absolute;right:14px;bottom:14px;background:#ff4d4f;color:#fff;border:none;border-radius:16px;padding:6px 16px;font-size:13px;cursor:pointer}
+.coupon-card.gray{filter:grayscale(1);opacity:.55}
+.coupon-card .tag{position:absolute;top:12px;right:12px;font-size:11px;padding:2px 8px;border-radius:4px}
+.tag-used{background:#f0f0f0;color:#999}
+.tag-exp{background:#f0f0f0;color:#bbb}
+.tag-ok{background:#e8f9ef;color:#07c160}
+.tag-port{background:#fff7e6;color:#fa8c16}
+.expire-tip{color:#ff4d4f;font-size:11px;margin-top:4px}
+
+/* tabs */
+.tabs{display:flex;background:#fff;border-bottom:1px solid #eee;position:sticky;top:0;z-index:5}
+.tabs .tab{flex:1;text-align:center;padding:13px 0;font-size:14px;color:#666;cursor:pointer;position:relative}
+.tabs .tab.active{color:#ff4d4f;font-weight:600}
+.tabs .tab.active::after{content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:28px;height:3px;background:#ff4d4f;border-radius:2px}
+
+/* 我的（个人中心） */
+.profile-head{background:linear-gradient(135deg,#534ab7,#7b6ff0);color:#fff;padding:46px 20px 22px}
+.profile-head .ava{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:24px}
+.profile-head .uname{font-size:18px;font-weight:700;margin-top:10px}
+.asset-row{display:flex;background:#fff;margin-top:-14px;margin-left:12px;margin-right:12px;border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,.06);padding:14px 0}
+.asset-row .item{flex:1;text-align:center;cursor:pointer}
+.asset-row .item .v{font-size:17px;font-weight:700}
+.asset-row .item .l{font-size:12px;color:#888;margin-top:3px}
+.asset-row .item .badge{display:inline-block;background:#ff4d4f;color:#fff;font-size:10px;border-radius:8px;padding:0 5px;margin-left:3px;vertical-align:top}
+
+/* 商品详情 */
+.gd-hero{height:300px;background:linear-gradient(135deg,#ffd6cc,#ffb3a7);display:flex;align-items:center;justify-content:center;color:#fff;font-size:40px}
+.gd-info{padding:14px;background:#fff}
+.gd-info .title{font-size:16px;font-weight:600}
+.gd-info .price{color:#ff4d4f;font-size:22px;font-weight:800;margin:8px 0}
+.gd-entry{margin:12px;border-radius:12px;background:#fff7f6;border:1px solid #ffd9d6;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.gd-entry .et{font-size:13px;color:#ff4d4f;font-weight:600}
+.gd-entry .ea{color:#ff4d4f;font-size:18px}
+.gd-section{padding:14px;background:#fff;margin-top:10px;font-size:14px;color:#444}
+
+/* 底部弹窗 */
+.sheet-mask{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:40;display:none}
+.sheet-mask.show{display:block}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:18px 18px 0 0;z-index:50;transform:translateY(100%);transition:transform .28s;max-height:78%;overflow-y:auto}
+.sheet.show{transform:translateY(0)}
+.sheet .sh-head{display:flex;align-items:center;justify-content:center;position:relative;padding:14px;border-bottom:1px solid #f0f0f0;font-size:15px;font-weight:600}
+.sheet .sh-head .x{position:absolute;right:14px;font-size:20px;color:#999;cursor:pointer}
+.sheet .coupon-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid #f6f6f6}
+.sheet .coupon-row .ca{color:#ff4d4f;font-size:20px;font-weight:800;min-width:64px}
+.sheet .coupon-row .ci{flex:1}
+.sheet .coupon-row .ci .cn{font-size:14px;font-weight:600}
+.sheet .coupon-row .ci .cc{font-size:11px;color:#999;margin-top:2px}
+.sheet .coupon-row .rule{color:#534ab7;font-size:12px;cursor:pointer;white-space:nowrap}
+
+/* 券规则页 */
+.rule-page{padding:0}
+.rule-body{padding:18px;font-size:14px;line-height:1.8;color:#333}
+.rule-body h3{font-size:15px;margin:14px 0 6px;color:#222}
+.rule-body p{margin:6px 0}
+.rule-foot{padding:14px;background:#fff;border-top:1px solid #eee}
+.rule-foot button{width:100%;background:#534ab7;color:#fff;border:none;border-radius:10px;padding:12px;font-size:15px;cursor:pointer}
+
+/* 确认订单 */
+.co-item{display:flex;gap:12px;padding:14px;background:#fff;border-bottom:1px solid #f6f6f6;align-items:center}
+.co-item .pic{width:64px;height:64px;border-radius:8px;background:#eee;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:24px}
+.co-item .info{flex:1}
+.co-item .info .t{font-size:14px;font-weight:600}
+.co-item .info .sku{font-size:12px;color:#999;margin:3px 0}
+.co-item .info .p{color:#ff4d4f;font-weight:700;font-size:15px}
+.co-item .info .deduct{font-size:12px;color:#07c160;margin-top:3px}
+.co-fold{background:#fff;margin-top:10px;padding:14px;cursor:pointer}
+.co-fold .row{display:flex;justify-content:space-between;font-size:14px;color:#333}
+.co-fold .arrow{transition:transform .2s}
+.co-fold .arrow.open{transform:rotate(180deg)}
+.co-coupons{background:#fff;padding:0 14px;display:none}
+.co-coupons.show{display:block}
+.co-coupons .cr{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #f6f6f6;font-size:13px}
+.co-coupons .cr input{accent-color:#ff4d4f}
+.co-coupons .cr .cn{flex:1}
+.co-coupons .cr .cn .cx{font-size:11px;color:#999}
+.co-coupons .cr .amt{color:#ff4d4f;font-weight:700}
+.co-coupons .cr.disabled{opacity:.5}
+.co-summary{background:#fff;margin-top:10px;padding:14px;font-size:14px}
+.co-summary .line{display:flex;justify-content:space-between;margin:6px 0;color:#555}
+.co-summary .line.total{font-size:17px;font-weight:800;color:#222;margin-top:10px}
+.co-summary .line.total .red{color:#ff4d4f}
+.co-submit{position:absolute;left:0;right:0;bottom:0;background:#ff4d4f;color:#fff;text-align:center;padding:15px;font-size:16px;font-weight:700;cursor:pointer;z-index:30}
+.empty{text-align:center;padding:60px 20px;color:#bbb}
+.empty .ic{font-size:54px}
+.empty .tx{margin:14px 0;font-size:14px}
+.empty .go{display:inline-block;background:#534ab7;color:#fff;padding:9px 26px;border-radius:20px;font-size:14px;cursor:pointer}
+
+/* 多SKU适用商品页 */
+.sku-page{padding:0}
+.sku-sec{padding:14px;background:#fff;margin-top:10px}
+.sku-sec .h{font-size:14px;font-weight:600;margin-bottom:8px}
+.sku-sec .srow{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid #f6f6f6;color:#444}
+.sku-sec .srow .y{color:#07c160}
+.sku-sec .srow .n{color:#bbb}
+
+/* toast */
+.toast{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.8);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;z-index:99;opacity:0;transition:.2s;pointer-events:none;max-width:80%;text-align:center}
+.toast.show{opacity:1}
 
 /* 复制按钮 */
-#copyBtn{
-  position:fixed;top:16px;right:16px;z-index:9999;
-  background:#534AB7;color:#fff;border:none;
-  padding:8px 18px;border-radius:8px;cursor:pointer;
-  font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(83,74,183,.35);
-  transition:transform .15s,box-shadow .15s;
-  user-select:none;
-}
-#copyBtn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(83,74,183,.45)}
-#copyBtn:active{transform:translateY(0)}
-#copyToast{
-  position:fixed;top:52px;right:16px;z-index:9999;
-  background:#07c160;color:#fff;padding:6px 14px;
-  border-radius:6px;font-size:12px;opacity:0;
-  transform:translateY(-8px);transition:.25s;pointer-events:none;
-}
-#copyToast.show{opacity:1;transform:translateY(0)}
+#copyBtn{position:fixed;top:16px;right:16px;z-index:9999;background:#534ab7;color:#fff;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(83,74,183,.35)}
+#copyToast{position:fixed;top:52px;right:16px;z-index:9999;background:#07c160;color:#fff;padding:6px 14px;border-radius:6px;font-size:12px;opacity:0;transition:.25s;pointer-events:none}
+#copyToast.show{opacity:1}
+.hidden{display:none!important}
 </style>
 </head>
 <body>
@@ -61,88 +148,384 @@ body{
 <button id="copyBtn">📋 复制源码</button>
 <div id="copyToast">已复制源码到剪贴板</div>
 
-<div class="hd">
-  <h1>🎫 优惠券体系 · App 端原型</h1>
-  <span class="sub">用户侧 — 最新截图</span>
-</div>
+<div class="layout">
+  <div class="sidebar">
+    <h2>🎫 优惠券 · App 端</h2>
+    <div class="grp">入口 / 券包</div>
+    <a data-go="my" class="active">U 我的（个人中心）</a>
+    <a data-go="coupons">C2 我的优惠券（三态）</a>
+    <a data-go="couponsEmpty">C2 我的优惠券（空态）</a>
+    <a data-go="portRestrict">C2 跨端口置灰券</a>
+    <div class="grp">商品详情 / 券规则</div>
+    <a data-go="goods">C5 商品详情（券入口条）</a>
+    <a data-go="goodsSheet">C5 优惠详情弹窗</a>
+    <a data-go="rules">C5 券规则页</a>
+    <div class="grp">确认订单 / 选券</div>
+    <a data-go="coNone">C6 确认订单（无券态）</a>
+    <a data-go="coOrder">C6 确认订单（订单级券）</a>
+    <a data-go="coSku">C6 确认订单（单SKU券作用于行）</a>
+    <a data-go="skuScope">C6 多SKU券适用商品</a>
+    <a data-go="coSheet">C6 选择优惠券弹窗</a>
+  </div>
 
-<div class="grid">
+  <div class="stage">
+    <div class="phone">
+      <div class="notch"></div>
 
-<!-- ① 我的（个人中心） -->
-<div class="card">
-  <div class="name">U 我的（资产入口）</div>
-  <img src="coupon-prd-assets/app-my-profile.png" alt="我的">
-</div>
+      <!-- ===== U 我的 ===== -->
+      <div class="screen active" id="scr-my">
+        <div class="statusbar"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="profile-head">
+          <div class="ava">🐯</div>
+          <div class="uname">泰小虎用户</div>
+        </div>
+        <div class="asset-row">
+          <div class="item"><div class="v">1,280</div><div class="l">积分</div></div>
+          <div class="item" onclick="go('coupons')"><div class="v">5<span class="badge">5</span></div><div class="l">优惠券</div></div>
+          <div class="item"><div class="v">0</div><div class="l">卡券</div></div>
+        </div>
+        <div class="gd-section" style="margin-top:10px">📋 我的订单　　👣 浏览足迹　　⚙️ 设置</div>
+      </div>
 
-<!-- ② 我的优惠券（空态） -->
-<div class="card">
-  <div class="name">C2 我的优惠券（空态）</div>
-  <img src="coupon-prd-assets/app-my-coupons-empty.png" alt="我的优惠券空态">
-</div>
+      <!-- ===== C2 我的优惠券（三态） ===== -->
+      <div class="screen" id="scr-coupons">
+        <div class="statusbar"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="navbar"><span class="back" onclick="go('my')">‹</span>我的优惠券</div>
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab(this,'unused')">未使用</div>
+          <div class="tab" onclick="switchTab(this,'used')">已使用</div>
+          <div class="tab" onclick="switchTab(this,'expired')">已过期</div>
+        </div>
+        <div class="content">
+          <!-- 未使用 -->
+          <div class="tabpane" id="tp-unused">
+            <div class="coupon-card">
+              <span class="tag tag-ok">生效中</span>
+              <div class="left"><span class="amt"><small>¥</small>15</span></div>
+              <div class="cond">满 99 元可用</div>
+              <div class="name">新人立减15元</div>
+              <span class="scope">指定商品</span>
+              <div class="date">2026.07.20 ~ 2026.08.20</div>
+              <div class="expire-tip">⏰ 3天后过期</div>
+              <button class="use-btn" onclick="go('goods')">去使用</button>
+            </div>
+            <div class="coupon-card">
+              <span class="tag tag-ok">生效中</span>
+              <div class="left"><span class="amt"><small>¥</small>30</span></div>
+              <div class="cond">满 200 元可用</div>
+              <div class="name">老券满200减30</div>
+              <span class="scope">全场</span>
+              <div class="date">2026.07.05 ~ 2026.12.31</div>
+              <button class="use-btn" onclick="go('goods')">去使用</button>
+            </div>
+            <div class="coupon-card gray">
+              <span class="tag tag-port">生效中</span>
+              <div class="left"><span class="amt"><small>¥</small>20</small></div>
+              <div class="cond">满 150 元可用</div>
+              <div class="name">老券满150减20</div>
+              <span class="scope">泰小虎App</span>
+              <div class="date">2026.07.05 ~ 2026.12.31</div>
+              <button class="use-btn" onclick="toast('此券仅支持在泰小虎App使用')">去使用</button>
+            </div>
+          </div>
+          <!-- 已使用 -->
+          <div class="tabpane hidden" id="tp-used">
+            <div class="coupon-card gray">
+              <span class="tag tag-used">已核销</span>
+              <div class="left"><span class="amt"><small>¥</small>15</span></div>
+              <div class="cond">满 99 元可用</div>
+              <div class="name">新人立减15元</div>
+              <span class="scope">指定商品</span>
+              <div class="date">使用时间：2026.07.18 14:22</div>
+              <div class="date">关联订单：NO20260718xxxx8821</div>
+            </div>
+          </div>
+          <!-- 已过期 -->
+          <div class="tabpane hidden" id="tp-expired">
+            <div class="coupon-card gray">
+              <span class="tag tag-exp">已过期</span>
+              <div class="left"><span class="amt"><small>¥</small>10</span></div>
+              <div class="cond">满 80 元可用</div>
+              <div class="name">夏日清凉券</div>
+              <span class="scope">全场</span>
+              <div class="date">过期时间：2026.07.10</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-<!-- ③ 我的优惠券（三态） -->
-<div class="card">
-  <div class="name">C2 我的优惠券（三态）<span class="drawn-badge">自画</span></div>
-  <img src="coupon-prd-assets/app-c2-coupons-drawn.png" alt="我的优惠券三态">
-</div>
+      <!-- ===== C2 空态 ===== -->
+      <div class="screen" id="scr-couponsEmpty">
+        <div class="statusbar"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="navbar"><span class="back" onclick="go('my')">‹</span>我的优惠券</div>
+        <div class="tabs">
+          <div class="tab active">未使用</div>
+          <div class="tab">已使用</div>
+          <div class="tab">已过期</div>
+        </div>
+        <div class="empty">
+          <div class="ic">🎫</div>
+          <div class="tx">暂无优惠券</div>
+          <div class="go" onclick="go('goods')">去逛逛</div>
+        </div>
+      </div>
 
-<!-- ④ 跨端口置灰券 -->
-<div class="card">
-  <div class="name">C2 跨端口置灰券<span class="drawn-badge">自画</span></div>
-  <img src="coupon-prd-assets/app-c2-port-restrict-drawn.png" alt="跨端口置灰券">
-</div>
+      <!-- ===== C2 跨端口置灰 ===== -->
+      <div class="screen" id="scr-portRestrict">
+        <div class="statusbar"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="navbar"><span class="back" onclick="go('my')">‹</span>我的优惠券</div>
+        <div class="tabs">
+          <div class="tab active">未使用</div>
+          <div class="tab">已使用</div>
+          <div class="tab">已过期</div>
+        </div>
+        <div class="content">
+          <p style="font-size:12px;color:#888;padding:10px 14px">当前端口：泰尔超优惠H5（该券仅支持泰小虎App，故置灰不可选）</p>
+          <div class="coupon-card gray" onclick="toast('此券仅支持在泰小虎App使用')">
+            <span class="tag tag-port">生效中</span>
+            <div class="left"><span class="amt"><small>¥</small>20</span></div>
+            <div class="cond">满 150 元可用</div>
+            <div class="name">老券满150减20</div>
+            <span class="scope">泰小虎App</span>
+            <div class="date">2026.07.05 ~ 2026.12.31</div>
+            <button class="use-btn" onclick="event.stopPropagation();toast('此券仅支持在泰小虎App使用')">去使用</button>
+          </div>
+        </div>
+      </div>
 
-<!-- ⑤ 商品详情优惠券入口 -->
-<div class="card">
-  <div class="name">C5 商品详情（优惠券入口条）<span class="drawn-badge">自画</span></div>
-  <img src="coupon-prd-assets/app-c5-product-entry.png" alt="商品详情优惠券入口">
-</div>
+      <!-- ===== C5 商品详情 ===== -->
+      <div class="screen" id="scr-goods">
+        <div class="statusbar"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="navbar"><span class="back" onclick="go('coupons')">‹</span>商品详情</div>
+        <div class="gd-hero">🛍️</div>
+        <div class="gd-info">
+          <div class="title">泰尔辅酶Q10软胶囊 30粒</div>
+          <div class="price">¥129 <span style="font-size:12px;color:#999;text-decoration:line-through;font-weight:400">¥169</span></div>
+        </div>
+        <div class="gd-entry" onclick="go('goodsSheet')">
+          <div class="et">新人立减15元 等3张券可用</div>
+          <div class="ea">›</div>
+        </div>
+        <div class="gd-section">📦 发货 ｜ ⚡ 48小时发货 ｜ 🛡️ 正品保障</div>
+      </div>
 
-<!-- ⑥ 优惠详情底部弹窗 -->
-<div class="card">
-  <div class="name">C5 优惠详情弹窗<span class="drawn-badge">自画</span></div>
-  <img src="coupon-prd-assets/app-c5-coupon-modal.png" alt="优惠详情弹窗">
-</div>
+      <!-- ===== C5 优惠详情弹窗 ===== -->
+      <div class="screen" id="scr-goodsSheet">
+        <div class="statusbar"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="navbar"><span class="back" onclick="go('goods')">‹</span>商品详情</div>
+        <div class="gd-hero">🛍️</div>
+        <div class="gd-info">
+          <div class="title">泰尔辅酶Q10软胶囊 30粒</div>
+          <div class="price">¥129</div>
+        </div>
+        <div class="gd-entry" onclick="openSheet()"><div class="et">新人立减15元 等3张券可用</div><div class="ea">›</div></div>
+        <div class="sheet-mask show" onclick="closeSheet()"></div>
+        <div class="sheet show">
+          <div class="sh-head">优惠详情<span class="x" onclick="closeSheet()">×</span></div>
+          <div class="coupon-row">
+            <div class="ca">¥15</div>
+            <div class="ci"><div class="cn">新人立减15元</div><div class="cc">满99元可用 · 2026.07.20~08.20</div></div>
+            <div class="rule" onclick="go('rules')">券规则 ›</div>
+          </div>
+          <div class="coupon-row">
+            <div class="ca">¥30</div>
+            <div class="ci"><div class="cn">老券满200减30</div><div class="cc">满200元可用 · 全场</div></div>
+            <div class="rule" onclick="go('rules')">券规则 ›</div>
+          </div>
+          <div class="coupon-row">
+            <div class="ca">¥20</div>
+            <div class="ci"><div class="cn">老券满150减20</div><div class="cc">满150元可用 · 已领取</div></div>
+            <div class="rule" onclick="go('rules')">券规则 ›</div>
+          </div>
+        </div>
+      </div>
 
-<!-- ⑦ 券规则页 -->
-<div class="card">
-  <div class="name">C5 券规则页<span class="drawn-badge">自画</span></div>
-  <img src="coupon-prd-assets/app-coupon-rules-drawn.png" alt="券规则页">
-</div>
+      <!-- ===== C5 券规则页 ===== -->
+      <div class="screen" id="scr-rules">
+        <div class="statusbar"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="navbar"><span class="back" onclick="go('goodsSheet')">‹</span>券规则说明</div>
+        <div class="rule-page">
+          <div class="rule-body">
+            <h3>新人立减15元</h3>
+            <p><b>使用门槛：</b>订单满 99 元可用（指定商品参与）。</p>
+            <p><b>优惠力度：</b>立减 ¥15，每笔订单限用 1 张。</p>
+            <p><b>有效期：</b>2026.07.20 ~ 2026.08.20，领取后 24 天内有效。</p>
+            <p><b>适用范围：</b>仅限「泰尔辅酶Q10软胶囊」等指定健康好物，不与跨店券叠加。</p>
+            <p><b>温馨提示：</b>退款不退券，券核销后状态保持「已使用」。</p>
+            <p style="color:#999;font-size:12px">* 券规则说明由商家配置，最终解释权归泰小虎所有。</p>
+          </div>
+          <div class="rule-foot"><button onclick="go('goodsSheet')">知道了</button></div>
+        </div>
+      </div>
 
-<!-- ⑧ 确认订单（单SKU） -->
-<div class="card">
-  <div class="name">C6 确认订单（单SKU）<span class="drawn-badge">自画</span></div>
-  <img src="coupon-prd-assets/app-c6-order-single-sku-drawn.png" alt="确认订单单SKU">
-</div>
+      <!-- ===== C6 确认订单（无券态） ===== -->
+      <div class="screen" id="scr-coNone">
+        <div class="statusbar"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="navbar"><span class="back" onclick="go('goods')">‹</span>确认订单</div>
+        <div class="content">
+          <div class="co-item">
+            <div class="pic">🛍️</div>
+            <div class="info"><div class="t">泰尔辅酶Q10软胶囊 30粒</div><div class="sku">规格：30粒/瓶</div><div class="p">¥129</div></div>
+          </div>
+          <div class="co-fold" onclick="toggleFold(this)">
+            <div class="row"><span>优惠券</span><span>无可用券 <span class="arrow">▾</span></span></div>
+          </div>
+          <div class="co-summary">
+            <div class="line"><span>商品金额</span><span>¥129.00</span></div>
+            <div class="line"><span>运费</span><span>¥0.00</span></div>
+            <div class="line total"><span>应付</span><span class="red">¥129.00</span></div>
+          </div>
+        </div>
+        <div class="co-submit">提交订单 ¥129.00</div>
+      </div>
 
-<!-- ⑨ 多SKU券适用商品 -->
-<div class="card">
-  <div class="name">C6 多SKU券适用商品<span class="drawn-badge">自画</span></div>
-  <img src="coupon-prd-assets/app-c6-coupon-sku-scope-drawn.png" alt="多SKU券适用商品">
-</div>
+      <!-- ===== C6 确认订单（订单级券） ===== -->
+      <div class="screen" id="scr-coOrder">
+        <div class="statusbar"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="navbar"><span class="back" onclick="go('goods')">‹</span>确认订单</div>
+        <div class="content">
+          <div class="co-item">
+            <div class="pic">🛍️</div>
+            <div class="info"><div class="t">泰尔辅酶Q10软胶囊 30粒</div><div class="sku">规格：30粒/瓶</div><div class="p">¥129</div></div>
+          </div>
+          <div class="co-fold" onclick="toggleFold(this)">
+            <div class="row"><span>优惠券</span><span>已选 老券满200减30（推荐） <span class="arrow open">▾</span></span></div>
+          </div>
+          <div class="co-coupons show">
+            <div class="cr"><input type="radio" name="co" checked><div class="cn">老券满200减30<div class="cx">满200元可用 · 全场 · 推荐</div></div><div class="amt">-¥30</div></div>
+            <div class="cr"><input type="radio" name="co"><div class="cn">新人立减15元<div class="cx">满99元可用 · 指定商品</div></div><div class="amt">-¥15</div></div>
+            <div class="cr"><input type="radio" name="co"><div class="cn" style="color:#999">不使用优惠券</div></div></div>
+          </div>
+          <div class="co-summary">
+            <div class="line"><span>商品金额</span><span>¥129.00</span></div>
+            <div class="line"><span>优惠券</span><span style="color:#ff4d4f">-¥30.00</span></div>
+            <div class="line"><span>运费</span><span>¥0.00</span></div>
+            <div class="line total"><span>应付</span><span class="red">¥99.00</span></div>
+          </div>
+        </div>
+        <div class="co-submit">提交订单 ¥99.00</div>
+      </div>
 
-<!-- ⑩ 选择优惠券弹窗 -->
-<div class="card">
-  <div class="name">C6 选择优惠券弹窗<span class="drawn-badge">自画</span></div>
-  <img src="coupon-prd-assets/app-select-coupon-with-coupon-drawn.png" alt="选择优惠券弹窗">
-</div>
+      <!-- ===== C6 确认订单（单SKU券作用于行） ===== -->
+      <div class="screen" id="scr-coSku">
+        <div class="statusbar"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="navbar"><span class="back" onclick="go('goods')">‹</span>确认订单</div>
+        <div class="content">
+          <div class="co-item">
+            <div class="pic">🛍️</div>
+            <div class="info"><div class="t">泰尔辅酶Q10软胶囊 30粒</div><div class="sku">规格：30粒/瓶</div><div class="p">¥129</div><div class="deduct">✓ 新人立减15元 已作用于本商品 -¥15.00</div></div>
+          </div>
+          <div class="co-item">
+            <div class="pic">🍯</div>
+            <div class="info"><div class="t">泰尔蜂蜜礼盒</div><div class="sku">规格：500g</div><div class="p">¥89</div></div>
+          </div>
+          <div class="co-fold" onclick="toggleFold(this)">
+            <div class="row"><span>优惠券</span><span>单SKU券作用于商品行 <span class="arrow open">▾</span></span></div>
+          </div>
+          <div class="co-coupons show">
+            <div class="cr"><input type="radio" name="co2" checked><div class="cn">新人立减15元<div class="cx">作用于「泰尔辅酶Q10」行（满99减15）</div></div><div class="amt">-¥15</div></div>
+            <div class="cr disabled"><input type="radio" name="co2" disabled><div class="cn">老券满200减30<div class="cx" style="color:#bbb">不适用：订单未满200（券作用于订单级）</div></div></div>
+            <div class="cr"><input type="radio" name="co2"><div class="cn" style="color:#999">不使用优惠券</div></div></div>
+          </div>
+          <div class="co-summary">
+            <div class="line"><span>商品金额</span><span>¥218.00</span></div>
+            <div class="line"><span>优惠券（作用于商品行）</span><span style="color:#ff4d4f">-¥15.00</span></div>
+            <div class="line"><span>运费</span><span>¥0.00</span></div>
+            <div class="line total"><span>应付</span><span class="red">¥203.00</span></div>
+          </div>
+        </div>
+        <div class="co-submit">提交订单 ¥203.00</div>
+      </div>
 
-<!-- ⑪ 确认订单（无券态） -->
-<div class="card">
-  <div class="name">C6 确认订单（无券态）</div>
-  <img src="coupon-prd-assets/app-confirm-order.png" alt="确认订单无券">
-</div>
+      <!-- ===== C6 多SKU券适用商品 ===== -->
+      <div class="screen" id="scr-skuScope">
+        <div class="statusbar"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="navbar"><span class="back" onclick="go('coSku')">‹</span>优惠券适用商品</div>
+        <div class="content">
+          <div class="sku-sec">
+            <div class="h">新人立减15元（满99减15 · 指定商品参与）</div>
+            <div class="srow"><span>泰尔辅酶Q10软胶囊 30粒</span><span class="y">适用 ✓ 预计抵扣 ¥15</span></div>
+            <div class="srow"><span>泰尔维生素C片 60片</span><span class="y">适用 ✓ 预计抵扣 ¥15</span></div>
+            <div class="srow"><span>泰尔蜂蜜礼盒 500g</span><span class="n">不适用 ✕ 不在适用范围</span></div>
+            <div class="srow"><span>泰尔蛋白粉 450g</span><span class="n">不适用 ✕ 不在适用范围</span></div>
+          </div>
+          <div style="font-size:12px;color:#888;padding:12px 14px">单SKU券门槛与减免均作用于对应商品行，与其余商品无关；订单级券（如满200减30）才作用于订单总价。</div>
+        </div>
+      </div>
 
-<!-- ⑫ 确认订单（含优惠券） -->
-<div class="card">
-  <div class="name">C6 确认订单（含券）</div>
-  <img src="coupon-prd-assets/app-confirm-order-with-coupon.png" alt="确认订单含券">
-</div>
+      <!-- ===== C6 选择优惠券弹窗 ===== -->
+      <div class="screen" id="scr-coSheet">
+        <div class="statusbar"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="navbar"><span class="back" onclick="go('coOrder')">‹</span>确认订单</div>
+        <div class="co-item">
+          <div class="pic">🛍️</div>
+          <div class="info"><div class="t">泰尔辅酶Q10软胶囊 30粒</div><div class="p">¥129</div></div>
+        </div>
+        <div class="co-fold" style="color:#ff4d4f" onclick="openCoSheet()">选择优惠券 ›</div>
+        <div class="sheet-mask show" onclick="closeCoSheet()"></div>
+        <div class="sheet show">
+          <div class="sh-head">选择优惠券<span class="x" onclick="closeCoSheet()">×</span></div>
+          <div class="coupon-row">
+            <div class="ca">¥30</div>
+            <div class="ci"><div class="cn">老券满200减30 <span style="color:#ff4d4f;font-size:11px">推荐</span></div><div class="cc">满200元可用 · 全场</div></div>
+            <div class="rule" onclick="selCoupon('老券满200减30')">选择</div>
+          </div>
+          <div class="coupon-row">
+            <div class="ca">¥15</div>
+            <div class="ci"><div class="cn">新人立减15元</div><div class="cc">满99元可用 · 指定商品</div></div>
+            <div class="rule" onclick="selCoupon('新人立减15元')">选择</div>
+          </div>
+          <div class="coupon-row">
+            <div class="ca" style="color:#bbb">—</div>
+            <div class="ci"><div class="cn" style="color:#999">不使用优惠券</div></div>
+            <div class="rule" onclick="selCoupon('不使用')">选择</div>
+          </div>
+        </div>
+      </div>
 
+      <div class="toast" id="toast"></div>
+    </div>
+  </div>
 </div>
 
 <script>
+function go(s){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('scr-'+s);
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
+  const nav=document.querySelector('.sidebar a[data-go="'+s+'"]');
+  if(nav) nav.classList.add('active');
+  el && (el.scrollTop=0);
+}
+document.querySelectorAll('.sidebar a').forEach(a=>{
+  a.addEventListener('click',()=>go(a.dataset.go));
+});
+function switchTab(t,id){
+  document.querySelectorAll('#scr-coupons .tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  document.querySelectorAll('#scr-coupons .tabpane').forEach(p=>p.classList.add('hidden'));
+  document.getElementById('tp-'+id).classList.remove('hidden');
+}
+function toggleFold(el){
+  const arrow=el.querySelector('.arrow');
+  arrow.classList.toggle('open');
+  const coupons=el.nextElementSibling;
+  if(coupons && coupons.classList.contains('co-coupons')) coupons.classList.toggle('show');
+}
+function openSheet(){document.getElementById('scr-goodsSheet').querySelector('.sheet-mask').classList.add('show');document.querySelector('#scr-goodsSheet .sheet').classList.add('show');}
+function closeSheet(){document.getElementById('scr-goodsSheet').querySelector('.sheet-mask').classList.remove('show');document.querySelector('#scr-goodsSheet .sheet').classList.remove('show');}
+function openCoSheet(){document.getElementById('scr-coSheet').querySelector('.sheet-mask').classList.add('show');document.querySelector('#scr-coSheet .sheet').classList.add('show');}
+function closeCoSheet(){document.getElementById('scr-coSheet').querySelector('.sheet-mask').classList.remove('show');document.querySelector('#scr-coSheet .sheet').classList.remove('show');}
+function selCoupon(n){toast('已选择：'+n);closeCoSheet();}
+let toastTimer;
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),1600);
+}
+// 复制按钮
 document.getElementById('copyBtn').addEventListener('click',async function(){
   try{
     const html=document.documentElement.outerHTML;
@@ -150,9 +533,7 @@ document.getElementById('copyBtn').addEventListener('click',async function(){
     const t=document.getElementById('copyToast');
     t.classList.add('show');
     setTimeout(()=>t.classList.remove('show'),1500);
-  }catch(e){
-    prompt('复制失败，请手动复制：',location.href);
-  }
+  }catch(e){prompt('复制失败，请手动复制：',location.href);}
 });
 </script>
 </body>
