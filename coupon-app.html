@@ -12,7 +12,8 @@ body{
   padding:32px 24px;
 }
 .hd{display:none}
-.group-title{display:none}
+.hd h1{font-size:20px;font-weight:700;color:#1a1a2e}
+.hd .sub{font-size:13px;color:#888;margin-top:4px}
 
 .grid{
   display:flex;flex-wrap:wrap;gap:20px;justify-content:center;
@@ -57,14 +58,15 @@ body{
 </head>
 <body>
 
+<button id="copyBtn">📋 复制源码</button>
+<div id="copyToast">已复制源码到剪贴板</div>
+
 <div class="hd">
   <h1>🎫 优惠券体系 · App 端原型</h1>
   <span class="sub">用户侧 — 最新截图</span>
 </div>
 
 <div class="grid">
-
-<div class="group-title">我的 / 资产线</div>
 
 <!-- ① 我的（个人中心） -->
 <div class="card">
@@ -80,19 +82,17 @@ body{
 
 <!-- ③ 我的优惠券（三态） -->
 <div class="card">
-  <div class="name">C2 我的优惠券（待使用 / 已使用 / 已过期）<span class="drawn-badge">自画</span></div>
+  <div class="name">C2 我的优惠券（三态）<span class="drawn-badge">自画</span></div>
   <img src="coupon-prd-assets/app-c2-coupons-drawn.png" alt="我的优惠券三态">
 </div>
 
 <!-- ④ 跨端口置灰券 -->
 <div class="card">
-  <div class="name">C2 跨端口置灰券 + 提示<span class="drawn-badge">自画</span></div>
+  <div class="name">C2 跨端口置灰券<span class="drawn-badge">自画</span></div>
   <img src="coupon-prd-assets/app-c2-port-restrict-drawn.png" alt="跨端口置灰券">
 </div>
 
-<div class="group-title">商城购买线</div>
-
-<!-- ⑤ 商品详情 -->
+<!-- ⑤ 商品详情优惠券入口 -->
 <div class="card">
   <div class="name">C5 商品详情（优惠券入口条）<span class="drawn-badge">自画</span></div>
   <img src="coupon-prd-assets/app-c5-product-entry.png" alt="商品详情优惠券入口">
@@ -100,31 +100,31 @@ body{
 
 <!-- ⑥ 优惠详情底部弹窗 -->
 <div class="card">
-  <div class="name">C5 优惠详情底部弹窗（券列表 + 券规则 ›）<span class="drawn-badge">自画</span></div>
+  <div class="name">C5 优惠详情弹窗<span class="drawn-badge">自画</span></div>
   <img src="coupon-prd-assets/app-c5-coupon-modal.png" alt="优惠详情弹窗">
 </div>
 
 <!-- ⑦ 券规则页 -->
 <div class="card">
-  <div class="name">C5 券规则页（富文本渲染）<span class="drawn-badge">自画</span></div>
+  <div class="name">C5 券规则页<span class="drawn-badge">自画</span></div>
   <img src="coupon-prd-assets/app-coupon-rules-drawn.png" alt="券规则页">
 </div>
 
-<!-- ⑧ 确认订单（单SKU·券作用于SKU行） -->
+<!-- ⑧ 确认订单（单SKU） -->
 <div class="card">
-  <div class="name">C6 确认订单（单SKU · 券作用于SKU行）<span class="drawn-badge">自画</span></div>
+  <div class="name">C6 确认订单（单SKU）<span class="drawn-badge">自画</span></div>
   <img src="coupon-prd-assets/app-c6-order-single-sku-drawn.png" alt="确认订单单SKU">
 </div>
 
 <!-- ⑨ 多SKU券适用商品 -->
 <div class="card">
-  <div class="name">C6 优惠券适用商品（多SKU券分摊）<span class="drawn-badge">自画</span></div>
+  <div class="name">C6 多SKU券适用商品<span class="drawn-badge">自画</span></div>
   <img src="coupon-prd-assets/app-c6-coupon-sku-scope-drawn.png" alt="多SKU券适用商品">
 </div>
 
 <!-- ⑩ 选择优惠券弹窗 -->
 <div class="card">
-  <div class="name">C6 选择优惠券弹窗（含可用券 + 券规则入口）<span class="drawn-badge">自画</span></div>
+  <div class="name">C6 选择优惠券弹窗<span class="drawn-badge">自画</span></div>
   <img src="coupon-prd-assets/app-select-coupon-with-coupon-drawn.png" alt="选择优惠券弹窗">
 </div>
 
@@ -136,24 +136,24 @@ body{
 
 <!-- ⑫ 确认订单（含优惠券） -->
 <div class="card">
-  <div class="name">C6 确认订单（含优惠券）</div>
+  <div class="name">C6 确认订单（含券）</div>
   <img src="coupon-prd-assets/app-confirm-order-with-coupon.png" alt="确认订单含券">
 </div>
 
 </div>
 
-<button id="copyBtn" onclick="copySrc()">📋 复制源码</button>
-<div id="copyToast">✅ 源码已复制到剪贴板（126 行 / 约 4KB）</div>
-
 <script>
-async function copySrc(){
-  const resp = await fetch(location.href);
-  const text = await resp.text();
-  await navigator.clipboard.writeText(text);
-  const t=document.getElementById('copyToast');
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2000);
-}
+document.getElementById('copyBtn').addEventListener('click',async function(){
+  try{
+    const html=document.documentElement.outerHTML;
+    await navigator.clipboard.writeText(html);
+    const t=document.getElementById('copyToast');
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),1500);
+  }catch(e){
+    prompt('复制失败，请手动复制：',location.href);
+  }
+});
 </script>
 </body>
 </html>
