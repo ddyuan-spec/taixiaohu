@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>优惠券体系 · App 端原型</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#f0f1f5;color:#23252b;
+  padding:32px 24px;
+}
+.hd{text-align:center;margin-bottom:28px}
+.hd h1{font-size:20px;font-weight:700;color:#1a1a2e}
+.hd .sub{font-size:13px;color:#888;margin-top:4px}
+
+.grid{
+  display:flex;flex-wrap:wrap;gap:20px;justify-content:center;
+  max-width:1600px;margin:0 auto;
+}
+.card{
+  background:#fff;border-radius:12px;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+  overflow:hidden;width:320px;flex-shrink:0;
+}
+.card .name{
+  font-size:13px;font-weight:600;color:#444;
+  padding:10px 14px 8px;background:#fafbfc;
+  border-bottom:1px solid #eee;text-align:center;line-height:1.3;
+}
+.card img{
+  width:100%;height:auto;display:block;
+}
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <h1>🎫 优惠券体系 · App 端原型</h1>
+  <span class="sub">用户侧 — 实际截图</span>
+</div>
+
+<div class="grid">
+
+<!-- ① 我的（个人中心） -->
+<div class="card">
+  <div class="name">U 我的（资产入口）</div>
+  <img src="coupon-prd-assets/app-my-profile.png" alt="我的">
+</div>
+
+<!-- ② 我的优惠券（空态） -->
+<div class="card">
+  <div class="name">C2 我的优惠券（空态）</div>
+  <img src="coupon-prd-assets/app-my-coupons-empty.png" alt="我的优惠券">
+</div>
+
+<!-- ③ 商品详情 -->
+<div class="card">
+  <div class="name">C5 商品详情</div>
+  <img src="coupon-prd-assets/app-product-detail.png" alt="商品详情">
+</div>
+
+<!-- ④ 优惠套餐弹窗 -->
+<div class="card">
+  <div class="name">C5 优惠套餐选择弹窗</div>
+  <img src="coupon-prd-assets/app-product-deal-modal.png" alt="优惠套餐弹窗">
+</div>
+
+<!-- ⑤ 确认订单（无券） -->
+<div class="card">
+  <div class="name">C6 确认订单（无券态）</div>
+  <img src="coupon-prd-assets/app-confirm-order.png" alt="确认订单无券">
+</div>
+
+<!-- ⑥ 确认订单（含券） -->
+<div class="card">
+  <div class="name">C6 确认订单（含优惠券）</div>
+  <img src="coupon-prd-assets/app-confirm-order-with-coupon.png" alt="确认订单含券">
+</div>
+
+<!-- ⑦ 我的订单 -->
+<div class="card">
+  <div class="name">我的订单列表</div>
+  <img src="coupon-prd-assets/app-my-orders.png" alt="我的订单">
+</div>
+
+<!-- ⑧ 收银台 -->
+<div class="card">
+  <div class="name">收银台（支付方式）</div>
+  <img src="coupon-prd-assets/app-payment.png" alt="收银台">
+</div>
+
+<!-- ⑨ 支付成功 -->
+<div class="card">
+  <div class="name">支付成功</div>
+  <img src="coupon-prd-assets/app-payment-success.png" alt="支付成功">
+</div>
+
+</div>
+</body>
+</html>
