@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎 · 平台端后台 — 直播观看记录</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f5f6fa;color:#333;font-size:13px}
+  /* ===== Top Bar ===== */
+  .topbar{height:48px;background:#534AB7;color:#fff;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100}
+  .topbar .logo{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+  .topbar .logo::before{content:'';display:inline-block;width:20px;height:20px;border-radius:4px;background:rgba(255,255,255,.2)}
+  .topbar .sys{opacity:.75;font-size:12px}
+  .topbar .right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:18px;cursor:pointer}
+
+  /* ===== Layout ===== */
+  .layout{display:flex;min-height:calc(100vh - 48px)}
+
+  /* ===== Sidebar ===== */
+  .side{width:196px;background:#fff;border-right:1px solid #eaeaea;display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+  .side .group{padding:0}
+  .side .gtitle{font-size:11px;color:#999;padding:14px 16px 6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;display:flex;align-items:center;gap:4px}
+  .side .gtitle .arr{font-size:10px;transition:transform .2s}
+  .side .gtitle.open .arr{transform:rotate(90deg)}
+  .side a{display:block;padding:9px 16px 9px 28px;color:#555;text-decoration:none;font-size:13px;cursor:pointer;transition:background .15s,color .15s;position:relative}
+  .side a:hover{background:#f8f7ff;color:#534AB7}
+  .side a.active{background:#f3f0ff;color:#534AB7;font-weight:500;border-right:3px solid #534AB7}
+
+  /* ===== Main Content ===== */
+  .main{flex:1;padding:18px 24px 60px;min-width:0}
+  .hidden{display:none!important}
+
+  /* ===== Breadcrumb ===== */
+  .crumb{font-size:12px;color:#999;margin-bottom:14px}
+  .crumb span{color:#333}
+  .crumb a{color:#534AB7;cursor:pointer;text-decoration:none}
+
+  /* ===== Page Header ===== */
+  .phead{display:flex;align-items:center;margin-bottom:14px;gap:10px}
+  .phead h2{font-size:17px;font-weight:600;color:#222}
+
+  /* ===== Filter Bar ===== */
+  .filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .filter-bar input,.filter-bar select{height:32px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:12px;color:#333;outline:none;background:#fff;transition:border-color .2s}
+  .filter-bar input:focus,.filter-bar select:focus{border-color:#534AB7}
+  .filter-bar input{width:180px}
+  .filter-bar select{width:130px}
+  .fb-label{font-size:12px;color:#666;white-space:nowrap}
+
+  /* ===== Buttons ===== */
+  .btn-primary{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 16px;background:#534AB7;color:#fff;border:none;border-radius:4px;font-size:13px;cursor:pointer;white-space:nowrap;transition:background .2s}
+  .btn-primary:hover{background:#453da0}
+  .btn-ghost{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 16px;background:#fff;color:#666;border:1px solid #dcdfe6;border-radius:4px;font-size:13px;cursor:pointer;white-space:nowrap;transition:border-color .2s,color .2s}
+  .btn-ghost:hover{color:#534AB7;border-color:#534AB7}
+  .btn-link{background:none;border:none;color:#534AB7;cursor:pointer;font-size:12px;padding:0 4px}
+  .btn-link:hover{text-decoration:underline}
+
+  /* ===== Table ===== */
+  .tbl-wrap{background:#fff;border:1px solid #ebeef5;border-radius:4px;overflow:hidden}
+  .tbl{width:100%;border-collapse:collapse;font-size:12px}
+  .tbl thead th{background:#fafbfc;border-bottom:1px solid #ebeef5;color:#909399;font-weight:500;text-align:left;padding:10px 12px;white-space:nowrap;font-size:12px}
+  .tbl tbody td{border-bottom:1px solid #f0f0f0;padding:10px 12px;color:#333;vertical-align:middle}
+  .tbl tbody tr:hover{background:#fafbfc}
+  .tbl tbody tr:last-child td{border-bottom:none}
+  .tbl .chk{width:36px;text-align:center}
+  .tbl .act a{margin-right:8px}
+
+  /* ===== Pagination ===== */
+  .pagi{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:14px;font-size:12px;color:#666}
+  .pagi input{width:40px;height:28px;border:1px solid #dcdfe6;border-radius:4px;text-align:center;font-size:12px;outline:none}
+  .pagi select{height:28px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;outline:none}
+  .pagi .pg-btn{min-width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #dcdfe6;border-radius:4px;cursor:pointer;font-size:12px;color:#606266;background:#fff}
+  .pg-btn.active{background:#534AB7;color:#fff;border-color:#534AB7}
+  .pg-btn:hover:not(.active){color:#534AB7;border-color:#534AB7}
+
+  /* ===== Tags / Status ===== */
+  .tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11.5px;line-height:1.6}
+  .tag-green{background:#f0f9eb;color:#67c23a;border:1px solid #c2e7b0}
+  .tag-gray{background:#f4f4f5;color:#909399;border:1px solid #d3d4d6}
+  .tag-blue{background:#ecf5ff;color:#409eff;border:1px solid #b3d8ff}
+  .tag-orange{background:#fdf6ec;color:#e6a23c;border:1px solid #faecd8}
+  .tag-purple{background:#f0ecff;color:#7c3aed;border:1px solid #d4c8ff}
+
+  /* Empty state */
+  .empty-state{text-align:center;padding:50px 0;color:#c0c4cc}
+  .empty-state .icon{font-size:48px;margin-bottom:10px;opacity:.35}
+
+  /* ===== Detail view ===== */
+  .dt-back{display:inline-flex;align-items:center;gap:4px;color:#534AB7;cursor:pointer;font-size:13px;margin-right:8px}
+  .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:#fff;border:1px solid #ebeef5;border-radius:4px;overflow:hidden;margin-bottom:16px}
+  .info-cell{padding:12px 16px;border-bottom:1px solid #f0f0f0;border-right:1px solid #f0f0f0}
+  .info-cell .k{font-size:12px;color:#909399;margin-bottom:4px}
+  .info-cell .v{font-size:13px;color:#333}
+</style>
+</head>
+<body>
+
+<!-- ===== Top Bar ===== -->
+<div class="topbar">
+  <div class="logo">泰小虎后台</div>
+  <span class="sys">运营管理平台</span>
+  <div class="right"><span>🔔</span><span>👤</span></div>
+</div>
+
+<div class="layout">
+
+<!-- ===== Sidebar ===== -->
+<nav class="side" id="sidebar">
+  <!-- 营销管理 -->
+  <div class="group">
+    <div class="gtitle open" onclick="toggleGroup(this)"><span class="arr">▶</span> 营销管理</div>
+    <a href="#">优惠券配置</a>
+    <a href="#">发券活动</a>
+    <a href="#">标签管理</a>
+    <a href="#" onclick="go('liveViewLog')" id="nav_liveViewLog" class="active">直播观看记录</a>
+    <a href="#">活动配置</a>
+    <a href="#">积分</a>
+    <a href="#">拼团</a>
+    <a href="#">秒杀</a>
+    <a href="#">分销</a>
+    <a href="#">券包</a>
+  </div>
+
+  <!-- 会员管理 -->
+  <div class="group">
+    <div class="gtitle" onclick="toggleGroup(this)"><span class="arr">▶</span> 会员管理</div>
+    <a href="#">会员中心</a>
+    <a href="#">会员列表</a>
+    <a href="#">信息采集</a>
+  </div>
+
+  <!-- 订单管理 -->
+  <div class="group">
+    <div class="gtitle" onclick="toggleGroup(this)"><span class="arr">▶</span> 订单管理</div>
+    <a href="#">订单列表</a>
+    <a href="#">售后工单</a>
+    <a href="#">采购订单</a>
+  </div>
+
+  <!-- 数据看板 -->
+  <div class="group">
+    <div class="gtitle" onclick="toggleGroup(this)"><span class="arr">▶</span> 数据看板</div>
+    <a href="#">粉丝画像</a>
+    <a href="#">APP画像</a>
+  </div>
+
+  <!-- 内容管理 -->
+  <div class="group">
+    <div class="gtitle" onclick="toggleGroup(this)"><span class="arr">▶</span> 内容管理</div>
+    <a href="#">商品库</a>
+    <a href="#">直播间</a>
+    <a href="#">科普图文</a>
+  </div>
+
+  <!-- 智能客服 -->
+  <div class="group">
+    <div class="gtitle" onclick="toggleGroup(this)"><span class="arr">▶</span> 智能客服</div>
+    <a href="#">知识库</a>
+    <a href="#">对话管理</a>
+    <a href="#">BadCase</a>
+  </div>
+
+  <!-- 系统 -->
+  <div class="group">
+    <div class="gtitle" onclick="toggleGroup(this)"><span class="arr">▶</span> 系统</div>
+    <a href="#">账号权限</a>
+    <a href="#">操作日志</a>
+  </div>
+</nav>
+
+<!-- ===== Main Content ===== -->
+<div class="main" id="mainContent">
+
+  <!-- ==================== 直播观看记录（列表） ==================== -->
+  <div id="viewLiveViewLog">
+    <div class="crumb"><a>首页</a> / <a>营销管理</a> / <span>直播观看记录</span></div>
+
+    <div class="phead">
+      <h2>直播观看记录</h2>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <span class="fb-label">直播间ID:</span>
+      <select id="lvRoom">
+        <option value="">全部直播间</option>
+        <option>LIVE001</option>
+        <option>LIVE002</option>
+        <option>LIVE003</option>
+      </select>
+      <span class="fb-label">观看日期:</span>
+      <input type="date" id="lvDateStart" style="width:140px">
+      <span class="fb-label">至</span>
+      <input type="date" id="lvDateEnd" style="width:140px">
+      <input placeholder="客户姓名 / 手机号 / 用户ID" id="lvKeyword" style="width:200px">
+      <button class="btn-primary" onclick="renderLiveView()">搜索</button>
+      <button class="btn-ghost" onclick="resetLiveView()">重置</button>
+      <button class="btn-ghost" onclick="exportLiveView()">导出</button>
+    </div>
+
+    <!-- Table -->
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th class="chk"><input type="checkbox"></th>
+            <th>客户信息</th>
+            <th>用户ID</th>
+            <th>观看直播间ID</th>
+            <th>进入时间</th>
+            <th>退出时间</th>
+            <th>观看时长</th>
+            <th>观看日期</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="liveViewTbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagi">
+      共 <b id="lvTotal">8</b> 条
+      <select><option>10条/页</option><option>20条/页</option><option>50条/页</option></select>
+      <span class="pg-btn active">1</span>
+      <span>跳至</span>
+      <input value="1">
+      <span>页</span>
+    </div>
+  </div>
+
+  <!-- ==================== 直播观看记录 · 详情 ==================== -->
+  <div id="viewLiveViewDetail" class="hidden">
+    <div class="crumb"><a>首页</a> / <a>营销管理</a> / <a onclick="go('liveViewLog')">直播观看记录</a> / <span>观看详情</span></div>
+
+    <div class="phead">
+      <span class="dt-back" onclick="go('liveViewLog')">← 返回列表</span>
+      <h2>观看详情</h2>
+    </div>
+
+    <div class="info-grid" id="dtGrid"></div>
+  </div>
+
+</div><!-- /mainContent -->
+</div><!-- /layout -->
+
+<script>
+/* ====== Util ====== */
+function $(id){return document.getElementById(id)}
+
+/* ====== Sidebar toggle ====== */
+function toggleGroup(el){el.classList.toggle('open')}
+
+/* ====== Navigation ====== */
+function go(page){
+  document.querySelectorAll('#sidebar a').forEach(function(a){a.classList.remove('active')});
+  var nav = document.getElementById('nav_'+page);
+  if(nav) nav.classList.add('active');
+
+  $('viewLiveViewLog').classList.add('hidden');
+  $('viewLiveViewDetail').classList.add('hidden');
+
+  if(page==='liveViewLog'){
+    $('viewLiveViewLog').classList.remove('hidden');
+    $('nav_liveViewLog').classList.add('active');
+    renderLiveView();
+  } else if(page==='liveViewDetail'){
+    $('viewLiveViewDetail').classList.remove('hidden');
+    $('nav_liveViewLog').classList.add('active');
+  }
+}
+
+/* ================================================================
+   直播观看记录 — Data & Render
+   ================================================================ */
+var liveViewLogs = [
+  {id:1, customer:'张*明（138****1234）', userId:'U20260715001', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-29 19:00:12', exitTime:'2026-07-29 19:47:33', duration:'47分21秒', mins:47, date:'2026-07-29', device:'iOS App', source:'APP直播入口'},
+  {id:2, customer:'李*芳（139****5678）', userId:'U20260716002', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-29 19:05:44', exitTime:'2026-07-29 19:22:10', duration:'16分26秒', mins:16, date:'2026-07-29', device:'Android App', source:'消息推送'},
+  {id:3, customer:'王*强（137****9012）', userId:'U20260717003', roomId:'LIVE002', roomName:'健康好物专场', enterTime:'2026-07-28 20:00:00', exitTime:'2026-07-28 21:15:30', duration:'1小时15分30秒', mins:75, date:'2026-07-28', device:'微信小程序', source:'小程序首页'},
+  {id:4, customer:'赵*敏（136****3456）', userId:'U20260718004', roomId:'LIVE002', roomName:'健康好物专场', enterTime:'2026-07-28 20:10:22', exitTime:'2026-07-28 20:35:08', duration:'24分46秒', mins:24, date:'2026-07-28', device:'iOS App', source:'分享链接'},
+  {id:5, customer:'陈*伟（135****7890）', userId:'U20260719005', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-27 19:30:15', exitTime:'2026-07-27 20:45:00', duration:'1小时14分45秒', mins:74, date:'2026-07-27', device:'Android App', source:'APP直播入口'},
+  {id:6, customer:'刘*芳（134****2345）', userId:'U20260720006', roomId:'LIVE003', roomName:'品牌新品发布', enterTime:'2026-07-27 15:00:00', exitTime:'2026-07-27 15:08:33', duration:'8分33秒', mins:8, date:'2026-07-27', device:'H5', source:'外部分享'},
+  {id:7, customer:'周*杰（133****6789）', userId:'U20260721007', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-26 19:00:05', exitTime:'2026-07-26 19:55:42', duration:'55分37秒', mins:55, date:'2026-07-26', device:'iOS App', source:'APP直播入口'},
+  {id:8, customer:'吴*静（132****0123）', userId:'U20260722008', roomId:'LIVE003', roomName:'品牌新品发布', enterTime:'2026-07-26 15:05:18', exitTime:'2026-07-26 16:30:00', duration:'1小时24分42秒', mins:84, date:'2026-07-26', device:'微信小程序', source:'小程序首页'},
+];
+
+function renderLiveView(){
+  var room = $('lvRoom').value;
+  var ds = $('lvDateStart').value;
+  var de = $('lvDateEnd').value;
+  var kw = $('lvKeyword').value.trim();
+  var rows = '';
+  var cnt = 0;
+  liveViewLogs.forEach(function(v){
+    if(room && v.roomId !== room) return;
+    if(ds && v.date < ds) return;
+    if(de && v.date > de) return;
+    if(kw && v.customer.indexOf(kw) < 0 && v.userId.indexOf(kw) < 0) return;
+    cnt++;
+    rows += '<tr>'+
+      '<td class="chk"><input type="checkbox"></td>'+
+      '<td>'+v.customer+'</td>'+
+      '<td>'+v.userId+'</td>'+
+      '<td><span class="tag tag-blue">'+v.roomId+'</span></td>'+
+      '<td>'+v.enterTime+'</td>'+
+      '<td>'+v.exitTime+'</td>'+
+      '<td><span class="tag '+(v.mins>=30?'tag-green':'tag-orange')+'">'+v.duration+'</span></td>'+
+      '<td>'+v.date+'</td>'+
+      '<td class="act"><a class="btn-link" onclick="viewDetail('+v.id+')">详情</a></td>'+
+      '</tr>';
+  });
+  $('liveViewTbody').innerHTML = rows || '<tr><td colspan="9" style="text-align:center;padding:50px"><div class="empty-state"><div class="icon">📭</div><div>暂无数据</div></div></td></tr>';
+  $('lvTotal').textContent = cnt;
+}
+
+function resetLiveView(){
+  $('lvRoom').value='';
+  $('lvDateStart').value='';
+  $('lvDateEnd').value='';
+  $('lvKeyword').value='';
+  renderLiveView();
+}
+
+function exportLiveView(){
+  alert('已生成导出任务，请前往「下载中心」查看');
+}
+
+function viewDetail(id){
+  var v = liveViewLogs.filter(function(x){return x.id===id})[0];
+  if(!v) return;
+  var cells = [
+    ['客户信息', v.customer],
+    ['用户ID', v.userId],
+    ['观看直播间ID', v.roomId],
+    ['直播间名称', v.roomName],
+    ['进入时间', v.enterTime],
+    ['退出时间', v.exitTime],
+    ['观看时长', v.duration],
+    ['观看日期', v.date],
+    ['观看终端', v.device],
+    ['进入来源', v.source],
+  ];
+  $('dtGrid').innerHTML = cells.map(function(c){
+    return '<div class="info-cell"><div class="k">'+c[0]+'</div><div class="v">'+c[1]+'</div></div>';
+  }).join('');
+  go('liveViewDetail');
+}
+
+/* ====== Init ====== */
+renderLiveView();
+</script>
+
+</body>
+</html>
