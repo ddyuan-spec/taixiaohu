@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎 · 优惠券体系 — A3 叠加规则配置（原型）</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f0f1f5;color:#2a2f3a;font-size:13px}
+  .topbar{height:52px;background:#534AB7;color:#fff;display:flex;align-items:center;padding:0 20px;gap:14px}
+  .topbar .logo{font-weight:700;font-size:15px}
+  .topbar .sys{opacity:.85;font-size:12px}
+  .topbar .user{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px}
+  .topbar .avatar{width:26px;height:26px;border-radius:50%;background:#fff;color:#534AB7;display:flex;align-items:center;justify-content:center;font-weight:700}
+  .layout{display:flex;min-height:calc(100vh - 52px)}
+  .side{width:180px;background:#fff;border-right:1px solid #e6e6ec;padding:14px 0}
+  .side .grp{font-size:11px;color:#9a9aa8;padding:10px 18px 4px}
+  .side a{display:block;padding:9px 18px;color:#4a4f5a;text-decoration:none;font-size:13px;cursor:pointer}
+  .side a:hover{background:#f5f3ff}
+  .side a.active{background:#EEEDFE;color:#534AB7;font-weight:600;border-right:3px solid #534AB7}
+  .main{flex:1;padding:18px 24px 90px;position:relative}
+  .hidden{display:none!important}
+  .crumb{font-size:12px;color:#9a9aa8;margin-bottom:10px}
+  .crumb b{color:#4a4f5a}
+  .phead{display:flex;align-items:center;margin-bottom:14px;gap:10px}
+  .phead h2{font-size:18px;font-weight:700}
+  .phead .btn-primary{margin-left:auto}
+  .banner{background:#EEEDFE;border:1px solid #d3ccf3;border-radius:10px;padding:12px 16px;font-size:12.5px;color:#3C3489;line-height:1.7;margin-bottom:14px}
+  .banner b{color:#534AB7}
+  .btn-primary{background:#534AB7;color:#fff;border:none;border-radius:7px;padding:8px 16px;font-size:12.5px;cursor:pointer}
+  .btn-primary:hover{background:#473fa3}
+  .btn-ghost{background:#fff;color:#534AB7;border:1px solid #c9bff5;border-radius:7px;padding:7px 14px;font-size:12.5px;cursor:pointer}
+  .btn-ghost:hover{background:#f5f3ff}
+  .btn-sm{background:#fff;color:#534AB7;border:1px solid #d8d8e0;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;margin-right:6px}
+  .btn-sm:hover{background:#f5f3ff;border-color:#c9bff5}
+  .btn-sm.danger{color:#b42318;border-color:#f0c0c0}
+  .btn-sm.danger:hover{background:#fef2f2}
+  .tbl{background:#fff;border:1px solid #e6e6ec;border-radius:10px;overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{border-bottom:1px solid #efeff3;padding:11px 12px;text-align:left;vertical-align:middle}
+  th{background:#f7f6fc;color:#6b6f7a;font-weight:600;white-space:nowrap}
+  tbody tr:hover{background:#faf9ff}
+  .tag{display:inline-block;padding:2px 9px;border-radius:11px;font-size:11px;font-weight:600;margin:1px 3px 1px 0}
+  .tag.on{background:#e8f5e9;color:#2f7d32}
+  .tag.off{background:#f1f1f4;color:#8a8a96}
+  .tag.cut{background:#e6f1fb;color:#185fa5}
+  .tag.t1{background:#f3eefc;color:#7c5cff}
+  .seq{display:inline-flex;align-items:center;gap:5px}
+  .mini{background:#fff;border:1px solid #d8d8e0;border-radius:5px;width:22px;height:22px;cursor:pointer;font-size:12px;color:#534AB7}
+  .mini:disabled{opacity:.3;cursor:not-allowed}
+  .empty{padding:30px;text-align:center;color:#9a9aa8}
+  .modal{position:fixed;inset:0;background:rgba(20,18,40,.42);display:none;align-items:flex-start;justify-content:center;z-index:70;padding-top:60px}
+  .modal.show{display:flex}
+  .mbox{width:520px;max-height:84vh;background:#fff;border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+  .mbox .mhead{padding:15px 20px;border-bottom:1px solid #efeff3;font-size:15px;font-weight:700;display:flex;align-items:center}
+  .mbox .mhead .x{margin-left:auto;cursor:pointer;font-size:18px;opacity:.7}
+  .mbox .mbody{padding:18px 20px;overflow-y:auto}
+  .mbox .mfoot{padding:13px 20px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid #efeff3}
+  .card{background:#faf9ff;border:1px solid #e6e6ec;border-radius:10px;padding:16px 18px;margin-bottom:14px}
+  .field{margin-bottom:14px}
+  .field .lbl{font-size:12px;color:#6b6f7a;margin-bottom:7px;display:block}
+  .field .lbl .req{color:#b42318;margin-left:2px}
+  input.inp,select.inp{width:100%;border:1px solid #d8d8e0;border-radius:7px;padding:8px 10px;font-size:12.5px;color:#2a2f3a;background:#fff;font-family:inherit}
+  input.inp:focus{border-color:#534AB7;box-shadow:0 0 0 2px #EEEDFE;outline:none}
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .seg label{display:inline-flex;align-items:center;gap:6px;border:1px solid #d8d8e0;border-radius:7px;padding:8px 15px;font-size:12.5px;cursor:pointer;background:#fff;user-select:none}
+  .seg label:hover{border-color:#c9bff5}
+  .seg input{accent-color:#534AB7}
+  .seg label.checked{border-color:#534AB7;background:#EEEDFE;color:#534AB7;font-weight:600}
+  .orderbox{border:1px dashed #d3ccf3;border-radius:8px;padding:10px 12px;background:#fff}
+  .orderrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed #ececf2}
+  .orderrow:last-child{border-bottom:none}
+  .orderrow .idx{width:22px;height:22px;border-radius:50%;background:#EEEDFE;color:#534AB7;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+  .orderrow .nm{font-size:12.5px;font-weight:600}
+  .orderrow .hint{font-size:11px;color:#9a9aa8;margin-left:auto}
+  .switchrow{display:flex;align-items:center;gap:12px}
+  .switch{position:relative;display:inline-block;width:44px;height:24px;flex:none}
+  .switch input{opacity:0;width:0;height:0}
+  .slider{position:absolute;cursor:pointer;inset:0;background:#cdd0d8;border-radius:24px;transition:.2s}
+  .slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+  .switch input:checked+.slider{background:#534AB7}
+  .switch input:checked+.slider:before{transform:translateX(20px)}
+  .switch input:disabled+.slider{background:#b9b3e6;cursor:not-allowed}
+  .locknote{font-size:11.5px;color:#534AB7;background:#f3eefc;border-radius:7px;padding:8px 12px;margin-top:8px}
+  .toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);background:#2a2f3a;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;opacity:0;transition:.25s;z-index:90;pointer-events:none}
+  .toast.show{opacity:.95}
+  .toast.bad{background:#b42318}
+  .footer{position:fixed;left:180px;right:0;bottom:0;background:#fff;border-top:1px solid #e6e6ec;padding:12px 24px;display:flex;justify-content:flex-end;gap:10px;z-index:40}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="logo">泰小虎</span>
+  <span class="sys">平台管理端 · 营销中台</span>
+  <span class="user"><span>运营管理员</span><span class="avatar">运</span></span>
+</div>
+
+<div class="layout">
+  <div class="side">
+    <div class="grp">优惠券体系</div>
+    <a onclick="toast('已在：券模板管理 A1/A2')">券模板管理</a>
+    <a class="active">叠加规则配置</a>
+    <a onclick="toast('跳转：发券活动配置 A4')">发券活动配置</a>
+    <a onclick="toast('跳转：领券活动配置 A5')">领券活动配置</a>
+    <a onclick="toast('跳转：退券规则配置 A6')">退券规则配置</a>
+    <a onclick="toast('跳转：到期提醒配置 A7')">到期提醒配置</a>
+    <a onclick="toast('跳转：商品底价管理 A8')">商品底价管理</a>
+    <a onclick="toast('跳转：售后单处理 A9')">售后单处理</a>
+    <a onclick="toast('跳转：数据看板 A10')">数据看板</a>
+    <a onclick="toast('跳转：用户券包查询 A11')">用户券包查询</a>
+  </div>
+
+  <div class="main">
+    <div class="crumb">营销中台 / <b>叠加规则配置</b></div>
+    <div class="phead">
+      <h2>叠加规则配置</h2>
+      <button class="btn-primary" onclick="openForm()">+ 新建规则</button>
+    </div>
+
+    <div class="banner">
+      <b>规则说明：</b>不同<b>券种</b>之间允许叠加使用（如满减券 + 代金券），同一订单最多叠加张数受本规则限制；<b>叠加计算顺序</b>决定多张券的抵扣先后。
+      系统对已叠加组合执行<b>严格不击穿</b>校验——任何组合只要让实付低于关联商品底价，将被阻止并提示「组合优惠超出底价下限」，该规则为系统强制，不可关闭。
+    </div>
+
+    <div class="tbl">
+      <table>
+        <thead>
+          <tr>
+            <th>规则名称</th>
+            <th>可叠加券种</th>
+            <th>最多叠加张数</th>
+            <th>叠加计算顺序</th>
+            <th>组合底价校验</th>
+            <th>状态</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 新建/编辑 弹窗 -->
+<div class="modal" id="mForm">
+  <div class="mbox">
+    <div class="mhead"><span id="formTitle">新建叠加规则</span><span class="x" onclick="closeForm()">✕</span></div>
+    <div class="mbody">
+      <div class="card">
+        <div class="field">
+          <label class="lbl">规则名称<span class="req">*</span></label>
+          <input class="inp" id="fName" placeholder="如：通用叠加规则">
+        </div>
+        <div class="field">
+          <label class="lbl">可叠加券种<span class="req">*</span>（至少选择 2 种）</label>
+          <div class="seg" id="fTypes">
+            <label onclick="toggleType(this,'满减')"><input type="checkbox">满减券</label>
+            <label onclick="toggleType(this,'折扣')"><input type="checkbox">折扣券</label>
+            <label onclick="toggleType(this,'代金')"><input type="checkbox">代金券</label>
+          </div>
+          <div class="orderbox" id="fOrder" style="margin-top:12px"></div>
+        </div>
+        <div class="field">
+          <label class="lbl">同一订单最多叠加张数<span class="req">*</span></label>
+          <input class="inp" id="fMax" type="number" min="2" value="2" style="max-width:160px">
+          <div class="hint" style="font-size:11px;color:#9a9aa8;margin-top:5px">支持的上限 = 已选券种数；超过将不允许保存</div>
+        </div>
+        <div class="field">
+          <div class="switchrow">
+            <span class="stxt"><b>组合底价校验（严格不击穿）</b></span>
+            <label class="switch"><input type="checkbox" id="fCheck" checked disabled><span class="slider"></span></label>
+          </div>
+          <div class="locknote">系统强制：叠加后实付不得低于任一关联商品底价，该开关不可关闭。</div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <div class="switchrow">
+            <span class="stxt"><b>状态</b></span>
+            <label class="switch"><input type="checkbox" id="fStatus" checked><span class="slider"></span></label>
+            <span id="fStatusTxt" style="font-size:12px;color:#2f7d32">启用</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn-ghost" onclick="closeForm()">取消</button>
+      <button class="btn-primary" onclick="saveForm()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 删除确认 -->
+<div class="modal" id="mDel">
+  <div class="mbox" style="width:400px">
+    <div class="mhead">删除确认</div>
+    <div class="mbody">确认删除规则「<b id="delName"></b>」？删除后已关联该规则的订单将不再按此叠加逻辑计算。</div>
+    <div class="mfoot">
+      <button class="btn-ghost" onclick="closeDel()">取消</button>
+      <button class="btn-primary" style="background:#b42318" onclick="doDel()">删除</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var rules = [
+  {id:1,name:'通用叠加规则',types:['满减','代金'],max:2,status:true},
+  {id:2,name:'大促叠加规则',types:['满减','折扣','代金'],max:3,status:true}
+];
+var editingId=null, delId=null;
+
+function toast(msg,bad){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(bad?' bad':'');setTimeout(function(){t.className='toast';},1800);}
+
+function renderList(){
+  var tb=document.getElementById('tbody');tb.innerHTML='';
+  if(rules.length===0){tb.innerHTML='<tr><td colspan="7"><div class="empty">暂无叠加规则，点击右上角「+ 新建规则」</div></td></tr>';return;}
+  rules.forEach(function(r){
+    var tr=document.createElement('tr');
+    var types=r.types.map(function(t){return '<span class="tag t1">'+t+'券</span>';}).join('');
+    var seq=r.types.map(function(t,i){return (i+1)+'.'+t;}).join(' → ');
+    tr.innerHTML='<td class="name-cell">'+r.name+'</td>'+
+      '<td>'+types+'</td>'+
+      '<td>'+r.max+' 张</td>'+
+      '<td style="font-size:12px;color:#6b6f7a">'+seq+'</td>'+
+      '<td><span class="tag cut">严格不击穿·开</span></td>'+
+      '<td><span class="tag '+(r.status?'on':'off')+'">'+(r.status?'启用':'停用')+'</span></td>'+
+      '<td><button class="btn-sm" onclick="openForm('+r.id+')">编辑</button>'+
+      '<button class="btn-sm" onclick="toggleStatus('+r.id+')">'+(r.status?'停用':'启用')+'</button>'+
+      '<button class="btn-sm danger" onclick="askDel('+r.id+')">删除</button></td>';
+    tb.appendChild(tr);
+  });
+}
+
+function toggleType(lbl,type){
+  var cb=lbl.querySelector('input');cb.checked=!cb.checked;
+  if(cb.checked)lbl.classList.add('checked');else lbl.classList.remove('checked');
+  renderOrder();
+}
+function getSelTypes(){return Array.from(document.querySelectorAll('#fTypes label.checked')).map(function(l){return l.textContent.replace('券','');});}
+function renderOrder(){
+  var box=document.getElementById('fOrder');var sel=getSelTypes();
+  if(sel.length===0){box.innerHTML='<div style="font-size:11.5px;color:#9a9aa8">请先在上方选择券种</div>';return;}
+  box.innerHTML=sel.map(function(t,i){
+    return '<div class="orderrow" data-t="'+t+'"><span class="idx">'+(i+1)+'</span><span class="nm">'+t+'券</span>'+
+      '<span class="hint">先抵扣</span>'+
+      '<button class="mini" '+(i===0?'disabled':'')+' onclick="move(-1,\''+t+'\')">↑</button>'+
+      '<button class="mini" '+(i===sel.length-1?'disabled':'')+' onclick="move(1,\''+t+'\')">↓</button></div>';
+  }).join('');
+}
+function move(dir,type){
+  var sel=getSelTypes();var i=sel.indexOf(type);
+  if(i<0)return;var j=i+dir;if(j<0||j>=sel.length)return;
+  sel.splice(i,1);sel.splice(j,0,type);
+  // 重绘 seg 选中状态
+  document.querySelectorAll('#fTypes label').forEach(function(l){var t=l.textContent.replace('券','');if(sel.indexOf(t)>=0){l.classList.add('checked');l.querySelector('input').checked=true;}else{l.classList.remove('checked');l.querySelector('input').checked=false;}});
+  renderOrder();
+}
+
+function openForm(id){
+  editingId=id||null;
+  document.getElementById('formTitle').textContent=id?'编辑叠加规则':'新建叠加规则';
+  // reset
+  document.querySelectorAll('#fTypes label').forEach(function(l){l.classList.remove('checked');l.querySelector('input').checked=false;});
+  document.getElementById('fMax').value=2;document.getElementById('fCheck').checked=true;
+  document.getElementById('fStatus').checked=true;document.getElementById('fStatusTxt').textContent='启用';
+  if(id){var r=rules.find(function(x){return x.id===id;});
+    document.getElementById('fName').value=r.name;
+    r.types.forEach(function(t){document.querySelectorAll('#fTypes label').forEach(function(l){if(l.textContent.indexOf(t)>=0){l.classList.add('checked');l.querySelector('input').checked=true;}});});
+    document.getElementById('fMax').value=r.max;
+    document.getElementById('fStatus').checked=r.status;document.getElementById('fStatusTxt').textContent=r.status?'启用':'停用';
+  }else{document.getElementById('fName').value='';}
+  renderOrder();
+  document.getElementById('mForm').classList.add('show');
+}
+function closeForm(){document.getElementById('mForm').classList.remove('show');}
+document.getElementById('fStatus').addEventListener('change',function(){document.getElementById('fStatusTxt').textContent=this.checked?'启用':'停用';});
+
+function saveForm(){
+  var name=document.getElementById('fName').value.trim();
+  var types=getSelTypes();
+  var max=parseInt(document.getElementById('fMax').value,10);
+  var status=document.getElementById('fStatus').checked;
+  if(!name){toast('请填写规则名称',true);return;}
+  if(types.length<2){toast('至少选择 2 种可叠加券种',true);return;}
+  if(!max||max<2){toast('叠加张数至少为 2',true);return;}
+  if(max>types.length){toast('叠加张数不能超过已选券种数（'+types.length+'）',true);return;}
+  var data={name:name,types:types,max:max,status:status};
+  if(editingId){var r=rules.find(function(x){return x.id===editingId;});r.name=data.name;r.types=data.types;r.max=data.max;r.status=data.status;toast('已保存修改');}
+  else{rules.unshift({id:Date.now(),name:data.name,types:data.types,max:data.max,status:data.status});toast('已新建规则');}
+  closeForm();renderList();
+}
+function toggleStatus(id){var r=rules.find(function(x){return x.id===id;});r.status=!r.status;renderList();toast(r.status?'已启用':'已停用');}
+
+function askDel(id){delId=id;var r=rules.find(function(x){return x.id===id;});document.getElementById('delName').textContent=r.name;document.getElementById('mDel').classList.add('show');}
+function closeDel(){document.getElementById('mDel').classList.remove('show');}
+function doDel(){rules=rules.filter(function(x){return x.id!==delId;});closeDel();renderList();toast('已删除');}
+
+renderList();
+</script>
+</body>
+</html>
