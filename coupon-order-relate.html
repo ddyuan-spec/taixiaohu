@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎 · 订单关联优惠券界面展示原型</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f5f6fa;color:#333;font-size:13px}
+
+  /* ===== Top Bar ===== */
+  .topbar{height:48px;background:#534AB7;color:#fff;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100}
+  .topbar .logo{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+  .topbar .logo::before{content:'';display:inline-block;width:20px;height:20px;border-radius:4px;background:rgba(255,255,255,.2)}
+  .topbar .sys{opacity:.75;font-size:12px}
+  .topbar .right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:18px;cursor:pointer}
+
+  /* ===== Layout ===== */
+  .layout{display:flex;min-height:calc(100vh - 48px)}
+
+  /* ===== Sidebar ===== */
+  .side{width:196px;background:#fff;border-right:1px solid #eaeaea;display:flex;flex-direction:column;flex-shrink:0}
+  .side .nav-group{border-bottom:1px solid #f4f4f5}
+  .side .gtitle{font-size:11px;color:#999;padding:14px 16px 6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:4px}
+  .side a{display:block;padding:9px 16px 9px 28px;color:#555;text-decoration:none;font-size:13px;cursor:pointer;transition:background .15s,color .15s;position:relative}
+  .side a:hover{background:#f8f7ff;color:#534AB7}
+  .side a.active{background:#f3f0ff;color:#534AB7;font-weight:500;border-right:3px solid #534AB7}
+
+  /* ===== Main Content ===== */
+  .main{flex:1;padding:18px 24px 60px;min-width:0;overflow-x:hidden}
+
+  /* ===== Breadcrumb / Page Tabs ===== */
+  .crumb{font-size:12px;color:#999;margin-bottom:14px}
+  .crumb span{color:#333}
+  .crumb a{color:#534AB7;cursor:pointer;text-decoration:none}
+
+  /* Top-level Tabs (数据概览/订单管理/订单详情/物流信息) */
+  .page-tabs{display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid #eaeaea}
+  .page-tab{padding:8px 18px;font-size:13px;color:#666;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s}
+  .page-tab:hover{color:#534AB7}
+  .page-tab.active{color:#534AB7;border-bottom-color:#534AB7;font-weight:500}
+
+  /* ===== Filter Bar ===== */
+  .filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .filter-bar input,.filter-bar select{height:32px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:12px;color:#333;outline:none;background:#fff;transition:border-color .2s}
+  .filter-bar input:focus,.filter-bar select:focus{border-color:#534AB7}
+  .filter-bar input{width:180px}
+  .filter-bar select{width:120px}
+  .fb-label{font-size:12px;color:#666;white-space:nowrap}
+
+  /* ===== Buttons ===== */
+  .btn-primary{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 16px;background:#534AB7;color:#fff;border:none;border-radius:4px;font-size:13px;cursor:pointer;white-space:nowrap;transition:background .2s}
+  .btn-primary:hover{background:#453da0}
+  .btn-ghost{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 16px;background:#fff;color:#666;border:1px solid #dcdfe6;border-radius:4px;font-size:13px;cursor:pointer;white-space:nowrap;transition:border-color .2s,color .2s}
+  .btn-ghost:hover{color:#534AB7;border-color:#534AB7}
+  .btn-link{background:none;border:none;color:#534AB7;cursor:pointer;font-size:12px;padding:0 4px}
+  .btn-link:hover{text-decoration:underline}
+  .btn-link.red{color:#f56c6c}
+
+  /* ===== Three-zone sticky table: left fixed | middle scroll | right fixed ===== */
+  .sticky-wrap{background:#fff;border:1px solid #ebeef5;border-radius:4px;overflow:hidden;position:relative}
+  .sticky-scroll{overflow-x:auto;overflow-y:hidden}
+  .sticky-tbl{width:100%;border-collapse:collapse;font-size:12px;min-width:1400px}
+  .sticky-tbl thead th{background:#fafbfc;border-bottom:1px solid #ebeef5;color:#909399;font-weight:500;text-align:left;padding:10px 12px;white-space:nowrap;font-size:12px;position:sticky;top:0;z-index:3}
+  .sticky-tbl tbody td{border-bottom:1px solid #f0f0f0;padding:10px 12px;color:#333;vertical-align:middle}
+  .sticky-tbl tbody tr:hover{background:#fafbfc}
+  .sticky-tbl tbody tr:last-child td{border-bottom:none}
+  /* zone shading */
+  .zone-left{background:#fcfcff}
+  .zone-right{background:#fcfcff}
+  .sticky-tbl thead th.zone-left,.sticky-tbl thead th.zone-right{background:#f2f2f7}
+  .chk{width:36px;text-align:center}
+  .act a{margin-right:8px}
+  /* NEW col: 优惠券抵扣 */
+  .col-coupon{background:#fff8e6!important;color:#E6A23C;font-weight:500}
+  .sticky-tbl thead th.col-coupon{background:#fff8e6!important;color:#E6A23C}
+  .col-coupon .val{color:#f56c6c}
+  .col-no-coupon{color:#c0c4cc}
+
+  /* ===== Pagination ===== */
+  .pagi{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:14px;font-size:12px;color:#666}
+  .pagi input{width:40px;height:28px;border:1px solid #dcdfe6;border-radius:4px;text-align:center;font-size:12px;outline:none}
+  .pagi .pg-btn{min-width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #dcdfe6;border-radius:4px;cursor:pointer;font-size:12px;color:#606266;background:#fff}
+  .pg-btn.active{background:#534AB7;color:#fff;border-color:#534AB7}
+  .pg-btn:hover:not(.active){color:#534AB7;border-color:#534AB7}
+
+  /* ===== Tags ===== */
+  .tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11.5px;line-height:1.6}
+  .tag-purple{background:#f3f0ff;color:#534AB7;border:1px solid #d9d2ff}
+  .tag-green{background:#f0f9eb;color:#67c23a;border:1px solid #c2e7b0}
+  .tag-gray{background:#f4f4f5;color:#909399;border:1px solid #d3d4d6}
+  .tag-red{background:#fef0f0;color:#f56c6c;border:1px solid #fbc4c4}
+  .tag-blue{background:#ecf5ff;color:#409eff;border:1px solid #b3d8ff}
+
+  /* ===== Order Detail ===== */
+  .od-status-title{font-size:22px;font-weight:600;color:#222;margin-bottom:16px}
+  .steps{display:flex;align-items:center;position:relative;padding:4px 0}
+  .steps::before{content:'';position:absolute;top:13px;left:28px;right:28px;height:2px;background:#eaeaea;z-index:0}
+  .step{display:flex;flex-direction:column;align-items:center;position:relative;z-index:1;flex:1}
+  .step-dot{width:26px;height:26px;border-radius:50%;background:#eaeaea;color:#999;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+  .step.active .step-dot{background:#534AB7;color:#fff}
+  .step.done .step-dot{background:#67c23a;color:#fff}
+  .step-label{margin-top:6px;font-size:11.5px;color:#999}
+  .step.active .step-label{color:#534AB7;font-weight:500}
+  .od-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 32px;margin:20px 0}
+  .od-info-row{display:flex;padding:8px 0;border-bottom:1px dashed #f0f0f0;font-size:13px}
+  .od-info-label{color:#909399;width:90px;flex-shrink:0}
+  .od-info-value{color:#333}
+  .od-prod-tbl{width:100%;border-collapse:collapse;border:1px solid #ebeef5;border-radius:4px;font-size:12px}
+  .od-prod-tbl th{background:#fafbfc;padding:10px 12px;text-align:left;color:#606266;font-weight:500;border-bottom:1px solid #ebeef5}
+  .od-prod-tbl td{padding:10px 12px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+  .od-prod-img{width:48px;height:48px;border-radius:4px;object-fit:cover;border:1px solid #eee}
+  .price-summary{text-align:right;min-width:210px;padding:16px 20px;background:#fafbfc;border:1px solid #ebeef5;border-radius:4px;align-self:flex-start}
+  .ps-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:13px}
+  .ps-label{color:#666}
+  .ps-value{color:#333}
+  .ps-value.red{color:#f56c6c}
+  .ps-value.green{color:#67c23a}
+  .ps-total{display:flex;justify-content:space-between;align-items:center;padding:12px 0 4px;margin-top:8px;border-top:1px solid #e0e0e0;font-size:17px;font-weight:600}
+  .ps-total .ps-label{color:#333}
+  .ps-total .ps-value{color:#f56c6c;font-size:20px}
+  /* NEW: 优惠券减免 row */
+  .ps-row.coupon-new{background:#fff8e6;border-radius:3px;padding:6px 8px;margin:2px -8px}
+  .ps-row.coupon-new .ps-label{color:#E6A23C;font-weight:500}
+  .ps-row.coupon-new .ps-value{color:#f56c6c;font-weight:500}
+  .field-source{font-size:11px;color:#aaa;display:block;margin-top:1px}
+
+  /* ===== C-End Mobile ===== */
+  .c-container{max-width:420px;margin:0 auto;background:#f5f6fa;min-height:100vh}
+  .c-nav{background:#fff;position:sticky;top:0;z-index:50;display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid #eee}
+  .c-back{width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#333;cursor:pointer}
+  .c-nav-title{font-size:17px;font-weight:600;color:#333;flex:1;text-align:center;margin-right:28px}
+  .c-tabs{display:flex;background:#fff;border-bottom:1px solid #eee;position:sticky;top:48px;z-index:40}
+  .c-tab{flex:1;text-align:center;padding:12px 0;font-size:14px;color:#666;cursor:pointer;position:relative}
+  .c-tab.active{color:#333;font-weight:600}
+  .c-tab.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:24px;height:3px;background:#534AB7;border-radius:2px}
+  .c-card{background:#fff;margin:10px 12px;border-radius:10px;padding:14px}
+  .c-card-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .c-status-badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500}
+  .c-status-pending-pay{color:#E6A23C;background:#fdf6ec}
+  .c-status-to-ship{color:#E6A23C;background:#fdf6ec}
+  .c-status-done{color:#999;background:#f4f4f5}
+  .c-prod-row{display:flex;gap:10px;margin-bottom:10px}
+  .c-prod-img{width:72px;height:72px;border-radius:8px;object-fit:cover;border:1px solid #eee;flex-shrink:0}
+  .c-prod-info{flex:1;min-width:0}
+  .c-prod-name{font-size:14px;font-weight:500;color:#333;line-height:1.4}
+  .c-prod-spec{font-size:12px;color:#999;margin-top:2px}
+  .c-prod-tags{display:flex;gap:4px;margin-top:4px}
+  .c-tag-sm{font-size:10px;padding:1px 5px;border-radius:3px;border:1px solid}
+  .c-price-row{display:flex;align-items:center;justify-content:space-between}
+  .c-price{font-size:14px;color:#333}
+  .c-qty{font-size:12px;color:#999}
+  .c-countdown{font-size:12px;color:#f56c6c;margin-top:6px}
+  .c-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid #f5f5f5}
+  .c-coupon-hint{font-size:12px;color:#E6A23C}
+  .c-pay-amount{font-size:15px;font-weight:600;color:#f56c6c}
+  .c-btn-group{display:flex;gap:8px}
+  .c-btn{padding:6px 16px;border-radius:16px;font-size:13px;cursor:pointer;border:1px solid #dcdfe6;background:#fff;color:#666}
+  .c-btn-primary{background:#ffd700;color:#333;border-color:#ffd700;font-weight:500}
+  .c-more{font-size:12px;color:#999;padding:8px 12px 0;cursor:pointer}
+
+  .proto-hint{position:fixed;bottom:16px;right:16px;background:#333;color:#fff;padding:8px 16px;border-radius:20px;font-size:12px;z-index:200;display:flex;gap:8px;align-items:center;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+  .proto-hint button{background:#534AB7;color:#fff;border:none;padding:4px 12px;border-radius:12px;font-size:12px;cursor:pointer}
+</style>
+</head>
+<body>
+<main>
+
+<!-- ==================== PAGE: 后台订单列表 ==================== -->
+<div id="viewOrderList" class="page-view">
+<div class="topbar">
+  <div class="logo">泰小虎后台</div>
+  <span class="sys">营销管理</span>
+  <div class="right">⚙️</div>
+</div>
+<div class="layout">
+  <div class="side">
+    <div class="nav-group"><div class="gtitle">订单管理</div>
+      <a class="active" onclick="go('order-list')">订单列表</a>
+    </div>
+    <div class="nav-group"><div class="gtitle">数据</div></div>
+  </div>
+
+  <div class="main">
+    <div class="crumb"><a>订单管理</a> / <span>订单详情</span></div>
+
+    <!-- Top-level Tabs: 数据概览 / 订单详情 / 物流信息 -->
+    <div class="page-tabs">
+      <div class="page-tab">数据概览</div>
+      <div class="page-tab active">订单详情</div>
+      <div class="page-tab" onclick="go('order-detail')">物流信息</div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <span class="fb-label">商品名称</span><input placeholder="输入商品名称">
+      <span class="fb-label">订单号</span><input placeholder="输入订单号">
+      <span class="fb-label">买家手机号</span><input placeholder="输入买家手机号">
+      <button class="btn-primary btn-sm">搜索</button>
+      <button class="btn-ghost btn-sm">重置</button>
+      <button class="btn-ghost btn-sm" style="margin-left:auto">展开 ∨</button>
+    </div>
+
+    <!-- Sub tabs -->
+    <div style="display:flex;gap:0;margin-bottom:14px;border-bottom:1px solid #eee">
+      <div style="padding:6px 16px;font-size:13px;color:#534AB7;font-weight:600;border-bottom:2px solid #534AB7;cursor:pointer">全部订单 ∨</div>
+      <div style="padding:6px 16px;font-size:13px;color:#666;cursor:pointer">待支付</div>
+      <div style="padding:6px 16px;font-size:13px;color:#666;cursor:pointer">待发货</div>
+      <div style="padding:6px 16px;font-size:13px;color:#666;cursor:pointer">待售后</div>
+      <div style="padding:6px 16px;font-size:13px;color:#666;cursor:pointer">待评价</div>
+      <div style="padding:6px 16px;font-size:13px;color:#666;cursor:pointer">已完成</div>
+      <div style="padding:6px 16px;font-size:13px;color:#666;cursor:pointer">已取消</div>
+      <div style="margin-left:auto;padding:6px 12px;font-size:12px;color:#999;cursor:pointer">⊙ 高级筛选</div>
+    </div>
+
+    <!-- Advanced filter row -->
+    <div class="filter-bar" style="background:#fafbfc;padding:8px 12px;border-radius:4px;margin-bottom:14px">
+      <span class="fb-label">扣减选项</span>
+      <select><option>扣减选项</option><option>有优惠券抵扣</option><option>无优惠券抵扣</option></select>
+      <span class="fb-label" style="margin-left:12px">和减状态</span>
+      <select><option>和减状态</option><option>已核销</option><option>未核销</option></select>
+    </div>
+
+    <!-- === THREE-ZONE STICKY TABLE === -->
+    <div class="sticky-wrap">
+      <div class="sticky-scroll" style="max-height:520px;overflow-y:auto">
+        <table class="sticky-tbl">
+          <thead>
+            <tr>
+              <th class="chk zone-left"><input type="checkbox"></th>
+              <th class="zone-left" style="min-width:260px">商品</th>
+              <th class="zone-left" style="min-width:110px">订单总额(元)</th>
+              <th class="zone-left" style="min-width:100px">实收金额(元)</th>
+              <th class="zone-left" style="min-width:110px">每笔分账抵扣</th>
+              <!-- ★ 新增列：优惠券抵扣（位于每笔分账抵扣之后、中间滑动区之前） -->
+              <th class="col-coupon" style="min-width:120px">优惠券抵扣 <span style="font-weight:400;font-size:11px;color:#bbb">★新增</span></th>
+              <!-- 中间滑动区 -->
+              <th style="min-width:90px">邮和</th>
+              <th style="min-width:100px">收货人</th>
+              <th style="min-width:100px">订单状态</th>
+              <!-- 右固定区 -->
+              <th class="zone-right" style="min-width:140px">买家</th>
+              <th class="zone-right" style="min-width:80px">操作</th>
+            </tr>
+          </thead>
+          <tbody id="orderListBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="pagi">
+      共 <strong>109</strong> 条 &nbsp;
+      <div class="pg-btn active">1</div><div class="pg-btn">2</div><div class="pg-btn">3</div><div class="pg-btn">4</div><div class="pg-btn">5</div>
+      <span>...</span><div class="pg-btn">200</div>
+      <input value="1"> <button class="pg-btn">跳转</button>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<!-- ==================== PAGE: 后台订单详情 ==================== -->
+<div id="viewOrderDetail" class="page-view hidden">
+<div class="topbar">
+  <div class="logo">泰小虎后台</div>
+  <span class="sys">营销管理</span>
+  <div class="right">⚙️</div>
+</div>
+<div class="layout">
+  <div class="side">
+    <div class="nav-group"><div class="gtitle">订单管理</div>
+      <a onclick="go('order-list')">订单列表</a>
+    </div>
+    <div class="nav-group"><div class="gtitle">数据</div></div>
+  </div>
+
+  <div class="main">
+    <div class="crumb"><a onclick="go('order-list')">订单管理</a> / <span>订单详情</span></div>
+
+    <!-- Top-level Tabs: 数据概览 / 订单详情 / 物流信息 -->
+    <div class="page-tabs">
+      <div class="page-tab">数据概览</div>
+      <div class="page-tab active">订单详情</div>
+      <div class="page-tab">物流信息</div>
+    </div>
+
+    <div class="od-status-title">待支付</div>
+    <div class="steps">
+      <div class="step done"><div class="step-dot">✓</div><div class="step-label">提交订单</div></div>
+      <div class="step active"><div class="step-dot">2</div><div class="step-label">确认付款</div></div>
+      <div class="step"><div class="step-dot">3</div><div class="step-label">实付付款</div></div>
+      <div class="step"><div class="step-dot">4</div><div class="step-label">商家发货</div></div>
+      <div class="step"><div class="step-dot">5</div><div class="step-label">买家收货</div></div>
+    </div>
+    <div style="margin-top:8px;font-size:12px;color:#999">成员：李未税</div>
+
+    <div class="od-info-grid">
+      <div>
+        <div class="od-info-row"><span class="od-info-label">订单编号</span><span class="od-info-value">SS202872879107946960</span></div>
+        <div class="od-info-row"><span class="od-info-label">支付单号</span><span class="od-info-value"></span></div>
+        <div class="od-info-row"><span class="od-info-label">下单时间</span><span class="od-info-value">2026-07-30 18:57:46</span></div>
+        <div class="od-info-row"><span class="od-info-label">配送方式</span><span class="od-info-value">非急配送</span></div>
+      </div>
+      <div>
+        <div class="od-info-row"><span class="od-info-label">收货人姓名</span><span class="od-info-value">范晓静</span></div>
+        <div class="od-info-row"><span class="od-info-label">收货人手机</span><span class="od-info-value">15507916037</span></div>
+        <div class="od-info-row"><span class="od-info-label">买家昵称</span><span class="od-info-value">dragon</span></div>
+        <div class="od-info-row"><span class="od-info-label">用户收货地址</span><span class="od-info-value">湖南省·长沙市·雨花区·东山街道·三塘</span></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:20px;align-items:flex-start">
+      <div style="flex:1;min-width:0">
+        <table class="od-prod-tbl">
+          <thead><tr>
+            <th>商品</th><th>优惠</th><th>小计</th><th>已退数量</th><th>待发货量</th><th>发货状态</th><th>售后状态</th>
+          </tr></thead>
+          <tbody><tr>
+            <td><div style="display:flex;gap:8px;align-items:center">
+              <div class="od-prod-img" style="background:linear-gradient(135deg,#ff7675,#d63031)"></div>
+              <div><div style="font-size:13px;color:#333">血燕媛臻养焕颜C计片</div><div style="font-size:11.5px;color:#999;margin-top:2px">白燕盏</div></div>
+            </div></td>
+            <td></td><td>¥36.00</td><td>0.00</td><td>56.00</td><td>0</td><td></td>
+          </tr></tbody>
+        </table>
+        <div style="text-align:right;margin-top:6px"><a class="btn-link">退换</a></div>
+      </div>
+
+      <!-- Right: price summary ★ 新增「优惠券减免」行 -->
+      <div class="price-summary">
+        <div class="ps-row"><span class="ps-label">商品总价</span><span class="ps-value red">¥36.00</span></div>
+        <div class="ps-row"><span class="ps-label">运费(包邮)</span><span class="ps-value">¥0.00</span></div>
+        <div class="ps-row"><span class="ps-label">平台优惠减免</span><span class="ps-value green">-¥9.00</span></div>
+        <!-- ★★★ 新增：优惠券减免（字段来源标注） ★★★ -->
+        <div class="ps-row coupon-new">
+          <div><span class="ps-label">优惠券减免</span>
+            <span class="field-source" id="couponSrc">字段来源：取《订单表》coupon_discount_amount</span>
+          </div>
+          <span class="ps-value">-¥9.00</span>
+        </div>
+        <div class="ps-row"><span class="ps-label">每笔分账抵扣</span><span class="ps-value green">-¥9.00</span></div>
+        <div class="ps-row"><span class="ps-label">积分抵扣金额</span><span class="ps-value">-¥0.00</span></div>
+        <div class="ps-total"><span class="ps-label">应付款：</span><span class="ps-value">¥46.00</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<!-- ==================== PAGE: C端订单列表（移动端） ==================== -->
+<div id="viewCOrders" class="page-view hidden">
+<div class="c-container">
+  <div class="c-nav">
+    <div class="c-back">‹</div>
+    <div class="c-nav-title">我的订单</div>
+  </div>
+  <div class="c-tabs">
+    <div class="c-tab active">全部</div>
+    <div class="c-tab">待付款</div>
+    <div class="c-tab" id="tabToShip" onclick="highlightToShip()">待发货</div>
+    <div class="c-tab">待收货</div>
+    <div class="c-tab">已完成</div>
+  </div>
+  <div id="cOrderCards"></div>
+</div>
+</div>
+
+</main>
+
+<div class="proto-hint">
+  <span>当前：<strong id="currentPageLabel">后台订单列表</strong></span>
+  <button onclick="go('order-list')">① 后台列表</button>
+  <button onclick="go('order-detail')">② 后台详情</button>
+  <button onclick="go('c-orders')">③ C端订单</button>
+</div>
+
+<script>
+// ========== Page Navigation ==========
+function go(page){
+  document.querySelectorAll('.page-view').forEach(function(el){el.classList.add('hidden')});
+  document.querySelectorAll('.side a').forEach(function(a){a.classList.remove('active')});
+  if(page==='order-list'){
+    document.getElementById('viewOrderList').classList.remove('hidden');
+    document.getElementById('currentPageLabel').textContent='后台订单列表';
+  }else if(page==='order-detail'){
+    document.getElementById('viewOrderDetail').classList.remove('hidden');
+    document.getElementById('currentPageLabel').textContent='后台订单详情';
+  }else if(page==='c-orders'){
+    document.getElementById('viewCOrders').classList.remove('hidden');
+    document.getElementById('currentPageLabel').textContent='C端订单列表（移动端）';
+  }
+}
+
+// ========== Backend Order List Data ==========
+var orders = [
+  {prod:'血燕媛臻养焕颜C计片', spec:'白燕盏', total:'¥36.00', paid:'¥46.00', deduction:'-¥9.00', couponDeduction:'-¥9.00', buyer:'apgm', phone:'15507916037', tag:'已取消', tagCls:'tag-gray', status:'查看详情'},
+  {prod:'血燕媛臻养焕颜C计片', spec:'白燕盏', total:'¥36.00', paid:'¥46.00', deduction:'-¥9.00', couponDeduction:'-¥9.00', buyer:'小蛋芽', phone:'15508419555', tag:'已取消', tagCls:'tag-gray', status:'查看详情'},
+  {prod:'无规格订单', spec:'白玉，3K', total:'¥8.00', paid:'¥8.00', deduction:'-¥9.00', couponDeduction:'—', buyer:'人人-大礼包', phone:'18504419557', tag:'UZ-(444B)', tagCls:'tag-blue', status:'查看详情'},
+  {prod:'A+P套餐', spec:'拿子+拿香(1件)+乐康(果)', total:'¥300.00', paid:'¥199.00', deduction:'-¥9.00', couponDeduction:'-¥19.00', buyer:'UZ-(444B)', phone:'18508419555', tag:'已取消', tagCls:'tag-gray', status:'查看详情'},
+  {prod:'血燕媛臻养焕颜C计片', spec:'白燕盏', total:'¥36.00', paid:'¥46.00', deduction:'-¥9.00', couponDeduction:'—', buyer:'apgm', phone:'15507916037', tag:'UZ-(444B)', tagCls:'tag-blue', status:'查看详情'},
+  {prod:'血燕媛臻养焕颜C计片', spec:'白燕盏', total:'¥36.00', paid:'¥46.00', deduction:'-¥9.00', couponDeduction:'-¥9.00', buyer:'apgm', phone:'15507916037', tag:'UZ-(444B)', tagCls:'tag-blue', status:'查看详情'}
+];
+
+function renderOrderList(){
+  var html='';
+  orders.forEach(function(o){
+    var hasCoupon=o.couponDeduction!=='—';
+    html+='<tr>'+
+      '<td class="chk zone-left"><input type="checkbox"></td>'+
+      '<td class="zone-left"><div style="display:flex;gap:8px;align-items:center">'+
+        '<div style="width:44px;height:44px;border-radius:4px;background:linear-gradient(135deg,#ff7675,#d63031);flex-shrink:0"></div>'+
+        '<div><div style="font-size:13px;color:#333">'+o.prod+'</div>'+
+        '<div style="font-size:11.5px;color:#999;margin-top:2px">'+o.spec+'</div></div></div>'+
+        '<div style="margin-top:4px;font-size:11.5px;color:#999">订单号：SS202872879107946960</div>'+
+        '<div style="font-size:11.5px;color:#999">支付时间：2026-07-30 18:57:46</div></td>'+
+      '<td class="zone-left">'+o.total+'</td>'+
+      '<td class="zone-left"><span style="color:#f56c6c;font-weight:500">'+o.paid+'</span></td>'+
+      '<td class="zone-left"><span style="color:#67c23a">'+o.deduction+'</span></td>'+
+      // ★ 新增列：优惠券抵扣
+      '<td class="col-coupon">'+(hasCoupon?'<span class="val">'+o.couponDeduction+'</span>':'<span class="col-no-coupon">'+o.couponDeduction+'</span>')+'</td>'+
+      '<td>—</td><td>—</td><td>已取消</td>'+
+      '<td class="zone-right"><div><span class="tag '+o.tagCls+'" style="font-size:11px">'+o.tag+'</span></div>'+
+        '<div style="margin-top:3px;font-size:11.5px;color:#666">'+o.phone+'</div>'+
+        '<div><span class="tag tag-green" style="font-size:10px;padding:1px 5px">已取消</span></div></td>'+
+      '<td class="zone-right act"><a class="btn-link" style="cursor:pointer;text-decoration:none;color:#534AB7" onmousedown="go(\'order-detail\')">'+o.status+'</a></td>'+
+    '</tr>';
+  });
+  document.getElementById('orderListBody').innerHTML=html;
+}
+renderOrderList();
+
+// ========== C-End Order List Data ==========
+var cOrders = [
+  {title:'血素牌铁质维C叶酸片', spec:'血素牌铁质维C叶酸片*2', tags:[{t:'湖南唯尔',c:'#f56c6c'},{t:'有方正品',c:'#f56c6c'}], price:'¥36.00', qty:'x1', status:'待付款', statusCls:'c-status-pending-pay', countdown:'还剩 00:00:08', payAmount:'¥46.00', couponHint:null, actions:[{t:'修改地址',p:false},{t:'去支付',p:true}]},
+  {title:'血素牌铁质维C叶酸片', spec:'血素牌铁质维C叶酸片*2', tags:[{t:'湖南唯尔',c:'#f56c6c'},{t:'有方正品',c:'#f56c6c'}], price:'¥36.00', qty:'x1', status:'待发货', statusCls:'c-status-to-ship', countdown:null, payAmount:'¥46.00', couponHint:'含优惠券折扣-¥9.00', actions:[]},
+  {title:'甄选牙膏', spec:'立白,1K', tags:[], price:'¥6.00', qty:'x1', status:'已关闭', statusCls:'c-status-done', countdown:null, payAmount:'', couponHint:null, actions:[]},
+  {title:'叶酸片', spec:'血素牌铁质维C叶酸片*2', tags:[{t:'湖南唯尔',c:'#f56c6c'},{t:'有方正品',c:'#f56c6c'}], price:'¥36.00', qty:'x1', status:'待发货', statusCls:'c-status-to-ship', countdown:null, payAmount:'¥46.00', couponHint:'含优惠券折扣-¥9.00', actions:[]},
+  {title:'新6-血素牌铁质维C叶酸片', spec:'血素牌铁质维C叶酸片*2', tags:[{t:'湖南唯尔',c:'#f56c6c'},{t:'有方正品',c:'#f56c6c'}], price:'¥36.00', qty:'x1', status:'待发货', statusCls:'c-status-to-ship', countdown:null, payAmount:'¥46.00', couponHint:'含优惠券折扣-¥9.00', actions:[]}
+];
+
+function renderCOrders(){
+  var html='';
+  cOrders.forEach(function(o,i){
+    html+='<div class="c-card" id="card'+i+'">'+
+      '<div class="c-card-head"><div style="flex:1"><div style="font-size:14px;font-weight:500;color:#333">'+o.title+'</div>'+
+        '<div style="font-size:12px;color:#999;margin-top:3px">'+o.spec+'</div></div>'+
+        '<span class="c-status-badge '+o.statusCls+'">'+o.status+'</span></div>'+
+      '<div class="c-prod-row"><div class="c-prod-img" style="background:linear-gradient(135deg,'+(i%2===0?'#ff7675,#d63031':'#74b9ff,#0984e3')+')"></div>'+
+        '<div class="c-prod-info">'+
+          (o.tags.length?'<div class="c-prod-tags">'+o.tags.map(function(t){return '<span class="c-tag-sm" style="background:'+(t.c==='#f56c6c'?'#fef0f0':'#ecf5ff')+';color:'+t.c+';border-color:'+t.c+'">'+t.t+'</span>';}).join('')+'</div>':'')+
+          '<div class="c-price-row"><span class="c-price">'+o.price+'</span><span class="c-qty">'+o.qty+'</span></div>'+
+          (o.countdown?'<div class="c-countdown">'+o.countdown+'</div>':'')+
+        '</div></div>'+
+      '<div class="c-card-footer">';
+    if(o.couponHint) html+='<span class="c-coupon-hint">'+o.couponHint+'、</span>';
+    if(o.payAmount) html+='<span class="c-pay-amount">'+(o.status==='待付款'?'应付款':'实付款')+' '+o.payAmount+'</span>';
+    if(o.actions.length){
+      html+='<div class="c-btn-group">';
+      o.actions.forEach(function(a){ html+='<span class="c-btn '+(a.p?'c-btn-primary':'')+'">'+a.t+'</span>'; });
+      html+='</div>';
+    }
+    html+='</div><div class="c-more">更多</div></div>';
+  });
+  document.getElementById('cOrderCards').innerHTML=html;
+}
+renderCOrders();
+
+function highlightToShip(){
+  setTimeout(function(){
+    document.querySelectorAll('#cOrderCards .c-card').forEach(function(card){
+      if(card.querySelector('.c-coupon-hint')){
+        card.style.boxShadow='0 0 0 2px #E6A23C';
+        setTimeout(function(){card.style.boxShadow='';},1500);
+      }
+    });
+  },100);
+}
+</script>
+</body>
+</html>
