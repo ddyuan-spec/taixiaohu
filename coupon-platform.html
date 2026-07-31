@@ -278,9 +278,6 @@
       <a id="navCoupon" class="active indent" onclick="go('list')">优惠券管理</a>
       <a id="navSend" class="indent" onclick="go('send')">发券活动管理</a>
       <a id="navBoard" class="indent" onclick="go('board')">数据看板</a>
-      <a id="navA3" class="indent" onclick="go('a3')">叠加规则配置</a>
-      <a id="navA8" class="indent" onclick="go('a8')">商品底价管理</a>
-      <a id="navA9" class="indent" onclick="go('a9')">售后单处理</a>
       <a id="navWallet" class="indent" onclick="go('wallet')">用户券查询</a>
     </div>
   </div>
@@ -786,114 +783,6 @@
 
 
 
-<!-- ==================== A3: 叠加规则配置 ==================== -->
-<div id="viewA3" class="hidden">
-  <div class="crumb">营销中台 / <span>叠加规则配置</span></div>
-  <div class="phead">
-    <h2>叠加规则配置</h2>
-    <button class="btn-primary btn-sm" onclick="a3OpenForm()" style="margin-left:auto">+ 新建规则</button>
-  </div>
-  <div class="banner">
-    <b>规则说明：</b>不同<b>券种</b>之间允许叠加使用（如满减券 + 代金券），同一订单最多叠加张数受本规则限制；<b>叠加计算顺序</b>决定多张券的抵扣先后。
-    系统对已叠加组合执行<b>严格不击穿</b>校验——任何组合只要让实付低于关联商品底价，将被阻止并提示「组合优惠超出底价下限」，该规则为系统强制，不可关闭。
-  </div>
-  <div class="tbl-wrap">
-    <table class="tbl">
-      <thead>
-        <tr>
-          <th>规则名称</th>
-          <th>可叠加券种</th>
-          <th>最多叠加张数</th>
-          <th>叠加计算顺序</th>
-          <th>组合底价校验</th>
-          <th>状态</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody id="a3Tbody"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- ==================== A8: 商品底价管理 ==================== -->
-<div id="viewA8" class="hidden">
-  <div class="crumb">商品管理 / <span>商品中心 — 最低零售价（底价）配置</span></div>
-  <div class="phead">
-    <h2>商品列表</h2>
-    <button class="btn-primary btn-sm" style="margin-left:auto" onclick="toast('新建商品（规划中）')">+ 新建商品</button>
-  </div>
-  <div class="filter-bar">
-    <span class="fb-label">商品状态</span>
-    <select><option>全部</option><option>已上架</option><option>已下架</option></select>
-    <span class="fb-label">商品名称</span>
-    <input placeholder="输入商品名称/SKU" style="min-width:180px">
-    <span class="fb-label">平价类型</span>
-    <select><option>全部</option><option>自采商品</option><option>代发商品</option></select>
-    <span class="fb-label">商品类目</span>
-    <select><option>请选择商品类目</option><option>食品保健</option><option>个护美妆</option></select>
-    <button class="btn-primary btn-sm">查询</button>
-    <button class="btn-ghost btn-sm">重置</button>
-  </div>
-  <div class="tab-bar">
-    <div class="tab-item active">全部</div>
-    <div class="tab-item">已上架</div>
-    <div class="tab-item">已下架</div>
-    <div class="tab-item">已售罄</div>
-    <div class="tab-item">库存预警</div>
-    <div class="tab-item">适格下架</div>
-  </div>
-  <div class="tbl-wrap">
-    <table class="tbl">
-      <thead><tr>
-        <th class="chk"><input type="checkbox"></th>
-        <th>商品</th>
-        <th style="width:70px">库存</th>
-        <th style="width:70px">已售</th>
-        <th style="width:80px">待提库存</th>
-        <th style="width:90px">商品渠道</th>
-        <th style="width:90px">最低零售价</th>
-        <th style="width:140px">操作</th>
-      </tr></thead>
-      <tbody id="a8Tbody"></tbody>
-    </table>
-  </div>
-  <div class="pagi">
-    <span>共 8 条</span>
-    <div>
-      <span class="pg-btn">&lt;</span>
-      <span class="pg-btn active">1</span>
-      <span class="pg-btn">2</span>
-      <span class="pg-btn">3</span>
-      <span class="pg-btn">4</span>
-      <span class="pg-btn">&gt;</span>
-      <span style="margin-left:8px">前往 <input type="text" value="1" style="width:38px;text-align:center"> 页</span>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== A9: 售后单处理 ==================== -->
-<div id="viewA9" class="hidden">
-  <div class="crumb">营销中台 / <span>售后单处理</span></div>
-  <div class="phead">
-    <h2>售后单处理</h2>
-    <div class="seg" id="a9Filter" style="margin-left:auto">
-      <label class="checked" onclick="a9PickFilter(this)"><input type="radio" name="a9f" value="待处理">待处理</label>
-      <label onclick="a9PickFilter(this)"><input type="radio" name="a9f" value="已处理">已处理</label>
-      <label onclick="a9PickFilter(this)"><input type="radio" name="a9f" value="全部">全部</label>
-    </div>
-  </div>
-  <div class="card">
-    <div class="ctitle">说明</div>
-    <div class="hint" style="margin-top:0">售后单关联退款 / 退货时，系统按每张涉及券在「A2 优惠券 §7 售后退券规则」中的配置，自动生成退券处置预览（退回原账户 / 折算退款 / 作废 + 有效期处理 + 防滥用），运营确认无误后执行退券。</div>
-  </div>
-  <div class="tbl-wrap">
-    <table class="tbl">
-      <thead><tr><th>售后单号</th><th>关联订单</th><th>退款金额</th><th>涉及券</th><th>命中退券规则</th><th>状态</th><th>操作</th></tr></thead>
-      <tbody id="a9Tbody"></tbody>
-    </table>
-  </div>
-</div>
-
 <!-- ==================== 关联需求占位页 ==================== -->
 <div id="viewRel1" class="hidden">
   <div class="crumb">关联需求 / <span>会员中心-批量送券</span></div>
@@ -944,59 +833,6 @@
 </main><!-- end mainArea -->
 </div><!-- end layout -->
 
-<!-- A9 售后单详情弹窗 -->
-<div class="modal" id="mAfterForm">
-  <div class="mbox">
-    <div class="mhead"><span id="a9Title">售后单详情</span><span class="x" onclick="a9CloseForm()">×</span></div>
-    <div class="mbody" id="a9Body"></div>
-    <div class="mfoot" id="a9Foot">
-      <button class="btn-ghost btn-sm" onclick="a9CloseForm()">关闭</button>
-      <button class="btn-primary btn-sm" onclick="a9Exec()" id="a9ExecBtn">确认执行退券</button>
-    </div>
-  </div>
-</div>
-
-<!-- A3 新建规则弹窗 -->
-<div class="modal" id="mA3Form">
-  <div class="mbox" style="width:520px">
-    <div class="mhead"><span>新建叠加规则</span><span class="x" onclick="a3CloseForm()">×</span></div>
-    <div class="mbody">
-      <div class="form-row"><label class="fr-label">规则名称</label><div class="fr-body"><input class="fr-input wide" id="a3Name" placeholder="如：满减+代金叠加"></div></div>
-      <div class="form-row"><label class="fr-label">可叠加券种</label><div class="fr-body">
-        <label class="radio-item"><input type="checkbox" value="满减券" checked> 满减券</label>
-        <label class="radio-item"><input type="checkbox" value="代金券"> 代金券</label>
-        <label class="radio-item"><input type="checkbox" value="折扣券"> 折扣券</label>
-      </div></div>
-      <div class="form-row"><label class="fr-label">最多叠加张数</label><div class="fr-body"><input class="fr-input" id="a3MaxQty" type="number" value="2" min="1" style="width:80px"> 张</div></div>
-      <div class="form-row"><label class="fr-label">叠加计算顺序</label><div class="fr-body">
-        <select class="fr-input"><option>先满减后代金</option><option>先代金后满减</option><option>按券面值从大到小</option></select>
-      </div></div>
-      <div class="form-row"><label class="fr-label">组合底价校验</label><div class="fr-body"><span class="tag tag-green">强制开启（不可关闭）</span><span class="fr-hint">实付不低于关联商品底价</span></div></div>
-    </div>
-    <div class="mfoot">
-      <button class="btn-ghost btn-sm" onclick="a3CloseForm()">取消</button>
-      <button class="btn-primary btn-sm" onclick="a3Save()">保存</button>
-    </div>
-  </div>
-</div>
-
-<!-- A8 配置底价弹窗 -->
-<div class="modal" id="mA8Form">
-  <div class="mbox" style="width:420px">
-    <div class="mhead"><span id="a8Title">配置最低零售价</span><span class="x" onclick="a8CloseForm()">×</span></div>
-    <div class="mbody">
-      <div class="form-row"><label class="fr-label" style="width:110px">商品名称</label><div class="fr-body"><span id="a8ProdName" style="font-weight:600">-</span></div></div>
-      <div class="form-row"><label class="fr-label" style="width:110px">当前售价</label><div class="fr-body"><span id="a8CurPrice" style="color:#f56c6c">-</span></div></div>
-      <div class="form-row"><label class="fr-label" style="width:110px">最低零售价<span style="color:#f56c6c">*</span></label><div class="fr-body"><input class="fr-input" id="a8FloorPrice" type="number" min="0" step="0.01" placeholder="0.00" style="width:160px"> 元</div></div>
-      <div class="locknote">最低零售价 = 商品的底价红线，优惠券叠加后实付不得低于此价格。配置后立即生效。</div>
-    </div>
-    <div class="mfoot">
-      <button class="btn-ghost btn-sm" onclick="a8CloseForm()">取消</button>
-      <button class="btn-primary btn-sm" onclick="a8Save()">确认</button>
-    </div>
-  </div>
-</div>
-
 
 <!-- ========== Toast ========== -->
 <div class="toast" id="toast"></div>
@@ -1016,7 +852,6 @@ function go(page){
     list:'viewList', send:'viewSend',
     board:'viewBoard', wallet:'viewWallet', detail:'viewCouponDetail',
     couponNew:'viewCouponNew', sendEdit:'viewSendEdit',
-    a3:'viewA3', a8:'viewA8', a9:'viewA9',
     rel1:'viewRel1', rel2:'viewRel2', rel3:'viewRel3', rel4:'viewRel4', rel5:'viewRel5'
   };
   Object.keys(map).forEach(k=>$(map[k]).classList.toggle('hidden',k!==page));
@@ -1024,10 +859,9 @@ function go(page){
     list:'navCoupon', detail:'navCoupon', couponNew:'navCoupon',
     send:'navSend', sendEdit:'navSend',
     board:'navBoard', wallet:'navWallet',
-    a3:'navA3', a8:'navA8', a9:'navA9',
     rel1:'navRel1', rel2:'navRel2', rel3:'navRel3', rel4:'navRel4', rel5:'navRel5'
   };
-  ['navCoupon','navSend','navBoard','navWallet','navA3','navA8','navA9','navRel1','navRel2','navRel3','navRel4','navRel5'].forEach(id=>{
+  ['navCoupon','navSend','navBoard','navWallet','navRel1','navRel2','navRel3','navRel4','navRel5'].forEach(id=>{
     if($(id)) $(id).classList.toggle('active', navMap[page]===id);
   });
   if(page==='list') renderCoupons();
@@ -1035,9 +869,6 @@ function go(page){
   if(page==='couponNew') resetCouponNew();
   if(page==='sendEdit') resetSendForm();
   if(page==='board'){boardRender();drawTrend();}
-  if(page==='a3') a3Render();
-  if(page==='a8') a8Render();
-  if(page==='a9') a9Render();
 }
 
 /* 侧边栏分组折叠 */
@@ -1506,132 +1337,6 @@ function queryWallet(){
     </tr>`).join('');
   $('walletResult').classList.remove('hidden');
   $('walletEmpty').classList.add('hidden');
-}
-
-/* ==================== A3: 叠加规则配置 ==================== */
-var a3Rules=[
-  {name:'满减+代金叠加',types:'满减券、代金券',maxQty:2,order:'先满减后代金',floorCheck:'强制开启',status:'启用'},
-  {name:'满减+折扣叠加',types:'满减券、折扣券',maxQty:2,order:'按券面值从大到小',floorCheck:'强制开启',status:'启用'},
-  {name:'三券叠加（限活动期）',types:'满减券、代金券、折扣券',maxQty:3,order:'先满减→代金→折扣',floorCheck:'强制开启',status:'停用'}
-];
-function a3Render(){
-  $('a3Tbody').innerHTML=a3Rules.map(function(r,i){
-    return '<tr>'+
-      '<td><b>'+r.name+'</b></td>'+
-      '<td>'+r.types+'</td>'+
-      '<td>'+r.maxQty+' 张</td>'+
-      '<td>'+r.order+'</td>'+
-      '<td><span class="tag tag-green">'+r.floorCheck+'</span></td>'+
-      '<td><span class="tag '+(r.status==='启用'?'tag-green':'tag-gray')+'">'+r.status+'</span></td>'+
-      '<td><a class="btn-link" onclick="a3Toggle('+i+')">'+(r.status==='启用'?'停用':'启用')+'</a></td>'+
-      '</tr>';
-  }).join('')||'<tr><td colspan="7" style="text-align:center;padding:30px;color:#c0c4cc">暂无规则</td></tr>';
-}
-function a3Toggle(i){a3Rules[i].status=a3Rules[i].status==='启用'?'停用':'启用';a3Render();toast('已'+a3Rules[i].status);}
-function a3OpenForm(){$('mA3Form').classList.add('show');$('a3Name').value='';$('a3MaxQty').value=2;}
-function a3CloseForm(){$('mA3Form').classList.remove('show');}
-function a3Save(){
-  var n=$('a3Name').value.trim();if(!n){toast('请填写规则名称',true);return;}
-  var types=[...document.querySelectorAll('#mA3Form input[type=checkbox]:checked')].map(function(c){return c.value;});
-  if(!types.length){toast('请至少选择一个可叠加券种',true);return;}
-  a3Rules.unshift({name:n,types:types.join('、'),maxQty:+$('a3MaxQty').value||2,order:'先满减后代金',floorCheck:'强制开启',status:'启用'});
-  a3CloseForm();a3Render();toast('规则已保存');
-}
-
-/* ==================== A8: 商品底价管理 ==================== */
-var a8Goods=[
-  {id:'g1',name:'春娟黄芪霜',img:'📦',stock:120,sold:58,pending:0,channel:'自采',floorPrice:5.00},
-  {id:'g2',name:'春娟面膜',img:'📦',stock:80,sold:42,pending:5,channel:'自采',floorPrice:20.00},
-  {id:'g3',name:'春娟·基础品',img:'📦',stock:200,sold:130,pending:0,channel:'代发',floorPrice:30.00},
-  {id:'g4',name:'丽园·基础品',img:'📦',stock:50,sold:25,pending:3,channel:'自采',floorPrice:81.00},
-  {id:'g5',name:'veg12312',img:'📦',stock:0,sold:15,pending:0,channel:'代发',floorPrice:5.25},
-  {id:'g6',name:'春娟面膜和控油五件套',img:'📦',stock:35,sold:60,pending:0,channel:'自采',floorPrice:30.00},
-  {id:'g7',name:'荣威新能源配件A',img:'📦',stock:15,sold:8,pending:2,channel:'代发',floorPrice:20.00},
-  {id:'g8',name:'荣威新能源配件B',img:'📦',stock:90,sold:45,pending:0,channel:'自采',floorPrice:40.00}
-];
-var a8CurIdx=-1;
-function a8Render(){
-  $('a8Tbody').innerHTML=a8Goods.map(function(g,i){
-    var stTag=g.stock===0?'<span class="tag tag-red">已售罄</span>':g.stock<20?'<span class="tag tag-yellow">库存预警</span>':'<span class="tag tag-green">正常</span>';
-    return '<tr>'+
-      '<td class="chk"><input type="checkbox"></td>'+
-      '<td><div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">'+g.img+'</span><span>'+g.name+'</span></div></td>'+
-      '<td>'+g.stock+'</td>'+
-      '<td>'+g.sold+'</td>'+
-      '<td>'+g.pending+'</td>'+
-      '<td>'+g.channel+'</td>'+
-      '<td><b style="color:#f56c6c">¥'+g.floorPrice.toFixed(2)+'</b></td>'+
-      '<td class="act"><a class="btn-link" onclick="a8OpenFloor('+i+')">配置底价</a> <a class="btn-link" onclick="toast(\'查看商品（规划中）\')">查看</a></td>'+
-      '</tr>';
-  }).join('');
-}
-function a8OpenFloor(i){
-  a8CurIdx=i;var g=a8Goods[i];
-  $('a8Title').textContent='配置最低零售价 · '+g.name;
-  $('a8ProdName').textContent=g.name;
-  $('a8CurPrice').textContent='¥'+g.floorPrice.toFixed(2);
-  $('a8FloorPrice').value=g.floorPrice.toFixed(2);
-  $('mA8Form').classList.add('show');
-}
-function a8CloseForm(){$('mA8Form').classList.remove('show');}
-function a8Save(){
-  if(a8CurIdx<0)return;
-  var v=parseFloat($('a8FloorPrice').value);
-  if(isNaN(v)||v<0){toast('请输入有效的底价金额',true);return;}
-  a8Goods[a8CurIdx].floorPrice=v;
-  a8CloseForm();a8Render();toast('底价已更新：¥'+v.toFixed(2));
-}
-
-/* ==================== A9: 售后单处理 ==================== */
-var a9Orders=[
-  {id:'AFT001',order:'O20260712001',refund:99.0,coupons:['新人满99减20'],rule:'R001 整单未用券原路退回',result:'退回原账户（顺延7天）',status:'待处理'},
-  {id:'AFT002',order:'O20260713007',refund:30.0,coupons:['直播专享满150减30'],rule:'R001 整单未用券原路退回',result:'退回原账户（顺延7天）',status:'待处理'},
-  {id:'AFT003',order:'O20260708012',refund:58.0,coupons:['健康食品9折'],rule:'R002 已用券退款并入订单',result:'折算退款 ¥5.80 并入订单退款',status:'已处理'},
-  {id:'AFT004',order:'O20260705033',refund:0,coupons:['无门槛5元代金'],rule:'R001 整单未用券原路退回',result:'退回原账户（顺延7天）',status:'已处理'}
-];
-var a9Filter='待处理',a9Cur=-1;
-function a9Render(){
-  var list=a9Orders.filter(function(o){return a9Filter==='全部'||o.status===a9Filter;});
-  var tb=$('a9Tbody');
-  tb.innerHTML=list.map(function(o){
-    var i=a9Orders.indexOf(o);
-    var st=o.status==='待处理'?'<span class="tag off">待处理</span>':'<span class="tag on">已处理</span>';
-    return '<tr><td><b>'+o.id+'</b></td>'+
-      '<td>'+o.order+'</td>'+
-      '<td>¥'+o.refund.toFixed(2)+'</td>'+
-      '<td>'+(o.coupons||[]).join('、')+'</td>'+
-      '<td>'+o.rule+'</td>'+
-      '<td>'+st+'</td>'+
-      '<td><button class="btn-sm btn-ghost" onclick="a9Open('+i+')">查看</button></td></tr>';
-  }).join('') || '<tr><td colspan="7" style="text-align:center;padding:30px;color:#c0c4cc">该筛选下暂无售后单</td></tr>';
-}
-function a9PickFilter(el){
-  document.querySelectorAll('#a9Filter label').forEach(function(l){l.classList.remove('checked');});
-  el.classList.add('checked');
-  a9Filter=el.querySelector('input').value;
-  a9Render();
-}
-function a9Open(i){
-  a9Cur=i;var o=a9Orders[i];
-  $('a9Title').textContent='售后单详情 · '+o.id;
-  $('a9Body').innerHTML=
-    '<div class="card"><div class="a9-field"><span class="lbl">关联订单</span><span>'+o.order+'</span></div>'+
-    '<div class="a9-field"><span class="lbl">退款金额</span><span>¥'+o.refund.toFixed(2)+'</span></div>'+
-    '<div class="a9-field"><span class="lbl">涉及券</span><span>'+(o.coupons||[]).join('、')+'</span></div></div>'+
-    '<div class="card"><div class="ctitle">退券处置预览（按各券 §7 售后退券规则）</div>'+
-    '<div class="hint" style="margin-top:0">'+(o.coupons||[]).map(function(cn){return '· <b>'+cn+'</b> → '+o.result;}).join('<br>')+'</div>'+
-    '<div class="locknote">处置结果以「确认执行退券」时各券 §7 规则为准。</div></div>';
-  $('a9ExecBtn').style.display=o.status==='待处理'?'inline-flex':'none';
-  $('mAfterForm').classList.add('show');
-}
-function a9CloseForm(){$('mAfterForm').classList.remove('show');}
-function a9Exec(){
-  if(a9Cur<0)return;
-  var o=a9Orders[a9Cur];
-  o.status='已处理';
-  a9CloseForm();
-  a9Render();
-  toast('已执行退券：'+o.id);
 }
 
 /* ---------- Init ---------- */
