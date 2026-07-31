@@ -98,73 +98,66 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <div class="sec">
 <p>本节明确<b>需求影响范围</b>（哪些功能模块覆盖哪些端口）与<b>涉及终端明细</b>（平台端后台 / App / 小程序 / H5）。</p>
 <!-- ===== §3.1 范围映射表：SVG 绘制（规避 GitHub Pages HTML <table> 列错位） ===== -->
-<svg viewBox="0 0 1100 376" xmlns="http://www.w3.org/2000/svg" font-family="'Microsoft YaHei','PingFang SC',sans-serif" style="background:#fff;border:1px solid #e0e0e0;border-radius:8px;width:100%;height:auto;max-width:1100px;margin:12px 0;display:block;">
+<svg viewBox="0 0 920 376" xmlns="http://www.w3.org/2000/svg" font-family="'Microsoft YaHei','PingFang SC',sans-serif" style="background:#fff;border:1px solid #e0e0e0;border-radius:8px;width:100%;height:auto;max-width:1100px;margin:12px 0;display:block;">
   <!-- 单元格颜色填充（✓ 绿 / — 灰 / 已有功能 红） -->
   <!-- row0 y=68 -->
   <rect x="284" y="68" width="156" height="48" fill="#e8f5e9"/>
-  <rect x="440" y="68" width="180" height="48" fill="#e8f5e9"/>
-  <rect x="620" y="68" width="156" height="48" fill="#fafafa"/>
-  <rect x="776" y="68" width="156" height="48" fill="#fafafa"/>
-  <rect x="932" y="68" width="144" height="48" fill="#fafafa"/>
+    <rect x="440" y="68" width="156" height="48" fill="#fafafa"/>
+  <rect x="596" y="68" width="156" height="48" fill="#fafafa"/>
+  <rect x="752" y="68" width="144" height="48" fill="#fafafa"/>
   <!-- row1 y=116 -->
   <rect x="284" y="116" width="156" height="48" fill="#e8f5e9"/>
-  <rect x="440" y="116" width="180" height="48" fill="#e8f5e9"/>
-  <rect x="620" y="116" width="156" height="48" fill="#fafafa"/>
-  <rect x="776" y="116" width="156" height="48" fill="#fafafa"/>
-  <rect x="932" y="116" width="144" height="48" fill="#fafafa"/>
+    <rect x="440" y="116" width="156" height="48" fill="#fafafa"/>
+  <rect x="596" y="116" width="156" height="48" fill="#fafafa"/>
+  <rect x="752" y="116" width="144" height="48" fill="#fafafa"/>
   <!-- row2 y=164 -->
   <rect x="284" y="164" width="156" height="48" fill="#e8f5e9"/>
-  <rect x="440" y="164" width="180" height="48" fill="#fafafa"/>
-  <rect x="620" y="164" width="156" height="48" fill="#fafafa"/>
-  <rect x="776" y="164" width="156" height="48" fill="#fafafa"/>
-  <rect x="932" y="164" width="144" height="48" fill="#fafafa"/>
+    <rect x="440" y="164" width="156" height="48" fill="#fafafa"/>
+  <rect x="596" y="164" width="156" height="48" fill="#fafafa"/>
+  <rect x="752" y="164" width="144" height="48" fill="#fafafa"/>
   <!-- row3 y=212 -->
   <rect x="284" y="212" width="156" height="48" fill="#fafafa"/>
-  <rect x="440" y="212" width="180" height="48" fill="#fafafa"/>
-  <rect x="620" y="212" width="156" height="48" fill="#e8f5e9"/>
-  <rect x="776" y="212" width="156" height="48" fill="#e8f5e9"/>
-  <rect x="932" y="212" width="144" height="48" fill="#e8f5e9"/>
+    <rect x="440" y="212" width="156" height="48" fill="#e8f5e9"/>
+  <rect x="596" y="212" width="156" height="48" fill="#e8f5e9"/>
+  <rect x="752" y="212" width="144" height="48" fill="#e8f5e9"/>
   <!-- row4 y=260 -->
   <rect x="284" y="260" width="156" height="48" fill="#fafafa"/>
-  <rect x="440" y="260" width="180" height="48" fill="#fafafa"/>
-  <rect x="620" y="260" width="156" height="48" fill="#e8f5e9"/>
-  <rect x="776" y="260" width="156" height="48" fill="#ffebee"/>
-  <rect x="932" y="260" width="144" height="48" fill="#ffebee"/>
+    <rect x="440" y="260" width="156" height="48" fill="#e8f5e9"/>
+  <rect x="596" y="260" width="156" height="48" fill="#ffebee"/>
+  <rect x="752" y="260" width="144" height="48" fill="#ffebee"/>
   <!-- row5 y=308 -->
   <rect x="284" y="308" width="156" height="48" fill="#fafafa"/>
-  <rect x="440" y="308" width="180" height="48" fill="#fafafa"/>
-  <rect x="620" y="308" width="156" height="48" fill="#e8f5e9"/>
-  <rect x="776" y="308" width="156" height="48" fill="#ffebee"/>
-  <rect x="932" y="308" width="144" height="48" fill="#ffebee"/>
+    <rect x="440" y="308" width="156" height="48" fill="#e8f5e9"/>
+  <rect x="596" y="308" width="156" height="48" fill="#ffebee"/>
+  <rect x="752" y="308" width="144" height="48" fill="#ffebee"/>
 
   <!-- 表头背景 -->
-  <rect x="20" y="20" width="1056" height="48" fill="#f5f5f5"/>
+  <rect x="20" y="20" width="876" height="48" fill="#f5f5f5"/>
 
   <!-- 外边框 -->
-  <rect x="20" y="20" width="1056" height="336" fill="none" stroke="#e0e0e0" stroke-width="1.5"/>
+  <rect x="20" y="20" width="876" height="336" fill="none" stroke="#e0e0e0" stroke-width="1.5"/>
 
   <!-- 网格线 -->
   <g stroke="#e0e0e0" stroke-width="1">
-    <line x1="20" y1="68" x2="1076" y2="68" stroke-width="1.5"/>
-    <line x1="20" y1="116" x2="1076" y2="116"/>
-    <line x1="20" y1="164" x2="1076" y2="164"/>
-    <line x1="20" y1="212" x2="1076" y2="212"/>
-    <line x1="20" y1="260" x2="1076" y2="260"/>
-    <line x1="20" y1="308" x2="1076" y2="308"/>
+    <line x1="20" y1="68" x2="896" y2="68" stroke-width="1.5"/>
+    <line x1="20" y1="116" x2="896" y2="116"/>
+    <line x1="20" y1="164" x2="896" y2="164"/>
+    <line x1="20" y1="212" x2="896" y2="212"/>
+    <line x1="20" y1="260" x2="896" y2="260"/>
+    <line x1="20" y1="308" x2="896" y2="308"/>
     <line x1="284" y1="20" x2="284" y2="356"/>
     <line x1="440" y1="20" x2="440" y2="356"/>
-    <line x1="620" y1="20" x2="620" y2="356"/>
-    <line x1="776" y1="20" x2="776" y2="356"/>
-    <line x1="932" y1="20" x2="932" y2="356"/>
-  </g>
+    <line x1="596" y1="20" x2="596" y2="356"/>
+    <line x1="752" y1="20" x2="752" y2="356"/>
+      </g>
 
   <!-- 表头文字 -->
   <g font-size="13" font-weight="bold" fill="#333" text-anchor="middle">
     <text x="152" y="49">功能模块</text>
     <text x="362" y="49">平台端后台</text>
-    <text x="698" y="49">App</text>
-    <text x="854" y="49">小程序</text>
-    <text x="1004" y="49">独立 H5</text>
+    <text x="518" y="49">App</text>
+    <text x="674" y="49">小程序</text>
+    <text x="824" y="49">独立 H5</text>
   </g>
 
   <!-- 功能模块列（左对齐） -->
@@ -180,34 +173,34 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
   <g font-size="13" text-anchor="middle">
     <!-- row0 -->
     <text x="362" y="97" fill="#2e7d32">✓</text>
-    <text x="698" y="97" fill="#999">—</text>
-    <text x="854" y="97" fill="#999">—</text>
-    <text x="1004" y="97" fill="#999">—</text>
+    <text x="518" y="97" fill="#999">—</text>
+    <text x="674" y="97" fill="#999">—</text>
+    <text x="824" y="97" fill="#999">—</text>
     <!-- row1 -->
     <text x="362" y="145" fill="#2e7d32">✓</text>
-    <text x="698" y="145" fill="#999">—</text>
-    <text x="854" y="145" fill="#999">—</text>
-    <text x="1004" y="145" fill="#999">—</text>
+    <text x="518" y="145" fill="#999">—</text>
+    <text x="674" y="145" fill="#999">—</text>
+    <text x="824" y="145" fill="#999">—</text>
     <!-- row2 -->
     <text x="362" y="193" fill="#2e7d32">✓</text>
-    <text x="698" y="193" fill="#999">—</text>
-    <text x="854" y="193" fill="#999">—</text>
-    <text x="1004" y="193" fill="#999">—</text>
+    <text x="518" y="193" fill="#999">—</text>
+    <text x="674" y="193" fill="#999">—</text>
+    <text x="824" y="193" fill="#999">—</text>
     <!-- row3 -->
     <text x="362" y="241" fill="#999">—</text>
-    <text x="698" y="241" fill="#2e7d32">✓</text>
-    <text x="854" y="241" fill="#2e7d32">✓</text>
-    <text x="1004" y="241" fill="#2e7d32">✓</text>
+    <text x="518" y="241" fill="#2e7d32">✓</text>
+    <text x="674" y="241" fill="#2e7d32">✓</text>
+    <text x="824" y="241" fill="#2e7d32">✓</text>
     <!-- row4 -->
     <text x="362" y="289" fill="#999">—</text>
-    <text x="698" y="289" fill="#2e7d32">✓</text>
-    <text x="854" y="289" fill="#c62828">已有功能</text>
-    <text x="1004" y="289" fill="#c62828">已有功能</text>
+    <text x="518" y="289" fill="#2e7d32">✓</text>
+    <text x="674" y="289" fill="#c62828">已有功能</text>
+    <text x="824" y="289" fill="#c62828">已有功能</text>
     <!-- row5 -->
     <text x="362" y="337" fill="#999">—</text>
-    <text x="698" y="337" fill="#2e7d32">✓</text>
-    <text x="854" y="337" fill="#c62828">已有功能</text>
-    <text x="1004" y="337" fill="#c62828">已有功能</text>
+    <text x="518" y="337" fill="#2e7d32">✓</text>
+    <text x="674" y="337" fill="#c62828">已有功能</text>
+    <text x="824" y="337" fill="#c62828">已有功能</text>
   </g>
 </svg>
 <div class="ok">✅ 本期覆盖 <b>4 端口</b>（平台端后台 + App + 小程序 + H5），符合泰小虎端口基线。</div>
@@ -1367,8 +1360,8 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 </table>
 </div>
 
-<!-- ==================== 十、关联需求（无原型，仅需求说明） ==================== -->
-<h2>十、关联需求（无原型，仅需求说明）</h2>
+<!-- ==================== 十、关联需求 ==================== -->
+<h2>十、关联需求</h2>
 <div class="sec">
 <p>本栏收录<b>本期需一并落地、但不单独出原型</b>的关联需求。这类需求多为在<b>既有页面/既有模块</b>上做增量配置（新增枚举值、新增字段、新增数据项），研发按本栏文字说明实现即可，无需等待原型。后续新增关联需求统一追加到本栏，按 10.x 顺序编号。</p>
 
@@ -1438,6 +1431,51 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 </ul>
 
 <div class="warn">⚠️ <b>本节待确认项</b>：① 枚举值编码命名（@技术Owner）；② 「福利直播」初始数据的创建方式（初始化脚本 / 运营手工，@技术Owner）。</div>
+</div>
+
+<h3>10.2 会员中心-批量送券</h3>
+<div class="sec">
+<p><b>功能说明</b>：平台端后台为运营提供「按用户标签圈选 → 批量发放优惠券」的能力。运营可在会员中心选择目标用户标签（如「福利直播」标签），配置要发放的券模板与数量，系统批量写入用户券账户。是「时长发券」之外另一条人工触达用户的送券通道。</p>
+<p><b>与优惠券体系的关系</b>：批量送券直接调用券模板的「发券」能力，写入用户券账户表；券的状态流转（未使用/已使用/已过期）与核销逻辑完全复用优惠券体系既有能力。</p>
+<p><b>原型短链</b>：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-member.html" target="_blank">https://ddyuan-spec.github.io/taixiaohu/coupon-member.html</a></p>
+<p><b>原型截图</b>：</p>
+<img src="https://ddyuan-spec.github.io/taixiaohu/coupon-prd-assets/assoc-member-batch.png" alt="会员中心-批量送券原型" />
+</div>
+
+<h3>10.3 关联直播原型</h3>
+<div class="sec">
+<p><b>功能说明</b>：平台端后台将「直播间」与「优惠券模板」进行关联绑定，实现直播场景下的券发放。运营在直播商品池管理或直播间管理中，选择要关联的券模板，配置发放规则（如观看满 X 分钟自动发放）。</p>
+<p><b>与优惠券体系的关系</b>：关联直播是优惠券的「发放场景」之一，直播间绑定的是「券模板」而非具体券实例；用户满足发放条件后，系统调用券模板生成券实例并写入用户账户。</p>
+<p><b>原型短链</b>：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-relate-live.html" target="_blank">https://ddyuan-spec.github.io/taixiaohu/coupon-relate-live.html</a></p>
+<p><b>原型截图</b>：</p>
+<img src="https://ddyuan-spec.github.io/taixiaohu/coupon-prd-assets/assoc-live-relate.png" alt="关联直播原型" />
+</div>
+
+<h3>10.4 订单关联优惠券</h3>
+<div class="sec">
+<p><b>功能说明</b>：平台端后台展示「订单与优惠券的关联关系」数据，支持运营查看某张券被哪些订单使用、某笔订单使用了哪些券、券的核销状态与抵扣金额。为售后退券、对账、数据分析提供查询入口。</p>
+<p><b>与优惠券体系的关系</b>：订单关联优惠券是优惠券「核销」环节的数据看板，展示券实例与订单的映射关系；售后关单时的「退券」操作也依赖此关联数据定位需要返还的券。</p>
+<p><b>原型短链</b>：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-order-relate.html" target="_blank">https://ddyuan-spec.github.io/taixiaohu/coupon-order-relate.html</a></p>
+<p><b>原型截图</b>：</p>
+<img src="https://ddyuan-spec.github.io/taixiaohu/coupon-prd-assets/assoc-order-relate.png" alt="订单关联优惠券原型" />
+</div>
+
+<h3>10.5 会员直接发券</h3>
+<div class="sec">
+<p><b>功能说明</b>：平台端后台为运营提供「针对单个会员直接发券」的能力。运营在用户详情页或会员列表中，选择目标用户和券模板，一键发放。适用于客服补偿、运营手动触达等单点场景。</p>
+<p><b>与优惠券体系的关系</b>：直接发券是批量送券的「单条」版本，同样调用券模板发券接口写入用户券账户；单条发放不做标签筛选，直接指定用户 ID。</p>
+<p><b>原型短链</b>：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-direct-send.html" target="_blank">https://ddyuan-spec.github.io/taixiaohu/coupon-direct-send.html</a></p>
+<p><b>原型截图</b>：</p>
+<img src="https://ddyuan-spec.github.io/taixiaohu/coupon-prd-assets/assoc-direct-send.png" alt="会员直接发券原型" />
+</div>
+
+<h3>10.6 直播观看记录</h3>
+<div class="sec">
+<p><b>功能说明</b>：平台端后台展示用户在直播间的观看时长记录，支持按直播间、用户、时间段筛选。为「时长发券」提供数据依据——运营可查看哪些用户满足「观看满 X 分钟」条件，校验发券名单的准确性。</p>
+<p><b>与优惠券体系的关系</b>：直播观看记录是「时长发券」的前置数据源，发券规则中的「累计观看时长 ≥ X」条件依赖此记录计算；同时，已发券用户的观看记录可辅助验证发券覆盖范围。</p>
+<p><b>原型短链</b>：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-live-viewlog.html" target="_blank">https://ddyuan-spec.github.io/taixiaohu/coupon-live-viewlog.html</a></p>
+<p><b>原型截图</b>：</p>
+<img src="https://ddyuan-spec.github.io/taixiaohu/coupon-prd-assets/assoc-live-viewlog.png" alt="直播观看记录原型" />
 </div>
 
 <!-- ==================== 十一、二期待办清单 ==================== -->
