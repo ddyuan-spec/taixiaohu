@@ -76,6 +76,7 @@
   .col-chk{width:42px;text-align:center}
   .col-chk input{width:16px;height:16px;cursor:pointer;accent-color:#4F46E5}
   .col-info{min-width:240px}
+  .col-store{width:120px}
   .col-stock{width:60px;text-align:center}
   .col-price{width:90px}
   .col-liststatus{width:90px}
@@ -234,6 +235,7 @@
         <tr>
           <th class="col-chk"><input type="checkbox" id="chk-all" onclick="onHeaderCheck(this)"></th>
           <th>商品信息</th>
+          <th class="col-store">店铺名称</th>
           <th class="col-stock">库存</th>
           <th class="col-price">售卖价</th>
           <th class="col-liststatus">上架状态</th>
@@ -270,6 +272,7 @@
             <tr>
               <th class="col-chk"><input type="checkbox"></th>
               <th>商品信息</th>
+              <th class="col-store">店铺名称</th>
               <th class="col-price">售卖价</th>
               <th class="col-status">商品状态</th>
             </tr>
@@ -278,24 +281,28 @@
             <tr>
               <td class="col-chk"><input type="checkbox"></td>
               <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">AI补骨胶囊</div><div class="prod-cat">所有商品</div></div></div></td>
+              <td>适乐肤官方旗舰店</td>
               <td class="col-price price">¥89.00</td>
               <td class="col-status"><span class="status status-synced">已上架</span></td>
             </tr>
             <tr>
               <td class="col-chk"><input type="checkbox"></td>
               <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">荻雅升级胶囊</div><div class="prod-cat">所有商品</div></div></div></td>
+              <td>荻雅健康专营店</td>
               <td class="col-price price">¥1095.00</td>
               <td class="col-status"><span class="status status-synced">已上架</span></td>
             </tr>
             <tr>
               <td class="col-chk"><input type="checkbox"></td>
               <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">SVP纳米面膜</div><div class="prod-cat">所有商品</div></div></div></td>
+              <td>SVP个护旗舰店</td>
               <td class="col-price price">¥1099.00</td>
               <td class="col-status"><span class="status status-synced">已上架</span></td>
             </tr>
             <tr style="opacity:.55;background:#f9fafb">
               <td class="col-chk"><input type="checkbox" disabled></td>
               <td><div class="prod-info"><img class="prod-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect fill='%23f3f4f6' width='48' height='48' rx='6'/%3E%3Ctext x='24' y='29' text-anchor='middle' fill='%239ca3af' font-size='10'%E5%9B%BE%3C/text%3E%3C/svg%3E" alt=""><div><div class="prod-name">清润护手霜</div><div class="prod-cat">所有商品</div></div></div></td>
+              <td>清润个护店</td>
               <td class="col-price price">¥39.00</td>
               <td class="col-status"><span class="status-off">已下架</span></td>
             </tr>
@@ -376,20 +383,20 @@ var IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox=
 var IMG36 = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect fill='%23f3f4f6' width='36' height='36' rx='4'/%3E%3Ctext x='18' y='23' text-anchor='middle' fill='%239ca3af' font-size='9'%E5%9B%BE%3C/text%3E%3C/svg%3E";
 
 var PRODUCTS = [
-  {id:557, name:'适乐肤高纯烟酰胺乳液',   cat:'个护清洁', stock:8717,  price:189.00,  listed:true,  status:'已同步',   syncTime:'07-22 17:30'},
-  {id:561, name:'添然膳复合益生菌冻干粉', cat:'食品保健', stock:15820, price:1095.00, listed:true,  status:'已同步',   syncTime:'07-22 16:42'},
-  {id:574, name:'雅乐宝蜜桃粉',           cat:'食品保健', stock:17083, price:230.00,  listed:false, status:'同步失败', syncTime:'07-22 15:20'},
-  {id:575, name:'基肽致颜弹光面膜凝露',   cat:'个护清洁', stock:0,     price:108.00,  listed:true,  status:'同步失败', syncTime:'07-22 18:15'},
-  {id:580, name:'番茄红素软胶囊',         cat:'食品保健', stock:6420,  price:158.00,  listed:true,  status:'已同步',   syncTime:'07-21 09:12'},
-  {id:583, name:'烟酰胺身体乳',           cat:'个护清洁', stock:3200,  price:79.00,   listed:true,  status:'—',        syncTime:'—'},
-  {id:590, name:'深海鱼油软胶囊',         cat:'食品保健', stock:9800,  price:268.00,  listed:true,  status:'已同步',   syncTime:'07-20 14:05'},
-  {id:596, name:'氨基酸洁面慕斯',         cat:'个护清洁', stock:5400,  price:69.00,   listed:true,  status:'同步失败', syncTime:'07-22 11:40'},
-  {id:601, name:'胶原蛋白饮',             cat:'食品保健', stock:2300,  price:199.00,  listed:false, status:'—',        syncTime:'—'},
-  {id:608, name:'玻尿酸保湿精华',         cat:'个护清洁', stock:7600,  price:159.00,  listed:true,  status:'已同步',   syncTime:'07-22 10:22'},
-  {id:612, name:'左旋肉碱茶',             cat:'食品保健', stock:4100,  price:128.00,  listed:true,  status:'同步失败', syncTime:'07-19 20:15'},
-  {id:620, name:'积雪草修护霜',           cat:'个护清洁', stock:880,   price:99.00,   listed:true,  status:'已同步',   syncTime:'07-22 08:50'},
-  {id:625, name:'维生素C咀嚼片',          cat:'食品保健', stock:12000, price:89.00,   listed:true,  status:'—',        syncTime:'—'},
-  {id:631, name:'神经酰胺面霜',           cat:'个护清洁', stock:3500,  price:139.00,  listed:true,  status:'已同步',   syncTime:'07-21 16:30'}
+  {id:557, name:'适乐肤高纯烟酰胺乳液',   cat:'个护清洁', stock:8717,  price:189.00,  listed:true,  status:'已同步',   syncTime:'07-22 17:30', store:'适乐肤官方旗舰店'},
+  {id:561, name:'添然膳复合益生菌冻干粉', cat:'食品保健', stock:15820, price:1095.00, listed:true,  status:'已同步',   syncTime:'07-22 16:42', store:'添然膳健康馆'},
+  {id:574, name:'雅乐宝蜜桃粉',           cat:'食品保健', stock:17083, price:230.00,  listed:false, status:'同步失败', syncTime:'07-22 15:20', store:'雅乐宝食品专营店'},
+  {id:575, name:'基肽致颜弹光面膜凝露',   cat:'个护清洁', stock:0,     price:108.00,  listed:true,  status:'同步失败', syncTime:'07-22 18:15', store:'基肽护肤旗舰店'},
+  {id:580, name:'番茄红素软胶囊',         cat:'食品保健', stock:6420,  price:158.00,  listed:true,  status:'已同步',   syncTime:'07-21 09:12', store:'番茄红素健康店'},
+  {id:583, name:'烟酰胺身体乳',           cat:'个护清洁', stock:3200,  price:79.00,   listed:true,  status:'—',        syncTime:'—',       store:'烟酰胺个护专营'},
+  {id:590, name:'深海鱼油软胶囊',         cat:'食品保健', stock:9800,  price:268.00,  listed:true,  status:'已同步',   syncTime:'07-20 14:05', store:'深海鱼油官方店'},
+  {id:596, name:'氨基酸洁面慕斯',         cat:'个护清洁', stock:5400,  price:69.00,   listed:true,  status:'同步失败', syncTime:'07-22 11:40', store:'氨基酸护肤店'},
+  {id:601, name:'胶原蛋白饮',             cat:'食品保健', stock:2300,  price:199.00,  listed:false, status:'—',        syncTime:'—',       store:'胶原蛋白养生馆'},
+  {id:608, name:'玻尿酸保湿精华',         cat:'个护清洁', stock:7600,  price:159.00,  listed:true,  status:'已同步',   syncTime:'07-22 10:22', store:'玻尿酸美妆专营'},
+  {id:612, name:'左旋肉碱茶',             cat:'食品保健', stock:4100,  price:128.00,  listed:true,  status:'同步失败', syncTime:'07-19 20:15', store:'左旋肉碱减肥专营'},
+  {id:620, name:'积雪草修护霜',           cat:'个护清洁', stock:880,   price:99.00,   listed:true,  status:'已同步',   syncTime:'07-22 08:50', store:'积雪草修护官方'},
+  {id:625, name:'维生素C咀嚼片',          cat:'食品保健', stock:12000, price:89.00,   listed:true,  status:'—',        syncTime:'—',       store:'维生素C健康店'},
+  {id:631, name:'神经酰胺面霜',           cat:'个护清洁', stock:3500,  price:139.00,  listed:true,  status:'已同步',   syncTime:'07-21 16:30', store:'神经酰胺护肤旗舰店'}
 ];
 
 var PAGE_SIZE = 10;
@@ -420,6 +427,7 @@ function renderList(){
     html += '<tr>'+
       '<td class="col-chk"><input type="checkbox" data-id="'+p.id+'" '+disabled+' '+checked+' onchange="onRowCheck(this)"></td>'+
       '<td><div class="prod-info"><img class="prod-img" src="'+IMG+'" alt=""><div><div class="prod-name">#'+p.id+' '+p.name+'</div><div class="prod-cat">'+p.cat+'</div></div></div></td>'+
+      '<td>'+ (p.store || '—') +'</td>'+
       '<td style="text-align:center">'+p.stock+'</td>'+
       '<td class="price">'+priceCell(p.price)+'</td>'+
       '<td class="col-liststatus">'+listedCell(p.listed)+'</td>'+
