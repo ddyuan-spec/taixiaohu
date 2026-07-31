@@ -275,7 +275,6 @@
       <a id="navCoupon" class="active indent" onclick="go('list')">优惠券管理</a>
       <a id="navSend" class="indent" onclick="go('send')">发券活动管理</a>
       <a id="navBoard" class="indent" onclick="go('board')">数据看板</a>
-      <a id="navWallet" class="indent" onclick="go('wallet')">用户券查询</a>
     </div>
   </div>
 
@@ -446,35 +445,6 @@
       </table>
     </div>
   </div>
-</div>
-
-
-<!-- ==================== P5: 用户券查询 ==================== -->
-<div id="viewWallet" class="hidden">
-  <div class="crumb">用户管理 / <span>用户详情</span> / <span>用户券查询</span></div>
-
-  <div class="filter-bar">
-    <input placeholder="输入用户ID或手机号" id="wfUser" style="width:240px">
-    <button class="btn-primary btn-sm" onclick="queryWallet()">查询</button>
-  </div>
-
-  <div id="walletResult" class="hidden">
-    <div style="margin-bottom:12px;font-size:13px;color:#606266">
-      用户：<strong id="wUserName">-</strong>（<span id="wUserId">-</span>）— 共 <strong id="wCount">0</strong> 张券
-    </div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead>
-          <tr>
-            <th>券名称</th><th>券码</th><th>获取来源</th><th>领取时间</th><th>有效期至</th><th>状态</th>
-          </tr>
-        </thead>
-        <tbody id="walletTbody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <div id="walletEmpty" class="empty-state">请输入用户标识后点击查询</div>
 </div>
 
 
@@ -822,7 +792,7 @@ const toast=(msg,err)=>{
 function go(page){
   const map={
     list:'viewList', send:'viewSend',
-    board:'viewBoard', wallet:'viewWallet', detail:'viewCouponDetail',
+    board:'viewBoard', detail:'viewCouponDetail',
     couponNew:'viewCouponNew', sendEdit:'viewSendEdit',
     rel1:'viewRel1', rel2:'viewRel2', rel3:'viewRel3', rel4:'viewRel4', rel5:'viewRel5'
   };
@@ -830,10 +800,10 @@ function go(page){
   const navMap={
     list:'navCoupon', detail:'navCoupon', couponNew:'navCoupon',
     send:'navSend', sendEdit:'navSend',
-    board:'navBoard', wallet:'navWallet',
+    board:'navBoard',
     rel1:'navRel1', rel2:'navRel2', rel3:'navRel3', rel4:'navRel4', rel5:'navRel5'
   };
-  ['navCoupon','navSend','navBoard','navWallet','navRel1','navRel2','navRel3','navRel4','navRel5'].forEach(id=>{
+  ['navCoupon','navSend','navBoard','navRel1','navRel2','navRel3','navRel4','navRel5'].forEach(id=>{
     if($(id)) $(id).classList.toggle('active', navMap[page]===id);
   });
   if(page==='list') renderCoupons();
@@ -1290,25 +1260,6 @@ function drawTrend(){
     ${Array.from({length:7},(_,i)=>`<text x="${padL+(i/6)*(W-padL-padR)}" y="${H+padT+16}" text-anchor="middle" font-size="11" fill="#999">${['7/21','7/22','7/23','7/24','7/25','7/26','7/27'][i]}</text>`).join('')}
     ${[0,0.25,0.5,0.75,1].map(r=>`<line x1="${padL}" y1="${padT+H*(1-r)}" x2="${W-padR}" y2="${padT+H*(1-r)}" stroke="#eee" stroke-dasharray="3,3"/><text x="${padL-6}" y="${padT+H*(1-r)+4}" text-anchor="end" font-size="10" fill="#999">${Math.round(maxV*r)}</text>`).join('')}
   `;
-}
-
-/* ==================== P5: 用户券查询 ==================== */
-function queryWallet(){
-  const u=$('wfUser').value.trim();if(!u){toast('请输入用户标识',true);return;}
-  $('wUserName').textContent=u;$('wUserId').textContent=u;
-  const mock=[
-    {name:'新人满99减20',code:'CP000001',src:'新人注册',time:'2026-07-15 10:22',expire:'2026-09-15',status:'未使用'},
-    {name:'无门槛5元代金',code:'CP000004',src:'直播时长发券',time:'2026-07-21 20:35',expire:'2026-07-28',status:'未使用'},
-    {name:'全场8折券',code:'CP000003',src:'系统发券',time:'2026-07-18 14:00',expire:'2026-08-18',status:'已使用'}
-  ];
-  $('wCount').textContent=mock.length;
-  $('walletTbody').innerHTML=mock.map(m=>`
-    <tr>
-      <td>${m.name}</td><td>${m.code}</td><td>${m.src}</td><td>${m.time}</td><td>${m.expire}</td>
-      <td><span class="tag ${m.status==='未使用'?'tag-green':'tag-gray'}">${m.status}</span></td>
-    </tr>`).join('');
-  $('walletResult').classList.remove('hidden');
-  $('walletEmpty').classList.add('hidden');
 }
 
 /* ---------- Init ---------- */
