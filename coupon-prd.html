@@ -916,16 +916,58 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>时间范围</td><td>日期范围；默认近 7 日</td></tr>
 </tbody>
 </table>
-<h5>4.1.6.3 数据来源（字段级）</h5>
+<h5>4.1.6.3 按券维度列表字段表（「按券维度」Tab 主表格，每行一张券模板的聚合统计）</h5>
 <table>
-<thead><tr><th>字段名称</th><th>取值逻辑说明</th></tr></thead>
+<thead><tr><th>字段名称</th><th>聚合算法（计算公式）</th><th>数据来源</th><th>排序 / 筛选支持</th></tr></thead>
 <tbody>
-<tr><td>发放量 / 核销量 / 金额</td><td>聚合《用户券表》（按维度分组）；金额=Σ 实际核销减免额（阶梯券取实扣额，非模板面值）</td></tr>
-<tr><td>趋势数据</td><td>按 redeem_time 聚合《核销流水表》</td></tr>
+<tr><td>券名称</td><td>取《券模板表》coupon_name，按 coupon_template_id 分组</td><td>《券模板表》</td><td>支持文本模糊搜索</td></tr>
+<tr><td>类型</td><td>取《券模板表》coupon_type（满减券 / 无门槛代金券等）</td><td>《券模板表》</td><td>支持下拉筛选</td></tr>
+<tr><td>总发行量</td><td>SUM(《券模板表》total_stock)，即该券模板配置的总库存上限</td><td>《券模板表》</td><td>支持数值区间筛选；默认降序</td></tr>
+<tr><td>已领取</td><td>COUNT(《用户券表》WHERE coupon_template_id=当前券)，即该券模板已发放到用户钱包的实例总数</td><td>《用户券表》</td><td>支持数值区间筛选</td></tr>
+<tr><td>领取率</td><td>已领取 ÷ 总发行量 × 100%（保留 1 位小数）；总发行量=0 时显示"—"</td><td>上述两字段派生</td><td>仅展示，不支持筛选</td></tr>
+<tr><td>核销量</td><td>COUNT(《用户券表》WHERE coupon_template_id=当前券 AND status='已使用')，即该券模板已被核销使用的实例数</td><td>《用户券表》</td><td>支持数值区间筛选</td></tr>
+<tr><td>核销率</td><td>核销量 ÷ 已领取 × 100%（保留 1 位小数）；已领取=0 时显示"—"</td><td>上述两字段派生</td><td>仅展示，不支持筛选</td></tr>
+<tr><td>核销金额（元）</td><td>SUM(《核销流水表》WHERE coupon_template_id=当前券 AND status='已使用' 的 actual_discount_amount)，即该券模板所有已核销实例的实际减免金额合计（阶梯券取实扣额，非模板面值）</td><td>《核销流水表》</td><td>支持数值区间筛选；默认降序</td></tr>
+<tr><td>来源 / 发放时间</td><td>展示该券最近一次发放的来源（发券活动名 / 会员中心批量赠送 / 系统发券）+ 最近发放时间；多来源时按时间倒序取最新一条</td><td>《用户券表》+《发券活动表》</td><td>来源支持下拉筛选；发放时间支持日期范围</td></tr>
+</tbody>
+</table>
+<p>列表附加规则：排序默认按「总发行量」降序；分页支持 10/20/50，默认 20；合计行（最末行）：总发行量/已领取/核销量/核销金额四列求和，领取率/核销率显示全量均值。空态：无数据时显示"暂无统计数据"。</p>
+
+<h5>4.1.6.4 按发放活动维度列表字段表（「按发放活动」Tab 主表格，每个活动一行聚合统计）</h5>
+<table>
+<thead><tr><th>字段名称</th><th>聚合算法（计算公式）</th><th>数据来源</th><th>排序 / 筛选支持</th></tr></thead>
+<tbody>
+<tr><td>活动名称</td><td>取《发券活动表》activity_name</td><td>《发券活动表》</td><td>支持文本模糊搜索</td></tr>
+<tr><td>触发源</td><td>取《发券活动表》trigger_type（直播时长 / 支付完成 / 签到等）</td><td>《发券活动表》</td><td>支持下拉筛选</td></tr>
+<tr><td>关联券数</td><td>COUNT(《活动-券关联表》WHERE activity_id=当前活动)，即该活动关联的券模板数量</td><td>《活动-券关联表》</td><td>仅展示</td></tr>
+<tr><td>已发放</td><td>COUNT(《用户券表》WHERE activity_id=当前活动)，即通过该活动已发放到用户钱包的券实例总数（跨所有关联券汇总）</td><td>《用户券表》</td><td>支持数值区间筛选</td></tr>
+<tr><td>核销量</td><td>COUNT(《用户券表》WHERE activity_id=当前活动 AND status='已使用')，即该活动发放的券中已被核销的实例数</td><td>《用户券表》</td><td>支持数值区间筛选</td></tr>
+<tr><td>核销率</td><td>核销量 ÷ 已发放 × 100%（保留 1 位小数）；已发放=0 时显示"—"</td><td>上述两字段派生</td><td>仅展示</td></tr>
+<tr><td>核销金额（元）</td><td>SUM(《核销流水表》WHERE activity_id=当前活动 AND status='已使用' 的 actual_discount_amount)</td><td>《核销流水表》</td><td>支持数值区间筛选</td></tr>
+<tr><td>活动状态</td><td>取《发券活动表》status（未开始 / 进行中 / 已结束）</td><td>《发券活动表》</td><td>支持下拉筛选</td></tr>
+<tr><td>开始时间</td><td>取《发券活动表》start_time</td><td>《发券活动表》</td><td>支持日期范围筛选</td></tr>
+</tbody>
+</table>
+<p>列表附加规则：排序默认按「开始时间」倒序（最新活动在前）；分页支持 10/20/50，默认 20；合计行同上。空态同上。</p>
+
+<h5>4.1.6.5 数据看板全局筛选与数据来源</h5>
+<table>
+<thead><tr><th>查询条件</th><th>查询说明</th><th>作用于哪些维度 Tab</th></tr></thead>
+<tbody>
+<tr><td>维度 Tab</td><td>切换：按券维度 / 按发放活动 / 券明细记录；默认「按券维度」</td><td>全部（决定下方表格与图表）</td></tr>
+<tr><td>时间范围</td><td>日期范围选择器（起 ~ 止）；默认近 7 日（T-7 ~ T）</td><td>全部三个 Tab 共用；影响列表聚合的时间窗口 + 下方趋势图 X 轴</td></tr>
+</tbody>
+</table>
+<table>
+<thead><tr><th>字段类别</th><th>取值逻辑说明</th></tr></thead>
+<tbody>
+<tr><td>发放量 / 领取率 / 核销量 / 核销率 / 核销金额</td><td>聚合《用户券表》（按 coupon_template_id 或 activity_id 分组），受时间范围筛选约束；金额=Σ actual_discount_amount（阶梯券取实扣额，非模板面值）</td></tr>
+<tr><td>总发行量</td><td>取《券模板表》total_stock（不受时间范围约束，为快照值）</td></tr>
+<tr><td>趋势图数据（近 7 日领取趋势 / 近 7 日核销趋势）</td><td>按天 GROUP BY issue_time（领取趋势）或 redeem_time（核销趋势）聚合《用户券表》或《核销流水表》；随维度 Tab 切换对应指标</td></tr>
 </tbody>
 </table>
 
-<h5>4.1.6.4 券明细记录字段表（按券实例 / 券ID 维度，每行一条发放明细）</h5>
+<h5>4.1.6.6 券明细记录字段表（按券实例 / 券ID 维度，每行一条发放明细）</h5>
 <table>
 <thead><tr><th>字段名称</th><th>需求说明</th><th>备注（查询支持）</th></tr></thead>
 <tbody>
@@ -937,7 +979,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>核销订单号</td><td>核销该券实例对应的订单号（未核销时为空）</td><td>查询：输入框，精确 / 模糊匹配</td></tr>
 </tbody>
 </table>
-<h5>4.1.6.5 券明细记录数据来源（字段级）</h5>
+<h5>4.1.6.7 券明细记录数据来源（字段级）</h5>
 <table>
 <thead><tr><th>字段名称</th><th>取值逻辑说明</th></tr></thead>
 <tbody>
