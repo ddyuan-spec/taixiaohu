@@ -251,12 +251,9 @@
   .a9-field{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13px}
   .a9-field .lbl{width:80px;color:#909399;flex-shrink:0}
   /* 关联需求占位页 */
-  .rel-placeholder{background:#fff;border:1px solid #ebeef5;border-radius:4px;padding:50px 30px;text-align:center}
-  .rel-placeholder .rel-icon{font-size:42px;margin-bottom:16px}
-  .rel-placeholder .rel-title{font-size:16px;font-weight:600;color:#222;margin-bottom:8px}
-  .rel-placeholder .rel-desc{font-size:13px;color:#909399;line-height:1.8;max-width:520px;margin:0 auto 20px}
-  .rel-placeholder .rel-link{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:8px 20px;background:#534AB7;color:#fff;border-radius:4px;text-decoration:none;font-size:13px;cursor:pointer}
-  .rel-placeholder .rel-link:hover{background:#453da0}
+  .rel-iframe-wrap{padding:0;}
+  .rel-iframe-wrap .crumb{padding:16px 24px;border-bottom:1px solid #ebeef5;}
+  .rel-iframe{width:100%;height:calc(100vh - 140px);border:none;display:block;background:#f7f8fa;}
 </style>
 </head>
 <body>
@@ -783,51 +780,26 @@
 
 
 
-<!-- ==================== 关联需求占位页 ==================== -->
-<div id="viewRel1" class="hidden">
+<!-- ==================== 关联需求：iframe 内嵌 ==================== -->
+<div id="viewRel1" class="hidden rel-iframe-wrap">
   <div class="crumb">关联需求 / <span>会员中心-批量送券</span></div>
-  <div class="rel-placeholder">
-    <div class="rel-icon">🎫</div>
-    <div class="rel-title">会员中心 — 批量送券</div>
-    <div class="rel-desc">在会员中心模块中，支持按会员等级 / 标签批量发放优惠券。本需求为关联需求，原型与功能详情请见会员中心模块。</div>
-    <a class="rel-link" onclick="toast('跳转会员中心模块（待集成）')">前往会员中心 ›</a>
-  </div>
+  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-member.html" class="rel-iframe"></iframe>
 </div>
-<div id="viewRel2" class="hidden">
+<div id="viewRel2" class="hidden rel-iframe-wrap">
   <div class="crumb">关联需求 / <span>关联直播原型</span></div>
-  <div class="rel-placeholder">
-    <div class="rel-icon">📺</div>
-    <div class="rel-title">关联直播原型</div>
-    <div class="rel-desc">优惠券体系与直播挂车模块关联——直播时长发券已在「发券活动管理」中实现。直播挂车完整原型请见直播挂车独立原型。</div>
-    <a class="rel-link" onclick="window.open('https://ddyuan-spec.github.io/taixiaohu/live-proto.html','_blank')">查看直播挂车原型 ›</a>
-  </div>
+  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-relate-live.html" class="rel-iframe"></iframe>
 </div>
-<div id="viewRel3" class="hidden">
+<div id="viewRel3" class="hidden rel-iframe-wrap">
   <div class="crumb">关联需求 / <span>订单关联优惠券</span></div>
-  <div class="rel-placeholder">
-    <div class="rel-icon">🧾</div>
-    <div class="rel-title">订单关联优惠券</div>
-    <div class="rel-desc">订单模块在创建订单、支付回调、售后退款时关联优惠券的核销与退券逻辑。券模板侧的退券规则已在「A2 优惠券 §7 售后退券规则」配置，售后单处理见本原型 A9 模块。</div>
-    <a class="rel-link" onclick="go('a9')">查看售后单处理（A9）›</a>
-  </div>
+  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-order-relate.html" class="rel-iframe"></iframe>
 </div>
-<div id="viewRel4" class="hidden">
+<div id="viewRel4" class="hidden rel-iframe-wrap">
   <div class="crumb">关联需求 / <span>会员直接发券</span></div>
-  <div class="rel-placeholder">
-    <div class="rel-icon">👤</div>
-    <div class="rel-title">会员直接发券</div>
-    <div class="rel-desc">在会员详情页直接向单个会员发放优惠券。本需求为关联需求，入口位于会员中心 → 会员详情 → 直接发券，券模板数据来源于本模块。</div>
-    <a class="rel-link" onclick="toast('跳转会员中心模块（待集成）')">前往会员中心 ›</a>
-  </div>
+  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-direct-send.html" class="rel-iframe"></iframe>
 </div>
-<div id="viewRel5" class="hidden">
+<div id="viewRel5" class="hidden rel-iframe-wrap">
   <div class="crumb">关联需求 / <span>直播观看记录</span></div>
-  <div class="rel-placeholder">
-    <div class="rel-icon">⏱️</div>
-    <div class="rel-title">直播观看记录</div>
-    <div class="rel-desc">直播观看时长记录是「发券活动管理 → 直播时长触发」的数据源。观看记录的采集与存储由直播模块负责，发券活动通过阈值配置消费这些数据。</div>
-    <a class="rel-link" onclick="go('send')">查看发券活动管理 ›</a>
-  </div>
+  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-live-viewlog.html" class="rel-iframe"></iframe>
 </div>
 
 </main><!-- end mainArea -->
