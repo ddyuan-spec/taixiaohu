@@ -921,8 +921,22 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <h4>4.1.7 P5 用户券查询 <span class="tag y">本期新增</span></h4>
 <p><b>页面原型与交互示意</b></p>
-<p><img src="coupon-prd-assets/coupon-p5-user-coupon.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="P5用户券查询"></p>
+<p><img src="coupon-prd-assets/coupon-p5-user-coupon.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="P5用户券查询-查询入口"></p>
 <p>⚠️ <b>入口调整（评审第7点）</b>：用户券查询不再作为平台端后台独立一级菜单，改为<b>会员管理（用户管理）模块 → 用户详情页的一个 Tab</b>（与用户基本信息 / 订单 / 资产并列）。导航路径：用户管理 / 用户详情 / 用户券查询。下方查询条件与列表字段不变。</p>
+
+<h5>4.1.7.0 优惠券详情展示 <span class="tag y">本期新增</span></h5>
+<p><b>页面原型与交互示意</b>：输入用户 ID 或手机号并点击「查询」后，展示该用户的券账户详情页。页面分为上下两区域：</p>
+<p><img src="coupon-prd-assets/coupon-p5-coupon-detail.png" style="max-width:100%;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="P5优惠券详情展示"></p>
+<table>
+<thead><tr><th>区域</th><th>内容说明</th></tr></thead>
+<tbody>
+<tr><td><b>用户信息头部</b></td><td>展示用户头像、ID（如 U6492）、性别、手机号、会员级别；下方元数据行：会员等级（VIP）、成单量、积分、注册时间、消费金额、储值余额、标签等。</td></tr>
+<tr><td><b>Tab 栏</b></td><td>充值明细 / 储值明细 / 积分明细 / 分销信息 / AOT签到记录 / 管理功能；默认停留在「充值明细」（即券交易记录）Tab。</td></tr>
+<tr><td><b>交易记录列表</b></td><td>列：交易时间、口袋编号（订单号）、商品活动、优惠金额、实付金额、支付方式；按交易时间倒序排列；支持分页（默认 20 条/页）。</td></tr>
+<tr><td><b>操作按钮</b></td><td>顶部右侧：解绑设备 / 解冻用户账户 / 询单验证（快捷操作入口）。</td></tr>
+</tbody>
+</table>
+
 <h5>4.1.7.1 查询条件（查询条件 / 查询说明）</h5>
 <table>
 <thead><tr><th>查询条件</th><th>查询说明</th></tr></thead>
