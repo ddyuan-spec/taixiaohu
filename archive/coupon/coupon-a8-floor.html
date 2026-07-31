@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎 · 商品中心 — 最低零售价配置（A8 关联原型）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f0f1f5;color:#2a2f3a;font-size:13px}
+.topbar{height:48px;background:#534AB7;color:#fff;display:flex;align-items:center;padding:0 20px;gap:12px}
+.topbar .logo{font-weight:700;font-size:14px}
+.topbar .path{opacity:.85;font-size:12px}
+.layout{display:flex;min-height:calc(100vh - 48px)}
+.side{width:170px;background:#fff;border-right:1px solid #e6e6ec;padding:14px 0}
+.side .grp{font-size:11px;color:#9a9aa8;padding:10px 16px 4px;text-transform:uppercase;letter-spacing:.5px}
+.side a{display:block;padding:7px 16px;color:#4a4f5a;text-decoration:none;font-size:12.5px;cursor:pointer}
+.side a:hover{background:#f5f3ff}
+.side a.active{background:#EEEDFE;color:#534AB7;font-weight:600;border-right:3px solid #534AB7}
+.main{flex:1;padding:16px 20px 60px}
+.crumb{font-size:12px;color:#9a9aa8;margin-bottom:10px}
+.crumb b{color:#4a4f5a}
+.phead{display:flex;align-items:center;margin-bottom:12px;gap:10px}
+.phead h2{font-size:17px;font-weight:700}
+.filter{background:#fff;border:1px solid #e6e6ec;border-radius:10px;padding:10px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.filter input,.filter select{border:1px solid #d8d8e0;border-radius:7px;padding:6px 10px;font-size:12px;color:#2a2f3a;background:#fff}
+.filter input{min-width:150px}
+.filter .lbl{font-size:12px;color:#6b6f7a}
+.btn-primary{background:#534AB7;color:#fff;border:none;border-radius:7px;padding:7px 15px;font-size:12px;cursor:pointer}
+.btn-primary:hover{background:#473fa3}
+.btn-ghost{background:#fff;color:#534AB7;border:1px solid #c9bff5;border-radius:7px;padding:6px 13px;font-size:12px;cursor:pointer}
+.btn-sm{background:#fff;color:#534AB7;border:1px solid #d8d8e0;border-radius:6px;padding:3px 9px;font-size:11.5px;cursor:pointer;margin-right:4px}
+.btn-sm:hover{background:#f5f3ff}
+.tabs{display:flex;gap:0;margin-bottom:12px;border-bottom:2px solid #efeff3}
+.tab{padding:8px 18px;cursor:pointer;font-size:12.5px;color:#6b6f7a;border-bottom:2px solid transparent;margin-bottom:-2px}
+.tab.active{color:#534AB7;font-weight:600;border-bottom-color:#534AB7}
+.tbl{background:#fff;border:1px solid #e6e6ec;border-radius:10px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{border-bottom:1px solid #efeff3;padding:10px 11px;text-align:left;vertical-align:middle}
+th{background:#f7f6fc;color:#6b6f7a;font-weight:600;white-space:nowrap}
+tbody tr:hover{background:#faf9ff}
+.tag{display:inline-block;padding:2px 8px;border-radius:11px;font-size:11px;font-weight:600}
+.tag.on{background:#e8f5e9;color:#2f7d32}
+.tag.off{background:#f1f1f4;color:#8a8a96}
+.tag.warn{background:#fef2f2;color:#b42318}
+.name-cell{font-weight:600;color:#2a2f3a}
+.sub{color:#9a9aa8;font-size:11px}
+.hint{color:#888;font-size:11.5px;line-height:1.6}
+.modal{position:fixed;inset:0;background:rgba(20,18,40,.42);display:none;align-items:start;justify-content:center;z-index:70;padding-top:50px}
+.modal.show{display:flex}
+.mbox{width:min(860px,92vw);max-height:88vh;background:#fff;border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.mhead{padding:14px 20px;border-bottom:1px solid #efeff3;font-size:15px;font-weight:700;display:flex;align-items:center}
+.mbody{padding:18px 22px;overflow-y:auto;flex:1}
+.mfoot{padding:12px 20px;border-top:1px solid #efeff3;display:flex;justify-content:flex-end;gap:10px}
+.card{background:#fff;border:1px solid #e6e6ec;border-radius:10px;padding:14px 18px;margin-bottom:14px}
+.ctitle{font-size:13.5px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.n{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#534AB7;color:#fff;font-size:11px;font-weight:700}
+.chint{font-weight:400;color:#888;font-size:11.5px}
+.row{display:flex;gap:14px;flex-wrap:wrap}
+.field{flex:1;min-width:160px}
+.lbl{display:block;font-size:12px;font-weight:600;color:#4a4f5a;margin-bottom:4px}
+.inp,.sel{width:100%;border:1px solid #d8d8e0;border-radius:7px;padding:7px 10px;font-size:12.5px;color:#2a2f3a;background:#fff}
+.ptable{width:100%;border-collapse:collapse;font-size:12px}
+.ptable th,.ptable td{border:1px solid #ececf2;padding:7px 9px}
+.ptable th{background:#fafafa;color:#6b6f7a;font-weight:600}
+.gp-low{color:#b42318;font-weight:600}
+.gp-ok{color:#2f7d32;font-weight:600}
+.gp-mid{color:#b8791a;font-weight:600}
+.switchrow{display:flex;align-items:center;gap:8px}
+.switch{position:relative;display:inline-block;width:36px;height:20px}
+.switch input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;background:#ccc;border-radius:20px;cursor:pointer}.slider:before{content:'';position:absolute;height:16px;width:16px;left:2px;bottom:2px;background:#fff;border-radius:50%}input:checked+.slider{background:#534AB7}input:checked+.slider:before{transform:translateX(16px)}
+.empty{text-align:center;padding:30px;color:#9a9aa8}
+.pager{display:flex;justify-content:space-between;align-items:center;padding:10px 4px;font-size:12px;color:#6b6f7a}
+.prod-img{width:42px;height:42px;border-radius:6px;object-fit:cover;border:1px solid #eee;vertical-align:middle}
+.prod-name{font-weight:600}
+.prod-sku{color:#9a9aa8;font-size:11px}
+.badge-floor{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:600;background:#FFF0F0;color:#E24B4A}
+</style>
+</head>
+<body>
+
+<div class="topbar"><span class="logo">泰小虎</span><span class="path">商品管理 / <b>商品中心</b></span></div>
+<div class="layout">
+  <div class="side">
+    <div class="grp">商品管理</div>
+    <a class="active">商品中心</a>
+    <a>行前管理</a>
+    <a>订单管理</a>
+    <div class="grp">营销中台</div>
+    <a onclick="toast('跳转：优惠券体系')">优惠券管理</a>
+    <a onclick="toast('跳转：发券活动')">发券活动</a>
+    <a onclick="toast('跳转：领券活动')">领券活动</a>
+    <div class="grp">财务</div>
+    <a>订单中心</a>
+    <a>账单发票</a>
+    <a>售后工单</a>
+    <div class="grp">运营</div>
+    <a>内容管理</a>
+  </div>
+  <div class="main">
+    <div class="crumb">商品管理 / <b>商品中心</b> — 最低零售价（底价）配置</div>
+    <div class="phead">
+      <h2>商品列表</h2>
+      <button class="btn-primary" style="margin-left:auto" onclick="openGoodsNew()">+ 新建商品</button>
+    </div>
+
+    <!-- 筛选 -->
+    <div class="filter">
+      <span class="lbl">商品状态</span>
+      <select><option>全部</option><option>已上架</option><option>已下架</option></select>
+      <span class="lbl">商品名称</span>
+      <input placeholder="输入商品名称/SKU" style="min-width:180px">
+      <span class="lbl">平价类型</span>
+      <select><option>全部</option><option>自采商品</option><option>代发商品</option></select>
+      <span class="lbl">商品类目</span>
+      <select><option>请选择商品类目</option><option>食品保健</option><option>个护美妆</option></select>
+      <button class="btn-primary">查询</button>
+      <button class="btn-ghost">重置</button>
+      <button class="btn-ghost" style="margin-left:auto">展开 ∨</button>
+    </div>
+
+    <!-- Tab -->
+    <div class="tabs">
+      <div class="tab active">全部</div>
+      <div class="tab">已上架</div>
+      <div class="tab">已下架</div>
+      <div class="tab">已售罄</div>
+      <div class="tab">库存预警</div>
+      <div class="tab">适格下架</div>
+      <div style="margin-left:auto;padding:8px 12px">
+        <button class="btn-ghost" style="margin-right:6px">新建商品</button>
+        <button class="btn-ghost">批量上架</button>
+        <button class="btn-ghost">批量下架</button>
+      </div>
+    </div>
+
+    <!-- 列表 -->
+    <div class="tbl">
+      <table>
+        <thead><tr>
+          <th style="width:34px"><input type="checkbox"></th>
+          <th>商品</th>
+          <th style="width:70px">库存</th>
+          <th style="width:70px">已售</th>
+          <th style="width:80px">待提库存</th>
+          <th style="width:90px">商品渠道</th>
+          <th style="width:90px">最低零售价</th>
+          <th style="width:140px">操作</th>
+        </tr></thead>
+        <tbody id="goodsBody"></tbody>
+      </table>
+    </div>
+    <div class="pager">
+      <span>共 8 条</span>
+      <div>
+        <button class="btn-sm">&lt;</button>
+        <button class="btn-sm" style="background:#534AB7;color:#fff">1</button>
+        <button class="btn-sm">2</button>
+        <button class="btn-sm">3</button>
+        <button class="btn-sm">4</button>
+        <button class="btn-sm">&gt;</button>
+        <span style="margin-left:8px">前往 <input type="text" value="1" style="width:38px;text-align:center;border:1px solid #d8d8e0;border-radius:4px;padding:2px 4px;font-size:12px"> 页</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 商品编辑弹窗（含最低零售价） -->
+<div class="modal" id="mGoodsForm" onclick="if(event.target===this)closeGoodsForm()">
+  <div class="mbox">
+    <div class="mhead"><span id="gTitle">新建商品</span><span style="margin-left:auto;cursor:pointer;font-size:18px;opacity:.7" onclick="closeGoodsForm()">×</span></div>
+    <div class="mbody">
+      <!-- 基础信息 -->
+      <div class="card">
+        <div class="ctitle"><span class="n">1</span>基础信息</div>
+        <div class="row">
+          <div class="field"><label class="lbl">商品名称<span class="req">*</span></label><input class="inp" id="gName"></div>
+          <div class="field"><label class="lbl">产品编码/SKU</label><input class="inp" id="gSku"></div>
+          <div class="field"><label class="lbl">商品类目</label><select class="sel" id="gCat"><option>食品保健</option><option>个护美妆</option><option>家居生活</option></select></div>
+        </div>
+      </div>
+      <!-- 销售信息 → 规格明细（含最低零售价） -->
+      <div class="card">
+        <div class="ctitle"><span class="n">2</span>销售信息 · 规格明细<span class="chint">每个 SKU 单独设置价格与最低零售价（底价）</span></div>
+        <table class="ptable" id="specTbl">
+          <thead><tr><th>规格名称</th><th>原价（元）</th><th style="color:#E24B4A;font-weight:700">最低零售价（元）<span class="req">*</span></th><th>毛利率</th><th>库存</th><th></th></tr></thead>
+          <tbody id="specBody"></tbody>
+        </table>
+        <div class="hint" style="margin-top:6px"><b>最低零售价 = 底价</b>，是优惠券「不击穿底价」校验的基准值（见优惠券体系 A1/A2 双底价校验、A3 叠加包双底价）。由采购/财务维护，运营不可随意修改。<span style="color:#E24B4A">最低零售价 ≤ 原价</span>，超出将拦截保存。</div>
+      </div>
+      <!-- 批量设置 -->
+      <div class="card">
+        <div class="ctitle"><span class="n">3</span>销售信息 · 批量设置</div>
+        <div class="row" style="align-items:end">
+          <div class="field"><label class="lbl">批量设原价</label><input class="inp" type="number" id="batchPrice" placeholder="如 99"></div>
+          <div class="field"><label class="lbl" style="color:#E24B4A;font-weight:700">批量设最低零售价</label><input class="inp" type="number" step="0.01" id="batchFloor" placeholder="如 59"></div>
+          <div class="field" style="max-width:120px"><label class="lbl">&nbsp;</label><button class="btn-primary" style="width:100%" onclick="applyBatch()">应用到所有规格</button></div>
+        </div>
+        <div class="hint">批量设置的最低零售价会覆盖各规格行的现有值；毛利率自动重算。</div>
+      </div>
+      <!-- 备注 -->
+      <div class="card">
+        <div class="ctitle"><span class="n">4</span>备注</div>
+        <textarea class="inp" id="gRemark" rows="2" placeholder="可选填备注信息…"></textarea>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn-ghost" onclick="closeGoodsForm()">取消</button>
+      <button class="btn-primary" onclick="saveGoods()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====== 数据 ====== */
+var goodsList=[
+  {id:'G001',name:'虾皮米-泰香酥',sku:'SP-SKU001',cat:'食品保健',specs:[{name:'默认',price:168,floor:89,stock:53,sold:6}],status:'已上架',channel:'自营商品'},
+  {id:'G002',name:'彩色猫抓板M24',sku:'SP-SKU002',cat:'家居生活',specs:[{name:'大号',price:99,floor:55,stock:999,sold:0}],status:'已上架',channel:'自营商品'},
+  {id:'G003',name:'泰-山竹果品',sku:'SP-SKU003',cat:'食品保健',specs:[{name:'500g装',price:79,floor:42,stock:78,sold:21}],status:'已上架',channel:'自营商品'},
+  {id:'G004',name:'虾-泰香脆Q56',sku:'SP-SKU004',cat:'食品保健',specs:[{name:'家庭装',price:108,floor:58,stock:10203,sold:896},{name:'礼盒装',price:168,floor:89,stock:500,sold:234}],status:'已上架',channel:'自营商品'},
+  {id:'G005',name:'泰-香草型',sku:'SP-SKU005',cat:'个护美妆',specs:[{name:'30ml',price:49,floor:26,stock:1540,sold:451}],status:'已上架',channel:'自营商品'},
+  {id:'G006',name:'香茅植物皂',sku:'SP-SKU006',cat:'个护美妆',specs:[{name:'100g',price:39,floor:20,stock:991,sold:8}],status:'已下架',channel:'自营商品'},
+  {id:'G007',name:'青草包装袋',sku:'SP-SKU007',cat:'家居生活',specs:[{name:'10只装',price:9.9,floor:5,stock:999,sold:1}],status:'已下架',channel:'代发商品'}
+];
+
+var gEditIdx=-1;
+
+/* ====== 渲染 ====== */
+function renderGoods(){
+  var tb=$('goodsBody');
+  tb.innerHTML=goodsList.map(function(g){
+    var sp=g.specs[0]||{};
+    var gpRate=((sp.price-sp.floor)/sp.price*100).toFixed(0);
+    var gpCls=gpRate>=50?'gp-ok':gpRate>=30?'gp-mid':'gp-low';
+    var floorBadge='<span class="badge-floor">¥'+sp.floor+'</span>';
+    return '<tr>'+
+      '<td><input type="checkbox"></td>'+
+      '<td><img src="" class="prod-img" onerror="this.style.display=\'none\'" alt=""> '+
+      '<div style="display:inline-block;vertical-align:middle;margin-left:6px"><div class="prod-name">'+g.name+'</div><div class="prod-sku">'+g.sku+'</div></div></td>'+
+      '<td>'+sp.stock+'</td><td>'+sp.sold+'</td><td>'+(sp.stock-sp.sold)+'</td>'+
+      '<td><span class="tag '+(g.status==='已上架'?'on':'off')+'">'+g.channel+'</span></td>'+
+      '<td>'+floorBadge+'<br><span class="'+gpCls+'" style="font-size:11px">毛利 '+gpRate+'%</span></td>'+
+      '<td><button class="btn-sm" onclick="openGoodsEdit('+goodsList.indexOf(g)+')">编辑</button> '+
+      '<button class="btn-sm" onclick="copyGoods('+goodsList.indexOf(g)+')">复制</button> '+
+      '<button class="btn-sm danger" onclick="askDelGoods('+goodsList.indexOf(g)+')">更多</button></td></tr>';
+  }).join('');
+}
+
+/* ====== 编辑 ====== */
+function openGoodsNew(){gEditIdx=-1;
+  $('gTitle').textContent='新建商品';
+  $('gName').value='';$('gSku').value='';$('gRemark').value='';
+  $('specBody').innerHTML='<tr><td><input class="inp" value="默认规格" style="width:110px"></td>'+
+    '<td><input class="inp sp-price" type="number" step="0.01" value="99" oninput="recalcRow(this)"></td>'+
+    '<td><input class="inp sp-floor" type="number" step="0.01" value="59" style="border-color:#E24B4A" oninput="recalcRow(this)"></td>'+
+    '<td class="sp-gp"></td><td><input class="inp" type="number" value="100" style="width:70px"></td>'+
+    '<td><span class="x" style="color:#b42318;cursor:pointer;font-weight:700" onclick="delSpecRow(this)">×</span></td></tr>';
+  recalcAllRows();
+  $('mGoodsForm').classList.add('show');
+}
+function openGoodsEdit(i){gEditIdx=i;var g=goodsList[i];
+  $('gTitle').textContent='编辑商品：'+g.name;
+  $('gName').value=g.name;$('gSku').value=g.sku;$('gCat').value=g.cat;$('gRemark').value=(g.remark||'');
+  $('specBody').innerHTML=g.specs.map(function(s,j){
+    return '<tr data-i="'+j+'"><td><input class="inp" value="'+s.name+'" style="width:110px"></td>'+
+      '<td><input class="inp sp-price" type="number" step="0.01" value="'+s.price+'" oninput="recalcRow(this)"></td>'+
+      '<td><input class="inp sp-floor" type="number" step="0.01" value="'+s.floor+'" style="border-color:#E24B4A" oninput="recalcRow(this)"></td>'+
+      '<td class="sp-gp"></td><td><input class="inp" type="number" value="'+s.stock+'" style="width:70px"></td>'+
+      '<td><span class="x" style="color:#b42318;cursor:pointer;font-weight:700" onclick="delSpecRow(this)">×</span></td></tr>';
+  }).join('')||'<tr><td colspan="6" class="empty">无规格</td></tr>';
+  recalcAllRows();
+  $('mGoodsForm').classList.add('show');
+}
+function closeGoodsForm(){$('mGoodsForm').classList.remove('show');}
+
+function recalcRow(inp){
+  var tr=inp.closest('tr');
+  var price=+tr.querySelector('.sp-price').value||0;
+  var floor=+tr.querySelector('.sp-floor').value||0;
+  var gpCell=tr.querySelector('.sp-gp');
+  if(price>0){var rate=((price-floor)/price*100);var cls=rate>=50?'gp-ok':rate>=30?'gp-mid':'gp-low';gpCell.innerHTML='<span class="'+cls+'">'+rate.toFixed(0)+'%</span>';gpCell.style.color='';}else{gpCell.innerHTML='-';}
+}
+function recalcAllRows(){document.querySelectorAll('#specBody tr').forEach(function(tr){var p=tr.querySelector('.sp-price'),f=tr.querySelector('.sp-floor');if(p&&f)recalcRow(f);});}
+function delSpecRow(el){var tb=$('specBody');if(tb.rows.length<=1)return;el.closest('tr').remove();}
+
+/* 批量设置 */
+function applyBatch(){
+  var bp=+$('batchPrice').value,bf=+$('batchFloor').value;
+  document.querySelectorAll('#specBody tr').forEach(function(tr){
+    if(bp)tr.querySelector('.sp-price').value=bp;
+    if(bf)tr.querySelector('.sp-floor').value=bf;
+  });
+  recalcAllRows();toast('已应用到所有规格行');
+}
+
+/* 保存 */
+function saveGoods(){
+  var name=$('gName').value.trim();if(!name){toast('请填写商品名称',true);return;}
+  var specs=[];var bad=false;
+  document.querySelectorAll('#specBody tr').forEach(function(tr){
+    var price=+tr.querySelector('.sp-price').value;
+    var floor=+tr.querySelector('.sp-floor').value;
+    if(floor>price){bad=true;}
+    specs.push({name:tr.querySelector('td input').value,price:price,floor:floor,stock:+tr.querySelectorAll('td')[4].querySelector('input').value});
+  });
+  if(bad){toast('校验不通过：存在规格「最低零售价 > 原价」，请修正后再保存',true);return;}
+  var data={id:gEditIdx<0?('G'+Date.now().toString().slice(-6)):goodsList[gEditIdx].id,
+    name:name,sku:$('gSku').value.trim()||'auto',cat:$('gCat').value,specs:specs,status:'已下架',channel:'自营商品',remark:$('gRemark').value};
+  if(gEditIdx<0){goodsList.unshift(data);toast('已新建：'+name);} else{goodsList[gEditIdx]=data;toast('已保存：'+name);}
+  closeGoodsForm();renderGoods();
+}
+
+function copyGoods(i){var g=goodsList[i];openGoodsNew();$('gName').value=g.name+'_副本';$('gSku').value=g.sku+'-2';}
+function askDelGoods(i){toast('删除功能待实现（关联订单后不可直接删，仅可下架）');}
+
+function $(id){return document.getElementById(id);}
+function toast(msg,warn){console.log('[Toast]',msg);}
+
+renderGoods();
+</script>
+</body>
+</html>
