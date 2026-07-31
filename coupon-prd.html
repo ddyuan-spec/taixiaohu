@@ -1436,6 +1436,10 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <thead><tr><th style="width:60px">编号</th><th style="width:180px">关联需求名称</th><th style="width:130px">归属模块</th><th style="width:80px">是否出原型</th><th>说明</th></tr></thead>
 <tbody>
 <tr><td>10.1</td><td>标签管理新增「直播标签」类型</td><td>平台端后台 · 营销管理 / 会员管理 → 标签管理</td><td>否</td><td>既有页面新增枚举值 + 1 条初始数据，详见 10.1</td></tr>
+<tr><td>10.2</td><td>会员中心-批量送券</td><td>平台端后台 · 会员中心</td><td>是</td><td>按标签圈选批量发券，原型详见 10.2</td></tr>
+<tr><td>10.3</td><td>关联直播原型</td><td>平台端后台 · 直播间管理 / 直播商品池</td><td>是</td><td>直播间绑定券模板，原型详见 10.3</td></tr>
+<tr><td>10.4</td><td>订单关联优惠券</td><td>平台端后台 · 订单 / 优惠券</td><td>是</td><td>券与订单映射看板，原型详见 10.4</td></tr>
+<tr><td>10.7</td><td>优惠券关联业绩报表</td><td>平台端后台 · 业绩报表 ⚠️ 菜单路径待确认</td><td>否</td><td>付款完成计优惠金额入业绩，退款不冲减，详见 10.7</td></tr>
 </tbody>
 </table>
 
@@ -1527,22 +1531,57 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <img src="https://ddyuan-spec.github.io/taixiaohu/coupon-prd-assets/assoc-order-relate.png" alt="订单关联优惠券原型" />
 </div>
 
-<h3>10.5 会员直接发券</h3>
+<h3>10.7 优惠券关联业绩报表</h3>
 <div class="sec">
-<p><b>功能说明</b>：平台端后台为运营提供「针对单个会员直接发券」的能力。运营在用户详情页或会员列表中，选择目标用户和券模板，一键发放。适用于客服补偿、运营手动触达等单点场景。</p>
-<p><b>与优惠券体系的关系</b>：直接发券是批量送券的「单条」版本，同样调用券模板发券接口写入用户券账户；单条发放不做标签筛选，直接指定用户 ID。</p>
-<p><b>原型短链</b>：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-direct-send.html" target="_blank">https://ddyuan-spec.github.io/taixiaohu/coupon-direct-send.html</a></p>
-<p><b>原型截图</b>：</p>
-<img src="https://ddyuan-spec.github.io/taixiaohu/coupon-prd-assets/assoc-direct-send.png" alt="会员直接发券原型" />
-</div>
+<p><b>功能说明</b>：业绩报表需体现优惠券对订单业绩的贡献。订单完成「下单 + 付款」后，业绩报表按订单维度生成/更新业绩记录，并将该订单使用的优惠券抵扣金额计入报表对应订单的业绩金额中（即「优惠金额」增加对应订单金额）。含优惠券的订单发生退款时，业绩报表<b>不回滚、不扣减</b>原业绩记录。</p>
 
-<h3>10.6 直播观看记录</h3>
-<div class="sec">
-<p><b>功能说明</b>：平台端后台展示用户在直播间的观看时长记录，支持按直播间、用户、时间段筛选。为「时长发券」提供数据依据——运营可查看哪些用户满足「观看满 X 分钟」条件，校验发券名单的准确性。</p>
-<p><b>与优惠券体系的关系</b>：直播观看记录是「时长发券」的前置数据源，发券规则中的「累计观看时长 ≥ X」条件依赖此记录计算；同时，已发券用户的观看记录可辅助验证发券覆盖范围。</p>
-<p><b>原型短链</b>：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-live-viewlog.html" target="_blank">https://ddyuan-spec.github.io/taixiaohu/coupon-live-viewlog.html</a></p>
-<p><b>原型截图</b>：</p>
-<img src="https://ddyuan-spec.github.io/taixiaohu/coupon-prd-assets/assoc-live-viewlog.png" alt="直播观看记录原型" />
+<p><b>归属位置</b></p>
+<table>
+<thead><tr><th>项</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>端口</td><td>平台端后台</td></tr>
+<tr><td>页面路径</td><td>⚠️ 待确认 @干系人（业绩报表在平台端后台的归属菜单，如「数据 / 业绩报表」或「财务 / 业绩报表」）</td></tr>
+<tr><td>页面性质</td><td><b>既有页面增量</b>，本期在业绩报表中新增「优惠金额」口径说明，不出原型</td></tr>
+<tr><td>改动范围</td><td>业绩报表订单业绩口径纳入优惠券抵扣金额；明确退款不回冲业绩</td></tr>
+</tbody>
+</table>
+
+<p><b>需求点 1：订单付款完成，优惠金额计入业绩报表</b></p>
+<table>
+<thead><tr><th style="width:140px">项</th><th>需求说明</th></tr></thead>
+<tbody>
+<tr><td>触发时点</td><td>订单状态变为<b>「已支付」（付款完成）</b>时，业绩报表新增/更新该订单业绩记录</td></tr>
+<tr><td>优惠金额取值</td><td>该订单使用的<b>全部优惠券抵扣金额之和</b>（多券叠加时求和）</td></tr>
+<tr><td>业绩金额口径</td><td>业绩报表该订单行的业绩金额 = <b>订单实付金额 + 优惠金额</b>（即按订单应付总额口径，优惠部分计入业绩）；⚠️ 待确认 @干系人（业绩报表是否统一展示「实付金额 / 优惠金额 / 业绩总额」三列，或仅调整总额口径）</td></tr>
+<tr><td>数据来源</td><td>优惠金额取自订单关联优惠券的抵扣记录（关联需求 10.4 订单关联优惠券），非实时重算</td></tr>
+</tbody>
+</table>
+
+<p><b>需求点 2：含优惠券订单退款不影响业绩报表</b></p>
+<table>
+<thead><tr><th style="width:140px">项</th><th>需求说明</th></tr></thead>
+<tbody>
+<tr><td>退款场景</td><td>订单全额或部分退款（含优惠券抵扣部分）完成后</td></tr>
+<tr><td>业绩报表处理</td><td><b>不回滚、不扣减</b>该订单原业绩记录；优惠金额对应业绩保留，不因退款冲减</td></tr>
+<tr><td>说明</td><td>优惠券退款仅影响券账户（按既有退券/返还规则），与业绩报表解耦；业绩报表以「付款完成」为唯一记账时点</td></tr>
+</tbody>
+</table>
+
+<p><b>业务规则</b></p>
+<ul>
+<li>记账时点唯一：仅「订单付款完成」触发业绩报表记账，后续状态变更（发货 / 确认收货 / 退款）不再改动该业绩记录。</li>
+<li>优惠金额口径：业绩报表中的优惠金额 = 该订单券抵扣总额，与 10.4 订单关联优惠券的抵扣金额一致。</li>
+<li>退款解耦：退款仅处理券账户与资金流，业绩报表保持「付款即记账、退款不冲减」。</li>
+</ul>
+
+<p><b>验收标准</b></p>
+<ul>
+<li>AC-10.7-1：订单付款完成后，业绩报表出现该订单记录，且「优惠金额」= 该订单使用的券抵扣总额。</li>
+<li>AC-10.7-2：业绩报表该订单业绩金额 = 订单实付金额 + 优惠金额，口径一致、可对账。</li>
+<li>AC-10.7-3：含优惠券订单发起退款并完成退款后，业绩报表中原记录不变（优惠金额不扣减、不退减）。</li>
+</ul>
+
+<div class="warn">⚠️ <b>本节待确认项</b>：① 业绩报表在平台端后台的归属菜单路径（@干系人）；② 业绩报表列展示方式（实付 / 优惠 / 总额三列 vs 仅总额口径调整，@干系人）。</div>
 </div>
 
 <!-- ==================== 十一、二期待办清单 ==================== -->
