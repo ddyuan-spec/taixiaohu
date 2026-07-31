@@ -128,9 +128,20 @@
   /* Toast */
   .toast{position:fixed;top:62px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(0,0,0,.82);color:#fff;padding:10px 20px;border-radius:4px;font-size:13px;opacity:0;pointer-events:none;transition:.3s;z-index:999}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* embed mode: hide topbar & sidebar when ?embed=1 */
+body.embed-mode .topbar{display:none}
+body.embed-mode .side{display:none}
+body.embed-mode .layout{display:block;min-height:100vh}
+body.embed-mode .main{padding-top:18px}
 </style>
 </head>
 <body>
+<script>
+/* embed mode detection */
+if(location.search.includes('embed=1')) document.body.classList.add('embed-mode');
+</script>
+
 
 <!-- ===== Top Bar ===== -->
 <div class="topbar">
