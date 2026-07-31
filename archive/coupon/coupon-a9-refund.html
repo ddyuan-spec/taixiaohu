@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>泰小虎 · 售后单处理（A9 · 关联需求）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f0f1f5;color:#2a2f3a;font-size:13px}
+.hidden{display:none!important}
+.crumb{font-size:12px;color:#9a9aa8;margin-bottom:10px}
+.crumb b{color:#4a4f5a}
+.phead{display:flex;align-items:center;margin-bottom:14px;gap:10px}
+.phead h2{font-size:18px;font-weight:700}
+.seg{display:inline-flex}
+.seg label{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;cursor:pointer;font-size:13px;background:#fff;border:1px solid #d8d8e0;margin-left:-1px}
+.seg label:first-child{border-radius:7px 0 0 7px;margin-left:0}
+.seg label:last-child{border-radius:0 7px 7px 0}
+.seg label.checked{background:#EEEDFE;color:#534AB7;font-weight:600;border-color:#534AB7}
+.card{background:#fff;border:1px solid #e6e6ec;border-radius:10px;padding:14px 18px;margin-bottom:14px}
+.ctitle{font-size:13.5px;font-weight:700;margin-bottom:10px}
+.hint{font-size:11.5px;color:#9a9aa8;margin-top:8px;line-height:1.6}
+.tbl{background:#fff;border:1px solid #e6e6ec;border-radius:10px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{border-bottom:1px solid #efeff3;padding:11px 12px;text-align:left;vertical-align:middle}
+th{background:#f7f6fc;color:#6b6f7a;font-weight:600;white-space:nowrap}
+tbody tr:hover{background:#faf9ff}
+.tag{display:inline-block;padding:2px 9px;border-radius:11px;font-size:11px;font-weight:600;margin:1px 3px 1px 0}
+.tag.on{background:#e8f5e9;color:#2f7d32}
+.tag.off{background:#f1f1f4;color:#8a8a96}
+.btn-sm{background:#fff;color:#534AB7;border:1px solid #d8d8e0;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;margin-right:6px}
+.btn-sm:hover{background:#f5f3ff;border-color:#c9bff5}
+.btn-primary{background:#534AB7;color:#fff;border:none;border-radius:7px;padding:8px 16px;font-size:12.5px;cursor:pointer}
+.btn-ghost{background:#fff;color:#534AB7;border:1px solid #c9bff5;border-radius:7px;padding:7px 14px;font-size:12.5px;cursor:pointer}
+.empty{padding:30px;text-align:center;color:#9a9aa8}
+.modal{position:fixed;inset:0;background:rgba(20,18,40,.42);display:none;align-items:flex-start;justify-content:center;z-index:70;padding-top:60px}
+.modal.show{display:flex}
+.mbox{width:560px;max-height:84vh;background:#fff;border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.mhead{padding:14px 20px;border-bottom:1px solid #efeff3;font-size:15px;font-weight:700;display:flex;align-items:center}
+.mhead .x{margin-left:auto;cursor:pointer;font-size:18px;opacity:.7}
+.mbody{padding:16px 20px;overflow-y:auto;flex:1}
+.mfoot{padding:12px 20px;border-top:1px solid #efeff3;display:flex;gap:10px;justify-content:flex-end}
+.field{margin-bottom:12px}
+.field .lbl{font-size:12px;color:#6b6f7a;display:block;margin-bottom:3px}
+.locknote{font-size:11.5px;color:#534AB7;background:#f3eefc;border-radius:7px;padding:8px 12px;margin-top:8px}
+.wrap{max-width:900px;margin:24px auto;padding:0 16px 40px}
+.banner{background:#EEEDFE;border:1px solid #d3ccf3;border-radius:10px;padding:12px 16px;font-size:12.5px;color:#3C3489;line-height:1.7;margin-bottom:14px}
+.banner b{color:#534AB7}
+.toast{position:fixed;left:50%;top:50px;transform:translateX(-50%);background:#2a2f3a;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;opacity:0;transition:.25s;z-index:90;pointer-events:none}
+.toast.show{opacity:.95}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crumb">营销中台 / <b>售后单处理</b>（A9 · 关联需求）<span style="font-size:11px;color:#b8791a;font-weight:400;margin-left:8px">⚠ 此模块为关联需求原型，后续迭代独立实现</span></div>
+  <div class="phead">
+    <h2>售后单处理</h2>
+    <div class="seg" id="a9Filter" style="margin-left:auto">
+      <label class="checked" onclick="a9PickFilter(this)"><input type="radio" name="a9f" value="待处理">待处理</label>
+      <label onclick="a9PickFilter(this)"><input type="radio" name="a9f" value="已处理">已处理</label>
+      <label onclick="a9PickFilter(this)"><input type="radio" name="a9f" value="全部">全部</label>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ctitle">说明</div>
+    <div class="hint" style="margin-top:0">售后单关联退款 / 退货时，系统按每张涉及券在「A2 优惠券 §7 售后退券规则」中的配置，自动生成退券处置预览（退回原账户 / 折算退款 / 作废 + 有效期处理 + 防滥用），运营确认无误后执行退券。</div>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>售后单号</th><th>关联订单</th><th>退款金额</th><th>涉及券</th><th>命中退券规则</th><th>状态</th><th>操作</th></tr></thead>
+      <tbody id="a9Tbody"></tbody>
+    </table>
+    <div class="empty" id="a9Empty" style="display:none">该筛选下暂无售后单。</div>
+  </div>
+</div>
+
+<div class="modal" id="mAfterForm">
+  <div class="mbox">
+    <div class="mhead"><span id="a9Title">售后单详情</span><span class="x" onclick="a9CloseForm()">×</span></div>
+    <div class="mbody" id="a9Body"></div>
+    <div class="mfoot" id="a9Foot">
+      <button class="btn-ghost" onclick="a9CloseForm()">关闭</button>
+      <button class="btn-primary" onclick="a9Exec()" id="a9ExecBtn">确认执行退券</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function $(id){return document.getElementById(id);}
+function toast(msg){var t=$('toast');t.textContent=msg;t.className='toast show';setTimeout(function(){t.className='toast';},1800);}
+
+var a9Orders=[
+  {id:'AFT001',order:'O20260712001',refund:99.0,coupons:['新人满99减20'],rule:'R001 整单未用券原路退回',result:'退回原账户（顺延7天）',status:'待处理'},
+  {id:'AFT002',order:'O20260713007',refund:30.0,coupons:['直播专享满150减30'],rule:'R001 整单未用券原路退回',result:'退回原账户（顺延7天）',status:'待处理'},
+  {id:'AFT003',order:'O20260708012',refund:58.0,coupons:['健康食品9折'],rule:'R002 已用券退款并入订单',result:'折算退款 ¥5.80 并入订单退款',status:'已处理'},
+  {id:'AFT004',order:'O20260705033',refund:0,coupons:['无门槛5元代金'],rule:'R001 整单未用券原路退回',result:'退回原账户（顺延7天）',status:'已处理'}
+];
+var a9Filter='待处理',a9Cur=-1;
+
+function a9Render(){
+  var list=a9Orders.filter(function(o){return a9Filter==='全部'||o.status===a9Filter;});
+  var tb=$('a9Tbody');
+  tb.innerHTML=list.map(function(o){
+    var i=a9Orders.indexOf(o);
+    var st=o.status==='待处理'?'<span class="tag off">待处理</span>':'<span class="tag on">已处理</span>';
+    return '<tr><td><b>'+o.id+'</b></td>'+
+      '<td>'+o.order+'</td>'+
+      '<td>¥'+o.refund.toFixed(2)+'</td>'+
+      '<td>'+(o.coupons||[]).join('、')+'</td>'+
+      '<td>'+o.rule+'</td>'+
+      '<td>'+st+'</td>'+
+      '<td><button class="btn-sm" onclick="a9Open('+i+')">查看</button></td></tr>';
+  }).join('') || '<tr><td colspan="7"><div class="empty">该筛选下暂无售后单。</div></td></tr>';
+  $('a9Empty').style.display=list.length?'none':'block';
+}
+function a9PickFilter(el){
+  document.querySelectorAll('#a9Filter label').forEach(function(l){l.classList.remove('checked');});
+  el.classList.add('checked');
+  a9Filter=el.querySelector('input').value;
+  a9Render();
+}
+function a9Open(i){
+  a9Cur=i;var o=a9Orders[i];
+  $('a9Title').textContent='售后单详情 · '+o.id;
+  $('a9Body').innerHTML=
+    '<div class="card"><div class="field"><label class="lbl">关联订单</label><span>'+o.order+'</span></div>'+
+    '<div class="field"><label class="lbl">退款金额</label><span>¥'+o.refund.toFixed(2)+'</span></div>'+
+    '<div class="field"><label class="lbl">涉及券</label><span>'+(o.coupons||[]).join('、')+'</span></div></div>'+
+    '<div class="card"><div class="ctitle">退券处置预览（按各券 §7 售后退券规则）</div>'+
+    '<div class="hint" style="margin-top:0">'+(o.coupons||[]).map(function(cn){return '· <b>'+cn+'</b> → '+o.result;}).join('<br>')+'</div>'+
+    '<div class="locknote">处置结果以「确认执行退券」时各券 §7 规则为准。</div></div>';
+  $('a9ExecBtn').style.display=o.status==='待处理'?'inline-block':'none';
+  $('mAfterForm').classList.add('show');
+}
+function a9CloseForm(){$('mAfterForm').classList.remove('show');}
+function a9Exec(){
+  if(a9Cur<0)return;
+  var o=a9Orders[a9Cur];
+  o.status='已处理';
+  a9CloseForm();
+  a9Render();
+  toast('已执行退券：'+o.id);
+}
+
+a9Render();
+</script>
+</body>
+</html>
