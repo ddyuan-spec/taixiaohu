@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>优惠券体系 · 小程序 / H5 端（获券弹窗）交互原型</title>
+<title>优惠券体系 · 小程序 / H5 端（获券弹窗）交互原型 ⚠️ 本期整节删除</title>
 <style>
 :root{
   --p:#534AB7; --p2:#6C5CE7; --pg:#ECE9FB; --ok:#1FA971; --warn:#E8932B; --bad:#E5484D;
@@ -95,6 +95,12 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 </head>
 <body>
 
+<!-- ⚠️ 本期整节删除 横幅 -->
+<div style="position:fixed;top:0;left:0;right:0;background:#c62828;color:#fff;text-align:center;padding:8px 16px;font-size:14px;font-weight:700;z-index:9999;letter-spacing:1px">
+  ⚠️ 本期整节删除（移至下期）— 获券弹窗(系统发券触达)不在本期范围 — 以下内容为下期参考
+</div>
+<div style="margin-top:44px">
+
 <!-- 顶部端切换 -->
 <div class="seg">
   <button id="segMini" class="on" onclick="switchEnd('mini')">微信小程序</button>
@@ -106,11 +112,11 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
   <h3>优惠券体系 · 小程序 / H5</h3>
   <a class="navbtn" onclick="switchEnd('mini')"><b>①</b>微信小程序端</a>
   <a class="navbtn" onclick="switchEnd('h5')"><b>②</b>独立 H5 端</a>
-  <div class="desc">
-    <b>本期范围</b>：小程序、H5 仅新增<b>获券弹窗</b>（系统发券触达）。<br>
-    我的优惠券 / 下单核销 在两端的<b>已有功能</b>，本期不重做（弹窗内"去使用/查看我的券"以 toast 示意跳转已有页）。<br>
-    <b>获券弹窗</b>：用户满足触发条件（直播观看满 30 分钟 / 被指定发券）后，系统自动发放券，弹出浮层提示，可含多张（每种 1 张）。<br>
-    复用 C 端原型样式体系；微信小程序端遵循微信导航栏 + 胶囊 + tabBar 规范，H5 端遵循移动浏览器外壳。
+  <div class="desc" style="background:#ffebee;border:2px solid #c62828;border-radius:10px;padding:12px">
+    <b style="color:#c62828;font-size:15px">⚠️ 本期整节删除（移至下期）</b><br>
+    <span style="color:#c62828">原范围：小程序、H5 仅新增「获券弹窗」（系统发券触达）。现裁定本期不做。</span><br>
+    我的优惠券 / 下单核销 在两端的<b>已有功能</b>，本期不重做。<br>
+    以下内容为<strong>保留参考（下期复用）</strong>，非本期交付物。
   </div>
 </div>
 
@@ -209,16 +215,14 @@ function switchEnd(end){
 }
 /* 获券弹窗数据（系统发券触达，每种 1 张，对应后台关联多券模板） */
 const arrivedCoupons = [
-  {name:'新人立减15', type:'cash', amt:15, cond:'无门槛'},
-  {name:'满99减10', type:'manjian', amt:10, cond:'满99元可用'},
-  {name:'全场8折券', type:'discount', amt:20, cond:'满88元享8折'}
+  {name:'新人满99减10', type:'manjian', amt:10, cond:'满99元可用'},
+  {name:'满199减30', type:'manjian', amt:30, cond:'满199元可用'},
+  {name:'阶梯每满300减100', type:'manjian', amt:100, cond:'每满300元减100元（阶梯）'}
 ];
 function showArrival(end){
   const listId = end==='mini' ? 'arrivalMiniList' : 'arrivalH5List';
   document.getElementById(listId).innerHTML = arrivedCoupons.map(c=>{
-    const amtHtml = c.type==='discount'
-      ? '<b>'+c.cond.replace(/[^\d折]/g,'').slice(0,2)+'折</b><span>折扣券</span>'
-      : '<b>¥'+c.amt+'</b><span>'+(c.type==='cash'?'无门槛':'满减')+'</span>';
+    const amtHtml = '<b>¥'+c.amt+'</b><span>满减</span>';
     return '<div class="ac"><div class="amt">'+amtHtml+'</div>'
       + '<div class="info"><div class="nm">'+c.name+'</div><div class="cond">'+c.cond+'</div></div></div>';
   }).join('');
@@ -236,5 +240,6 @@ function toast(msg){
   clearTimeout(toastTimers[id]); toastTimers[id] = setTimeout(()=>t.classList.remove('show'), 1800);
 }
 </script>
+</div>
 </body>
 </html>
