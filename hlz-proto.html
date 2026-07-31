@@ -125,8 +125,6 @@
   .sel-box{background:#fff;border:1px dashed #dcdfe6;border-radius:6px;padding:10px 12px;min-height:46px}
   .sel-count{font-size:12px;color:#666;margin-bottom:8px}
   .sel-count b{color:#7C3AED;font-size:14px}
-  .import-area{margin-top:12px;border-top:1px solid #f0f0f0;padding-top:12px}
-  .import-tip{font-size:12px;color:#909399;margin-bottom:8px}
   .detail-meta{font-size:12px;color:#666;margin-bottom:12px;display:flex;gap:18px;flex-wrap:wrap}
   .detail-meta b{color:#333}
   .form-footer{display:flex;justify-content:center;gap:12px;padding:16px 20px;border-top:1px solid #f0f0f0}
@@ -341,16 +339,12 @@
           <div class="filter-actions">
             <button class="btn-primary btn-sm" onclick="runFilter()">搜索</button>
             <button class="btn-ghost btn-sm" onclick="resetFilterAll()">重置</button>
-            <label class="btn-ghost btn-sm" style="cursor:pointer">批量导入表格
-              <input type="file" id="fileImport" accept=".csv,.xlsx,.xls,.txt" style="display:none" onchange="handleImport(event)">
-            </label>
-            <button class="btn-ghost btn-sm" onclick="downloadTemplate()">⬇ 下载导入模板</button>
           </div>
         </div>
 
-        <!-- 目标用户列表：筛选/导入后直接显示，点击底部「确认」即批量赠送/扣除 -->
+        <!-- 目标用户列表：筛选后直接显示，点击底部「确认」即批量赠送/扣除 -->
         <div class="sel-box">
-          <div class="sel-count">目标用户：<b id="selCount">0</b> 人（筛选/导入后直接显示，点击底部「确认」即批量赠送/扣除）</div>
+          <div class="sel-count">目标用户：<b id="selCount">0</b> 人（筛选后直接显示，点击底部「确认」即批量赠送/扣除）</div>
           <div class="tbl-wrap" style="max-height:200px;overflow:auto">
             <table class="tbl" id="targetTbl">
               <thead><tr><th>昵称</th><th>用户ID</th><th>手机号</th><th style="width:60px">操作</th></tr></thead>
@@ -594,7 +588,7 @@
 if (typeof URL !== 'undefined' && typeof URL.createObjectURL !== 'function') {
   URL.createObjectURL = function(){ return 'blob:safe'; };
 }
-// ========== 模拟用户库（用于搜索/全选/导入匹配） ==========
+// ========== 模拟用户库（用于搜索/全选匹配） ==========
 const userBase = [
   {uid:'U_10001',name:'张三',phone:'13812341234'},
   {uid:'U_10002',name:'李四',phone:'13912345678'},
@@ -667,7 +661,7 @@ function resetFilter(){
 
 // ========== 批量赠送/扣除弹窗 ==========
 let batchType = 'grant';
-let selectedUsers = new Map();   // uid -> {uid,name,phone,source:'filter'|'import'}
+let selectedUsers = new Map();   // uid -> {uid,name,phone,source:'filter'}
 
 function openBatch(type){
   batchType = type;
@@ -702,7 +696,7 @@ function closeBatch(){
   document.getElementById('batchOverlay').classList.remove('show');
 }
 
-// 目标用户列表（标签命中 / 手动添加 / 导入 统一展示，直接作为待操作名单）
+// 目标用户列表（标签命中 / 手机号命中 统一展示，直接作为待操作名单）
 function renderTarget(){
   const tbody = document.getElementById('targetTbody');
   tbody.innerHTML = [...selectedUsers.values()].map(u=>
@@ -751,57 +745,9 @@ function resetFilterAll(){
   showToast('已重置筛选条件','success');
 }
 
-// ========== 批量导入表格 ==========
-function downloadTemplate(){
-  const header = ['用户ID','昵称','手机号'];
-  const rows = [
-    ['U_10002','李四',''],               // 填 ID + 昵称
-    ['','王五','13900005678'],          // 仅填手机号（演示「每行至少填一个」）
-    ['U_10005','孙七','13500007890'],
-  ];
-  const csv = [header, ...rows].map(r=>r.map(c=>`"${c}"`).join(',')).join('\r\n');
-  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = '虎力值批量操作导入模板.csv';
-  document.body.appendChild(a); a.click(); a.remove();
-  showToast('模板已下载（用户ID/昵称/手机号，每行至少填一个）','success');
-}
-function handleImport(e){
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev){
-    try{
-      const rows = parseCSV(ev.target.result);
-      if(!rows.length){ showToast('表格为空','err'); return; }
-      const first = rows[0].join('').toLowerCase();
-      let data;
-      if(first.includes('id')||first.includes('昵称')||first.includes('手机')||first.includes('uid')){
-        data = rows.slice(1);
-      }else{ data = rows; }
-      let added=0, skip=0;
-      data.forEach(r=>{
-        const uid=(r[0]||'').trim(), name=(r[1]||'').trim(), phone=(r[2]||'').trim();
-        if(!uid && !name && !phone){ skip++; return; }   // 每行至少填一个字段
-        const u = userBase.find(y=>y.uid.toLowerCase()===uid.toLowerCase());
-        addUser(u?{...u}:{uid,name,phone},'import');
-        added++;
-      });
-      showToast('已导入 '+added+' 人'+(skip?'（跳过 '+skip+' 行空白）':''), added?'success':'err');
-    }catch(err){ showToast('表格解析失败','err'); }
-  };
-  reader.readAsText(file);
-}
-function parseCSV(text){
-  const lines = text.split(/\r?\n/).filter(l=>l.trim());
-  const delim = text.includes('\t') ? '\t' : ',';
-  return lines.map(l=>l.split(delim).map(c=>c.trim()));
-}
-
 // ========== 提交批量操作 ==========
 function submitBatch(){
-  if(selectedUsers.size===0){ showToast('请先通过筛选或导入选择人员','err'); return; }
+  if(selectedUsers.size===0){ showToast('请先通过筛选选择人员','err'); return; }
   const amt = parseInt(document.getElementById('batchAmount').value);
   if(!amt || amt<=0){ showToast('请输入有效的数量','err'); return; }
   const rsel = document.getElementById('batchReason').value;
