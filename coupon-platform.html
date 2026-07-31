@@ -32,12 +32,7 @@
   .side .gtitle .arr{display:inline-block;font-size:9px;color:#bbb;margin-right:3px}
   .side .nav-body{display:none;padding-bottom:4px}
   .side .nav-group.open .nav-body{display:block}
-  /* 二级子分组（如营销管理） */
-  .side .gsubtitle{font-size:12px;color:#888;padding:7px 16px 7px 40px;cursor:pointer;display:flex;align-items:center;gap:4px;user-select:none}
-  .side .gsubtitle .arr{display:inline-block;font-size:9px;color:#bbb;margin-right:3px}
-  .side .gsub.collapsed .gsub-body{display:none}
   .side a.indent{padding-left:40px}
-  .side a.indent2{padding-left:52px}
 
   /* ===== Main Content ===== */
   .main{flex:1;padding:18px 24px 60px;min-width:0}
@@ -276,75 +271,17 @@
 
 <!-- ========== Sidebar ========== -->
 <nav class="side" id="sidebar">
-  <!-- 营销应用（展开） -->
+  <!-- 营销应用 -->
   <div class="nav-group open">
     <div class="gtitle" onclick="toggleGroup(this)"><span class="arr">▼</span> 营销应用</div>
     <div class="nav-body">
-      <div class="gsub open">
-        <div class="gsubtitle" onclick="toggleSub(this)"><span class="arr">▼</span> 营销管理</div>
-        <div class="gsub-body">
-          <a id="navCoupon" class="active indent2" onclick="go('list')">优惠券管理</a>
-          <a id="navSend" class="indent2" onclick="go('send')">发券活动管理</a>
-          <a id="navBoard" class="indent2" onclick="go('board')">数据看板</a>
-          <a id="navA3" class="indent2" onclick="go('a3')">叠加规则配置</a>
-          <a id="navA9" class="indent2" onclick="go('a9')">售后单处理</a>
-        </div>
-      </div>
-      <div class="gsub open">
-        <div class="gsubtitle" onclick="toggleSub(this)"><span class="arr">▼</span> 商品管理</div>
-        <div class="gsub-body">
-          <a id="navA8" class="indent2" onclick="go('a8')">商品底价管理</a>
-        </div>
-      </div>
-      <a class="indent" onclick="toast('满减/满赠（规划中）')">满减/满赠</a>
-      <a class="indent" onclick="toast('秒杀（规划中）')">秒杀</a>
-      <a class="indent" onclick="toast('拼团（规划中）')">拼团</a>
-      <a class="indent" onclick="toast('积分商城（规划中）')">积分商城</a>
-      <a class="indent" onclick="toast('储值（规划中）')">储值</a>
-      <a class="indent" onclick="toast('泰小虎直播 - APP直播（规划中）')">泰小虎直播 - APP直播</a>
-    </div>
-  </div>
-
-  <!-- 会员管理 -->
-  <div class="nav-group">
-    <div class="gtitle" onclick="toggleGroup(this)"><span class="arr">▶</span> 会员管理</div>
-    <div class="nav-body">
+      <a id="navCoupon" class="active indent" onclick="go('list')">优惠券管理</a>
+      <a id="navSend" class="indent" onclick="go('send')">发券活动管理</a>
+      <a id="navBoard" class="indent" onclick="go('board')">数据看板</a>
+      <a id="navA3" class="indent" onclick="go('a3')">叠加规则配置</a>
+      <a id="navA8" class="indent" onclick="go('a8')">商品底价管理</a>
+      <a id="navA9" class="indent" onclick="go('a9')">售后单处理</a>
       <a id="navWallet" class="indent" onclick="go('wallet')">用户券查询</a>
-      <a class="indent" href="#">会员中心</a>
-      <a class="indent" href="#">会员列表</a>
-    </div>
-  </div>
-
-  <!-- 订单管理 -->
-  <div class="nav-group">
-    <div class="gtitle" onclick="toggleGroup(this)"><span class="arr">▶</span> 订单管理</div>
-    <div class="nav-body">
-      <a class="indent" href="#">订单列表</a>
-      <a class="indent" href="#">采购订单</a>
-    </div>
-  </div>
-
-  <!-- 内容管理 -->
-  <div class="nav-group">
-    <div class="gtitle" onclick="toggleGroup(this)"><span class="arr">▶</span> 内容管理</div>
-    <div class="nav-body">
-      <a class="indent" href="#">直播间</a>
-    </div>
-  </div>
-
-  <!-- 智能客服 -->
-  <div class="nav-group">
-    <div class="gtitle" onclick="toggleGroup(this)"><span class="arr">▶</span> 智能客服</div>
-    <div class="nav-body">
-      <a class="indent" href="#">客服会话</a>
-    </div>
-  </div>
-
-  <!-- 系统 -->
-  <div class="nav-group">
-    <div class="gtitle" onclick="toggleGroup(this)"><span class="arr">▶</span> 系统</div>
-    <div class="nav-body">
-      <a class="indent" href="#">系统设置</a>
     </div>
   </div>
 
@@ -1108,11 +1045,6 @@ function toggleGroup(el){
   const g=el.parentElement;
   g.classList.toggle('open');
   el.querySelector('.arr').textContent = g.classList.contains('open') ? '▼' : '▶';
-}
-function toggleSub(el){
-  const sub=el.parentElement;
-  sub.classList.toggle('collapsed');
-  el.querySelector('.arr').textContent = sub.classList.contains('collapsed') ? '▶' : '▼';
 }
 
 /* ==================== DATA ==================== */
