@@ -285,6 +285,8 @@
       <a id="navRel1" class="indent" onclick="go('rel1')">会员中心-批量送券</a>
       <a id="navRel2" class="indent" onclick="go('rel2')">关联直播原型</a>
       <a id="navRel3" class="indent" onclick="go('rel3')">订单关联优惠券</a>
+      <a id="navRel4" class="indent" onclick="go('rel4')">会员直接发券</a>
+      <a id="navRel5" class="indent" onclick="go('rel5')">直播观看记录</a>
     </div>
   </div>
 </nav>
@@ -717,6 +719,29 @@
   </div>
 </div>
 
+<!-- ==================== 下架原因 弹窗 ==================== -->
+<div class="modal-overlay" id="offlineModal" style="display:none">
+  <div class="modal-dlg" style="width:460px">
+    <div class="modal-header">
+      <span class="modal-title">下架优惠券</span>
+      <button class="modal-close" onclick="closeOfflineModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row" style="margin:6px 0;align-items:flex-start">
+        <label class="fr-label" style="width:80px;padding-top:7px">下架原因<span style="color:#f56c6c">*</span></label>
+        <div class="fr-body" style="flex:1">
+          <textarea class="fr-input" id="offlineReason" maxlength="200" rows="4" placeholder="请输入下架原因（必填，≤200字）" style="width:100%" oninput="document.getElementById('offlineReasonCount').textContent=(this.value||'').length"></textarea>
+          <div style="text-align:right;font-size:12px;color:#999;margin-top:4px"><span id="offlineReasonCount">0</span> / 200</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost btn-sm" onclick="closeOfflineModal()">取消</button>
+      <button class="btn-danger-ghost btn-sm" onclick="confirmOffline()">确认下架</button>
+    </div>
+  </div>
+</div>
+
 <!-- ==================== D3: 发券活动 新建/编辑 独立页 ==================== -->
 <div id="viewSendEdit" class="hidden">
   <div class="phead">
@@ -751,15 +776,23 @@
 <!-- ==================== 关联需求：iframe 内嵌 ==================== -->
 <div id="viewRel1" class="hidden rel-iframe-wrap">
   <div class="crumb">关联需求 / <span>会员中心-批量送券</span></div>
-  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-member.html?embed=1" class="rel-iframe"></iframe>
+  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-member.html" class="rel-iframe"></iframe>
 </div>
 <div id="viewRel2" class="hidden rel-iframe-wrap">
   <div class="crumb">关联需求 / <span>关联直播原型</span></div>
-  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-relate-live.html?embed=1" class="rel-iframe"></iframe>
+  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-relate-live.html" class="rel-iframe"></iframe>
 </div>
 <div id="viewRel3" class="hidden rel-iframe-wrap">
   <div class="crumb">关联需求 / <span>订单关联优惠券</span></div>
-  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-order-relate.html?embed=1" class="rel-iframe"></iframe>
+  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-order-relate.html" class="rel-iframe"></iframe>
+</div>
+<div id="viewRel4" class="hidden rel-iframe-wrap">
+  <div class="crumb">关联需求 / <span>会员直接发券</span></div>
+  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-direct-send.html" class="rel-iframe"></iframe>
+</div>
+<div id="viewRel5" class="hidden rel-iframe-wrap">
+  <div class="crumb">关联需求 / <span>直播观看记录</span></div>
+  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-live-viewlog.html" class="rel-iframe"></iframe>
 </div>
 
 </main><!-- end mainArea -->
@@ -784,14 +817,14 @@ function go(page){
     list:'viewList', send:'viewSend',
     board:'viewBoard', detail:'viewCouponDetail',
     couponNew:'viewCouponNew', sendEdit:'viewSendEdit',
-    rel1:'viewRel1', rel2:'viewRel2', rel3:'viewRel3'
+    rel1:'viewRel1', rel2:'viewRel2', rel3:'viewRel3', rel4:'viewRel4', rel5:'viewRel5'
   };
   Object.keys(map).forEach(k=>$(map[k]).classList.toggle('hidden',k!==page));
   const navMap={
     list:'navCoupon', detail:'navCoupon', couponNew:'navCoupon',
     send:'navSend', sendEdit:'navSend',
     board:'navBoard',
-    rel1:'navRel1', rel2:'navRel2', rel3:'navRel3'
+    rel1:'navRel1', rel2:'navRel2', rel3:'navRel3', rel4:'navRel4', rel5:'navRel5'
   };
   ['navCoupon','navSend','navBoard','navRel1','navRel2','navRel3','navRel4','navRel5'].forEach(id=>{
     if($(id)) $(id).classList.toggle('active', navMap[page]===id);
@@ -819,6 +852,8 @@ let coupons=[
   {id:5,name:'老券满150减20',shop:'健康生活馆',type:'满减券',rule:'满150减20',status:'下架',usageStatus:'进行中',ladder:false,share:'不共用',valid:'领取后 24 天内有效',claimed:30,left:70,date:'2026-07-05 ~ 2026-12-31',createDate:'2026-07-05'}
 ];
 let currentCouponId=null;
+let offlineTargetId=null;
+let offlineFromDetail=false;
 
 let sends=[
   {id:1,name:'7月直播时长发券-A',trigger:'live',triggerName:'直播时长',thresholdText:'观看满30分钟',liveTag:'福利直播',levelMode:'all',levels:[],coupons:['新人满99减20','无门槛5元代金'],perUser:1,startTime:'2026-07-21T10:00:00',issued:89,status:'进行中',time:'2026-07-21 10:00'},
@@ -942,14 +977,31 @@ function offlineCouponById(id){
   const c=coupons.find(x=>x.id===id);if(!c)return;
   const refs=sendActivitiesReferencing(c.name);
   if(refs.length){toast('该券正被 '+refs.length+' 个发券活动引用，请先删除相关发券活动后再下架',true);return;}
-  c.status='下架';renderCoupons();toast('已下架');
+  offlineTargetId=id;offlineFromDetail=false;openOfflineModal();
 }
 function revokeCoupon(id){if(!confirm('确认撤回该券？撤回后所有已发放的用户券将立即失效，有效期截止至今天。'))return;const c=coupons.find(x=>x.id===id);if(!c)return;c.usageStatus='已结束';renderCoupons();toast('已撤回');}
 function offlineCoupon(){
   const c=coupons.find(x=>x.id===currentCouponId);if(!c)return;
   const refs=sendActivitiesReferencing(c.name);
   if(refs.length){toast('该券正被 '+refs.length+' 个发券活动引用，请先删除相关发券活动后再下架',true);return;}
-  toast('已下架');setTimeout(()=>go('list'),1200);
+  offlineTargetId=currentCouponId;offlineFromDetail=true;openOfflineModal();
+}
+function openOfflineModal(){
+  $('offlineReason').value='';
+  $('offlineReasonCount').textContent='0';
+  $('offlineModal').style.display='flex';
+}
+function closeOfflineModal(){ $('offlineModal').style.display='none'; }
+function confirmOffline(){
+  const reason=($('offlineReason').value||'').trim();
+  if(!reason){ toast('请填写下架原因（必填）',true); return; }
+  if(reason.length>200){ toast('下架原因不能超过 200 字',true); return; }
+  const c=coupons.find(x=>x.id===offlineTargetId);if(!c)return;
+  c.status='下架';
+  closeOfflineModal();
+  renderCoupons();
+  if(offlineFromDetail){ toast('已下架'); setTimeout(()=>go('list'),1200); }
+  else { toast('已下架（原因：'+reason.slice(0,12)+(reason.length>12?'…':'')+'）'); }
 }
 
 /* ---- 增加发行量 ---- */
