@@ -285,8 +285,9 @@ if(location.search.includes('embed=1')) document.body.classList.add('embed-mode'
     <div class="nav-group"><div class="gtitle">数据</div></div>
   </div>
 
-  <div class="main">
-    <div class="crumb"><a onclick="go('order-list')">订单管理</a> / <span>订单详情</span></div>
+      <div class="main">
+        <div id="odBackEmbed" style="display:none;margin-bottom:10px"><span class="btn-ghost btn-sm" onclick="go('order-list')">← 返回订单列表</span></div>
+        <div class="crumb"><a onclick="go('order-list')">订单管理</a> / <span>订单详情</span></div>
 
     <!-- Top-level Tabs: 数据概览 / 订单详情 / 物流信息 -->
     <div class="page-tabs">
@@ -379,13 +380,6 @@ if(location.search.includes('embed=1')) document.body.classList.add('embed-mode'
 
 </main>
 
-<div class="proto-hint">
-  <span>当前：<strong id="currentPageLabel">后台订单列表</strong></span>
-  <button onclick="go('order-list')">① 后台列表</button>
-  <button onclick="go('order-detail')">② 后台详情</button>
-  <button onclick="go('c-orders')">③ C端订单</button>
-</div>
-
 <script>
 // ========== Page Navigation ==========
 function go(page){
@@ -393,13 +387,10 @@ function go(page){
   document.querySelectorAll('.side a').forEach(function(a){a.classList.remove('active')});
   if(page==='order-list'){
     document.getElementById('viewOrderList').classList.remove('hidden');
-    document.getElementById('currentPageLabel').textContent='后台订单列表';
   }else if(page==='order-detail'){
     document.getElementById('viewOrderDetail').classList.remove('hidden');
-    document.getElementById('currentPageLabel').textContent='后台订单详情';
   }else if(page==='c-orders'){
     document.getElementById('viewCOrders').classList.remove('hidden');
-    document.getElementById('currentPageLabel').textContent='C端订单列表（移动端）';
   }
 }
 
@@ -434,7 +425,7 @@ function renderOrderList(){
       '<td class="zone-right"><div><span class="tag '+o.tagCls+'" style="font-size:11px">'+o.tag+'</span></div>'+
         '<div style="margin-top:3px;font-size:11.5px;color:#666">'+o.phone+'</div>'+
         '<div><span class="tag tag-green" style="font-size:10px;padding:1px 5px">已取消</span></div></td>'+
-      '<td class="zone-right act"><a class="btn-link" style="cursor:pointer;text-decoration:none;color:#534AB7" onmousedown="go(\'order-detail\')">'+o.status+'</a></td>'+
+      '<td class="zone-right act"><a class="btn-link" style="cursor:pointer;text-decoration:none;color:#534AB7" onclick="go(\'order-detail\')">'+o.status+'</a></td>'+
     '</tr>';
   });
   document.getElementById('orderListBody').innerHTML=html;
