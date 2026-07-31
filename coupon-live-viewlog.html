@@ -127,9 +127,20 @@
   .slider::before{content:'';position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
   input:checked+.slider{background:#534AB7}
   input:checked+.slider::before{transform:translateX(18px)}
+
+/* embed mode: hide topbar & sidebar when ?embed=1 */
+body.embed-mode .topbar{display:none}
+body.embed-mode .side{display:none}
+body.embed-mode .layout{display:block;min-height:100vh}
+body.embed-mode .main{padding-top:18px}
 </style>
 </head>
 <body>
+<script>
+/* embed mode detection */
+if(location.search.includes('embed=1')) document.body.classList.add('embed-mode');
+</script>
+
 
 <!-- ===== Top Bar ===== -->
 <div class="topbar">
