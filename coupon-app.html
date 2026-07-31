@@ -34,6 +34,25 @@ body{
 }
 
 .group-title{display:none}
+
+/* 复制按钮 */
+#copyBtn{
+  position:fixed;top:16px;right:16px;z-index:9999;
+  background:#534AB7;color:#fff;border:none;
+  padding:8px 18px;border-radius:8px;cursor:pointer;
+  font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(83,74,183,.35);
+  transition:transform .15s,box-shadow .15s;
+  user-select:none;
+}
+#copyBtn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(83,74,183,.45)}
+#copyBtn:active{transform:translateY(0)}
+#copyToast{
+  position:fixed;top:52px;right:16px;z-index:9999;
+  background:#07c160;color:#fff;padding:6px 14px;
+  border-radius:6px;font-size:12px;opacity:0;
+  transform:translateY(-8px);transition:.25s;pointer-events:none;
+}
+#copyToast.show{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
@@ -122,5 +141,19 @@ body{
 </div>
 
 </div>
+
+<button id="copyBtn" onclick="copySrc()">📋 复制源码</button>
+<div id="copyToast">✅ 源码已复制到剪贴板（126 行 / 约 4KB）</div>
+
+<script>
+async function copySrc(){
+  const resp = await fetch(location.href);
+  const text = await resp.text();
+  await navigator.clipboard.writeText(text);
+  const t=document.getElementById('copyToast');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+</script>
 </body>
 </html>
