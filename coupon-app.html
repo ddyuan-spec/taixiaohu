@@ -29,8 +29,19 @@ body{
   padding:10px 14px 8px;background:#fafbfc;
   border-bottom:1px solid #eee;text-align:center;line-height:1.3;
 }
+.card .name .drawn-badge{
+  font-size:11px;font-weight:600;color:#07c160;
+  background:#e8f9ef;padding:1px 6px;border-radius:4px;
+  margin-left:6px;white-space:nowrap;
+}
 .card img{
   width:100%;height:auto;display:block;
+}
+
+.group-title{
+  width:100%;text-align:center;font-size:15px;font-weight:700;
+  color:#534AB7;margin:24px 0 8px;padding-bottom:8px;
+  border-bottom:2px solid #e2e4e8;
 }
 </style>
 </head>
@@ -38,10 +49,12 @@ body{
 
 <div class="hd">
   <h1>🎫 优惠券体系 · App 端原型</h1>
-  <span class="sub">用户侧 — 实际截图</span>
+  <span class="sub">用户侧 — 最新截图</span>
 </div>
 
 <div class="grid">
+
+<div class="group-title">我的 / 资产线</div>
 
 <!-- ① 我的（个人中心） -->
 <div class="card">
@@ -52,49 +65,69 @@ body{
 <!-- ② 我的优惠券（空态） -->
 <div class="card">
   <div class="name">C2 我的优惠券（空态）</div>
-  <img src="coupon-prd-assets/app-my-coupons-empty.png" alt="我的优惠券">
+  <img src="coupon-prd-assets/app-my-coupons-empty.png" alt="我的优惠券空态">
 </div>
 
-<!-- ③ 商品详情 -->
+<!-- ③ 我的优惠券（三态） -->
 <div class="card">
-  <div class="name">C5 商品详情</div>
-  <img src="coupon-prd-assets/app-product-detail.png" alt="商品详情">
+  <div class="name">C2 我的优惠券（待使用 / 已使用 / 已过期）<span class="drawn-badge">自画</span></div>
+  <img src="coupon-prd-assets/app-c2-coupons-drawn.png" alt="我的优惠券三态">
 </div>
 
-<!-- ④ 优惠套餐弹窗 -->
+<!-- ④ 跨端口置灰券 -->
 <div class="card">
-  <div class="name">C5 优惠套餐选择弹窗</div>
-  <img src="coupon-prd-assets/app-product-deal-modal.png" alt="优惠套餐弹窗">
+  <div class="name">C2 跨端口置灰券 + 提示<span class="drawn-badge">自画</span></div>
+  <img src="coupon-prd-assets/app-c2-port-restrict-drawn.png" alt="跨端口置灰券">
 </div>
 
-<!-- ⑤ 确认订单（无券） -->
+<div class="group-title">商城购买线</div>
+
+<!-- ⑤ 商品详情 -->
+<div class="card">
+  <div class="name">C5 商品详情（优惠券入口条）<span class="drawn-badge">自画</span></div>
+  <img src="coupon-prd-assets/app-c5-product-entry.png" alt="商品详情优惠券入口">
+</div>
+
+<!-- ⑥ 优惠详情底部弹窗 -->
+<div class="card">
+  <div class="name">C5 优惠详情底部弹窗（券列表 + 券规则 ›）<span class="drawn-badge">自画</span></div>
+  <img src="coupon-prd-assets/app-c5-coupon-modal.png" alt="优惠详情弹窗">
+</div>
+
+<!-- ⑦ 券规则页 -->
+<div class="card">
+  <div class="name">C5 券规则页（富文本渲染）<span class="drawn-badge">自画</span></div>
+  <img src="coupon-prd-assets/app-coupon-rules-drawn.png" alt="券规则页">
+</div>
+
+<!-- ⑧ 确认订单（单SKU·券作用于SKU行） -->
+<div class="card">
+  <div class="name">C6 确认订单（单SKU · 券作用于SKU行）<span class="drawn-badge">自画</span></div>
+  <img src="coupon-prd-assets/app-c6-order-single-sku-drawn.png" alt="确认订单单SKU">
+</div>
+
+<!-- ⑨ 多SKU券适用商品 -->
+<div class="card">
+  <div class="name">C6 优惠券适用商品（多SKU券分摊）<span class="drawn-badge">自画</span></div>
+  <img src="coupon-prd-assets/app-c6-coupon-sku-scope-drawn.png" alt="多SKU券适用商品">
+</div>
+
+<!-- ⑩ 选择优惠券弹窗 -->
+<div class="card">
+  <div class="name">C6 选择优惠券弹窗（含可用券 + 券规则入口）<span class="drawn-badge">自画</span></div>
+  <img src="coupon-prd-assets/app-select-coupon-with-coupon-drawn.png" alt="选择优惠券弹窗">
+</div>
+
+<!-- ⑪ 确认订单（无券态） -->
 <div class="card">
   <div class="name">C6 确认订单（无券态）</div>
   <img src="coupon-prd-assets/app-confirm-order.png" alt="确认订单无券">
 </div>
 
-<!-- ⑥ 确认订单（含券） -->
+<!-- ⑫ 确认订单（含优惠券） -->
 <div class="card">
   <div class="name">C6 确认订单（含优惠券）</div>
   <img src="coupon-prd-assets/app-confirm-order-with-coupon.png" alt="确认订单含券">
-</div>
-
-<!-- ⑦ 我的订单 -->
-<div class="card">
-  <div class="name">我的订单列表</div>
-  <img src="coupon-prd-assets/app-my-orders.png" alt="我的订单">
-</div>
-
-<!-- ⑧ 收银台 -->
-<div class="card">
-  <div class="name">收银台（支付方式）</div>
-  <img src="coupon-prd-assets/app-payment.png" alt="收银台">
-</div>
-
-<!-- ⑨ 支付成功 -->
-<div class="card">
-  <div class="name">支付成功</div>
-  <img src="coupon-prd-assets/app-payment-success.png" alt="支付成功">
 </div>
 
 </div>
