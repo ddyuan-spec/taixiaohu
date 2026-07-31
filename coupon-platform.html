@@ -975,14 +975,14 @@ function sendActivitiesReferencing(couponName){
 function offlineCouponById(id){
   const c=coupons.find(x=>x.id===id);if(!c)return;
   const refs=sendActivitiesReferencing(c.name);
-  if(refs.length){toast('该券正被 '+refs.length+' 个发券活动引用，请先删除相关发券活动后再下架',true);return;}
+  if(refs.length){toast('该券正被 '+refs.length+' 个发券活动引用，请先结束相关发券活动后再下架',true);return;}
   offlineTargetId=id;offlineFromDetail=false;openOfflineModal();
 }
 function revokeCoupon(id){if(!confirm('确认撤回该券？撤回后所有已发放的用户券将立即失效，有效期截止至今天。'))return;const c=coupons.find(x=>x.id===id);if(!c)return;c.usageStatus='已结束';renderCoupons();toast('已撤回');}
 function offlineCoupon(){
   const c=coupons.find(x=>x.id===currentCouponId);if(!c)return;
   const refs=sendActivitiesReferencing(c.name);
-  if(refs.length){toast('该券正被 '+refs.length+' 个发券活动引用，请先删除相关发券活动后再下架',true);return;}
+  if(refs.length){toast('该券正被 '+refs.length+' 个发券活动引用，请先结束相关发券活动后再下架',true);return;}
   offlineTargetId=currentCouponId;offlineFromDetail=true;openOfflineModal();
 }
 function openOfflineModal(){
@@ -1159,7 +1159,9 @@ function renderSends(){
       <td>${s.issued}</td>
       <td><span class="tag ${s.status==='进行中'?'tag-green':s.status==='未开始'?'tag-blue':'tag-gray'}">${s.status}</span></td>
       <td>${s.time}</td>
-      <td class="act"><a class="btn-link" onclick="editSend(${s.id})">编辑</a>${s.status!=='已结束'?'<a class="btn-link" style="margin-left:10px;color:#d9363e" onclick="endSend('+s.id+')">结束活动</a>':''}</td>
+      <td class="act">${s.status==='已结束'
+        ? `<a class="btn-link red" onclick="delSend(${s.id})">删除</a>`
+        : `<a class="btn-link" onclick="editSend(${s.id})">编辑</a><a class="btn-link" style="margin-left:10px;color:#d9363e" onclick="endSend(${s.id})">结束活动</a>`}</td>
     </tr>`).join('')||'<tr><td colspan="10" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
 }
 let editSendId=null;
@@ -1200,6 +1202,15 @@ function endSend(id){
   s.status='已结束';
   renderSends();
   toast('已结束活动，未发放的券不再发放');
+}
+function delSend(id){
+  const s=sends.find(x=>x.id===id);
+  if(!s) return;
+  if(s.status!=='已结束'){ toast('仅已结束的活动可删除',true); return; }
+  if(!confirm('确认删除该发券活动？删除后不可恢复')) return;
+  sends=sends.filter(x=>x.id!==id);
+  renderSends();
+  toast('已删除');
 }
 function fillSend(id){
   const s=sends.find(x=>x.id===id);if(!s)return;
