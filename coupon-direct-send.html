@@ -115,9 +115,20 @@
   /* Toast */
   .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-20px);background:#333;color:#fff;padding:10px 24px;border-radius:6px;font-size:13px;z-index:2000;opacity:0;transition:opacity .25s,transform .25s}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* embed mode: hide topbar & sidebar when ?embed=1 */
+body.embed-mode .topbar{display:none}
+body.embed-mode .side{display:none}
+body.embed-mode .layout{display:block;min-height:100vh}
+body.embed-mode .main{padding-top:18px}
 </style>
 </head>
 <body>
+<script>
+/* embed mode detection */
+if(location.search.includes('embed=1')) document.body.classList.add('embed-mode');
+</script>
+
 
 <!-- Topbar -->
 <div class="topbar">
