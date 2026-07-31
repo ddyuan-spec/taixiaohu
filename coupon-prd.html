@@ -294,7 +294,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
     <rect x="690" y="610" width="190" height="46" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
     <text x="785" y="646" text-anchor="middle" fill="#2e7d32" font-size="10.5">三端新增（消息由后台配置）</text>
 
-
     <rect x="908" y="676" width="130" height="46" rx="6" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.5"/>
     <text x="973" y="695" text-anchor="middle" font-weight="bold">我的优惠券</text>
     <text x="973" y="712" text-anchor="middle" fill="#e65100" font-size="10.5">App新增·H5/小程序已有</text>
@@ -420,7 +419,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 本期直播时长发券为<b>写死规则</b>：不提供活动配置化能力，仅实现「取某时间段直播进入/退出时间 → 相减求时长 → 筛选超过 X 的用户列表 → 批量发券」链路。第 3/4 步依赖火山引擎接口，需确认接口能返回哪些数据。
 </p>
 
-
 <div class="smoke" style="margin-top:14px;">
 📎 完整版含更多细节（图例说明、节点颜色含义等）见 <a href="https://ddyuan-spec.github.io/taixiaohu/coupon-flow.html" target="_blank"><b>coupon-flow.html（线上）</b></a>。以上 2 张图为 PRD 内嵌摘要版，与线上完整版保持一致。
 </div>
@@ -506,7 +504,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <p style="font-size:12px;color:#666;margin-top:6px">💡 <b>双维度独立说明</b>：上架状态（启用/下架）由运营手动控制，影响发券活动可选性；使用状态（未开始/进行中/已结束/已删除）由系统根据有效期自动计算或运营手动撤回，影响用户下单可用性。两者互不依赖——一张「启用」的券可能因过期或撤回而「已结束」，一张「下架」的券只要未过期且未被撤回对已持券用户仍「进行中」。</p>
 <p style="font-size:12px;color:#666;margin-top:6px">📌 <b>规则复用</b>：上述「只能选上架券」的约束与校验逻辑同样适用于 <b>§4.2 会员中心-批量送券</b> 的弹窗选券；会员中心批量赠送作为运营手动发券入口，与发券活动共用同一套上架状态过滤与下架拦截口径。</p>
 
-
 <!-- ===== 4.6 发券活动状态机 ===== -->
 <p><b>六、发券活动状态转换表</b></p>
 <table>
@@ -518,7 +515,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 </tbody>
 </table>
 <div class="note">📌 <b>发券活动状态说明</b>：状态仅由开始 / 结束时间由系统定时任务驱动（未开始 → 进行中 → 已结束），<b>无手动停用 / 暂停态</b>。进行中活动如需停止发放，须<b>删除该活动</b>（删除不影响已发放券实例，见 §4.1.4）。</div>
-
 
 <p><b>用户券状态转换表</b>（我的优惠券三态 + 边界）<span style="font-size:11px;color:#999"> ｜ 注：下表起始状态均为明确单态（非宽泛"所有"），每行转换路径唯一确定。</span>：</p>
 <table>
@@ -642,6 +638,24 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 </tbody>
 </table>
 
+<h5>4.1.3.4 「底价（商品级）」字段规则 <span class="tag y">本期新增</span></h5>
+<p><b>字段定义</b>：底价是<b>商品级</b>属性，由运营在券配置的「商品选择区」环节，对<b>每个适用商品</b>逐行录入该商品允许成交的最低实付单价。它约束的是 C 端结算时「叠加/用券后该商品实付不得低于底价」，与券面额、门槛、可共用优惠、阶梯计算相互独立。</p>
+<p><b>录入与存储</b>：</p>
+<ul>
+<li><b>来源</b>：<b>运营在券配置中手动录入</b>（以后台原型为准，<b>非</b>商品域接口只读）。原型中每个已选商品行带「底价 ¥」数字输入框（min=0，step=0.01，默认留空）。</li>
+<li><b>字段</b>：存《券模板表》适用商品集合的 <code>floor_price</code>；<b>空值 / 0.00 = 无底价（即不限制）</b>，C 端该商品不做底价不击穿校验。</li>
+<li><b>校验</b>：≥0 数值；可留空；<b>不强制必填</b>。</li>
+</ul>
+<p><b>C 端「严格不击穿底价」保护规则（本期实现）</b>：</p>
+<ul>
+<li><b>生效位置</b>：在确认订单页结算计算时生效（与 §4.3.6 选券联动），后端在下单/核销接口二次校验，前后端规则一致。</li>
+<li><b>计算顺序</b>：多盒多折（商品级）→ 优惠券满减（订单级）→ 臻享积分抵现（支付级）。底价不击穿在「优惠券满减」步骤后、逐商品核算实付时触发。</li>
+<li><b>保护逻辑</b>：逐商品校验「该商品结算实付单价 ≥ 其 floor_price」；若减免后实付 < 底价，则<b>回退该商品对应的优惠减免至刚好触底</b>（该商品实付 = 底价），<b>其余商品不受影响</b>，不整体取消券。</li>
+<li><b>极端兜底</b>：若回退后仍无法满足（如单商品订单券面额超过「原价 − 底价」），则该券对当前订单<b>不可用</b>，确认订单页置灰并提示「该商品触发底价不击穿，本券不可用」。</li>
+<li><b>前端展示</b>：确认订单页实时计算并显示本单实际减免金额；触底回退时展示触底提示，减免金额随之更新。</li>
+<li><b>计算基数</b>：底价不击穿仅作用于<b>该券适用商品范围内</b>的商品实付单价；<b>不含赠品 / 换购商品金额</b>（用户裁定：当前赠品不影响指定券的 SKU，与 §4.1.3.3 阶梯计算基数口径一致）。</li>
+</ul>
+
 <p><b>功能按钮</b></p>
 <table>
 <thead><tr><th>按钮</th><th>功能说明</th><th>权限</th><th>前置条件</th></tr></thead>
@@ -700,7 +714,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>取消</td><td>放弃当前填写，返回 P1 列表</td><td>所有角色</td><td>—</td><td>点击 → 若有已填内容 → 弹确认"确定放弃？填写内容不会保存" → 确认返回 / 取消留页</td></tr>
 <tr><td>提交（新建）</td><td>创建新券模板，写入《券模板表》</td><td>直播运营</td><td>所有必填项通过校验</td><td>① 前端逐字段校验（见上表校验规则）→ 不通过则对应字段标红+提示文案<br>② 全部通过 → 调 POST /coupon/template → 成功后跳转 P1 列表并 Toast"创建成功"<br>③ 失败 → 接口报错文案 Toast 展示</td></tr></tbody>
 </table>
-
 
 <p><b>数据来源</b>：店铺下拉取《店铺表》；商品弹窗取《商品中心·商品表》；提交写《券模板表》（/coupon/template CRUD）。</p>
 
@@ -784,26 +797,51 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <p><img src="coupon-prd-assets/coupon-p2-send-list.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="P2发券活动管理列表"></p>
 <p><b>列表字段与筛选（关联直播板块增量）</b>：在既有字段（活动名称 / 触发源 / 适用会员等级 / 关联券模板 / 每人上限 / 开始发券时间 / 状态）基础上，<b>新增「关联直播标签」列</b>——仅当活动触发源=直播时长时展示所关联的直播标签（Tag 样式），非直播时长活动该列显示「—」。列表顶部筛选区在既有「触发源 / 状态 / 关键词」基础上，<b>新增「关联直播标签」单选下拉</b>（数据来源同 D3，取标签管理·直播标签类型启用项），与「触发源=直播时长」组合可快速定位直播发券活动。</p>
 
+<p><b>P2 列表字段表</b></p>
+<table>
+<thead><tr><th>字段</th><th>需求说明</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>勾选框</td><td>多选，用于批量操作</td><td>—</td></tr>
+<tr><td>活动名称</td><td>发券活动名称（文本）</td><td>取《发券活动表》name</td></tr>
+<tr><td>触发源</td><td>触发来源类型展示（如「直播时长」）</td><td>取 trigger 字段；本期固定为「直播时长」</td></tr>
+<tr><td>关联直播标签</td><td>所关联的直播标签名称；非直播时长活动显示「—」</td><td><span class="tag y">本期新增</span> 仅当触发源=直播时长时展示（Tag 样式）；取关联标签表的 tag_name</td></tr>
+<tr><td>观看阈值/条件</td><td>触发条件的文本描述（如「观看满30分钟」）</td><td>取 threshold_text（由触发源+阈值数值组合生成，见 D3 表单）</td></tr>
+<tr><td>关联券模板</td><td>本活动关联的券模板名称列表（多行展示）</td><td>取关联关系表，多券时换行显示</td></tr>
+<tr><td>已发放</td><td>已发放的券实例总数</td><td>聚合《用户券表》count(where activity_id)</td></tr>
+<tr><td>状态</td><td>活动状态 Tag（未开始 / <span style="color:#1890ff">进行中</span> / 已结束）</td><td>取 status 枚举；进行中=绿色Tag、未开始=蓝色Tag、其余灰色</td></tr>
+<tr><td>开始发券时间</td><td>计划开始执行发券的时间</td><td>取 start_time（精确到秒）</td></tr>
+<tr><td>操作</td><td>操作列按钮（见下方功能按钮表）</td><td>—</td></tr>
+</tbody>
+</table>
+
+<p><b>P2 筛选条件表</b></p>
+<table>
+<thead><tr><th>筛选条件</th><th>控件类型</th><th>查询说明</th></tr></thead>
+<tbody>
+<tr><td>关键词</td><td>文本输入</td><td>支持按「活动名称」模糊搜索；空=不筛选</td></tr>
+<tr><td>触发源</td><td>下拉单选</td><td>全部 / 直播时长；默认「全部」</td></tr>
+<tr><td>状态</td><td>下拉单选</td><td>全部 / 未开始 / 进行中 / 已结束；默认「全部」</td></tr>
+<tr><td>关联直播标签</td><td>下拉单选</td><td><span class="tag y">本期新增</span> 取标签管理·直播标签类型启用项；与「触发源=直播时长」组合可快速定位直播发券活动；非直播时该筛选置灰或隐藏</td></tr>
+</tbody>
+</table>
+
+<p><b>P2 功能按钮（操作列 + 全局按钮）</b></p>
+<table>
+<thead><tr><th>按钮</th><th>位置</th><th>显示条件</th><th>功能说明</th><th>权限</th></tr></thead>
+<tbody>
+<tr><td>＋ 新建发券活动</td><td>列表顶部工具栏右侧</td><td>始终可见</td><td>跳转 D3 新建页（标题「新建发券活动」，表单空白）</td><td>直播运营</td></tr>
+<tr><td>搜索</td><td>筛选区</td><td>始终可见</td><td>按当前筛选条件刷新列表</td><td>所有角色</td></tr>
+<tr><td>重置</td><td>筛选区</td><td>始终可见</td><td>清空所有筛选条件并刷新列表（恢复默认「全部」状态）</td><td>所有角色</td></tr>
+<tr><td>编辑</td><td>列表操作列</td><td>所有状态均可见</td><td>跳转 D3 编辑页（标题切换为「编辑发券活动」，表单回填当前活动数据）；<b>仅「未开始」态的活动可保存修改</b>，进行中/已结束态进入编辑页后「保存」按钮禁用或隐藏（或前端拦截提示"进行中/已结束的活动不可编辑"）</td><td>直播运营</td></tr>
+<tr><td>删除</td><td>列表操作列</td><td>所有状态均可见</td><td>二次确认弹窗「确认删除该发券活动？删除后不可恢复」→ 确认后删除活动记录；<b>已发放的券实例不受影响</b>（券独立于活动存在）</td><td>直播运营</td></tr>
+</tbody>
+</table>
+<div class="note">📌 <b>P2 列表排序与分页</b>：默认按「开始发券时间」倒序（最新创建的在顶部）；分页支持 20 / 50 / 100 条每页，默认 20。列表无数据时显示空态「暂无发券活动」。</div>
+
+<p><b>D3 新建/编辑发券活动（规则引擎）</b></p>
+
 <p><b>D3 新建/编辑发券活动（规则引擎）</b></p>
 <p><img src="coupon-prd-assets/coupon-d3-send-edit.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="D3新建编辑发券活动"></p>
-
-<h5>4.1.3.4 「底价（商品级）」字段规则 <span class="tag y">本期新增</span></h5>
-<p><b>字段定义</b>：底价是<b>商品级</b>属性，由运营在券配置的「商品选择区」环节，对<b>每个适用商品</b>逐行录入该商品允许成交的最低实付单价。它约束的是 C 端结算时「叠加/用券后该商品实付不得低于底价」，与券面额、门槛、可共用优惠、阶梯计算相互独立。</p>
-<p><b>录入与存储</b>：</p>
-<ul>
-<li><b>来源</b>：<b>运营在券配置中手动录入</b>（以后台原型为准，<b>非</b>商品域接口只读）。原型中每个已选商品行带「底价 ¥」数字输入框（min=0，step=0.01，默认留空）。</li>
-<li><b>字段</b>：存《券模板表》适用商品集合的 <code>floor_price</code>；<b>空值 / 0.00 = 无底价（即不限制）</b>，C 端该商品不做底价不击穿校验。</li>
-<li><b>校验</b>：≥0 数值；可留空；<b>不强制必填</b>。</li>
-</ul>
-<p><b>C 端「严格不击穿底价」保护规则（本期实现）</b>：</p>
-<ul>
-<li><b>生效位置</b>：在确认订单页结算计算时生效（与 §4.3.6 选券联动），后端在下单/核销接口二次校验，前后端规则一致。</li>
-<li><b>计算顺序</b>：多盒多折（商品级）→ 优惠券满减（订单级）→ 臻享积分抵现（支付级）。底价不击穿在「优惠券满减」步骤后、逐商品核算实付时触发。</li>
-<li><b>保护逻辑</b>：逐商品校验「该商品结算实付单价 ≥ 其 floor_price」；若减免后实付 < 底价，则<b>回退该商品对应的优惠减免至刚好触底</b>（该商品实付 = 底价），<b>其余商品不受影响</b>，不整体取消券。</li>
-<li><b>极端兜底</b>：若回退后仍无法满足（如单商品订单券面额超过「原价 − 底价」），则该券对当前订单<b>不可用</b>，确认订单页置灰并提示「该商品触发底价不击穿，本券不可用」。</li>
-<li><b>前端展示</b>：确认订单页实时计算并显示本单实际减免金额；触底回退时展示触底提示，减免金额随之更新。</li>
-<li><b>计算基数</b>：底价不击穿仅作用于<b>该券适用商品范围内</b>的商品实付单价；<b>不含赠品 / 换购商品金额</b>（用户裁定：当前赠品不影响指定券的 SKU，与 §4.1.3.3 阶梯计算基数口径一致）。</li>
-</ul>
 
 <p><b>D3 表单字段（规则引擎）</b></p>
 <table>
@@ -899,7 +937,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 </tbody>
 </table>
 <p>列表附加规则：排序：按发放时间倒序；分页：支持 20/50/100，默认 20；数据唯一判断：券ID 唯一。</p>
-
 
 <h4>4.1.7 P5 用户券查询 <span class="tag y">本期新增</span></h4>
 <p><b>页面原型与交互示意</b></p>
@@ -1089,7 +1126,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <p><img src="coupon-prd-assets/coupon-app.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="App端原型"></p>
 <p><b>App 端为部分新增</b>。本期 App 需新建：<b>商品详情页优惠券入口条与优惠详情弹窗</b>、<b>券规则页</b>、<b>我的优惠券页</b>、<b>确认订单选券/核销逻辑</b>。以下逐页面逐功能点拆解。</p>
 
-
 <h4>4.3.1 商品详情页优惠券入口与优惠详情弹窗 <span class="tag y">本期新增</span></h4>
 <h5>4.3.1.1 原型与交互示意</h5>
 <p><b>入口链</b>：商品详情页 → 优惠券入口条 → 优惠详情弹窗 → 券规则页。</p>
@@ -1230,7 +1266,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <h5>4.3.4.8 状态流转</h5>
 <p>未使用 ──(支付成功核销)──&gt; 已使用；未使用 ──(超过 expire_time，定时任务)──&gt; 已过期。</p>
 
-
 <h4>4.3.5 券可使用端口·跨端口展示与拦截规则 <span class="tag y">本期新增</span></h4>
 <p>券模板在平台端配置「券可使用端口」(<code>usable_ports</code>，枚举：泰小虎App / 泰尔超优惠H5 / 泰尔超优会小程序，见 §4.1.3 D2)。因 App / 小程序 / H5 账号与券包打通，用户在一个端口领取的券，在另外两个端口也能看到。本规则定义<b>已持有券</b>在当前端口的展示与可用判定（与发券投放的端口过滤互补）。</p>
 <p><img src="coupon-prd-assets/app-c2-port-restrict-drawn.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="跨端口置灰券与点击提示示意"></p>
@@ -1272,7 +1307,6 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>用户券 status</td><td>取《用户券表》status（未使用 / 已使用 / 已过期），与端口匹配态叠加展示</td></tr>
 </tbody>
 </table>
-
 
 <h4>4.3.6 确认订单选券 / 核销<span class="tag y">本期新增</span></h4>
 <h5>4.3.6.1 原型与交互示意</h5>
