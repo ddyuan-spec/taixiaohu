@@ -1159,7 +1159,7 @@ function renderSends(){
       <td>${s.issued}</td>
       <td><span class="tag ${s.status==='进行中'?'tag-green':s.status==='未开始'?'tag-blue':'tag-gray'}">${s.status}</span></td>
       <td>${s.time}</td>
-      <td class="act"><a class="btn-link" onclick="editSend(${s.id})">编辑</a></td>
+      <td class="act"><a class="btn-link" onclick="editSend(${s.id})">编辑</a>${s.status!=='已结束'?'<a class="btn-link" style="margin-left:10px;color:#d9363e" onclick="endSend('+s.id+')">结束活动</a>':''}</td>
     </tr>`).join('')||'<tr><td colspan="10" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
 }
 let editSendId=null;
@@ -1192,6 +1192,15 @@ function saveSendForm(){
   go('send');toast('已保存');
 }
 function editSend(id){editSendId=id;go('sendEdit');fillSend(id);}
+function endSend(id){
+  const s=sends.find(x=>x.id===id);
+  if(!s) return;
+  if(s.status==='已结束'){ toast('该活动已结束，不可重复操作',true); return; }
+  if(!confirm('确认结束该发券活动？结束后立即停止发券且不可重新开启')) return;
+  s.status='已结束';
+  renderSends();
+  toast('已结束活动，未发放的券不再发放');
+}
 function fillSend(id){
   const s=sends.find(x=>x.id===id);if(!s)return;
   $('snName').value=s.name;
