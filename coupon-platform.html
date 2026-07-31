@@ -285,8 +285,6 @@
       <a id="navRel1" class="indent" onclick="go('rel1')">会员中心-批量送券</a>
       <a id="navRel2" class="indent" onclick="go('rel2')">关联直播原型</a>
       <a id="navRel3" class="indent" onclick="go('rel3')">订单关联优惠券</a>
-      <a id="navRel4" class="indent" onclick="go('rel4')">会员直接发券</a>
-      <a id="navRel5" class="indent" onclick="go('rel5')">直播观看记录</a>
     </div>
   </div>
 </nav>
@@ -763,14 +761,6 @@
   <div class="crumb">关联需求 / <span>订单关联优惠券</span></div>
   <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-order-relate.html?embed=1" class="rel-iframe"></iframe>
 </div>
-<div id="viewRel4" class="hidden rel-iframe-wrap">
-  <div class="crumb">关联需求 / <span>会员直接发券</span></div>
-  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-direct-send.html?embed=1" class="rel-iframe"></iframe>
-</div>
-<div id="viewRel5" class="hidden rel-iframe-wrap">
-  <div class="crumb">关联需求 / <span>直播观看记录</span></div>
-  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-live-viewlog.html?embed=1" class="rel-iframe"></iframe>
-</div>
 
 </main><!-- end mainArea -->
 </div><!-- end layout -->
@@ -794,14 +784,14 @@ function go(page){
     list:'viewList', send:'viewSend',
     board:'viewBoard', detail:'viewCouponDetail',
     couponNew:'viewCouponNew', sendEdit:'viewSendEdit',
-    rel1:'viewRel1', rel2:'viewRel2', rel3:'viewRel3', rel4:'viewRel4', rel5:'viewRel5'
+    rel1:'viewRel1', rel2:'viewRel2', rel3:'viewRel3'
   };
   Object.keys(map).forEach(k=>$(map[k]).classList.toggle('hidden',k!==page));
   const navMap={
     list:'navCoupon', detail:'navCoupon', couponNew:'navCoupon',
     send:'navSend', sendEdit:'navSend',
     board:'navBoard',
-    rel1:'navRel1', rel2:'navRel2', rel3:'navRel3', rel4:'navRel4', rel5:'navRel5'
+    rel1:'navRel1', rel2:'navRel2', rel3:'navRel3'
   };
   ['navCoupon','navSend','navBoard','navRel1','navRel2','navRel3','navRel4','navRel5'].forEach(id=>{
     if($(id)) $(id).classList.toggle('active', navMap[page]===id);
