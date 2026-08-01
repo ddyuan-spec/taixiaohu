@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>数据看板 · 券明细记录 — 需求详情</title>
+<style>
+:root{--p:#534AB7;--p2:#6C5CE7;--line:#e6e6ee;--bg:#f7f8fb;--t:#23252b;--mut:#8a8f9c;--ok:#1FA971;--warn:#E8932B;--bad:#E5484D}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--t);line-height:1.65;font-size:14px}
+.wrap{max-width:1080px;margin:0 auto;padding:32px 28px 80px}
+h1{font-size:26px;font-weight:800;color:var(--p);margin-bottom:6px}
+h2{font-size:20px;font-weight:700;margin:38px 0 14px;padding-left:12px;border-left:4px solid var(--p)}
+h3{font-size:18px;font-weight:700;margin:28px 0 12px;color:var(--p)}
+h4{font-size:15px;font-weight:700;margin:20px 0 10px;color:#333}
+p{margin:8px 0;color:#3a3d45}
+.meta{color:var(--mut);font-size:13px;margin-bottom:6px}
+.sec{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 22px;margin:14px 0;box-shadow:0 1px 3px rgba(30,30,50,.04)}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px;table-layout:auto}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;word-break:break-all;overflow-wrap:break-word}
+th{background:#f3f1fc;color:#4a4a6a;font-weight:600}
+tr:nth-child(even) td{background:#fafaff}
+.tag{display:inline-block;padding:1px 8px;border-radius:6px;font-size:12px;font-weight:600}
+.tag.g{background:#e6f7f0;color:var(--ok)}
+.tag.b{background:#ecf5ff;color:#409eff}
+.tag.o{background:#fdf1e3;color:var(--warn)}
+.tag.r{background:#fdecec;color:var(--bad)}
+.tag.y{background:#fff7e0;color:#b8860b}
+.note{background:#fffbe9;border:1px solid #ffe58f;border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px}
+.warn{background:#fdecec;border:1px solid #ffccc7;border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px}
+.ok{background:#e6f7f0;border:1px solid #b7eb8f;border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px}
+code{background:#f0f0f5;padding:1px 6px;border-radius:4px;font-size:12px;color:#c0392b}
+a{color:var(--p);text-decoration:none}
+a:hover{text-decoration:underline}
+ul,ol{margin:8px 0 8px 22px}
+li{margin:4px 0}
+.kvs{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
+.kv{background:#f3f1fc;border-radius:8px;padding:8px 14px;font-size:13px}
+.kv b{color:var(--p)}
+.screenshot{max-width:100%;border:1px solid var(--line);border-radius:8px;margin:12px 0;box-shadow:0 2px 6px rgba(0,0,0,.04)}
+.smoke{color:var(--mut);font-size:12px;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>数据看板 · 券明细记录 — 需求详情</h1>
+<div class="meta">所属模块：泰小虎 · 优惠券体系 / 平台端后台 / 数据看板 ｜ 页面：券明细记录 ｜ 状态：<span class="tag g">PRD 定稿</span></div>
+
+<h2>§四 功能需求详情</h2>
+
+<h3>平台端后台 <span class="tag g">本期新增</span></h3>
+
+<h4>券明细记录</h4>
+
+<p><b>需求影响范围</b>：本期新增的数据看板统计 Tab，不影响既有优惠券列表/发券活动配置等功能，仅做只读展示。</p>
+<p><b>涉及终端</b>：仅平台端后台可见；商家端后台本期不实现。</p>
+
+<!-- ==================== 2.1 页面原型与交互示意 ==================== -->
+<h2>2.1 页面原型与交互示意</h2>
+<div class="sec">
+<p>下图为平台端后台「数据看板 → 券明细记录」Tab 当前原型截图：</p>
+<img src="coupon-board-detail-screenshot.png" alt="券明细记录原型截图" class="screenshot">
+<p class="smoke">截图来源：用户 2026-08-01 提供，对应 <a href="https://ddyuan-spec.github.io/taixiaohu/coupon-platform.html" target="_blank">coupon-platform.html</a>「券明细记录」Tab。</p>
+
+<h4>交互说明</h4>
+<ul>
+<li>进入「数据看板」页面后，点击 Tab 栏「券明细记录」切换至本 Tab。</li>
+<li>表格上方为筛选栏，输入条件后点击「搜索」触发查询；点击「重置」清空所有筛选条件并恢复初始列表。</li>
+<li>列表支持分页浏览，默认每页 20 条。</li>
+<li>本 Tab 无行内操作按钮，仅作数据展示。</li>
+</ul>
+</div>
+
+<!-- ==================== 2.2 详细逻辑规则 ==================== -->
+<h2>2.2 详细逻辑规则</h2>
+<div class="sec">
+<h4>界面与展示规则</h4>
+<ul>
+<li><b>入参校验</b>：用户需具备「数据看板」菜单访问权限方可进入本页。</li>
+<li><b>空状态</b>：当系统中无券明细记录时，列表区域展示「暂无数据」，隐藏分页器。</li>
+<li><b>字段显示</b>：
+  <ul>
+    <li>「是否发放」「是否核销」用 tag 形式展示，「是」为绿色，「否」为灰色。</li>
+    <li>未发放的券，「发放时间」「接收用户」显示「-」。</li>
+    <li>未核销的券，「核销订单号」显示「-」。</li>
+    <li>发放时间格式 <code>yyyy-MM-dd HH:mm</code>。</li>
+  </ul>
+</li>
+<li><b>手机号展示</b>：后台手机号<b>固定不脱敏</b>，直接展示完整手机号（如 <code>13800000021</code>）。</li>
+</ul>
+
+<h4>业务逻辑与边界条件</h4>
+<ul>
+<li><b>数据范围</b>：券明细记录按券实例维度展示，<b>包含已发放与未发放的券实例</b>（即含「是否发放=否」的记录）。</li>
+<li><b>筛选逻辑</b>：各筛选条件之间为「且」关系；单个条件不填时该条件不参与过滤。</li>
+<li><b>模糊匹配</b>：券ID、接收用户、核销订单号支持模糊匹配。</li>
+<li><b>日期范围</b>：结束日期默认按当日 <code>23:59</code> 计算，覆盖整天。</li>
+<li><b>已删除数据</b>：已软删的券实例<b>不排除</b>，仍展示在列表中。</li>
+</ul>
+
+<h4>异常分支与校验提示</h4>
+<table>
+<tr><th style="width:140px">场景</th><th>系统行为</th><th>提示文案</th></tr>
+<tr><td>无券明细数据</td><td>列表区域展示空状态，隐藏分页器</td><td>「暂无数据」</td></tr>
+<tr><td>网络异常/接口超时</td><td>toast 提示失败，保留当前页面结构</td><td>「数据加载失败，请稍后重试」</td></tr>
+<tr><td>筛选结果为空</td><td>列表区域展示空状态，分页器显示 0 条</td><td>「暂无符合条件的数据」</td></tr>
+</table>
+</div>
+
+<!-- ==================== 2.3 列表字段表 ==================== -->
+<h2>2.3 列表字段表</h2>
+<div class="sec">
+<table>
+<thead><tr><th style="width:110px">字段名称</th><th>需求说明</th><th>备注</th></tr></thead>
+<tbody>
+<tr>
+<td>券ID</td>
+<td>券实例的唯一标识，如 <code>CP-20260721-0001</code>。</td>
+<td>是否支持模糊搜索：是</td>
+</tr>
+<tr>
+<td>是否发放</td>
+<td>标识该券实例是否已发放给用户。枚举：是 / 否。</td>
+<td>「是」绿色 tag，「否」灰色 tag</td>
+</tr>
+<tr>
+<td>发放时间</td>
+<td>券实例实际发放给用户的时间。未发放时显示「-」。</td>
+<td>格式 <code>yyyy-MM-dd HH:mm</code></td>
+</tr>
+<tr>
+<td>接收用户</td>
+<td>接收该券的用户手机号，<b>不脱敏</b>，直接展示完整手机号。</td>
+<td>未发放时显示「-」</td>
+</tr>
+<tr>
+<td>是否核销</td>
+<td>标识该券是否已被核销使用。枚举：是 / 否。</td>
+<td>「是」绿色 tag，「否」灰色 tag；未发放时一般为「否」</td>
+</tr>
+<tr>
+<td>核销订单号</td>
+<td>该券被核销时关联的订单号。未核销时显示「-」。</td>
+<td>是否支持模糊搜索：是</td>
+</tr>
+</tbody>
+</table>
+
+<div class="note"><b>排序说明</b>：默认按「发放时间」倒序排列；<b>有发放时间的排在前面，没有发放时间的排在后面</b>。支持点击表头升/降序切换。</div>
+<div class="note"><b>分页说明</b>：默认每页 20 条，支持切换 20 / 50 / 100 条。页码显示当前页/总页数，支持上一页/下一页/跳页。</div>
+<div class="note"><b>合计说明</b>：本列表不设合计行。</div>
+<div class="warn"><b>唯一性说明</b>：每行数据对应一个券实例，按券实例 ID 去重。</div>
+</div>
+
+<!-- ==================== 2.4 功能按钮总表（本页无按钮） ==================== -->
+<h2>2.4 功能按钮总表</h2>
+<div class="sec">
+<p>本页为只读统计列表，<b>无操作按钮</b>。筛选栏的「搜索」「重置」属于查询控件，详见 2.6 查询条件。</p>
+</div>
+
+<!-- ==================== 2.5 编辑/新增表单（本页无表单） ==================== -->
+<h2>2.5 编辑/新增表单</h2>
+<div class="sec">
+<p>本页为只读统计列表，<b>无编辑/新增表单</b>。</p>
+</div>
+
+<!-- ==================== 2.6 查询条件 ==================== -->
+<h2>2.6 查询条件</h2>
+<div class="sec">
+<table>
+<thead><tr><th style="width:140px">查询条件</th><th>查询说明</th></tr></thead>
+<tbody>
+<tr>
+<td>券ID</td>
+<td>文本输入框，模糊匹配券实例 ID。占位文案：「券ID」。</td>
+</tr>
+<tr>
+<td>是否发放</td>
+<td>下拉单选，选项：全部 / 是 / 否。默认「全部」。</td>
+</tr>
+<tr>
+<td>发放时间</td>
+<td>日期范围选择器，分开始日期、结束日期两个控件，用「~」连接。结束日期按当日 23:59 计算。</td>
+</tr>
+<tr>
+<td>接收用户</td>
+<td>文本输入框，模糊匹配用户完整手机号（后台不脱敏）。占位文案：「接收用户(手机号)」。</td>
+</tr>
+<tr>
+<td>是否核销</td>
+<td>下拉单选，选项：全部 / 是 / 否。默认「全部」。</td>
+</tr>
+<tr>
+<td>核销订单号</td>
+<td>文本输入框，模糊匹配订单号。占位文案：「核销订单号」。</td>
+</tr>
+</tbody>
+</table>
+
+<div class="note"><b>查询行为</b>：点击「搜索」时统一提交所有条件；点击「重置」时清空所有条件并恢复初始列表（不提交）。</div>
+</div>
+
+<!-- ==================== 2.7 数据来源 ==================== -->
+<h2>2.7 数据来源</h2>
+<div class="sec">
+<table>
+<thead><tr><th style="width:110px">字段名称</th><th>取值逻辑说明</th></tr></thead>
+<tbody>
+<tr><td>券ID</td><td>取《user_coupon》表 <code>id</code> 字段，按系统当前生成的格式展示。</td></tr>
+<tr><td>是否发放</td><td>取《user_coupon》表 <code>user_id IS NOT NULL</code> 判定为「是」，<code>user_id IS NULL</code> 为「否」。</td></tr>
+<tr><td>发放时间</td><td>取<b>绑定用户的时间</b>（即 <code>user_coupon</code> 表中 <code>user_id</code> 绑定时的 <code>bind_time</code> 字段）。</td></tr>
+<tr><td>接收用户</td><td>取《user_coupon》表 <code>user_id</code>，关联《user》表 <code>phone</code> 字段，<b>不脱敏</b>，直接展示完整手机号。</td></tr>
+<tr><td>是否核销</td><td>取《user_coupon》表 <code>status</code> 字段，<code>status = 'used'</code> 为是，否则为否。</td></tr>
+<tr><td>核销订单号</td><td>取核销时关联的订单号信息（即该券被核销使用时对应的订单编号，取自订单表 <code>order_no</code> 字段）。</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ==================== 2.8 状态流转 ==================== -->
+<h2>2.8 状态流转</h2>
+<div class="sec">
+<p>本页为只读列表，不涉及券实例状态变更操作，因此不单独绘制状态流转图。券实例本身的状态流转（未使用 → 已使用 / 已过期等）见优惠券核心模块。</p>
+</div>
+
+<!-- ==================== 2.9 权限 ==================== -->
+<h2>2.9 权限</h2>
+<div class="sec">
+<table>
+<tr><th style="width:140px">角色</th><th>权限</th></tr>
+<tr><td>平台运营</td><td>可查看本页全部数据</td></tr>
+<tr><td>平台管理员</td><td>可查看本页全部数据</td></tr>
+</table>
+<div class="ok">本期无商家端后台功能，商家角色不可见本页。</div>
+</div>
+
+<!-- ==================== 2.10 前置条件 ==================== -->
+<h2>2.10 前置条件</h2>
+<div class="sec">
+<ol>
+<li>用户已登录平台端后台，且具备「数据看板」菜单访问权限。</li>
+<li>系统中已存在券实例记录（《user_coupon》表或券实例表）。</li>
+<li>券实例已与券模板、用户、订单等关联数据建立正确关系。</li>
+</ol>
+</div>
+
+<!-- ==================== 2.11 接口草稿（供技术参考） ==================== -->
+<h2>2.11 接口草稿（供技术参考）</h2>
+<div class="sec">
+<p>以下接口名为草稿，最终命名以技术方案为准。</p>
+<table>
+<thead><tr><th style="width:140px">接口</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><code>GET /admin/coupon/board/coupon-detail</code></td><td>券明细记录列表；入参：page、pageSize、sortField、sortOrder、couponId、issued、startTime、endTime、userPhone、redeemed、orderNo。排序规则：有发放时间倒序在前，无发放时间排后。</td></tr>
+<tr><td colspan="2"><b>本期不支持导出功能。</b></td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ==================== 2.12 待确认项汇总 ==================== -->
+<h2>2.12 待确认项汇总</h2>
+<div class="sec">
+<div class="ok"><b>已确认项（2026-08-01）</b>：<br>
+① 数据范围<b>含</b>未发放的券实例（即「是否发放=否」也展示）<br>
+② 券ID <b>就按当前系统生成格式</b>展示，不做额外编码<br>
+③ 默认排序：有发放时间的排前面，没有发放时间的排后面（均按倒序）<br>
+④ 已软删的券实例<b>不排除</b>，仍展示<br>
+⑤ 后台手机号<b>固定不脱敏</b>，直接展示完整号码<br>
+⑥ 核销订单号：取核销时关联的订单号信息<br>
+⑦ 发放时间字段：取<b>绑定用户的时间</b><br>
+⑧ 本期<b>暂不支持</b>导出功能</div>
+<p>本页无待确认项。</p>
+</div>
+
+</div>
+</body>
+</html>
