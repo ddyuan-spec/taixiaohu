@@ -392,6 +392,7 @@
     <div class="tab-item active" onclick="switchBoardTab(this,'coupon')">按券维度</div>
     <div class="tab-item" onclick="switchBoardTab(this,'issue')">按发放活动</div>
     <div class="tab-item" onclick="switchBoardTab(this,'couponDetail')">券明细记录</div>
+    <div class="tab-item" onclick="switchBoardTab(this,'paid')">已支付列表</div>
   </div>
 
   <!-- Board Summary (按券/发放活动) -->
@@ -400,7 +401,7 @@
       <table class="tbl">
         <thead>
           <tr>
-            <th>券名称</th><th>类型</th><th>发放量</th><th>已领</th><th>已核销</th><th>核销率</th><th>核销金额</th><th>已支付（笔）</th><th>退单（量/金额）</th>
+            <th>券名称</th><th>类型</th><th>发放量</th><th>已领</th><th>已核销</th><th>核销率</th><th>核销金额</th>
           </tr>
         </thead>
         <tbody id="boardTbody"></tbody>
@@ -411,6 +412,20 @@
     <div class="chart-area">
       <div class="chart-title">近 7 日核销趋势</div>
       <svg id="trendChart" width="100%" height="220" viewBox="0 0 800 220"></svg>
+    </div>
+  </div>
+
+  <!-- 已支付列表（从汇总表抽离的已支付笔数 + 退单统计独立列表） -->
+  <div id="boardPaid" class="hidden">
+    <div class="tbl-wrap" style="margin-bottom:16px">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>券名称</th><th>类型</th><th>已支付（笔）</th><th>退单量（笔）</th><th>退单金额（元）</th><th>退单率</th>
+          </tr>
+        </thead>
+        <tbody id="paidTbody"></tbody>
+      </table>
     </div>
   </div>
 
@@ -1235,9 +1250,15 @@ function switchBoardTab(el,dim){
     $('boardSummary').classList.add('hidden');
     $('boardDetail').classList.remove('hidden');
     renderCouponDetail();
+  } else if(dim==='paid'){
+    $('boardSummary').classList.add('hidden');
+    $('boardDetail').classList.add('hidden');
+    $('boardPaid').classList.remove('hidden');
+    renderPaid();
   } else {
     $('boardSummary').classList.remove('hidden');
     $('boardDetail').classList.add('hidden');
+    $('boardPaid').classList.add('hidden');
     boardRender(dim);
     if(dim==='coupon') drawTrend();
   }
@@ -1250,13 +1271,25 @@ function boardRender(dim){
       const total=c.claimed+c.left;
       const rate=total?((c.claimed/total)*100).toFixed(1):0;
       const used=Math.round(c.claimed*0.65);
-      const paid=Math.round(c.claimed*0.85);
-      const refundQty=Math.round(c.claimed*0.08);
-      const refundAmt=refundQty*50;
-      rows+=`<tr><td>${c.name}</td><td>${c.type}</td><td>${total}</td><td>${c.claimed}</td><td>${used}</td><td>${rate}%</td><td>¥${(c.claimed*50).toLocaleString()}</td><td>${paid}</td><td><div>退单量：${refundQty} 笔</div><div>退单金额：¥${refundAmt.toLocaleString()}</div></td></tr>`;
+      rows+=`<tr><td>${c.name}</td><td>${c.type}</td><td>${total}</td><td>${c.claimed}</td><td>${used}</td><td>${rate}%</td><td>¥${(c.claimed*50).toLocaleString()}</td></tr>`;
     });
   }
-  $('boardTbody').innerHTML=rows||'<tr><td colspan="9" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
+  $('boardTbody').innerHTML=rows||'<tr><td colspan="7" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
+}
+const paidStats=[
+  {name:'新人专享满100减20',type:'满减券',paid:170,refundQty:16,refundAmt:320},
+  {name:'直播限时无门槛5元',type:'无门槛代金券',paid:340,refundQty:27,refundAmt:135},
+  {name:'会员日满200减30',type:'满减券',paid:95,refundQty:8,refundAmt:240},
+  {name:'签到奖励满50减8',type:'满减券',paid:210,refundQty:18,refundAmt:144},
+  {name:'老客回馈无门槛10元',type:'无门槛代金券',paid:120,refundQty:9,refundAmt:90}
+];
+function renderPaid(){
+  let rows='';
+  paidStats.forEach(p=>{
+    const rate=p.paid?((p.refundQty/p.paid)*100).toFixed(1):0;
+    rows+=`<tr><td>${p.name}</td><td>${p.type}</td><td>${p.paid}</td><td>${p.refundQty}</td><td>¥${p.refundAmt.toLocaleString()}</td><td>${rate}%</td></tr>`;
+  });
+  $('paidTbody').innerHTML=rows||'<tr><td colspan="6" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
 }
 const couponDetails=[
   {id:'CP-20260721-0001',issued:'是',issueTime:'2026-07-21 20:35',user:'138****0021',redeemed:'是',order:'ORD20260722A31'},
