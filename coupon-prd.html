@@ -1664,7 +1664,16 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <div class="warn">⚠️ <b>本节待确认项</b>：① 枚举值编码命名（@技术Owner）；② 「福利直播」初始数据的创建方式（初始化脚本 / 运营手工，@技术Owner）。</div>
 </div>
 
-<h3>10.2 关联直播原型</h3>
+<h3>10.2 会员中心-批量送券</h3>
+<div class="sec">
+<p><b>功能说明</b>：平台端后台为运营提供「按用户标签圈选 → 批量发放优惠券」的能力。运营可在会员中心选择目标用户标签（如「福利直播」标签），配置要发放的券模板与数量，系统批量写入用户券账户。是「时长发券」之外另一条人工触达用户的送券通道。</p>
+<p><b>与优惠券体系的关系</b>：批量送券直接调用券模板的「发券」能力，写入用户券账户表；券的状态流转（未使用/已使用/已过期）与核销逻辑完全复用优惠券体系既有能力。</p>
+<p><b>原型短链</b>：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-member.html" target="_blank">https://ddyuan-spec.github.io/taixiaohu/coupon-member.html</a></p>
+<p><b>原型截图</b>：</p>
+<img src="https://ddyuan-spec.github.io/taixiaohu/coupon-prd-assets/assoc-member-batch.png" alt="会员中心-批量送券原型" />
+</div>
+
+<h3>10.3 关联直播原型</h3>
 <div class="sec">
 <p><b>功能说明</b>：平台端后台将「直播间」与「优惠券模板」进行关联绑定，实现直播场景下的券发放。运营在直播商品池管理或直播间管理中，选择要关联的券模板，配置发放规则（如观看满 X 分钟自动发放）。</p>
 <p><b>与优惠券体系的关系</b>：关联直播是优惠券的「发放场景」之一，直播间绑定的是「券模板」而非具体券实例；用户满足发放条件后，系统调用券模板生成券实例并写入用户账户。</p>
@@ -1673,7 +1682,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <img src="https://ddyuan-spec.github.io/taixiaohu/coupon-prd-assets/assoc-live-relate.png" alt="关联直播原型" />
 </div>
 
-<h3>10.3 订单关联优惠券</h3>
+<h3>10.4 订单关联优惠券</h3>
 <div class="sec">
 <p><b>功能说明</b>：平台端后台展示「订单与优惠券的关联关系」数据，支持运营查看某张券被哪些订单使用、某笔订单使用了哪些券、券的核销状态与抵扣金额。为售后退券、对账、数据分析提供查询入口。</p>
 <p><b>与优惠券体系的关系</b>：订单关联优惠券是优惠券「核销」环节的数据看板，展示券实例与订单的映射关系；售后关单时的「退券」操作也依赖此关联数据定位需要返还的券。</p>
@@ -1682,7 +1691,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <img src="https://ddyuan-spec.github.io/taixiaohu/coupon-prd-assets/assoc-order-relate.png" alt="订单关联优惠券原型" />
 </div>
 
-<h3>10.4 会员直接发券</h3>
+<h3>10.5 会员直接发券</h3>
 <div class="sec">
 <p><b>功能说明</b>：平台端后台为运营提供「针对单个会员直接发券」的能力。运营在用户详情页或会员列表中，选择目标用户和券模板，一键发放。适用于客服补偿、运营手动触达等单点场景。</p>
 <p><b>与优惠券体系的关系</b>：直接发券是批量送券的「单条」版本，同样调用券模板发券接口写入用户券账户；单条发放不做标签筛选，直接指定用户 ID。</p>
@@ -1691,7 +1700,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <img src="https://ddyuan-spec.github.io/taixiaohu/coupon-prd-assets/assoc-direct-send.png" alt="会员直接发券原型" />
 </div>
 
-<h3>10.5 直播观看记录</h3>
+<h3>10.6 直播观看记录</h3>
 <div class="sec">
 <p><b>功能说明</b>：平台端后台展示用户在直播间的观看时长记录，支持按直播间、用户、时间段筛选。为「时长发券」提供数据依据——运营可查看哪些用户满足「观看满 X 分钟」条件，校验发券名单的准确性。</p>
 <p><b>与优惠券体系的关系</b>：直播观看记录是「时长发券」的前置数据源，发券规则中的「累计观看时长 ≥ X」条件依赖此记录计算；同时，已发券用户的观看记录可辅助验证发券覆盖范围。</p>
