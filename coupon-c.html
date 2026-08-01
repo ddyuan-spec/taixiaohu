@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>泰小虎优惠券 · C端页面平铺 v1.9</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f0f1f5;color:#333}
+
+/* Header */
+.hd{
+  background:#fff;border-bottom:1px solid #e2e4e8;
+  padding:16px 40px;display:flex;align-items:center;gap:14px;
+  position:sticky;top:0;z-index:50;
+}
+.hd h1{font-size:18px;font-weight:700;color:#1a1a2e}
+.hd .sub{font-size:13px;color:#999}
+.tot{font-size:13px;color:#888;margin-left:auto}
+
+/* Section */
+.sec{padding:26px 40px 8px}
+.sec-hd{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.sec-hd .dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.dot-c{background:linear-gradient(135deg,#534AB7,#6C5CE7)}
+.sec-hd h2{font-size:18px;font-weight:700;color:#1a1a2e}
+.sec-hd .cnt{font-size:12.5px;color:#aaa;background:#f0f0f0;padding:3px 11px;border-radius:10px;font-weight:500}
+
+/* 横向分列 */
+.cols{display:flex;gap:36px;overflow-x:auto;padding-bottom:20px}
+.col{flex:0 0 auto;display:flex;flex-direction:column}
+.col.col-c{width:280px}
+.col-hd{
+  font-size:15px;font-weight:700;color:#333;
+  padding:0 0 4px;margin-bottom:14px;
+  border-bottom:2px solid #d9dbe0;
+  display:flex;align-items:center;gap:8px;
+}
+.col-hd .tag{font-size:11px;padding:1px 7px;border-radius:4px;font-weight:600;flex-shrink:0}
+.tag-c{background:#EDE9FB;color:#534AB7}
+
+/* 列内：上下堆叠的页面 */
+.flow{display:flex;flex-direction:column}
+.node{margin-bottom:20px}
+.node .name{font-size:14px;font-weight:600;color:#333;padding:0 0 8px;display:flex;align-items:center;gap:6px}
+.node .name .drawn-badge{font-size:11px;font-weight:600;color:#07c160;background:#e8f9ef;padding:1px 7px;border-radius:4px;flex-shrink:0;white-space:nowrap}
+.node img{width:100%;height:auto;display:block;cursor:pointer;background:#fff}
+
+/* Fullscreen */
+.ifull{
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,.72);z-index:300;
+  display:none;align-items:center;justify-content:center;
+  cursor:pointer;backdrop-filter:blur(4px)
+}
+.ifull.show{display:flex}
+.ifull img{max-width:96vw;max-height:96vh;border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+
+::-webkit-scrollbar{height:7px;width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <h1>🎫 泰小虎优惠券 · C端页面平铺 v1.9</h1>
+  <span class="sub">按页面跳转逻辑 · 同一组列表/详情上下排列，不同组横向分列 · 已移除获券弹窗 · C5 商品详情页点击「优惠券」入口拉起底部「优惠详情」弹窗 · 单SKU订单券在订单详情页作用于SKU行 · 多SKU订单提供独立的「优惠券适用商品」页展示券与SKU的对应关系 · C2 我的优惠券新增「跨端口置灰券」（当前端口不在 usable_ports 内时置灰、标「生效中」、点击提示仅支持端口）</span>
+  <span class="tot">共 <strong id="tc">0</strong> 张</span>
+</div>
+
+<!-- C端 -->
+<div class="sec" id="secC">
+  <div class="sec-hd"><div class="dot dot-c"></div><h2>C端（用户侧）</h2><span class="cnt" id="cntC">0</span></div>
+  <div class="cols" id="colsC"></div>
+</div>
+
+<div class="ifull" id="ifull" onclick="this.classList.remove('show')"></div>
+
+<script>
+const SECTIONS = [
+  {
+    side:'C', key:'C', name:'C端（用户侧）',
+    cols:[
+      {g:'我的 / 资产线', items:[
+        {title:'U 我的（资产入口）', img:'coupon-prd-assets/app-my-profile.png'},
+        {title:'C2 我的优惠券（空态）', img:'coupon-prd-assets/app-my-coupons-empty.png'},
+        {title:'C2 我的优惠券（待使用 / 已使用 / 已过期 三态）', img:'coupon-prd-assets/app-c2-coupons-drawn.png', drawn:true},
+        {title:'C2 我的优惠券（跨端口置灰券 + 点击提示：此券仅支持在泰小虎App使用）', img:'coupon-prd-assets/app-c2-port-restrict-drawn.png', drawn:true},
+        {title:'我的订单列表', img:'coupon-prd-assets/app-my-orders-list.png'},
+      ]},
+      {g:'商城购买线', items:[
+        {title:'C5 商品详情（优惠券入口）', img:'coupon-prd-assets/app-c5-product-entry.png', drawn:true},
+        {title:'C5 优惠详情底部弹窗（券列表 + 每张券规则）', img:'coupon-prd-assets/app-c5-coupon-modal.png', drawn:true},
+        {title:'C5 券规则页（后端富文本配置渲染）', img:'coupon-prd-assets/app-coupon-rules-drawn.png', drawn:true},
+        {title:'C6 订单详情（单SKU · 券作用于SKU行）', img:'coupon-prd-assets/app-c6-order-single-sku-drawn.png', drawn:true},
+        {title:'C6 优惠券适用商品（多SKU券分摊）', img:'coupon-prd-assets/app-c6-coupon-sku-scope-drawn.png', drawn:true},
+        {title:'C6 选择优惠券弹窗（含可用券 + 券规则入口）', img:'coupon-prd-assets/app-select-coupon-with-coupon-drawn.png', drawn:true},
+        {title:'C6 券规则页（从选择优惠券弹窗进入）', img:'coupon-prd-assets/app-coupon-rules-drawn.png', drawn:true},
+        {title:'收银台（支付方式）', img:'coupon-prd-assets/app-payment.png'},
+        {title:'支付成功', img:'coupon-prd-assets/app-payment-success.png'},
+      ]},
+    ]
+  },
+];
+
+const $=id=>document.getElementById(id);
+const ifull=$('ifull');
+let total=0;
+
+function nodeHTML(p, i){
+  const it = p.items[i];
+  const drawnBadge = it.drawn ? '<span class="drawn-badge">自画</span>' : '';
+  return `<div class="node">
+    <div class="name">${it.title}${drawnBadge}</div>
+    <img src="${it.img}" alt="${it.title}" loading="lazy" onclick="full('${it.img}')">
+  </div>`;
+}
+
+function colHTML(c, side){
+  const tagCls = side==='C'?'tag-c':'tag-b';
+  const label = side==='C'?'C':'B';
+  const flow = c.items.map((_,i)=>nodeHTML(c,i)).join('');
+  return `<div class="col col-c">
+    <div class="col-hd"><span class="tag ${tagCls}">${label}</span>${c.g}</div>
+    <div class="flow">${flow}</div>
+  </div>`;
+}
+
+function realCount(cols){return cols.reduce((s,c)=>s+c.items.length,0);}
+
+function renderSection(sec){
+  const html = sec.cols.map(c=>colHTML(c, sec.side)).join('');
+  total += realCount(sec.cols);
+  return html;
+}
+
+$('colsC').innerHTML = renderSection(SECTIONS[0]);
+$('cntC').textContent = realCount(SECTIONS[0].cols);
+$('tc').textContent = total;
+
+function full(src){ifull.innerHTML=`<img src="${src}" onclick="event.stopPropagation()">`;ifull.classList.add('show')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')ifull.classList.remove('show')});
+</script>
+
+</body>
+</html>
