@@ -404,7 +404,6 @@
     <div class="tab-item active" onclick="switchBoardTab(this,'coupon')">按券维度</div>
     <div class="tab-item" onclick="switchBoardTab(this,'issue')">按发放活动</div>
     <div class="tab-item" onclick="switchBoardTab(this,'couponDetail')">券明细记录</div>
-    <div class="tab-item" onclick="switchBoardTab(this,'paid')">已支付列表</div>
   </div>
 
   <!-- Board Summary (按券维度) -->
@@ -413,7 +412,7 @@
       <table class="tbl">
         <thead>
           <tr>
-            <th>券名称</th><th>类型</th><th>发放量</th><th>已领</th><th>已核销</th><th>核销率</th><th>核销金额</th>
+            <th>券名称</th><th>类型</th><th>发放量</th><th>已领</th><th>已核销</th><th>核销率</th><th>核销金额</th><th>退单量</th><th>退单金额</th>
           </tr>
         </thead>
         <tbody id="boardTbody"></tbody>
@@ -429,6 +428,12 @@
       <button class="pager-btn" id="couponPrev" onclick="changeBoardPage('coupon',-1)">上一页</button>
       <span class="pager-cur">第 <b id="couponPage">1</b> / <b id="couponPages">1</b> 页</span>
       <button class="pager-btn" id="couponNext" onclick="changeBoardPage('coupon',1)">下一页</button>
+    </div>
+
+    <!-- Trend Chart (仅按券维度展示) -->
+    <div class="chart-area" id="trendArea">
+      <div class="chart-title">近 7 日核销趋势</div>
+      <svg id="trendChart" width="100%" height="220" viewBox="0 0 800 220"></svg>
     </div>
   </div>
 
@@ -454,38 +459,6 @@
       <button class="pager-btn" id="issuePrev" onclick="changeBoardPage('issue',-1)">上一页</button>
       <span class="pager-cur">第 <b id="issuePage">1</b> / <b id="issuePages">1</b> 页</span>
       <button class="pager-btn" id="issueNext" onclick="changeBoardPage('issue',1)">下一页</button>
-    </div>
-  </div>
-
-    <!-- Trend Chart (仅按券维度展示) -->
-    <div class="chart-area">
-      <div class="chart-title">近 7 日核销趋势</div>
-      <svg id="trendChart" width="100%" height="220" viewBox="0 0 800 220"></svg>
-    </div>
-  </div>
-
-  <!-- 已支付列表（从汇总表抽离的已支付笔数 + 退单统计独立列表） -->
-  <div id="boardPaid" class="hidden">
-    <div class="tbl-wrap" style="margin-bottom:16px">
-      <table class="tbl">
-        <thead>
-          <tr>
-            <th>券名称</th><th>类型</th><th>已支付（笔）</th><th>退单量（笔）</th><th>退单金额（元）</th><th>退单率</th>
-          </tr>
-        </thead>
-        <tbody id="paidTbody"></tbody>
-      </table>
-    </div>
-    <div class="pager">
-      <span class="pager-info">共 <b id="paidTotal">0</b> 条</span>
-      <select class="pager-size" onchange="changeBoardPageSize('paid',this.value)">
-        <option value="10">10 条/页</option>
-        <option value="20" selected>20 条/页</option>
-        <option value="50">50 条/页</option>
-      </select>
-      <button class="pager-btn" id="paidPrev" onclick="changeBoardPage('paid',-1)">上一页</button>
-      <span class="pager-cur">第 <b id="paidPage">1</b> / <b id="paidPages">1</b> 页</span>
-      <button class="pager-btn" id="paidNext" onclick="changeBoardPage('paid',1)">下一页</button>
     </div>
   </div>
 
@@ -930,11 +903,11 @@ function toggleGroup(el){
 
 /* ==================== DATA ==================== */
 let coupons=[
-  {id:1,name:'福利直播满100减10',shop:'红门旗舰店',type:'满减券',rule:'满100减10',status:'启用',usageStatus:'进行中',ladder:false,share:'不共用',valid:'领取后 24 天内有效',claimed:0,left:1,date:'2026-07-01 ~ 2026-12-31',createDate:'2026-07-01'},
-  {id:2,name:'老券满200减30',shop:'健康生活馆',type:'满减券',rule:'满200减30',status:'下架',usageStatus:'已结束',ladder:false,share:'不共用',valid:'领取后 24 天内有效',claimed:0,left:1,date:'2026-07-05 ~ 2026-12-31',createDate:'2026-07-05'},
-  {id:3,name:'新人满99减20',shop:'红门旗舰店',type:'满减券',rule:'满99减20',status:'启用',usageStatus:'进行中',ladder:false,share:'臻享积分',valid:'固定 2026-07-15 ~ 2026-09-15',claimed:156,left:344,date:'2026-07-15 ~ 2026-09-15',createDate:'2026-07-15'},
-  {id:4,name:'阶梯每满300减100',shop:'泰山滋补专营店',type:'满减券',rule:'每满300减100（阶梯）',status:'启用',usageStatus:'未开始',ladder:true,share:'臻享积分、多盒多折',valid:'2026-08-15 ~ 2026-10-15',claimed:89,left:211,date:'2026-08-15 ~ 2026-10-15',createDate:'2026-07-10'},
-  {id:5,name:'老券满150减20',shop:'健康生活馆',type:'满减券',rule:'满150减20',status:'下架',usageStatus:'进行中',ladder:false,share:'不共用',valid:'领取后 24 天内有效',claimed:30,left:70,date:'2026-07-05 ~ 2026-12-31',createDate:'2026-07-05'}
+  {id:1,name:'福利直播满100减10',shop:'红门旗舰店',type:'满减券',rule:'满100减10',status:'启用',usageStatus:'进行中',ladder:false,share:'不共用',valid:'领取后 24 天内有效',claimed:0,left:1,refundQty:0,refundAmt:0,date:'2026-07-01 ~ 2026-12-31',createDate:'2026-07-01'},
+  {id:2,name:'老券满200减30',shop:'健康生活馆',type:'满减券',rule:'满200减30',status:'下架',usageStatus:'已结束',ladder:false,share:'不共用',valid:'领取后 24 天内有效',claimed:0,left:1,refundQty:0,refundAmt:0,date:'2026-07-05 ~ 2026-12-31',createDate:'2026-07-05'},
+  {id:3,name:'新人满99减20',shop:'红门旗舰店',type:'满减券',rule:'满99减20',status:'启用',usageStatus:'进行中',ladder:false,share:'臻享积分',valid:'固定 2026-07-15 ~ 2026-09-15',claimed:156,left:344,refundQty:12,refundAmt:240,date:'2026-07-15 ~ 2026-09-15',createDate:'2026-07-15'},
+  {id:4,name:'阶梯每满300减100',shop:'泰山滋补专营店',type:'满减券',rule:'每满300减100（阶梯）',status:'启用',usageStatus:'未开始',ladder:true,share:'臻享积分、多盒多折',valid:'2026-08-15 ~ 2026-10-15',claimed:89,left:211,refundQty:7,refundAmt:700,date:'2026-08-15 ~ 2026-10-15',createDate:'2026-07-10'},
+  {id:5,name:'老券满150减20',shop:'健康生活馆',type:'满减券',rule:'满150减20',status:'下架',usageStatus:'进行中',ladder:false,share:'不共用',valid:'领取后 24 天内有效',claimed:30,left:70,refundQty:3,refundAmt:60,date:'2026-07-05 ~ 2026-12-31',createDate:'2026-07-05'}
 ];
 let currentCouponId=null;
 let offlineTargetId=null;
@@ -1315,7 +1288,7 @@ function fillSend(id){
 
 /* ==================== P4: 数据看板 ==================== */
 /* 看板分页状态：默认每页条数与该维度 PRD 分页规格一致 */
-const boardPage={coupon:{p:1,size:20}, issue:{p:1,size:20}, paid:{p:1,size:20}, detail:{p:1,size:20}};
+const boardPage={coupon:{p:1,size:20}, issue:{p:1,size:20}, detail:{p:1,size:20}};
 function _syncPager(prefix, total, st){
   const pages=Math.max(1, Math.ceil(total/st.size));
   if(st.p>pages) st.p=pages;
@@ -1337,7 +1310,6 @@ function changeBoardPage(dim, delta){
 function _renderBoardDim(dim){
   if(dim==='coupon') renderBoardCoupon();
   else if(dim==='issue') renderIssue();
-  else if(dim==='paid') renderPaid();
   else if(dim==='detail') renderCouponDetail();
 }
 function switchBoardTab(el,dim){
@@ -1346,28 +1318,23 @@ function switchBoardTab(el,dim){
   if(dim==='couponDetail'){
     $('boardCouponTable').classList.add('hidden');
     $('boardIssueTable').classList.add('hidden');
-    $('boardPaid').classList.add('hidden');
+    $('trendArea').classList.add('hidden');
     $('boardDetail').classList.remove('hidden');
     renderCouponDetail();
-  } else if(dim==='paid'){
-    $('boardCouponTable').classList.add('hidden');
-    $('boardIssueTable').classList.add('hidden');
-    $('boardDetail').classList.add('hidden');
-    $('boardPaid').classList.remove('hidden');
-    renderPaid();
   } else {
     $('boardDetail').classList.add('hidden');
-    $('boardPaid').classList.add('hidden');
     if(dim==='issue'){
       $('boardCouponTable').classList.add('hidden');
+      $('trendArea').classList.add('hidden');
       $('boardIssueTable').classList.remove('hidden');
       renderIssue();
     } else {
       $('boardCouponTable').classList.remove('hidden');
+      $('trendArea').classList.remove('hidden');
       $('boardIssueTable').classList.add('hidden');
       renderBoardCoupon();
+      drawTrend();
     }
-    if(dim==='coupon') drawTrend();
   }
 }
 function renderBoardCoupon(){
@@ -1379,9 +1346,9 @@ function renderBoardCoupon(){
     const total=c.claimed+c.left;
     const rate=total?((c.claimed/total)*100).toFixed(1):0;
     const used=Math.round(c.claimed*0.65);
-    rows+=`<tr><td>${c.name}</td><td>${c.type}</td><td>${total}</td><td>${c.claimed}</td><td>${used}</td><td>${rate}%</td><td>¥${(c.claimed*50).toLocaleString()}</td></tr>`;
+    rows+=`<tr><td>${c.name}</td><td>${c.type}</td><td>${total}</td><td>${c.claimed}</td><td>${used}</td><td>${rate}%</td><td>¥${(c.claimed*50).toLocaleString()}</td><td>${c.refundQty}</td><td>¥${c.refundAmt.toLocaleString()}</td></tr>`;
   });
-  $('boardTbody').innerHTML=rows||'<tr><td colspan="7" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
+  $('boardTbody').innerHTML=rows||'<tr><td colspan="9" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
   _syncPager('coupon', coupons.length, st);
 }
 let issueStats=[
@@ -1403,13 +1370,6 @@ function renderIssue(){
   $('issueTbody').innerHTML=rows||'<tr><td colspan="9" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
   _syncPager('issue', issueStats.length, st);
 }
-let paidStats=[
-  {name:'新人专享满100减20',type:'满减券',paid:170,refundQty:16,refundAmt:320},
-  {name:'直播限时无门槛5元',type:'无门槛代金券',paid:340,refundQty:27,refundAmt:135},
-  {name:'会员日满200减30',type:'满减券',paid:95,refundQty:8,refundAmt:240},
-  {name:'签到奖励满50减8',type:'满减券',paid:210,refundQty:18,refundAmt:144},
-  {name:'老客回馈无门槛10元',type:'无门槛代金券',paid:120,refundQty:9,refundAmt:90}
-];
 /* ===== 扩展看板 mock 数据以演示分页（默认每页20，扩展后产生多页） ===== */
 function _expandBoard(base, n, fn){
   const arr=[]; const baseLen=base.length;
@@ -1424,13 +1384,6 @@ issueStats=_expandBoard(issueStats, 32, (b,i)=>({
   rate: ((b.used+(i*19)%560)/(b.issued+(i*37)%880+i)*100).toFixed(1)+'%',
   amount: '¥'+((b.issued+(i*37)%880+i)*50).toLocaleString(),
   startTime: `2026-0${(i%9)+1}-${String((i*7)%27+1).padStart(2,'0')} 10:00`
-}));
-paidStats=_expandBoard(paidStats, 32, (b,i)=>({
-  ...b,
-  name: i<paidStats.length?b.name:`${b.name}·${Math.floor(i/5)+1}`,
-  paid: b.paid+(i*13)%200,
-  refundQty: b.refundQty+(i*3)%30,
-  refundAmt: b.refundAmt+(i*7)%500
 }));
 let couponDetails=[
   {id:'CP-20260721-0001',issued:'是',issueTime:'2026-07-21 20:35',user:'138****0021',redeemed:'是',order:'ORD20260722A31'},
@@ -1453,20 +1406,10 @@ coupons=_expandBoard(coupons, 32, (b,i)=>({
   id: 100+i,
   name: i<coupons.length?b.name:`${b.name}·变体${i}`,
   claimed: (b.claimed||0)+(i*23)%400,
-  left: (b.left||1)+(i*11)%300
+  left: (b.left||1)+(i*11)%300,
+  refundQty: (b.refundQty||0)+(i*5)%40,
+  refundAmt: (b.refundAmt||0)+(i*13)%500
 }));
-function renderPaid(){
-  const st=boardPage.paid;
-  const start=(st.p-1)*st.size;
-  const pageRows=paidStats.slice(start, start+st.size);
-  let rows='';
-  pageRows.forEach(p=>{
-    const rate=p.paid?((p.refundQty/p.paid)*100).toFixed(1):0;
-    rows+=`<tr><td>${p.name}</td><td>${p.type}</td><td>${p.paid}</td><td>${p.refundQty}</td><td>¥${p.refundAmt.toLocaleString()}</td><td>${rate}%</td></tr>`;
-  });
-  $('paidTbody').innerHTML=rows||'<tr><td colspan="6" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
-  _syncPager('paid', paidStats.length, st);
-}
 function renderCouponDetail(){
   const id=$('dtId').value.trim().toLowerCase();
   const iss=$('dtIssued').value;
