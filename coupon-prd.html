@@ -932,6 +932,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 </tbody>
 </table>
 <p>列表附加规则：排序默认按「总发行量」降序；分页支持 10/20/50，默认 20；合计行（最末行）：总发行量/已领取/核销量/核销金额四列求和，领取率/核销率显示全量均值。空态：无数据时显示"暂无统计数据"。</p>
+<p class="note">📌 <b>券名称唯一性约束（统计维度准确性）</b>：本维度列表的统计分组键始终为 <b>coupon_template_id（唯一）</b>，「券名称」仅作展示字段，<b>不直接用于聚合分组</b>。若后续业务需用「券名称」作为统计维度（如按券名汇总、导出 Excel 以券名为分组键），则须确保《券模板表》coupon_name <b>全局唯一</b>——平台端<b>新建券模板时应校验券名称不可与系统内已有券重名</b>（沿用/编辑态不强制，但编辑时也禁止改成已存在的名称），否则同名不同券模板的发放/核销数据将被错误合并。聚合查询统一用 coupon_template_id 分组后取 MIN(coupon_name) 展示，避免名称歧义。</p>
 
 <h5>4.1.6.4 按发放活动维度列表字段表（「按发放活动」Tab 主表格，每个活动一行聚合统计）</h5>
 <table>
@@ -964,6 +965,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>发放量 / 领取率 / 核销量 / 核销率 / 核销金额</td><td>聚合《用户券表》（按 coupon_template_id 或 activity_id 分组），受时间范围筛选约束；金额=Σ actual_discount_amount（阶梯券取实扣额，非模板面值）</td></tr>
 <tr><td>总发行量</td><td>取《券模板表》total_stock（不受时间范围约束，为快照值）</td></tr>
 <tr><td>趋势图数据（近 7 日领取趋势 / 近 7 日核销趋势）</td><td>按天 GROUP BY issue_time（领取趋势）或 redeem_time（核销趋势）聚合《用户券表》或《核销流水表》；随维度 Tab 切换对应指标</td></tr>
+<tr><td>分组键与券名称</td><td>所有聚合的<b>分组键统一为 coupon_template_id（唯一）</b>，券名称仅作 MIN(coupon_name) 展示；若以券名称做统计维度须先保证 coupon_name 全局唯一（见 §4.1.6.3 券名称唯一性约束）</td></tr>
 </tbody>
 </table>
 
