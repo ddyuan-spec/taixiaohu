@@ -1432,6 +1432,16 @@ paidStats=_expandBoard(paidStats, 32, (b,i)=>({
   refundQty: b.refundQty+(i*3)%30,
   refundAmt: b.refundAmt+(i*7)%500
 }));
+let couponDetails=[
+  {id:'CP-20260721-0001',issued:'是',issueTime:'2026-07-21 20:35',user:'138****0021',redeemed:'是',order:'ORD20260722A31'},
+  {id:'CP-20260721-0002',issued:'是',issueTime:'2026-07-21 20:36',user:'139****5523',redeemed:'是',order:'ORD20260722B08'},
+  {id:'CP-20260721-0003',issued:'是',issueTime:'2026-07-21 20:40',user:'137****8823',redeemed:'否',order:'-'},
+  {id:'CP-20260721-0004',issued:'是',issueTime:'2026-07-22 09:12',user:'135****1092',redeemed:'是',order:'ORD20260723B07'},
+  {id:'CP-20260725-0001',issued:'是',issueTime:'2026-07-25 19:35',user:'136****6610',redeemed:'否',order:'-'},
+  {id:'CP-20260725-0002',issued:'否',issueTime:'-',user:'-',redeemed:'否',order:'-'},
+  {id:'CP-20260725-0003',issued:'否',issueTime:'-',user:'-',redeemed:'否',order:'-'},
+  {id:'CP-20260726-0001',issued:'是',issueTime:'2026-07-26 14:50',user:'188****3344',redeemed:'是',order:'ORD20260726C12'}
+];
 couponDetails=_expandBoard(couponDetails, 46, (b,i)=>({
   ...b,
   id: i<couponDetails.length?b.id:`CP-20260${(7-(i%3))}-${String((i%28)+1).padStart(4,'0')}`,
@@ -1457,16 +1467,6 @@ function renderPaid(){
   $('paidTbody').innerHTML=rows||'<tr><td colspan="6" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
   _syncPager('paid', paidStats.length, st);
 }
-let couponDetails=[
-  {id:'CP-20260721-0001',issued:'是',issueTime:'2026-07-21 20:35',user:'138****0021',redeemed:'是',order:'ORD20260722A31'},
-  {id:'CP-20260721-0002',issued:'是',issueTime:'2026-07-21 20:36',user:'139****5523',redeemed:'是',order:'ORD20260722B08'},
-  {id:'CP-20260721-0003',issued:'是',issueTime:'2026-07-21 20:40',user:'137****8823',redeemed:'否',order:'-'},
-  {id:'CP-20260721-0004',issued:'是',issueTime:'2026-07-22 09:12',user:'135****1092',redeemed:'是',order:'ORD20260723B07'},
-  {id:'CP-20260725-0001',issued:'是',issueTime:'2026-07-25 19:35',user:'136****6610',redeemed:'否',order:'-'},
-  {id:'CP-20260725-0002',issued:'否',issueTime:'-',user:'-',redeemed:'否',order:'-'},
-  {id:'CP-20260725-0003',issued:'否',issueTime:'-',user:'-',redeemed:'否',order:'-'},
-  {id:'CP-20260726-0001',issued:'是',issueTime:'2026-07-26 14:50',user:'188****3344',redeemed:'是',order:'ORD20260726C12'}
-];
 function renderCouponDetail(){
   const id=$('dtId').value.trim().toLowerCase();
   const iss=$('dtIssued').value;
