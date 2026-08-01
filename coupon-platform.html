@@ -287,6 +287,7 @@
       <a id="navCoupon" class="active indent" onclick="go('list')">优惠券管理</a>
       <a id="navSend" class="indent" onclick="go('send')">发券活动管理</a>
       <a id="navBoard" class="indent" onclick="go('board')">数据看板</a>
+      <a id="navUserCoupon" class="indent" onclick="go('userCoupon')">用户券查询</a>
     </div>
   </div>
 
@@ -503,6 +504,72 @@
       <span class="pager-cur">第 <b id="detailPage">1</b> / <b id="detailPages">1</b> 页</span>
       <button class="pager-btn" id="detailNext" onclick="changeBoardPage('detail',1)">下一页</button>
     </div>
+  </div>
+</div>
+
+
+<!-- ==================== P5: 用户券查询 ==================== -->
+<div id="viewUserCoupon" class="hidden">
+  <div class="crumb">营销后台 / <span>优惠券</span> / <span>用户券查询</span></div>
+
+  <!-- 用户信息卡片 -->
+  <div style="background:#fff;border:1px solid #e8e8eb;border-radius:8px;padding:20px 24px;margin-bottom:16px;display:flex;gap:24px;align-items:flex-start">
+    <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#c0bfe0,#a0a0c0);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;font-weight:700">U</div>
+    <div style="flex:1;display:flex;flex-wrap:wrap;gap:6px 40px;font-size:13px;line-height:2">
+      <div><span style="color:#999">用户ID：</span><b id="ucUserId" style="font-size:15px">U6492</b></div>
+      <div><span style="color:#999">手机号：</span><span id="ucPhone">137****9042</span></div>
+      <div><span style="color:#999">会员级别：</span><span id="ucLevel" style="color:#534AB7;font-weight:600">高级会员</span></div>
+      <div><span style="color:#999">注册时间：</span><span id="ucRegTime">2024-10-18 13:57:43</span></div>
+      <div><span style="color:#999">消费金额：</span><span>¥3,986</span></div>
+      <div><span style="color:#999">领券数量：</span><b id="ucCouponCount" style="color:#534AB7">4</b></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-shrink:0">
+      <button class="btn btn-primary" style="padding:6px 16px;font-size:12px;border-radius:4px;background:#534AB7;color:#fff;border:none;cursor:pointer" onclick="toast('跳转至会员详情页')">查看会员</button>
+      <button class="btn" style="padding:6px 16px;font-size:12px;border-radius:4px;background:#fff;color:#666;border:1px solid #dcdfe6;cursor:pointer" onclick="resetUserCoupon()">切换用户</button>
+    </div>
+  </div>
+
+  <!-- 查询条件 -->
+  <div class="filter-bar" style="margin-bottom:12px">
+    <input placeholder="用户 ID / 手机号" id="ucSearchKey" style="width:180px" value="U6492">
+    <select id="ucStatusFilter" style="width:120px">
+      <option value="">全部状态</option>
+      <option value="未使用">未使用</option>
+      <option value="已使用">已使用</option>
+      <option value="已过期">已过期</option>
+    </select>
+    <button class="btn-primary" onclick="searchUserCoupon()" style="padding:6px 18px;font-size:12px;border-radius:4px;background:#534AB7;color:#fff;border:none;cursor:pointer">查询</button>
+    <button class="btn-default" onclick="resetUserCoupon()" style="padding:6px 18px;font-size:12px;border-radius:4px;background:#fff;color:#666;border:1px solid #dcdfe6;cursor:pointer">重置</button>
+  </div>
+
+  <!-- 券列表 -->
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>关联时间</th>
+          <th>券码</th>
+          <th>券名称</th>
+          <th>获取来源</th>
+          <th>领取时间</th>
+          <th>有效期至</th>
+          <th>状态</th>
+          <th>核销订单号</th>
+        </tr>
+      </thead>
+      <tbody id="ucTbody"></tbody>
+    </table>
+  </div>
+  <div class="pager">
+    <span class="pager-info">共 <b id="ucTotal">0</b> 条</span>
+    <select class="pager-size" onchange="changeUcPageSize(this.value)">
+      <option value="10">10 条/页</option>
+      <option value="20" selected>20 条/页</option>
+      <option value="50">50 条/页</option>
+    </select>
+    <button class="pager-btn" id="ucPrev" onclick="changeUcPage(-1)">上一页</button>
+    <span class="pager-cur">第 <b id="ucPage">1</b> / <b id="ucPages">1</b> 页</span>
+    <button class="pager-btn" id="ucNext" onclick="changeUcPage(1)">下一页</button>
   </div>
 </div>
 
@@ -875,6 +942,7 @@ function go(page){
     list:'viewList', send:'viewSend',
     board:'viewBoard', detail:'viewCouponDetail',
     couponNew:'viewCouponNew', sendEdit:'viewSendEdit',
+    userCoupon:'viewUserCoupon',
     rel1:'viewRel1', rel2:'viewRel2', rel3:'viewRel3', rel4:'viewRel4', rel5:'viewRel5'
   };
   Object.keys(map).forEach(k=>$(map[k]).classList.toggle('hidden',k!==page));
@@ -882,9 +950,10 @@ function go(page){
     list:'navCoupon', detail:'navCoupon', couponNew:'navCoupon',
     send:'navSend', sendEdit:'navSend',
     board:'navBoard',
+    userCoupon:'navUserCoupon',
     rel1:'navRel1', rel2:'navRel2', rel3:'navRel3', rel4:'navRel4', rel5:'navRel5'
   };
-  ['navCoupon','navSend','navBoard','navRel1','navRel2','navRel3','navRel4','navRel5'].forEach(id=>{
+  ['navCoupon','navSend','navBoard','navUserCoupon','navRel1','navRel2','navRel3','navRel4','navRel5'].forEach(id=>{
     if($(id)) $(id).classList.toggle('active', navMap[page]===id);
   });
   if(page==='list') renderCoupons();
@@ -892,6 +961,7 @@ function go(page){
   if(page==='couponNew') resetCouponNew();
   if(page==='sendEdit') resetSendForm();
   if(page==='board'){renderBoardCoupon();drawTrend();}
+  if(page==='userCoupon') renderUserCoupons();
 }
 
 /* 侧边栏分组折叠 */
@@ -1370,6 +1440,59 @@ function renderIssue(){
   $('issueTbody').innerHTML=rows||'<tr><td colspan="9" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
   _syncPager('issue', issueStats.length, st);
 }
+
+/* ===== P5: 用户券查询 ===== */
+const ucPage={p:1,size:20};
+let userCoupons=[
+  {id:'UC-20260721-0001',code:'S5196052340120804320',name:'福利直播满100减10',source:'7月直播时长发券',claimTime:'2026-07-21 20:35',expire:'2026-08-14 20:35',status:'未使用',order:'-'},
+  {id:'UC-20260722-0002',code:'S5198064721231490804',name:'新人满99减20',source:'新人注册支付完成',claimTime:'2026-07-22 09:15',expire:'2026-08-15 09:15',status:'已使用',order:'ORD20260725A31'},
+  {id:'UC-20260725-0003',code:'S5200547721532149804',name:'签到奖励满50减8',source:'每日签到满额奖励',claimTime:'2026-07-25 19:30',expire:'2026-08-18 19:30',status:'未使用',order:'-'},
+  {id:'UC-20260726-0004',code:'S5203267862140987654',name:'会员日满200减30',source:'会员日直播专享发券',claimTime:'2026-07-26 14:50',expire:'2026-08-19 14:50',status:'已过期',order:'-'},
+  {id:'UC-20260728-0005',code:'S5208890123456789012',name:'老客回馈无门槛10元',source:'手动运营发放',claimTime:'2026-07-28 11:00',expire:'2026-08-21 11:00',status:'已使用',order:'ORD20260730B07'},
+  {id:'UC-20260729-0006',code:'S5210012345678901234',name:'阶梯每满300减100',source:'直播观看记录发券',claimTime:'2026-07-29 16:20',expire:'2026-08-22 16:20',status:'未使用',order:'-'}
+];
+function renderUserCoupons(){
+  const filterStatus=$('ucStatusFilter').value;
+  let data=userCoupons;
+  if(filterStatus) data=data.filter(c=>c.status===filterStatus);
+  const st=ucPage;
+  const start=(st.p-1)*st.size;
+  const pageRows=data.slice(start, start+st.size);
+  let rows='';
+  pageRows.forEach(c=>{
+    const statusTag=c.status==='未使用'?'<span style="color:#67c23a;font-weight:500">未使用</span>'
+      :c.status==='已使用'?'<span style="color:#409eff;font-weight:500">已使用</span>'
+      :'<span style="color:#909399;font-weight:500">已过期</span>';
+    rows+=`<tr><td>${c.claimTime}</td><td style="font-family:monospace;font-size:11.5px;color:#666">${c.code}</td><td>${c.name}</td><td>${c.source}</td><td>${c.claimTime}</td><td>${c.expire}</td><td>${statusTag}</td><td>${c.order}</td></tr>`;
+  });
+  $('ucTbody').innerHTML=rows||'<tr><td colspan="8" style="text-align:center;padding:30px;color:#c0c4cc">该用户暂无优惠券记录</td></tr>';
+  $('ucTotal').textContent=data.length;
+  const totalPages=Math.max(1,Math.ceil(data.length/st.size));
+  $('ucPage').textContent=st.p;
+  $('ucPages').textContent=totalPages;
+  $('ucPrev').disabled=st.p<=1;
+  $('ucNext').disabled=st.p>=totalPages;
+  $('ucCouponCount').textContent=userCoupons.length;
+}
+function searchUserCoupon(){
+  ucPage.p=1; renderUserCoupons();
+}
+function resetUserCoupon(){
+  $('ucSearchKey').value=''; $('ucStatusFilter').value='';
+  ucPage.p=1; renderUserCoupons();
+}
+function changeUcPage(delta){
+  const filterStatus=$('ucStatusFilter').value;
+  let data=userCoupons;
+  if(filterStatus) data=data.filter(c=>c.status===filterStatus);
+  const totalPages=Math.max(1,Math.ceil(data.length/ucPage.size));
+  ucPage.p=Math.max(1,Math.min(totalPages,ucPage.p+delta));
+  renderUserCoupons();
+}
+function changeUcPageSize(size){
+  ucPage.size=parseInt(size); ucPage.p=1; renderUserCoupons();
+}
+
 /* ===== 扩展看板 mock 数据以演示分页（默认每页20，扩展后产生多页） ===== */
 function _expandBoard(base, n, fn){
   const arr=[]; const baseLen=base.length;
