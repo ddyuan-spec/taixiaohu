@@ -266,15 +266,16 @@
 </head>
 <body>
 
-<!-- ========== Top Bar ========== -->
-<div class="topbar">
-  <div class="logo">泰尔平台端</div>
-  <div class="right">🔔 👤 ⚙️</div>
+<!-- ========== Top Bar（独立预览用；嵌入实际系统时由系统提供，隐藏本 topbar） ========== -->
+<div class="topbar" id="topbar">
+  <div class="logo">泰小虎</div>
+  <span class="sys">· 优惠券管理后台</span>
+  <div class="right"><span title="通知">🔔</span><span title="个人中心">👤</span><span title="设置">⚙️</span></div>
 </div>
 
 <div class="layout">
 
-<!-- ========== Sidebar ========== -->
+<!-- ========== Sidebar（独立预览用；嵌入实际系统时由系统提供全局导航，隐藏本 side） ========== -->
 <nav class="side" id="sidebar">
   <!-- 营销应用 -->
   <div class="nav-group open">
@@ -1561,6 +1562,16 @@ function drawTrend(){
     ${[0,0.25,0.5,0.75,1].map(r=>`<line x1="${padL}" y1="${padT+H*(1-r)}" x2="${W-padR}" y2="${padT+H*(1-r)}" stroke="#eee" stroke-dasharray="3,3"/><text x="${padL-6}" y="${padT+H*(1-r)+4}" text-anchor="end" font-size="10" fill="#999">${Math.round(maxV*r)}</text>`).join('')}
   `;
 }
+
+/* ---------- 嵌入模式检测：在 iframe 中加载时自动隐藏自带的 topbar + side，避免与宿主系统导航冲突（双边栏问题） ---------- */
+try{
+  if(window.self!==window.top){
+    document.getElementById('topbar').style.display='none';
+    document.getElementById('sidebar').style.display='none';
+    document.querySelector('.layout').style.marginLeft='0';
+    document.getElementById('mainArea').style.paddingLeft='24px';
+  }
+}catch(e){}
 
 /* ---------- Init ---------- */
 renderCoupons();
