@@ -262,10 +262,6 @@
   .mfoot{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:10px 18px;border-top:1px solid #ebeef5;background:#fafbfc}
   .a9-field{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13px}
   .a9-field .lbl{width:80px;color:#909399;flex-shrink:0}
-  /* 关联需求占位页 */
-  .rel-iframe-wrap{padding:0;}
-  .rel-iframe-wrap .crumb{padding:16px 24px;border-bottom:1px solid #ebeef5;}
-  .rel-iframe{width:100%;height:calc(100vh - 140px);border:none;display:block;background:#f7f8fa;}
 </style>
 </head>
 <body>
@@ -287,19 +283,14 @@
       <a id="navCoupon" class="active indent" onclick="go('list')">优惠券管理</a>
       <a id="navSend" class="indent" onclick="go('send')">发券活动管理</a>
       <a id="navBoard" class="indent" onclick="go('board')">数据看板</a>
-      <a id="navUserCoupon" class="indent" onclick="go('userCoupon')">用户券查询</a>
     </div>
   </div>
 
-  <!-- 关联需求 -->
+  <!-- 关联查询 -->
   <div class="nav-group">
-    <div class="gtitle" onclick="toggleGroup(this)"><span class="arr">▶</span> 关联需求</div>
+    <div class="gtitle" onclick="toggleGroup(this)"><span class="arr">▶</span> 关联查询</div>
     <div class="nav-body">
-      <a id="navRel1" class="indent" onclick="go('rel1')">会员中心-批量送券</a>
-      <a id="navRel2" class="indent" onclick="go('rel2')">关联直播原型</a>
-      <a id="navRel3" class="indent" onclick="go('rel3')">订单关联优惠券</a>
-      <a id="navRel4" class="indent" onclick="go('rel4')">会员直接发券</a>
-      <a id="navRel5" class="indent" onclick="go('rel5')">直播观看记录</a>
+      <a id="navUserCoupon" class="indent" onclick="go('userCoupon')">用户券查询</a>
     </div>
   </div>
 </nav>
@@ -898,27 +889,7 @@
 
 
 
-<!-- ==================== 关联需求：iframe 内嵌 ==================== -->
-<div id="viewRel1" class="hidden rel-iframe-wrap">
-  <div class="crumb">关联需求 / <span>会员中心-批量送券</span></div>
-  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-member.html" class="rel-iframe"></iframe>
-</div>
-<div id="viewRel2" class="hidden rel-iframe-wrap">
-  <div class="crumb">关联需求 / <span>关联直播原型</span></div>
-  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-relate-live.html" class="rel-iframe"></iframe>
-</div>
-<div id="viewRel3" class="hidden rel-iframe-wrap">
-  <div class="crumb">关联需求 / <span>订单关联优惠券</span></div>
-  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-order-relate.html" class="rel-iframe"></iframe>
-</div>
-<div id="viewRel4" class="hidden rel-iframe-wrap">
-  <div class="crumb">关联需求 / <span>会员直接发券</span></div>
-  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-direct-send.html" class="rel-iframe"></iframe>
-</div>
-<div id="viewRel5" class="hidden rel-iframe-wrap">
-  <div class="crumb">关联需求 / <span>直播观看记录</span></div>
-  <iframe src="https://ddyuan-spec.github.io/taixiaohu/coupon-live-viewlog.html" class="rel-iframe"></iframe>
-</div>
+<!-- ==================== 关联查询 ==================== -->
 
 </main><!-- end mainArea -->
 </div><!-- end layout -->
@@ -942,18 +913,16 @@ function go(page){
     list:'viewList', send:'viewSend',
     board:'viewBoard', detail:'viewCouponDetail',
     couponNew:'viewCouponNew', sendEdit:'viewSendEdit',
-    userCoupon:'viewUserCoupon',
-    rel1:'viewRel1', rel2:'viewRel2', rel3:'viewRel3', rel4:'viewRel4', rel5:'viewRel5'
+    userCoupon:'viewUserCoupon'
   };
   Object.keys(map).forEach(k=>$(map[k]).classList.toggle('hidden',k!==page));
   const navMap={
     list:'navCoupon', detail:'navCoupon', couponNew:'navCoupon',
     send:'navSend', sendEdit:'navSend',
     board:'navBoard',
-    userCoupon:'navUserCoupon',
-    rel1:'navRel1', rel2:'navRel2', rel3:'navRel3', rel4:'navRel4', rel5:'navRel5'
+    userCoupon:'navUserCoupon'
   };
-  ['navCoupon','navSend','navBoard','navUserCoupon','navRel1','navRel2','navRel3','navRel4','navRel5'].forEach(id=>{
+  ['navCoupon','navSend','navBoard','navUserCoupon'].forEach(id=>{
     if($(id)) $(id).classList.toggle('active', navMap[page]===id);
   });
   if(page==='list') renderCoupons();
