@@ -1019,7 +1019,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>券ID</td><td>券实例唯一标识，取《用户券表》user_coupon_id</td><td>《用户券表》</td><td>查询：输入框，支持模糊匹配</td></tr>
 <tr><td>券名 / 类型</td><td>该券实例所属模板的名称 + 券类型标签（满减券 / 无门槛代金券等），取《券模板表》</td><td>《券模板表》（JOIN user_coupon.coupon_template_id）</td><td>查询：券名文本模糊 + 类型下拉筛选</td></tr>
 <tr><td>发放时间</td><td>券实例写入《用户券表》的时间（issue_time）</td><td>《用户券表》</td><td>查询：发放日期范围（起 ~ 止）</td></tr>
-<tr><td>领取用户</td><td>领取 / 接收该券实例的用户标识（user_id 或 手机号脱敏展示）</td><td>《用户券表》</td><td>查询：输入框，支持模糊匹配</td></tr>
+<tr><td>领取用户</td><td>领取 / 接收该券实例的用户标识（user_id 或 手机号完整展示）</td><td>《用户券表》</td><td>查询：输入框，支持模糊匹配</td></tr>
 <tr><td>是否核销</td><td>该券实例是否已核销（已核销 ✓绿标 / 未核销 ○灰标），取 status 字段</td><td>《用户券表》</td><td>查询：是否核销下拉（是 / 否）</td></tr>
 <tr><td>核销订单号</td><td>核销该券实例对应的订单号（未核销时显示"—"）</td><td>《核销流水表》（JOIN order_no）</td><td>查询：输入框，精确 / 模糊匹配</td></tr>
 </tbody>
@@ -1046,7 +1046,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <thead><tr><th>字段名称</th><th>需求说明</th><th>数据来源</th></tr></thead>
 <tbody>
 <tr><td>用户 ID</td><td>系统分配的用户唯一标识（如 U6492）</td><td>《用户表》user_id</td></tr>
-<tr><td>手机号</td><td>脱敏展示（中间4位*），如 137****9042</td><td>《用户表》phone</td></tr>
+<tr>< ancient><td>手机号</td><td>完整展示（11 位），如 13712349042</td><td>《用户表》phone</td></tr>
 <tr><td>会员级别</td><td>当前会员等级（普通会员 / 高级会员 / VIP 等）</td><td>《用户表》member_level</td></tr>
 <tr><td>注册时间</td><td>用户注册账号的时间</td><td>《用户表》created_at</td></tr>
 <tr><td>消费金额（元）</td><td>历史累计消费总额</td><td>《订单表》SUM(pay_amount) WHERE user_id=当前用户 AND pay_status='已支付'</td></tr>
