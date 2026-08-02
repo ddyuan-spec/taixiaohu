@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>适用范围标签 · 明细展示原型 Demo</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f0f1f5;color:#333;padding:24px 12px 60px}
+.wrap{max-width:440px;margin:0 auto}
+h1{font-size:17px;font-weight:700;text-align:center;margin-bottom:4px;color:#1a1a2e}
+.sub{font-size:12.5px;color:#999;text-align:center;margin-bottom:22px;line-height:1.6}
+.scen{font-size:13px;color:#534AB7;font-weight:700;margin:22px 4px 10px;display:flex;align-items:center;gap:6px}
+.scen::before{content:"";width:4px;height:14px;background:#6C5CE7;border-radius:2px}
+
+/* 券卡片 */
+.coupon{display:flex;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:14px}
+.coupon .left{flex:0 0 96px;background:linear-gradient(135deg,#ff7a59,#ff5e62);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.coupon .left .amt{font-size:30px;font-weight:800;line-height:1}
+.coupon .left .amt small{font-size:14px;font-weight:700}
+.coupon .left .cond{font-size:11px;opacity:.92;margin-top:6px}
+.coupon .left::after{content:"";position:absolute;right:-1px;top:0;bottom:0;width:2px;background:radial-gradient(circle, #fff 1.5px, transparent 2px) 0 0/2px 10px repeat-y}
+.coupon .right{flex:1;padding:14px 14px 12px;min-width:0}
+.coupon .name{font-size:15px;font-weight:600;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.coupon .meta{font-size:11.5px;color:#999;margin-top:4px}
+.coupon .scope{margin-top:9px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:#fff3ec;color:#ff6a3d;border:1px solid #ffd9c7;white-space:nowrap}
+.detail{font-size:11px;color:#888;display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:2px}
+.detail .pre{color:#999}
+.chip{font-size:11px;color:#555;background:#f2f3f5;border-radius:6px;padding:2px 8px;white-space:nowrap;border:1px solid #e7e9ed}
+.chip.shop{background:#eef4ff;color:#3a6df0;border-color:#d6e4ff}
+.more{font-size:11px;color:#999;background:#f2f3f5;border-radius:6px;padding:2px 8px;white-space:nowrap}
+.btnrow{display:flex;align-items:center;gap:8px;margin-top:12px}
+.use{flex:1;background:linear-gradient(135deg,#ff7a59,#ff5e62);color:#fff;border:none;border-radius:20px;height:32px;font-size:13px;font-weight:600}
+.rule{font-size:12px;color:#888;background:none;border:none;white-space:nowrap}
+.note{font-size:11px;color:#bbb;margin:2px 4px 0;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎫 适用范围标签 · 明细展示原型</h1>
+  <div class="sub">C 端券卡片适用范围标签 + 明细行 6 种形态 · 对齐 PRD §4.3.4.2<br>红字标签=限制类型，下方 chip=具体商品/店铺</div>
+
+  <div class="scen">场景 1 · 全场通用（无明细）</div>
+  <div class="coupon">
+    <div class="left"><div class="amt"><small>¥</small>30</div><div class="cond">满200可用</div></div>
+    <div class="right">
+      <div class="name">会员日满减券</div>
+      <div class="meta">有效期 2026.08.01 - 2026.08.31</div>
+      <div class="scope"><span class="tag">全场通用</span></div>
+      <div class="btnrow"><button class="use">去使用</button><button class="rule">券规则 ›</button></div>
+    </div>
+  </div>
+
+  <div class="scen">场景 2 · 指定商品（≤3 件，全展示）</div>
+  <div class="coupon">
+    <div class="left"><div class="amt"><small>¥</small>15</div><div class="cond">满100可用</div></div>
+    <div class="right">
+      <div class="name">营养品专享券</div>
+      <div class="meta">有效期 2026.08.01 - 2026.08.31</div>
+      <div class="scope"><span class="tag">指定商品</span></div>
+      <div class="detail">
+        <span class="chip">维生素C咀嚼片</span>
+        <span class="chip">益生菌冻干粉</span>
+        <span class="chip">钙铁锌口服液</span>
+      </div>
+      <div class="btnrow"><button class="use">去使用</button><button class="rule">券规则 ›</button></div>
+    </div>
+  </div>
+
+  <div class="scen">场景 3 · 指定商品（＞3 件，折叠 +N）</div>
+  <div class="coupon">
+    <div class="left"><div class="amt"><small>¥</small>20</div><div class="cond">满150可用</div></div>
+    <div class="right">
+      <div class="name">爆款清单券</div>
+      <div class="meta">有效期 2026.08.01 - 2026.08.31</div>
+      <div class="scope"><span class="tag">指定商品</span></div>
+      <div class="detail">
+        <span class="chip">叶黄素酯软糖</span>
+        <span class="chip">鱼油胶囊</span>
+        <span class="chip">蛋白粉</span>
+        <span class="more">+5</span>
+      </div>
+      <div class="btnrow"><button class="use">去使用</button><button class="rule">券规则 ›</button></div>
+    </div>
+  </div>
+
+  <div class="scen">场景 4 · 指定店铺（单店 chip）</div>
+  <div class="coupon">
+    <div class="left"><div class="amt"><small>¥</small>10</div><div class="cond">无门槛</div></div>
+    <div class="right">
+      <div class="name">旗舰店专享券</div>
+      <div class="meta">有效期 2026.08.01 - 2026.08.31</div>
+      <div class="scope"><span class="tag">指定店铺</span></div>
+      <div class="detail">
+        <span class="chip shop">🏬 泰小虎官方旗舰店</span>
+      </div>
+      <div class="btnrow"><button class="use">去使用</button><button class="rule">券规则 ›</button></div>
+    </div>
+  </div>
+
+  <div class="scen">场景 5 · 指定店铺 · 指定商品（双 chip）</div>
+  <div class="coupon">
+    <div class="left"><div class="amt"><small>¥</small>25</div><div class="cond">满120可用</div></div>
+    <div class="right">
+      <div class="name">旗舰店营养品券</div>
+      <div class="meta">有效期 2026.08.01 - 2026.08.31</div>
+      <div class="scope"><span class="tag">指定店铺·指定商品</span></div>
+      <div class="detail">
+        <span class="chip shop">🏬 泰小虎官方旗舰店</span>
+        <span class="chip">维生素C咀嚼片</span>
+        <span class="chip">益生菌冻干粉</span>
+      </div>
+      <div class="btnrow"><button class="use">去使用</button><button class="rule">券规则 ›</button></div>
+    </div>
+  </div>
+
+  <div class="scen">场景 6 · 排除商品（"除以下外可用"）</div>
+  <div class="coupon">
+    <div class="left"><div class="amt"><small>¥</small>8</div><div class="cond">满50可用</div></div>
+    <div class="right">
+      <div class="name">通用满减券（排除特价）</div>
+      <div class="meta">有效期 2026.08.01 - 2026.08.31</div>
+      <div class="scope"><span class="tag">指定商品</span></div>
+      <div class="detail">
+        <span class="pre">除以下商品外可用：</span>
+        <span class="chip">限时秒杀特价品</span>
+        <span class="chip">清仓尾货</span>
+      </div>
+      <div class="btnrow"><button class="use">去使用</button><button class="rule">券规则 ›</button></div>
+    </div>
+  </div>
+
+  <p class="note">注：商品 chip 名超 8 字截断「…」（如"维生素C咀嚼片"在第9字截断为"维生素C咀嚼…"）；指定店铺恒为单选故最多 1 个 chip；明细行仅"全场通用"不显示。</p>
+</div>
+</body>
+</html>
