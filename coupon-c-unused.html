@@ -36,6 +36,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hira
 .coupon.disabled .right .cname,.coupon.disabled .right .cdate,.coupon.disabled .right .tag{color:#bbb!important;border-color:#eee!important}
 .coupon.disabled .right .tag.port{background:#fafafa;color:#aaa;border-color:#eee}
 .coupon.disabled .right .btn-use{display:none}
+.coupon.disabled{cursor:not-allowed}
 /* 规则弹窗 */
 .rule-overlay{display:none;position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:24px}
 .rule-overlay.show{display:flex}
@@ -71,7 +72,7 @@ var coupons = [
   {name:'会员日满200减30',amount:30,threshold:200,start:'2026.07.28',expire:'2026.08.19',scope:'全场通用',rec:true},
   {name:'新人专享满99减20',amount:20,threshold:99,start:'2026.07.22',expire:'2026.08.15',scope:'指定商品'},
   {name:'福利直播满100减10',amount:10,threshold:100,start:'2026.07.21',expire:'2026.08.04',scope:'全场通用',warn:true,warnText:'2天后过期'},
-  {name:'老客回馈无门槛10元',amount:10,threshold:0,start:'2026.07.28',expire:'2026.08.21',scope:'仅泰尔超优惠H5',port:true,disabled:true}
+  {name:'老客回馈无门槛10元',amount:10,threshold:0,start:'2026.07.28',expire:'2026.08.21',scope:'全场通用',usable_ports:'泰尔超优惠H5',disabled:true,port:true}
 ];
 
 function render(){
@@ -82,10 +83,16 @@ function render(){
     var disCls=c.disabled?' disabled':'';
     var recTag=c.rec?'<span class="tag rec">推荐</span>':'';
     var warnTag=c.warn?'<span class="tag warn">'+c.warnText+'</span>':'';
-    var portTag=c.port?'<span class="tag port">生效中·'+c.scope+'</span>':'<span class="tag">'+c.scope+'</span>';
+    var scopeTag=c.disabled&&c.port
+      ? '<span class="tag">生效中</span><span class="tag port">仅'+c.usable_ports+'</span>'
+      : '<span class="tag">'+c.scope+'</span>';
+    var ruleLink=c.disabled
+      ? '<span class="rule-link" onclick="event.stopPropagation();toast(\'此券仅支持在'+c.usable_ports+'使用\')">券规则 ›</span>'
+      : '<span class="rule-link" onclick="showRule('+i+',event)">券规则 ›</span>';
     var btnUse=c.disabled?'':'<button class="btn-use" onclick="toast(\'跳转商品详情页\')">去使用</button>';
+    var cardClick=c.disabled?' onclick="toast(\'此券仅支持在'+c.usable_ports+'使用\')"':'';
 
-    html+='<div class="coupon'+disCls+'">'
+    html+='<div class="coupon'+disCls+'"'+cardClick+'>'
       +'<div class="left" style="background:'+bg+'">'
         +'<span class="amt"><sub>¥</sub>'+c.amount+'</span>'
         +'<span class="cond">满'+c.threshold+'可用</span>'
@@ -93,9 +100,9 @@ function render(){
       +'<div class="right">'
         +'<div class="cname">'+c.name+'</div>'
         +'<div class="cdate">'+c.start+' ~ '+c.expire+'</div>'
-        +'<div class="tags">'+recTag+warnTag+(c.port?portTag:'<span class="tag">'+c.scope+'</span>')+'</div>'
+        +'<div class="tags">'+recTag+warnTag+scopeTag+'</div>'
         +'<div class="actions">'
-          +'<span class="rule-link" onclick="showRule('+i+',event)">券规则 ›</span>'
+          +ruleLink
           +btnUse
         +'</div>'
       +'</div>'
@@ -118,12 +125,40 @@ function showRule(idx,e){
   document.getElementById('ruleOverlay').classList.add('show');
 }
 
-function toast(msg){alert(msg)}
+function toast(msg){
+  var t=document.getElementById('toast');
+  if(!t){
+    t=document.createElement('div');
+    t.id='toast';
+    t.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.8);color:#fff;padding:10px 18px;border-radius:8px;font-size:14px;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none;max-width:80%;text-align:center';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg;
+  t.style.opacity='1';
+  clearTimeout(t._timer);
+  t._timer=setTimeout(function(){t.style.opacity='0';},1500);
+}
+
+function fallbackCopy(src,ok,fail){
+  var ta=document.createElement('textarea');
+  ta.value=src;
+  ta.style.position='fixed';
+  ta.style.left='-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  try{document.execCommand('copy');ok();}catch(e){fail();}
+  document.body.removeChild(ta);
+}
 
 function copySource(){
   var src='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
-  if(navigator.clipboard){navigator.clipboard.writeText(src).then(function(){alert('已复制完整源码，去墨刀粘贴即可')})}
-  else{var ta=document.createElement('textarea');ta.value.src;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);alert('已复制完整源码，去墨刀粘贴即可')}
+  function ok(){toast('已复制完整源码，去墨刀粘贴即可');}
+  function fail(){toast('复制失败，请手动复制');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(src).then(ok,function(){fallbackCopy(src,ok,fail);});
+  }else{
+    fallbackCopy(src,ok,fail);
+  }
 }
 
 render();
