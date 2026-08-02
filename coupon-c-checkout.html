@@ -150,6 +150,14 @@
     max-width:300px; text-align:center; line-height:1.5; opacity:0; pointer-events:none; transition:opacity .25s; z-index:99;
   }
   .toast.show { opacity:1; }
+
+  .copy-btn {
+    position:fixed; right:18px; bottom:18px; z-index:999;
+    background:#534AB7; color:#fff; border:none; border-radius:22px;
+    padding:11px 18px; font-size:14px; font-weight:600; cursor:pointer;
+    box-shadow:0 6px 18px rgba(83,74,183,.4);
+  }
+  .copy-btn:active { transform:scale(.96); }
 </style>
 </head>
 <body>
@@ -227,6 +235,7 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<button class="copy-btn" onclick="copySource()">📋 复制源码（墨刀）</button>
 
 <script>
   var goodsTotal = 337.00;
@@ -316,6 +325,28 @@
   }
 
   renderList();
+
+  function copySource(){
+    var src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(src).then(
+        function(){ toast('已复制完整源码，去墨刀粘贴即可'); },
+        function(){ fallbackCopy(src); }
+      );
+    } else {
+      fallbackCopy(src);
+    }
+  }
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position='fixed'; ta.style.top='-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); toast('已复制完整源码，去墨刀粘贴即可'); }
+    catch(e){ toast('复制失败，请手动复制页面源码'); }
+    document.body.removeChild(ta);
+  }
 </script>
 </body>
 </html>
