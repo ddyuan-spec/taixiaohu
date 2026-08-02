@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=375,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>我的优惠券-未使用</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB',sans-serif;background:#f5f5f5;color:#333;width:375px;margin:0 auto;min-height:100vh}
+/* 顶部导航 */
+.nav{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid #eee;padding:12px 16px;text-align:center;font-size:17px;font-weight:600;color:#000;display:flex;align-items:center;justify-content:center}
+.nav .back{position:absolute;left:14px;font-size:22px;color:#333;text-decoration:none}
+/* Tab 栏 */
+.tab-bar{display:flex;background:#fff;padding:0 16px;border-bottom:1px solid #f0f0f0}
+.tab-item{flex:1;text-align:center;padding:11px 0;font-size:14px;color:#666;position:relative;cursor:pointer}
+.tab-item.active{color:#ff6b35;font-weight:600}
+.tab-item.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:28px;height:3px;background:#ff6b35;border-radius:2px}
+.tab-badge{display:inline-block;min-width:18px;height:18px;line-height:18px;background:#ff6b35;color:#fff;font-size:10px;border-radius:9px;margin-left:4px;padding:0 5px}
+/* 券列表 */
+.coupon-list{padding:12px 12px}
+.coupon{background:#fff;border-radius:10px;margin-bottom:10px;overflow:hidden;display:flex;position:relative}
+.coupon.disabled{opacity:.55}
+.coupon-left{width:108px;background:linear-gradient(135deg,#ff6b35,#ff8c42);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 8px;flex-shrink:0;position:relative}
+.coupon-left::after{content:'';position:absolute;right:-7px;top:50%;transform:translateY(-50%);width:14px;height:14px;background:#f5f5f5;border-radius:50%;border:3px solid #ff8c42}
+.coupon.used .coupon-left,.coupon.expired .coupon-left{background:linear-gradient(135deg,#bbb,#ddd)}
+.coupon-amount{font-size:32px;font-weight:700;line-height:1}
+.coupon-amount small{font-size:13px;font-weight:400}
+.coupon-threshold{font-size:11px;opacity:.85;margin-top:2px}
+.coupon-right{flex:1;padding:12px 12px 10px;display:flex;flex-direction:column;justify-content:space-between;min-height:88px}
+.coupon-name{font-size:15px;font-weight:600;color:#222;line-height:1.3}
+.coupon-used .coupon-name,.coupon.expired .coupon-name{color:#999}
+.coupon-meta{font-size:12px;color:#888;margin-top:4px;line-height:1.6}
+.coupon-tags{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}
+.tag-scope{font-size:10px;border:1px solid #e0a060;color:#c07830;border-radius:3px;padding:1px 5px;background:#fff9f0}
+.tag-rec{font-size:10px;background:#fff0e8;color:#d46b08;border-radius:3px;padding:1px 5px}
+.tag-expire-soon{font-size:10px;background:#fff1f0;color:#cf1322;border-radius:3px;padding:1px 5px;border:1px solid #ffa39e}
+.tag-status-used{font-size:10px;background:#f5f5f5;color:#999;border-radius:3px;padding:1px 5px}
+.tag-status-expired{font-size:10px;background:#f5f5f5;color:#999;border-radius:3px;padding:1px 5px}
+.tag-port-disabled{font-size:10px;background:#e6f7ff;color:#1890ff;border-radius:3px;padding:1px 5px}
+.coupon-actions{margin-top:8px;display:flex;align-items:center;justify-content:space-between}
+.btn-use{border:none;background:linear-gradient(135deg,#ff6b35,#ff8c42);color:#fff;font-size:12px;padding:5px 16px;border-radius:15px;cursor:pointer;font-weight:500}
+.btn-rule{border:none;background:none;color:#534AB7;font-size:12px;cursor:pointer;padding:5px 0}
+/* 规则弹窗 */
+.rule-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center}
+.rule-overlay.show{display:flex}
+.rule-card{background:#fff;border-radius:12px;width:300px;padding:20px 18px;max-height:70vh;overflow-y:auto}
+.rule-card h4{font-size:16px;margin-bottom:12px;color:#222}
+.rule-row{font-size:13px;color:#555;line-height:2.2;border-bottom:1px solid #f5f5f5}
+.rule-row:last-child{border:none}
+.rule-close{display:block;margin:14px auto 0;background:#534AB7;color:#fff;border:none;padding:7px 28px;border-radius:16px;font-size:13px;cursor:pointer}
+.copy-btn{position:fixed;right:12px;bottom:20px;z-index:150;background:#534AB7;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer;box-shadow:0 2px 8px rgba(83,74,183,.35)}
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.72);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;z-index:300;opacity:0;transition:.25s;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div class="nav"><span class="back">‹</span> 我的优惠券</div>
+
+<div class="tab-bar">
+  <div class="tab-item active">未使用<span class="tab-badge">3</span></div>
+  <div class="tab-item">已使用<span class="tab-badge">2</span></div>
+  <div class="tab-item">已过期<span class="tab-badge">2</span></div>
+</div>
+
+<!-- ===== 未使用列表 ===== -->
+<div class="coupon-list" id="list"></div>
+
+<button class="copy-btn" onclick="copySource()">📋 复制源码（墨刀）</button>
+<div class="toast" id="toast"></div>
+
+<!-- 规则弹窗 -->
+<div class="rule-overlay" id="ruleOverlay" onclick="closeRule(event)">
+  <div class="rule-card" id="ruleCard"></div>
+</div>
+
+<script>
+var coupons = [
+  {id:'c1',name:'会员日满200减30',amount:30,threshold:200,validFrom:'2026-07-26',validTo:'2026-08-19',scope:'全场通用',rec:true,portDisabled:false},
+  {id:'c2',name:'新人专享满99减20',amount:20,threshold:99,validFrom:'2026-07-22',validTo:'2026-08-15',scope:'指定商品',rec:false,portDisabled:false},
+  {id:'c3',name:'福利直播满100减10',amount:10,threshold:100,validFrom:'2026-07-21',validTo:'2026-08-04',scope:'指定店铺',rec:false,portDisabled:false,daysLeft:2},
+  {id:'c4',name:'老客回馈无门槛10元',amount:10,threshold:0,validFrom:'2026-07-28',validTo:'2026-08-21',scope:'全场通用',rec:false,portDisabled:true,ports:'泰尔超优惠H5'}
+];
+
+function render(){
+  var html='';
+  for(var i=0;i<coupons.length;i++){
+    var c=coupons[i];
+    var cls='coupon'+(c.portDisabled?' disabled':'');
+    var recTag=c.rec?'<span class="tag-rec">推荐</span>':'';
+    var expireTag=c.daysLeft<=3&&c.daysLeft>0?'<span class="tag-expire-soon">'+c.daysLeft+'天后过期</span>':'';
+    var portTag=c.portDisabled?'<span class="tag-port-disabled">生效中 · 仅'+c.ports+'</span>':'';
+    var scopeClass=c.scope==='全场通用'?'tag-scope':'tag-scope';
+    html+='<div class="'+cls+'" data-id="'+c.id+'">'
+      +'<div class="coupon-left">'
+        +'<div class="coupon-amount"><small>¥</small>'+c.amount+'</div>'
+        +'<div class="coupon-threshold">'+(c.threshold>0?'满'+c.threshold+'可用':'无门槛')+'</div>'
+      +'</div>'
+      +'<div class="coupon-right">'
+        +'<div class="coupon-name">'+c.name+'</div>'
+        +'<div class="coupon-meta">'+c.validFrom.replace(/-/g,'.')+' ~ '+c.validTo.replace(/-/g,'.')+'</div>'
+        +'<div class="coupon-tags">'
+          +'<span class="'+scopeClass+'">'+c.scope+'</span>'
+          +recTag+expireTag+portTag
+        +'</div>'
+        +'<div class="coupon-actions">'
+          +(c.portDisabled?'':'<button class="btn-use">去使用</button>')
+          +'<button class="btn-rule" onclick="showRule('+i+',event)">券规则 ›</button>'
+        +'</div>'
+      +'</div>'
+    +'</div>';
+  }
+  document.getElementById('list').innerHTML=html;
+}
+
+function showRule(idx,e){
+  e.stopPropagation();
+  var c=coupons[idx];
+  document.getElementById('ruleCard').innerHTML='<h4>券规则</h4>'
+    +'<div class="rule-row"><b>券名：</b>'+c.name+'</div>'
+    +'<div class="rule-row"><b>面额：</b>¥'+c.amount+'</div>'
+    +'<div class="rule-row"><b>门槛：</b>'+(c.threshold>0?'满¥'+c.threshold:'无门槛')+'</div>'
+    +'<div class="rule-row"><b>有效期：</b>'+c.validFrom+' ~ '+c.validTo+'</div>'
+    +'<div class="rule-row"><b>适用范围：</b>'+c.scope+'</div>'
+    +(c.portDisabled?'<div class="rule-row"><b>可用端口：</b>'+c.ports+'</div>':'')
+    +'<button class="rule-close" onclick="document.getElementById(\'ruleOverlay\').classList.remove(\'show\')">我知道了</button>';
+  document.getElementById('ruleOverlay').classList.add('show');
+}
+
+function closeRule(e){if(e.target===e.currentTarget)e.currentTarget.classList.remove('show')}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1600)}
+function copySource(){
+  var html=document.documentElement.outerHTML;
+  if(navigator.clipboard)navigator.clipboard.writeText(html).then(function(){toast('已复制完整源码，去墨刀粘贴即可')});
+  else{var ta=document.createElement('textarea');ta.value=html;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('已复制完整源码')}
+}
+render();
+</script>
+</body>
+</html>
