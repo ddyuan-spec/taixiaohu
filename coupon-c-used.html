@@ -6,63 +6,48 @@
 <title>我的优惠券-已使用</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB',sans-serif;background:#f5f5f5;color:#333;width:375px;margin:0 auto;min-height:100vh}
-.nav{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid #eee;padding:12px 16px;text-align:center;font-size:17px;font-weight:600;color:#000;display:flex;align-items:center;justify-content:center}
-.nav .back{position:absolute;left:14px;font-size:22px;color:#333;text-decoration:none}
-.tab-bar{display:flex;background:#fff;padding:0 16px;border-bottom:1px solid #f0f0f0}
-.tab-item{flex:1;text-align:center;padding:11px 0;font-size:14px;color:#666;position:relative;cursor:pointer}
-.tab-item.active{color:#ff6b35;font-weight:600}
-.tab-item.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:28px;height:3px;background:#ff6b35;border-radius:2px}
-.tab-badge{display:inline-block;min-width:18px;height:18px;line-height:18px;background:#ccc;color:#fff;font-size:10px;border-radius:9px;margin-left:4px;padding:0 5px}
-.coupon-list{padding:12px 12px}
-.coupon{background:#fff;border-radius:10px;margin-bottom:10px;overflow:hidden;display:flex;opacity:.65}
-.coupon-left{width:108px;background:linear-gradient(135deg,#bbb,#ddd);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 8px;flex-shrink:0;position:relative}
-.coupon-left::after{content:'';position:absolute;right:-7px;top:50%;transform:translateY(-50%);width:14px;height:14px;background:#f5f5f5;border-radius:50%;border:3px solid #ccc}
-.coupon-amount{font-size:32px;font-weight:700;line-height:1}
-.coupon-amount small{font-size:13px;font-weight:400}
-.coupon-threshold{font-size:11px;opacity:.85;margin-top:2px}
-.coupon-right{flex:1;padding:12px 12px 10px;display:flex;flex-direction:column;justify-content:space-between;min-height:88px}
-.coupon-name{font-size:15px;font-weight:600;color:#999;line-height:1.3}
-.coupon-meta{font-size:12px;color:#aaa;margin-top:4px;line-height:1.8}
-.coupon-tags{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}
-.tag-status-used{font-size:11px;background:#f0f0f0;color:#999;border-radius:3px;padding:2px 7px;font-weight:500}
-.tag-scope{font-size:10px;border:1px solid #d9d9d9;color:#999;border-radius:3px;padding:1px 5px}
-.btn-rule{border:none;background:none;color:#888;font-size:12px;cursor:pointer;padding:5px 0;margin-top:4px}
-.rule-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB',sans-serif;background:#f5f5f5;max-width:375px;margin:0 auto;min-height:100vh}
+.nav{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid #eee;padding:14px 16px;text-align:center;font-size:17px;font-weight:600;color:#333}
+.list{padding:12px}
+.coupon{display:flex;background:#fff;border-radius:10px;overflow:hidden;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.coupon .left{width:105px;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;flex-shrink:0;background:#d9d9d9}
+.coupon .left .amt{font-size:34px;font-weight:700;line-height:1.1}
+.coupon .left .amt sub{font-size:13px;font-weight:400;vertical-align:baseline}
+.coupon .left .cond{font-size:11px;margin-top:2px;opacity:.85}
+.coupon .right{flex:1;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between}
+.coupon .right .cname{font-size:15px;font-weight:600;color:#999;line-height:1.3}
+.coupon .right .used-tag{display:inline-block;font-size:11px;color:#52c41a;background:#f6ffed;border:1px solid #b7eb8f;border-radius:8px;padding:1px 8px;margin-top:4px;width:fit-content}
+.coupon .right .info-row{font-size:12px;color:#999;margin-top:4px;line-height:1.6}
+.coupon .right .order-no{color:#534AB7;font-family:monospace;font-size:11px}
+.coupon .right .rule-link{font-size:11px;color:#534AB7;cursor:pointer;margin-top:6px;display:inline-block}
+/* 规则弹窗 */
+.rule-overlay{display:none;position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:24px}
 .rule-overlay.show{display:flex}
-.rule-card{background:#fff;border-radius:12px;width:300px;padding:20px 18px;max-height:70vh;overflow-y:auto}
-.rule-card h4{font-size:16px;margin-bottom:12px;color:#222}
-.rule-row{font-size:13px;color:#555;line-height:2.2;border-bottom:1px solid #f5f5f5}
-.rule-row:last-child{border:none}
+.rule-card{background:#fff;border-radius:14px;width:300px;max-height:70vh;overflow-y:auto;padding:20px}
+.rule-card h3{font-size:16px;text-align:center;margin-bottom:14px;color:#333}
+.rule-card .ri{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0f0f0;font-size:13px}
+.rule-card .ri .rl{color:#666}
+.rule-card .ri .rr{color:#333;font-weight:500;text-align:right;max-width:60%}
 .rule-close{display:block;margin:14px auto 0;background:#534AB7;color:#fff;border:none;padding:7px 28px;border-radius:16px;font-size:13px;cursor:pointer}
-.copy-btn{position:fixed;right:12px;bottom:20px;z-index:150;background:#534AB7;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer;box-shadow:0 2px 8px rgba(83,74,183,.35)}
-.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.72);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;z-index:300;opacity:0;transition:.25s;pointer-events:none}
-.toast.show{opacity:1}
+.copy-btn{position:fixed;right:12px;bottom:18px;z-index:50;background:#534AB7;color:#fff;border:none;padding:8px 16px;border-radius:20px;font-size:12px;cursor:pointer;box-shadow:0 2px 8px rgba(83,74,183,.35);font-weight:600}
 </style>
 </head>
 <body>
 
-<div class="nav"><span class="back">‹</span> 我的优惠券</div>
+<div class="nav">我的优惠券 · 已使用</div>
 
-<div class="tab-bar">
-  <div class="tab-item">未使用<span class="tab-badge">3</span></div>
-  <div class="tab-item active">已使用<span class="tab-badge">2</span></div>
-  <div class="tab-item">已过期<span class="tab-badge">2</span></div>
-</div>
+<div class="list" id="list"></div>
 
-<div class="coupon-list" id="list"></div>
-
-<button class="copy-btn" onclick="copySource()">📋 复制源码（墨刀）</button>
-<div class="toast" id="toast"></div>
-
-<div class="rule-overlay" id="ruleOverlay" onclick="closeRule(event)">
+<div class="rule-overlay" id="ruleOverlay" onclick="if(event.target===this)this.classList.remove('show')">
   <div class="rule-card" id="ruleCard"></div>
 </div>
 
+<button class="copy-btn" onclick="copySource()">📋 复制源码（墨刀）</button>
+
 <script>
 var coupons = [
-  {id:'u1',name:'新人专享满99减20',amount:20,threshold:99,usedTime:'2026-07-25 14:32',orderNo:'ORD20260725A31',scope:'指定商品'},
-  {id:'u2',name:'老客回馈无门槛10元',amount:10,threshold:0,usedTime:'2026-07-30 09:18',orderNo:'ORD20260730B07',scope:'全场通用'}
+  {name:'新人专享满99减20',amount:20,threshold:99,useTime:'2026.07.25 09:31',orderNo:'ORD20260725A31',expire:'2026.08.15',scope:'指定商品'},
+  {name:'老客回馈无门槛10元',amount:10,threshold:0,useTime:'2026.07.30 14:22',orderNo:'ORD20260730B07',expire:'2026.08.21',scope:'全场通用'}
 ];
 
 function render(){
@@ -70,19 +55,16 @@ function render(){
   for(var i=0;i<coupons.length;i++){
     var c=coupons[i];
     html+='<div class="coupon">'
-      +'<div class="coupon-left">'
-        +'<div class="coupon-amount"><small>¥</small>'+c.amount+'</div>'
-        +'<div class="coupon-threshold">'+(c.threshold>0?'满'+c.threshold+'可用':'无门槛')+'</div>'
+      +'<div class="left">'
+        +'<span class="amt"><sub>¥</sub>'+c.amount+'</span>'
+        +'<span class="cond">满'+c.threshold+'可用</span>'
       +'</div>'
-      +'<div class="coupon-right">'
-        +'<div class="coupon-name">'+c.name+'</div>'
-        +'<div class="coupon-meta">使用时间：'+c.usedTime+'</div>'
-        +'<div class="coupon-meta">关联订单：'+c.orderNo+'</div>'
-        +'<div class="coupon-tags">'
-          +'<span class="tag-status-used">✓ 已核销</span>'
-          +'<span class="tag-scope">'+c.scope+'</span>'
-        +'</div>'
-        +'<button class="btn-rule" onclick="showRule('+i+',event)">券规则 ›</button>'
+      +'<div class="right">'
+        +'<div class="cname">'+c.name+'</div>'
+        +'<span class="used-tag">✓ 已核销</span>'
+        +'<div class="info-row">使用时间：'+c.useTime+'</div>'
+        +'<div class="info-row">关联订单：<span class="order-no">'+c.orderNo+'</span></div>'
+        +'<span class="rule-link" onclick="showRule('+i+',event)">券规则 ›</span>'
       +'</div>'
     +'</div>';
   }
@@ -92,24 +74,23 @@ function render(){
 function showRule(idx,e){
   e.stopPropagation();
   var c=coupons[idx];
-  document.getElementById('ruleCard').innerHTML='<h4>券规则</h4>'
-    +'<div class="rule-row"><b>券名：</b>'+c.name+'</div>'
-    +'<div class="rule-row"><b>面额：</b>¥'+c.amount+'</div>'
-    +'<div class="rule-row"><b>门槛：</b>'+(c.threshold>0?'满¥'+c.threshold:'无门槛')+'</div>'
-    +'<div class="rule-row"><b>适用范围：</b>'+c.scope+'</div>'
-    +'<div class="rule-row"><b>核销时间：</b>'+c.usedTime+'</div>'
-    +'<div class="rule-row"><b>关联订单：</b>'+c.orderNo+'</div>'
+  document.getElementById('ruleCard').innerHTML='<h3>券规则</h3>'
+    +'<div class="ri"><span class="rl">券名称</span><span class="rr">'+c.name+'</span></div>'
+    +'<div class="ri"><span class="rl">面额</span><span class="rr">¥'+c.amount+'</span></div>'
+    +'<div class="ri"><span class="rl">使用门槛</span><span class="rr">满¥'+c.threshold+'可用</span></div>'
+    +'<div class="ri"><span class="rl">有效期</span><span class="rr">至 '+c.expire+'</span></div>'
+    +'<div class="ri"><span class="rl">适用范围</span><span class="rr">'+c.scope+'</span></div>'
+    +'<div class="ri"><span class="rl">说明</span><span class="rr">该券已核销，不可再次使用</span></div>'
     +'<button class="rule-close" onclick="document.getElementById(\'ruleOverlay\').classList.remove(\'show\')">我知道了</button>';
   document.getElementById('ruleOverlay').classList.add('show');
 }
 
-function closeRule(e){if(e.target===e.currentTarget)e.currentTarget.classList.remove('show')}
-function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1600)}
 function copySource(){
-  var html=document.documentElement.outerHTML;
-  if(navigator.clipboard)navigator.clipboard.writeText(html).then(function(){toast('已复制完整源码，去墨刀粘贴即可')});
-  else{var ta=document.createElement('textarea');ta.value=html;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('已复制完整源码')}
+  var src='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  if(navigator.clipboard){navigator.clipboard.writeText(src).then(function(){alert('已复制完整源码，去墨刀粘贴即可')})}
+  else{var ta=document.createElement('textarea');ta.value.src;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);alert('已复制完整源码，去墨刀粘贴即可')}
 }
+
 render();
 </script>
 </body>
