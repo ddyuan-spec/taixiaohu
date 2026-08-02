@@ -304,7 +304,6 @@
       <a id="navCoupon" class="active indent" onclick="go('list')">优惠券管理</a>
       <a id="navSend" class="indent" onclick="go('send')">发券活动管理</a>
       <a id="navBoard" class="indent" onclick="go('board')">数据看板</a>
-      <a id="navUserCoupon" class="indent" onclick="go('userCoupon')">用户券查询</a>
     </div>
   </div>
 
@@ -978,10 +977,9 @@ function go(page){
   const navMap={
     list:'navCoupon', detail:'navCoupon', couponNew:'navCoupon',
     send:'navSend', sendEdit:'navSend',
-    board:'navBoard',
-    userCoupon:'navUserCoupon'
+    board:'navBoard'
   };
-  ['navCoupon','navSend','navBoard','navUserCoupon'].forEach(id=>{
+  ['navCoupon','navSend','navBoard'].forEach(id=>{
     if($(id)) $(id).classList.toggle('active', navMap[page]===id);
   });
   if(page==='list') renderCoupons();
