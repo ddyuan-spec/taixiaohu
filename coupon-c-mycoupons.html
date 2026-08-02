@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>泰小虎 App - 我的优惠券（三态平铺）</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif; background:#e9eaee; color:#1d1d1f; display:flex; justify-content:center; padding:24px 0; min-height:100vh; }
+  .phone { width:390px; background:#f2f3f5; border-radius:38px; overflow:hidden; box-shadow:0 18px 50px rgba(0,0,0,.22); display:flex; flex-direction:column; }
+  .statusbar { height:44px; background:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 24px; font-size:14px; font-weight:600; flex-shrink:0; }
+  .statusbar .right { display:flex; gap:6px; align-items:center; font-size:12px; }
+  .navbar { height:48px; background:#fff; display:flex; align-items:center; position:relative; border-bottom:1px solid #f0f0f0; flex-shrink:0; }
+  .navbar .back { width:48px; text-align:center; font-size:22px; color:#222; }
+  .navbar .title { position:absolute; left:0; right:0; text-align:center; font-size:17px; font-weight:600; }
+  .screen { flex:1; overflow-y:auto; padding:0 0 16px; }
+  .screen::-webkit-scrollbar { width:0; }
+
+  .tabs { display:flex; background:#fff; position:sticky; top:0; z-index:10; border-bottom:1px solid #f0f0f0; }
+  .tabs .tab { flex:1; text-align:center; padding:13px 0; font-size:14px; color:#666; position:relative; cursor:pointer; }
+  .tabs .tab .cnt { font-size:11px; color:#bbb; margin-left:2px; }
+  .tabs .tab.on { color:#534AB7; font-weight:600; }
+  .tabs .tab.on::after { content:""; position:absolute; left:50%; bottom:0; transform:translateX(-50%); width:28px; height:3px; background:#534AB7; border-radius:2px; }
+
+  .sec { padding:12px; }
+  .sec-title { font-size:13px; color:#999; margin:6px 2px 2px; }
+
+  .mc { display:flex; align-items:stretch; border-radius:10px; overflow:hidden; margin:10px 0; background:#fff; box-shadow:0 1px 5px rgba(0,0,0,.05); }
+  .mc .left { width:92px; flex-shrink:0; background:linear-gradient(135deg,#ff7a45,#ff4d4f); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:10px 4px; position:relative; }
+  .mc .left .amt { font-size:26px; font-weight:700; line-height:1; }
+  .mc .left .amt small { font-size:13px; font-weight:600; }
+  .mc .left .thr { font-size:11px; opacity:.92; margin-top:4px; }
+  .mc .left::after { content:""; position:absolute; right:-6px; top:0; bottom:0; width:12px; background:radial-gradient(circle at 6px 6px,#f2f3f5 5px,transparent 6px) 0 0/12px 12px repeat-y; }
+  .mc .body { flex:1; padding:11px 12px; display:flex; flex-direction:column; justify-content:center; }
+  .mc .body .cname { font-size:14px; font-weight:600; color:#222; }
+  .mc .body .cname .rec { display:inline-block; background:#fff0e6; color:#ff7a45; font-size:10px; font-weight:700; padding:1px 6px; border-radius:4px; margin-left:6px; vertical-align:middle; }
+  .mc .body .meta { font-size:11px; color:#999; margin-top:5px; line-height:1.5; }
+  .mc .body .scope { display:inline-block; background:#f0eeff; color:#534AB7; font-size:10px; padding:1px 6px; border-radius:4px; margin-top:5px; }
+  .mc .body .acts { margin-top:9px; display:flex; align-items:center; gap:12px; }
+  .mc .body .use { background:#534AB7; color:#fff; border:none; border-radius:14px; padding:5px 14px; font-size:12px; font-weight:600; cursor:pointer; }
+  .mc .body .rule { color:#534AB7; font-size:12px; font-weight:600; cursor:pointer; }
+  .mc .body .status-tag { display:inline-block; font-size:11px; color:#999; border:1px solid #ddd; border-radius:10px; padding:2px 8px; margin-top:6px; }
+
+  .mc.disabled { opacity:.55; }
+  .mc.disabled .left { background:linear-gradient(135deg,#b9b9b9,#9a9a9a); }
+  .mc.disabled .left::after { background:radial-gradient(circle at 6px 6px,#f2f3f5 5px,transparent 6px) 0 0/12px 12px repeat-y; }
+  .mc.disabled .use { background:#ccc; }
+
+  .copy-btn { position:fixed; right:18px; bottom:18px; z-index:999; background:#534AB7; color:#fff; border:none; border-radius:22px; padding:11px 18px; font-size:14px; font-weight:600; cursor:pointer; box-shadow:0 6px 18px rgba(83,74,183,.4); }
+  .copy-btn:active { transform:scale(.96); }
+
+  .rule-mask { position:fixed; left:0; right:0; top:0; bottom:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; z-index:200; padding:30px; }
+  .rule-mask.show { display:flex; }
+  .rule-card { background:#fff; border-radius:14px; width:100%; max-width:320px; padding:20px; box-shadow:0 12px 40px rgba(0,0,0,.25); }
+  .rule-card .rt { font-size:16px; font-weight:700; color:#1d1d1f; margin-bottom:12px; }
+  .rule-card .rb { font-size:13px; color:#555; line-height:1.9; }
+  .rule-card .rb b { color:#222; }
+  .rule-card .rc { margin-top:18px; width:100%; height:42px; border:none; border-radius:21px; background:#534AB7; color:#fff; font-size:15px; font-weight:600; cursor:pointer; }
+
+  .toast { position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,.78); color:#fff; font-size:13px; padding:10px 16px; border-radius:8px; max-width:300px; text-align:center; line-height:1.5; opacity:0; pointer-events:none; transition:opacity .25s; z-index:99; }
+  .toast.show { opacity:1; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="statusbar"><span>9:41</span><span class="right"><span>●●●</span><span>WiFi</span><span>🔋</span></span></div>
+  <div class="navbar"><div class="back">‹</div><div class="title">我的优惠券</div></div>
+
+  <div class="screen">
+    <div class="tabs">
+      <div class="tab on" onclick="scrollToSec('secUnused')">未使用<span class="cnt">3</span></div>
+      <div class="tab" onclick="scrollToSec('secUsed')">已使用<span class="cnt">2</span></div>
+      <div class="tab" onclick="scrollToSec('secExpired')">已过期<span class="cnt">2</span></div>
+    </div>
+
+    <div class="sec" id="secUnused">
+      <div class="sec-title">未使用</div>
+      <div id="listUnused"></div>
+    </div>
+    <div class="sec" id="secUsed">
+      <div class="sec-title">已使用</div>
+      <div id="listUsed"></div>
+    </div>
+    <div class="sec" id="secExpired">
+      <div class="sec-title">已过期</div>
+      <div id="listExpired"></div>
+    </div>
+  </div>
+</div>
+
+<button class="copy-btn" onclick="copySource()">📋 复制源码（墨刀）</button>
+
+<div class="rule-mask" id="ruleMask" onclick="hideRule()">
+  <div class="rule-card" onclick="event.stopPropagation()">
+    <div class="rt" id="ruleTitle">券规则</div>
+    <div class="rb" id="ruleBody"></div>
+    <button class="rc" onclick="hideRule()">我知道了</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  var unused = [
+    { id:'u1', name:'会员日满200减30', amount:30, threshold:200, expire:'2026-08-19', scope:'全场通用', rec:true },
+    { id:'u2', name:'新人满99减20', amount:20, threshold:99, expire:'2026-08-15', scope:'全场通用', rec:false },
+    { id:'u3', name:'福利直播满100减10', amount:10, threshold:100, expire:'2026-08-14', scope:'指定直播间商品', rec:false }
+  ];
+  var used = [
+    { id:'s1', name:'老客回馈无门槛10元', amount:10, threshold:0, usedTime:'2026-07-30 14:22', order:'ORD20260730B07' },
+    { id:'s2', name:'签到奖励满50减8', amount:8, threshold:50, usedTime:'2026-07-25 19:30', order:'ORD20260725A31' }
+  ];
+  var expired = [
+    { id:'e1', name:'新人专享满150减25', amount:25, threshold:150, expire:'2026-07-20' },
+    { id:'e2', name:'直播专享满300减50', amount:50, threshold:300, expire:'2026-07-18', scope:'指定直播间商品' }
+  ];
+
+  function fmtLeft(c){
+    var thr = c.threshold > 0 ? ('满'+c.threshold) : '无门槛';
+    var rec = c.rec ? '<span class="rec">推荐</span>' : '';
+    return '<div class="left"><div class="amt"><small>¥</small>'+c.amount+'</div><div class="thr">'+thr+'</div></div>';
+  }
+
+  function renderUnused(){
+    var h='';
+    unused.forEach(function(c){
+      var scope = c.scope ? '<span class="scope">'+c.scope+'</span>' : '';
+      h += '<div class="mc">'+ fmtLeft(c) +
+        '<div class="body"><div class="cname">'+c.name+rec+'</div>'+
+        '<div class="meta">有效期至 '+c.expire+'</div>'+ scope +
+        '<div class="acts"><button class="use" onclick="toast(\'去使用 → 跳转商品详情页\')">去使用</button>'+
+        '<span class="rule" onclick="showRule(\''+c.id+'\',\'unused\')">券规则 ›</span></div></div></div>';
+    });
+    document.getElementById('listUnused').innerHTML=h;
+  }
+  function renderUsed(){
+    var h='';
+    used.forEach(function(c){
+      h += '<div class="mc disabled">'+ fmtLeft(c) +
+        '<div class="body"><div class="cname">'+c.name+'</div>'+
+        '<div class="meta">使用时间 '+c.usedTime+'<br>关联订单号 '+c.order+'</div>'+
+        '<span class="status-tag">已核销</span></div></div>';
+    });
+    document.getElementById('listUsed').innerHTML=h;
+  }
+  function renderExpired(){
+    var h='';
+    expired.forEach(function(c){
+      var scope = c.scope ? '<span class="scope">'+c.scope+'</span>' : '';
+      h += '<div class="mc disabled">'+ fmtLeft(c) +
+        '<div class="body"><div class="cname">'+c.name+'</div>'+
+        '<div class="meta">过期时间 '+c.expire+'</div>'+ scope +
+        '<span class="status-tag">已过期</span></div></div>';
+    });
+    document.getElementById('listExpired').innerHTML=h;
+  }
+
+  function scrollToSec(id){
+    var el=document.getElementById(id);
+    el.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  function showRule(id, grp){
+    var pool = grp==='unused'?unused : (grp==='used'?used:expired);
+    var c = pool.filter(function(x){ return x.id===id; })[0];
+    if(!c) return;
+    document.getElementById('ruleTitle').textContent = c.name + ' · 使用规则';
+    var thr = c.threshold > 0 ? ('满'+c.threshold+'元可用') : '无门槛，任意金额可用';
+    var exp = c.expire || c.usedTime;
+    document.getElementById('ruleBody').innerHTML =
+      '<div><b>使用门槛：</b>'+thr+'</div>'+
+      '<div><b>有效期至：</b>'+exp+'</div>'+
+      '<div><b>适用范围：</b>'+(c.scope||'全场通用')+'</div>'+
+      '<div><b>说明：</b>仅限本人账户使用，不可转赠、不可兑换现金；过期自动作废，不予补偿。</div>';
+    document.getElementById('ruleMask').classList.add('show');
+  }
+  function hideRule(){ document.getElementById('ruleMask').classList.remove('show'); }
+
+  function copySource(){
+    var src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(src).then(function(){ toast('已复制完整源码，去墨刀粘贴即可'); }, function(){ fallbackCopy(src); });
+    } else { fallbackCopy(src); }
+  }
+  function fallbackCopy(text){
+    var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.top='-9999px';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); toast('已复制完整源码，去墨刀粘贴即可'); } catch(e){ toast('复制失败，请手动复制页面源码'); }
+    document.body.removeChild(ta);
+  }
+
+  var toastTimer=null;
+  function toast(msg){
+    var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+    if(toastTimer) clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){ t.classList.remove('show'); },1800);
+  }
+
+  renderUnused(); renderUsed(); renderExpired();
+</script>
+</body>
+</html>
