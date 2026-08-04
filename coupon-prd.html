@@ -162,7 +162,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <li><b>后台</b>：平台端可配置券、发券活动（规则引擎），数据按店铺隔离。</li>
 
-<li><b>发券规则引擎</b>：<span style="color:#d32f2f;font-weight:bold">本期支持两种触发源，运营可在新建活动时切换：直播时长（阈值=观看满 X 分钟）+ 分享活动（阈值=分享满 X 次，按人累计）+ 会员等级限定 + 多券模板关联 + 每人每种限发上限</span>。</li>
+<li><b>发券规则引擎</b>：<span style="color:#d32f2f;font-weight:bold">本期支持两种触发源，运营可在新建活动时切换：直播时长（阈值=观看满 X 分钟）+ 分享活动（阈值=绑定用户数量 X 人）+ 会员等级限定 + 多券模板关联 + 每人每种限发上限</span>。</li>
 
 <li><b>客户端用券闭环</b>：我的优惠券（三态）、确认订单选券/核销。</li>
 
@@ -1711,7 +1711,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>观看阈值</td><td><span style="color:#d32f2f;font-weight:bold">仅当触发源=直播时长时显示：观看满 X 分钟（min=1）</span></td><td><span style="color:#d32f2f;font-weight:bold">直播时长活动时必填≥1 整数</span></td><td>阈值文本见原型 D3 表单（snThresholdText）</td></tr>
 
 <tr><td>关联直播标签</td><td><span style="color:#d32f2f;font-weight:bold">仅当触发源=直播时长时显示；下拉选直播标签（数据来源：平台「营销管理」·标签类型=直播标签，默认内置标签「福利直播」（标签描述：可发券直播））</span></td><td><span style="color:#d32f2f;font-weight:bold">直播时长活动时必选 1（取直播标签启用项）</span></td><td>—</td></tr>
-<tr><td>分享数量</td><td><span style="color:#d32f2f;font-weight:bold">仅当触发源=分享活动时显示：分享满 X 次（按人累计）</span></td><td><span style="color:#d32f2f;font-weight:bold">分享活动时必填≥1 整数</span></td><td>—</td></tr>
+<tr><td>绑定用户数量</td><td><span style="color:#d32f2f;font-weight:bold">仅当触发源=分享活动时显示：绑定用户数量 X 人</span></td><td><span style="color:#d32f2f;font-weight:bold">分享活动时必填≥1 整数</span></td><td>—</td></tr>
 <tr><td>关联分享标签</td><td><span style="color:#d32f2f;font-weight:bold">仅当触发源=分享活动时显示；下拉单选，首项「不限制」（空值，表示不绑定标签），后续选项：朋友圈 / 社群 / 海报</span></td><td><span style="color:#d32f2f;font-weight:bold">分享活动时选填（默认「不限制」）</span></td><td><span style="color:#d32f2f;font-weight:bold">⚠️ 待确认 @干系人：关联分享标签具体取值（朋友圈/社群/海报）以业务确认为准</span></td></tr>
 
 <tr><td>适用会员等级</td><td>全部会员 / 指定等级(Lv1-8 多选 chip)</td><td>默认「全部会员」；选「指定等级」时<b>至少勾选 1 个等级</b></td><td>—</td></tr>
@@ -1731,7 +1731,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <thead><tr><th>活动类型</th><th>触发阈值（绑定）</th><th>关联标签</th><th>会员等级</th></tr></thead>
 <tbody>
 <tr><td>直播时长</td><td>观看满 X 分钟</td><td>直播标签（福利直播 / 新品直播 / VIP 专享直播…）</td><td>全部 / 指定（含单等级）</td></tr>
-<tr><td>分享活动</td><td>分享满 X 次（按人）</td><td>不限制 / 朋友圈 / 社群 / 海报（<span style="color:#d32f2f;font-weight:bold">⚠️ 待确认 @干系人：分享标签具体取值以业务确认为准</span>）</td><td>全部（不限）/ 指定（含单等级）</td></tr>
+<tr><td>分享活动</td><td>绑定用户数量 X 人</td><td>不限制 / 朋友圈 / 社群 / 海报（<span style="color:#d32f2f;font-weight:bold">⚠️ 待确认 @干系人：分享标签具体取值以业务确认为准</span>）</td><td>全部（不限）/ 指定（含单等级）</td></tr>
 </tbody>
 </table>
 
@@ -1767,7 +1767,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <li>极限值处理：活动名称最长 50 字符，超长截断并提示；每人上限最大值 999；关联券模板最多勾选 20 个。</li>
 
-<li><span style="color:#d32f2f;font-weight:bold">动态表单联动：选择活动类型后即时显隐对应字段——直播时长 → 显示「观看阈值」+「关联直播标签」；分享活动 → 显示「分享数量」+「关联分享标签」（首项「不限制」）；两类共用「适用会员等级」「每人限制发券上限」「活动时间」「关联券模板」。</span></li>
+<li><span style="color:#d32f2f;font-weight:bold">动态表单联动：选择活动类型后即时显隐对应字段——直播时长 → 显示「观看阈值」+「关联直播标签」；分享活动 → 显示「绑定用户数量」+「关联分享标签」（首项「不限制」）；两类共用「适用会员等级」「每人限制发券上限」「活动时间」「关联券模板」。</span></li>
 
 </ul>
 
