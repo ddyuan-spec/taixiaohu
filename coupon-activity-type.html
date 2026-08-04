@@ -135,16 +135,6 @@
         <label class="fr-label">分享数量</label>
         <div class="fr-body">分享满 <input class="fr-input" id="snShareCount" type="number" value="5" min="1" style="width:80px"> 次</div>
       </div>
-      <div class="form-row hidden" id="rowShareTag">
-        <label class="fr-label">分享标签</label>
-        <div class="fr-body">
-          <select class="fr-input" id="snShareTag" style="width:260px">
-            <option value="friend">朋友圈分享</option>
-            <option value="group">社群分享</option>
-            <option value="poster">海报分享</option>
-          </select>
-        </div>
-      </div>
 
       <div class="form-row">
         <label class="fr-label">适用会员等级</label>
@@ -182,10 +172,10 @@
     <div class="form-section">
       <div class="fs-sub">活动类型 × 阈值绑定</div>
       <table class="inner-tbl">
-        <thead><tr><th>活动类型</th><th>触发阈值（绑定）</th><th>关联标签（通用字段，按类型取值）</th><th>会员等级</th></tr></thead>
+        <thead><tr><th>活动类型</th><th>触发阈值（绑定）</th><th>关联标签</th><th>会员等级</th></tr></thead>
         <tbody>
-          <tr><td>直播时长</td><td>观看满 X 分钟</td><td>直播标签（福利直播 / 新品直播 / VIP 专享直播…）</td><td>全部 / 指定</td></tr>
-          <tr><td>分享活动</td><td>分享满 X 次（按人）</td><td>分享标签（朋友圈 / 社群 / 海报…）</td><td>全部（不限）/ 指定（含单等级）</td></tr>
+          <tr><td>直播时长</td><td>观看满 X 分钟</td><td>直播标签（福利直播 / 新品直播 / VIP 专享直播…）</td><td>全部 / 指定（含单等级）</td></tr>
+          <tr><td>分享活动</td><td>分享满 X 次（按人）</td><td>—</td><td>全部（不限）/ 指定（含单等级）</td></tr>
         </tbody>
       </table>
     </div>
@@ -210,7 +200,6 @@ function switchType(type){
   $('rowWatch').classList.toggle('hidden',!isLive);
   $('rowLiveTag').classList.toggle('hidden',!isLive);
   $('rowShareCount').classList.toggle('hidden',isLive);
-  $('rowShareTag').classList.toggle('hidden',isLive);
 }
 
 /* 会员等级：全部 / 指定 */
