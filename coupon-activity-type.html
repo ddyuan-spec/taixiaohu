@@ -126,8 +126,8 @@
       </div>
 
       <div class="form-row hidden" id="rowShareCount">
-        <label class="fr-label">分享数量</label>
-        <div class="fr-body">分享满 <input class="fr-input" id="snShareCount" type="number" value="5" min="1" style="width:80px"> 次</div>
+        <label class="fr-label">绑定用户数量</label>
+        <div class="fr-body">满 <input class="fr-input" id="snShareCount" type="number" value="5" min="1" style="width:80px"> 人</div>
       </div>
       <div class="form-row hidden" id="rowShareTag">
         <label class="fr-label">关联分享标签</label>
@@ -220,7 +220,7 @@ function saveSendForm(){
     if(!m||m<1){toast('请填写有效的观看阈值（≥1 分钟）',true);return;}
   }else{
     const c=+$('snShareCount').value;
-    if(!c||c<1){toast('请填写有效的分享数量（≥1 次）',true);return;}
+    if(!c||c<1){toast('请填写有效的绑定用户数量（≥1 人）',true);return;}
   }
   const picked=document.querySelectorAll('#snCouponPick input:checked').length;
   if(!picked){toast('请至少关联一个券模板',true);return;}
