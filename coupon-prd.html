@@ -512,11 +512,12 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <thead><tr><th>起始状态</th><th>触发动作</th><th>前置条件</th><th>目标状态</th></tr></thead>
 <tbody>
 <tr><td>未开始</td><td>到达开始时间</td><td>系统定时任务</td><td>进行中</td></tr>
-<tr><td>未开始 / 进行中</td><td><b>运营手动「结束活动」</b></td><td>列表操作列按钮，二次确认弹窗</td><td><b>已结束（终态，不可重开）</b>：立即停止发券，未发放券不再发放，已发放券实例不受影响</td></tr>
+<tr><td><span style="color:#d32f2f;font-weight:bold">进行中</span></td><td><span style="color:#d32f2f;font-weight:bold">到达关闭时间</span></td><td><span style="color:#d32f2f">系统定时任务</span></td><td><span style="color:#d32f2f;font-weight:bold">已结束（系统自动结束）</span>：到点自动停止发券，未发放券不再发放，已发放券实例不受影响</td></tr>
+<tr><td>未开始 / 进行中</td><td><b>运营手动「结束活动」</b></td><td>列表操作列按钮，二次确认弹窗</td><td><b>已结束（终态，不可重开，手动结束）</b>：立即停止发券，未发放券不再发放，已发放券实例不受影响</td></tr>
 
 </tbody>
 </table>
-<div class="note">📌 <b>发券活动状态说明</b>：发券活动<b>仅有「开始发券时间」，无结束时间设置</b>——活动一旦开始即持续发券，不会因到达某个时间点自动结束。状态转换：<b>未开始</b>（当前＜开始时间）→ 系统定时任务到达开始时间 → <b>进行中</b> → 运营手动「结束活动」→ <b>已结束（终态，不可重开）</b>。无暂停 / 恢复态，亦<b>无系统自动结束态</b>；活动只能由运营手动「结束活动」终止，结束后立即停止发券、未发放券不再发放、已发放券实例不受影响（见 §4.1.4 P2 功能按钮表「结束活动」）。</div>
+<div class="note">📌 <b>发券活动状态说明</b>：发券活动<span style="color:#d32f2f;text-decoration:line-through">仅有「开始发券时间」，无结束时间设置</span><span style="color:#d32f2f;font-weight:bold">现含「开始时间」「关闭时间」两段时间</span>——<span style="color:#d32f2f;font-weight:bold">到达关闭时间后由系统定时任务自动置为「已结束」</span>，<span style="color:#d32f2f;text-decoration:line-through">不会因到达某个时间点自动结束</span>。状态转换：<b>未开始</b>（当前＜开始时间）→ 系统定时任务到达开始时间 → <b>进行中</b>（开始时间 ≤ 当前 ＜ 关闭时间）→ <span style="color:#d32f2f;font-weight:bold">到达关闭时间自动结束</span> / 运营手动「结束活动」→ <b>已结束（终态，不可重开）</b>。<span style="color:#d32f2f">无暂停 / 恢复态；自动结束与手动结束均为终态不可重开</span>。活动可经运营手动「结束活动」提前终止，结束后立即停止发券、未发放券不再发放、已发放券实例不受影响（见 §4.1.4 P2 功能按钮表「结束活动」）。</div>
 
 <p><b>用户券状态转换表</b>（我的优惠券三态 + 边界）<span style="font-size:11px;color:#999"> ｜ 注：下表起始状态均为明确单态（非宽泛"所有"），每行转换路径唯一确定。</span>：</p>
 <table>
@@ -797,7 +798,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <p><b>P2 发券活动管理列表</b></p>
 <p><img src="coupon-prd-assets/coupon-p2-send-list.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="P2发券活动管理列表"></p>
-<p><b>列表字段与筛选（关联直播板块增量）</b>：在既有字段（活动名称 / 触发源 / 适用会员等级 / 关联券模板 / 每人上限 / 开始发券时间 / 状态）基础上，<b>新增「关联直播标签」列</b>——仅当活动触发源=直播时长时展示所关联的直播标签（Tag 样式），非直播时长活动该列显示「—」。列表顶部筛选区在既有「触发源 / 状态 / 关键词」基础上，<b>新增「关联直播标签」单选下拉</b>（数据来源同 D3，取标签管理·直播标签类型启用项），与「触发源=直播时长」组合可快速定位直播发券活动。</p>
+<p><b>列表字段与筛选（关联直播板块增量）</b>：在既有字段（活动名称 / 触发源 / 适用会员等级 / 关联券模板 / 每人上限 / <span style="color:#d32f2f;text-decoration:line-through">开始发券时间</span><span style="color:#d32f2f;font-weight:bold">活动时间（含开始时间、关闭时间）</span> / 状态）基础上，<b>新增「关联直播标签」列</b>——仅当活动触发源=直播时长时展示所关联的直播标签（Tag 样式），非直播时长活动该列显示「—」。列表顶部筛选区在既有「触发源 / 状态 / 关键词」基础上，<b>新增「关联直播标签」单选下拉</b>（数据来源同 D3，取标签管理·直播标签类型启用项），与「触发源=直播时长」组合可快速定位直播发券活动。</p>
 
 <p><b>P2 列表字段表</b></p>
 <table>
@@ -811,7 +812,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>关联券模板</td><td>本活动关联的券模板名称列表（多行展示）</td><td>取关联关系表，多券时换行显示</td></tr>
 <tr><td>已发放</td><td>已发放的券实例总数</td><td>聚合《用户券表》count(where activity_id)</td></tr>
 <tr><td>状态</td><td>活动状态 Tag（未开始 / <span style="color:#1890ff">进行中</span> / 已结束）</td><td>取 status 枚举；进行中=绿色Tag、未开始=蓝色Tag、其余灰色</td></tr>
-<tr><td>开始发券时间</td><td>计划开始执行发券的时间</td><td>取 start_time（精确到秒）</td></tr>
+<tr><td><span style="color:#d32f2f;text-decoration:line-through">开始发券时间</span><span style="color:#d32f2f;font-weight:bold">活动时间</span></td><td><span style="color:#d32f2f;font-weight:bold">活动起止时间（含开始时间、关闭时间）</span></td><td><span style="color:#d32f2f">取 start_time ~ end_time（均精确到秒）</span></td></tr>
 <tr><td>操作</td><td>操作列按钮（见下方功能按钮表）</td><td>—</td></tr>
 </tbody>
 </table>
@@ -839,7 +840,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>删除</td><td>列表操作列</td><td>仅「已结束」态可见可点击；「未开始 / 进行中」态<b>不显示</b>该按钮</td><td>二次确认弹窗「确认删除该发券活动？删除后不可恢复」→ 确认后<b>物理 / 逻辑删除活动记录（不可恢复）</b>；<b>已发放到用户钱包的券实例不受影响</b>（券独立于活动存在，仍可按其使用状态正常使用）；删除为对已结束活动的<b>终态清理动作</b>，未开始 / 进行中活动不支持删除（须先「结束活动」转为已结束后方可删除）</td><td>直播运营</td></tr>
 </tbody>
 </table>
-<div class="note">📌 <b>P2 列表排序与分页</b>：默认按「开始发券时间」倒序（最新创建的在顶部）；分页支持 20 / 50 / 100 条每页，默认 20。列表无数据时显示空态「暂无发券活动」。</div>
+<div class="note">📌 <b>P2 列表排序与分页</b>：默认按「<span style="color:#d32f2f;text-decoration:line-through">开始发券时间</span><span style="color:#d32f2f;font-weight:bold">开始时间</span>」倒序（最新创建的在顶部）；分页支持 20 / 50 / 100 条每页，默认 20。列表无数据时显示空态「暂无发券活动」。</div>
 
 <p><b>D3 新建/编辑发券活动（规则引擎）</b></p>
 
@@ -856,7 +857,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>关联直播标签</td><td>固定显示（本期触发源恒为「直播时长」）；下拉选直播标签（数据来源：平台「营销管理」·标签类型=直播标签，默认内置标签「福利直播」（标签描述：可发券直播））</td><td><b>必选 1</b>（取直播标签启用项）</td><td>—</td></tr>
 <tr><td>适用会员等级</td><td>全部会员 / 指定等级(Lv1-8 多选 chip)</td><td>默认「全部会员」；选「指定等级」时<b>至少勾选 1 个等级</b></td><td>—</td></tr>
 <tr><td>每人限制发券上限（每种）</td><td>数字≥1，默认 1；多选券模板时每种独立限张</td><td><b>必填≥1 整数</b>；非法（0/负数/非数字）→提示"每人上限须≥1"；最大 999</td><td>呼应 v9.2 文案</td></tr>
-<tr><td>开始发券时间</td><td>datetime-local + 秒(0-59) 精确到秒</td><td><b>必填</b>；空→提示"请选择开始发券时间"</td><td>异步发券，无冷却/生效时段；<b>发券活动无结束时间设置</b>，活动开始后持续发券，仅可经「结束活动」手动终止</td></tr>
+<tr><td><span style="color:#d32f2f;text-decoration:line-through">开始发券时间</span><span style="color:#d32f2f;font-weight:bold">活动时间</span></td><td><span style="color:#d32f2f">两段时间：开始时间（datetime-local + 秒 0-59 精确到秒）+ 关闭时间（datetime-local + 秒 0-59 精确到秒），同一表单行内联展示</span></td><td><span style="color:#d32f2f"><b>两段皆必填</b>；任一空→提示"请选择活动时间"；开始时间＜关闭时间，否则提示"开始时间须早于关闭时间"</span></td><td><span style="color:#d32f2f">异步发券，无冷却/生效时段；<b>到达关闭时间后由系统定时任务自动置为「已结束」停止发券</b>，<span style="text-decoration:line-through">活动开始后持续发券，仅可经「结束活动」手动终止</span>亦可经运营「结束活动」手动提前终止；活动生命周期为「开始时间 ≤ 当前 ＜ 关闭时间」；已发放的券实例不受活动终止影响</span></td></tr>
 <tr><td>关联券模板</td><td>页面内可勾选（多选），实时显示已选数</td><td><b>至少 1 个</b>；空→提示"请至少关联一个券模板"；最多 20 个</td><td>—</td></tr>
 </tbody>
 </table>
@@ -865,7 +866,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <table>
 <thead><tr><th>按钮</th><th>位置</th><th>显示条件</th><th>功能说明</th><th>权限</th></tr></thead>
 <tbody>
-<tr><td>保存</td><td>表单底部右侧</td><td>始终可见</td><td>依次校验全部必填项（活动名称/观看阈值/关联直播标签/每人上限/开始发券时间/关联券模板≥1）→ 校验通过后写发券活动记录（触发源/阈值文本/等级/券模板/每人上限/开始时间）→ toast"保存成功"并跳转 P2 列表页（新建时新记录置顶，编辑时原地刷新）；<b>编辑模式下仅「未开始」态的活动可保存修改</b>，进行中 / 已结束态进入编辑页后「保存」按钮 disabled 并 tooltip 提示"进行中/已结束的活动不可编辑"；保存中按钮 disabled + loading 文字"保存中..."防止重复提交；保存失败 → toast 显示后端错误信息</td><td>直播运营</td></tr>
+<tr><td>保存</td><td>表单底部右侧</td><td>始终可见</td><td>依次校验全部必填项（活动名称/观看阈值/关联直播标签/每人上限/<span style="color:#d32f2f;text-decoration:line-through">开始发券时间</span><span style="color:#d32f2f;font-weight:bold">活动时间（开始+关闭）</span>/关联券模板≥1，<span style="color:#d32f2f;font-weight:bold">且开始时间＜关闭时间</span>）→ 校验通过后写发券活动记录（触发源/阈值文本/等级/券模板/每人上限/<span style="color:#d32f2f;text-decoration:line-through">开始时间</span><span style="color:#d32f2f;font-weight:bold">开始时间 + 关闭时间</span>）→ toast"保存成功"并跳转 P2 列表页（新建时新记录置顶，编辑时原地刷新）；<b>编辑模式下仅「未开始」态的活动可保存修改</b>，进行中 / 已结束态进入编辑页后「保存」按钮 disabled 并 tooltip 提示"进行中/已结束的活动不可编辑"；保存中按钮 disabled + loading 文字"保存中..."防止重复提交；保存失败 → toast 显示后端错误信息</td><td>直播运营</td></tr>
 <tr><td>取消</td><td>表单底部（保存按钮左侧）</td><td>始终可见</td><td>未做任何表单修改时直接返回 P2 列表页；有修改但未保存时弹窗确认「当前修改尚未保存，确定离开吗？」（确认 / 取消两个按钮）→ 确认返回列表页 / 取消留在当前页继续编辑</td><td>所有角色</td></tr>
 </tbody>
 </table>
@@ -874,7 +875,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <p><b>界面与展示规则</b>：</p>
 <ul>
 <li>入参校验（P2 列表页）：触发源下拉筛选支持单选，「关联直播标签」下拉筛选支持单选（取标签管理·直播标签类型启用项）；时间范围为日期区间（开始~结束），空筛选条件默认查全部；列表无数据时显示空态"暂无发券活动"。</li>
-<li>入参校验（D3 编辑页）：活动名称文本必填，空值→提示"请填写活动名称"；关联券模板至少勾选 1 个，空→提示"请至少关联一个券模板"；每人限制发券上限≥1 的数字输入，非法（0/负数/非数字）→提示"每人上限须≥1"；开始发券时间为 datetime-local 精确到秒，必填。</li>
+<li>入参校验（D3 编辑页）：活动名称文本必填，空值→提示"请填写活动名称"；关联券模板至少勾选 1 个，空→提示"请至少关联一个券模板"；每人限制发券上限≥1 的数字输入，非法（0/负数/非数字）→提示"每人上限须≥1"；<span style="color:#d32f2f;text-decoration:line-through">开始发券时间为 datetime-local 精确到秒，必填</span><span style="color:#d32f2f;font-weight:bold">活动时间（开始时间、关闭时间）均为 datetime-local 精确到秒，两段皆必填；开始时间须早于关闭时间</span>。</li>
 <li>极限值处理：活动名称最长 50 字符，超长截断并提示；每人上限最大值 999；关联券模板最多勾选 20 个。</li>
 <li>动态表单联动：本期触发源固定为「直播时长」，无切换联动；观看阈值恒为「观看满 X 分钟」，关联直播标签恒显示。</li>
 </ul>
