@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎 · 优惠券体系 — 发券活动类型切换原型（确认稿）</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f5f6fa;color:#333;font-size:13px}
+  .topbar{height:48px;background:#534AB7;color:#fff;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100}
+  .topbar .logo{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+  .topbar .logo::before{content:'';display:inline-block;width:20px;height:20px;border-radius:4px;background:rgba(255,255,255,.2)}
+  .topbar .sys{opacity:.75;font-size:12px}
+  .topbar .right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:18px;cursor:pointer}
+  .layout{display:flex;min-height:calc(100vh - 48px)}
+  .side{width:196px;background:#fff;border-right:1px solid #eaeaea;display:flex;flex-direction:column;flex-shrink:0;padding-top:8px}
+  .side .gtitle{font-size:11px;color:#999;padding:14px 16px 6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+  .side a{display:block;padding:9px 16px 9px 28px;color:#555;text-decoration:none;font-size:13px;cursor:pointer}
+  .side a:hover{background:#f8f7ff;color:#534AB7}
+  .side a.active{background:#f3f0ff;color:#534AB7;font-weight:500;border-right:3px solid #534AB7}
+  .main{flex:1;padding:18px 24px 60px;min-width:0}
+  .hidden{display:none!important}
+  .crumb{font-size:12px;color:#999;margin-bottom:14px}
+  .crumb span{color:#333}
+  .phead{display:flex;align-items:center;margin-bottom:14px;gap:10px}
+  .phead h2{font-size:17px;font-weight:600;color:#222}
+  .banner-note{background:#fff7e6;border:1px solid #ffe7ba;color:#ad6800;padding:10px 14px;border-radius:4px;font-size:12.5px;margin-bottom:16px;line-height:1.6}
+  .banner-note strong{color:#d48806}
+
+  /* Form */
+  .form-section{background:#fff;border:1px solid #ebeef5;border-radius:4px;padding:20px 24px;margin-bottom:16px}
+  .fs-sub{font-size:13px;font-weight:600;color:#534AB7;margin:6px 0 14px;padding-bottom:8px;border-bottom:1px dashed #ece9fb}
+  .form-row{display:flex;align-items:flex-start;gap:16px;margin-bottom:14px}
+  .fr-label{width:90px;font-size:13px;color:#606266;line-height:32px;flex-shrink:0;text-align:right;padding-right:8px}
+  .fr-body{flex:1;min-width:0}
+  .fr-hint{font-size:12px;color:#c0c4cc;margin-left:8px;line-height:32px}
+  .fr-input{height:32px;border:1px solid #dcdfe6;border-radius:4px;padding:0 10px;font-size:13px;width:280px;outline:none;transition:border-color .2s}
+  .fr-input:focus{border-color:#534AB7}
+  select.fr-input{width:auto;min-width:160px}
+  .radio-group{display:flex;align-items:center;gap:18px}
+  .radio-item{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:13px;color:#606266}
+  .radio-item input[type=radio]{accent-color:#534AB7;width:15px;height:15px}
+  .level-box{display:flex;flex-wrap:wrap;gap:10px;padding:10px 12px;background:#fafbfc;border:1px solid #ebeef5;border-radius:4px;max-width:560px}
+  .chk-item{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:13px;color:#606266}
+  .chk-item input{accent-color:#534AB7;width:15px;height:15px}
+
+  /* Segmented control for activity type */
+  .seg{display:inline-flex;border:1px solid #dcdfe6;border-radius:4px;overflow:hidden}
+  .seg-item{height:32px;padding:0 20px;border:none;background:#fff;cursor:pointer;font-size:13px;color:#606266;border-right:1px solid #dcdfe6;transition:all .15s}
+  .seg-item:last-child{border-right:none}
+  .seg-item:hover:not(.active){color:#534AB7}
+  .seg-item.active{background:#534AB7;color:#fff}
+
+  /* Tags */
+  .tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11.5px;line-height:1.6}
+  .tag-blue{background:#ecf5ff;color:#409eff;border:1px solid #b3d8ff}
+  .tag-purple{background:#f3f0ff;color:#534AB7;border:1px solid #d9d2ff}
+
+  /* Coupon pick */
+  .cp-pick-list{display:flex;flex-direction:column;gap:8px;max-width:520px}
+  .cp-opt{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #ebeef5;border-radius:4px;cursor:pointer;font-size:13px;color:#333}
+  .cp-opt input{accent-color:#534AB7;width:15px;height:15px}
+  .cp-picked-hint{margin-top:8px;font-size:12px;color:#909399}
+  .cp-picked-hint b{color:#534AB7}
+
+  .form-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:8px}
+
+  /* Buttons */
+  .btn-primary{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 16px;background:#534AB7;color:#fff;border:none;border-radius:4px;font-size:13px;cursor:pointer;transition:background .2s}
+  .btn-primary:hover{background:#453da0}
+  .btn-ghost{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 16px;background:#fff;color:#666;border:1px solid #dcdfe6;border-radius:4px;font-size:13px;cursor:pointer;transition:border-color .2s,color .2s}
+  .btn-ghost:hover{color:#534AB7;border-color:#534AB7}
+  .btn-sm{height:26px;padding:0 10px;font-size:12px}
+
+  /* Inner table */
+  .inner-tbl{width:100%;border-collapse:collapse;margin-top:4px}
+  .inner-tbl th{background:#fafbfc;border:1px solid #ebeef5;color:#606266;font-weight:500;padding:8px 12px;font-size:12px;text-align:left}
+  .inner-tbl td{border:1px solid #ebeef5;padding:8px 12px;font-size:12px;color:#333}
+  .inner-tbl tr:first-child td:first-child{font-weight:600;color:#534AB7}
+
+  /* Toast */
+  .toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:#323232;color:#fff;padding:10px 18px;border-radius:4px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:999}
+  .toast.show{opacity:1}
+  .toast.err{background:#f56c6c}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">泰小虎</div>
+  <span class="sys">优惠券体系 · 平台端后台</span>
+  <div class="right">🔔</div>
+</div>
+<div class="layout">
+  <aside class="side">
+    <div class="gtitle">营销管理</div>
+    <a>标签管理</a>
+    <a>直播标签</a>
+    <div class="gtitle">优惠券</div>
+    <a>券模板</a>
+    <a>券管理</a>
+    <a class="active">发券活动</a>
+    <a>数据看板</a>
+  </aside>
+
+  <main class="main">
+    <div class="crumb">发券活动 / <span>新建发券活动</span></div>
+    <div class="phead">
+      <button class="btn-ghost btn-sm" onclick="toast('返回列表（演示）')">← 返回</button>
+      <h2>新建发券活动</h2>
+    </div>
+
+    <div class="banner-note">
+      ⚠️ 本页为<strong>独立确认原型</strong>：仅用于确认「活动类型可切换 + 新增分享活动」的交互方案。确认通过后，才会合并进正式平台端原型（coupon-platform.html）与 PRD（coupon-prd.html）。当前 PRD 仍为「本期固定单一触发源=直播时长」，<strong>本页内容尚未写入 PRD</strong>。
+    </div>
+
+    <div class="form-section">
+      <div class="form-row"><label class="fr-label">活动名称</label><div class="fr-body"><input class="fr-input" id="snName" placeholder="如：8月直播时长发券 / 老客分享有礼" style="width:400px"></div></div>
+
+      <div class="fs-sub">发券规则</div>
+
+      <!-- 活动类型切换 -->
+      <div class="form-row">
+        <label class="fr-label">活动类型</label>
+        <div class="fr-body">
+          <div class="seg" id="typeSeg">
+            <button type="button" class="seg-item active" data-type="live" onclick="switchType('live')">直播时长</button>
+            <button type="button" class="seg-item" data-type="share" onclick="switchType('share')">分享活动</button>
+          </div>
+          <span class="fr-hint">切换活动类型后，下方「触发阈值」与「关联标签」会随之变化</span>
+        </div>
+      </div>
+      <input type="hidden" id="snTrigger" value="live">
+
+      <!-- 直播时长 专属行 -->
+      <div class="form-row" id="rowWatch">
+        <label class="fr-label">观看阈值</label>
+        <div class="fr-body">观看满 <input class="fr-input" id="snThVal" type="number" value="30" min="1" style="width:80px"> 分钟</div>
+      </div>
+      <div class="form-row" id="rowLiveTag">
+        <label class="fr-label">关联直播标签</label>
+        <div class="fr-body">
+          <select class="fr-input" id="snLiveTag" style="width:260px">
+            <option value="welfare">福利直播</option>
+            <option value="newprod">新品直播</option>
+            <option value="vip">会员专享直播</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 分享活动 专属行 -->
+      <div class="form-row hidden" id="rowShareCount">
+        <label class="fr-label">分享数量</label>
+        <div class="fr-body">分享满 <input class="fr-input" id="snShareCount" type="number" value="5" min="1" style="width:80px"> 次 <span class="fr-hint">（按人累计，达量发券）</span></div>
+      </div>
+      <div class="form-row hidden" id="rowShareTag">
+        <label class="fr-label">分享标签</label>
+        <div class="fr-body">
+          <select class="fr-input" id="snShareTag" style="width:260px">
+            <option value="friend">朋友圈分享</option>
+            <option value="group">社群分享</option>
+            <option value="poster">海报分享</option>
+          </select>
+          <span class="fr-hint">示例值，最终取值以 PRD 对照表为准</span>
+        </div>
+      </div>
+
+      <!-- 适用会员等级（两类共用：分享活动即“某个等级（含不限）用户 + 数量发券”的等级约束） -->
+      <div class="form-row">
+        <label class="fr-label">适用会员等级</label>
+        <div class="fr-body">
+          <div class="radio-group" style="margin-bottom:8px">
+            <label class="radio-item"><input type="radio" name="snLevel" value="all" checked onchange="snLevelToggle()"> 全部会员（不限等级）</label>
+            <label class="radio-item"><input type="radio" name="snLevel" value="part" onchange="snLevelToggle()"> 指定等级</label>
+          </div>
+          <div id="snLevelBox" class="level-box hidden">
+            <label class="chk-item"><input type="checkbox" value="V1"> V1青铜</label>
+            <label class="chk-item"><input type="checkbox" value="V2"> V2白银</label>
+            <label class="chk-item"><input type="checkbox" value="V3"> V3黄金</label>
+            <label class="chk-item"><input type="checkbox" value="V4"> V4铂金</label>
+            <label class="chk-item"><input type="checkbox" value="V5"> V5钻石</label>
+            <label class="chk-item"><input type="checkbox" value="V6"> V6黑金</label>
+          </div>
+          <div class="fr-hint" style="margin-left:0;margin-top:6px">分享活动示例：选「指定等级=V3黄金」→ 仅 V3 及以上用户分享达量发券；选「全部会员」→ 不限等级。</div>
+        </div>
+      </div>
+
+      <div class="form-row"><label class="fr-label">每人限制</label><div class="fr-body"><span>每人限制发券上限（每种）</span><input class="fr-input" id="snPerUser" type="number" value="1" min="1" style="width:64px"><span style="margin:0 6px">张</span></div></div>
+      <div class="form-row"><label class="fr-label">活动时间</label><div class="fr-body">开始 <input class="fr-input" id="snStartTime" type="datetime-local" style="width:200px"><span style="margin:0 12px;color:#999">至</span>关闭 <input class="fr-input" id="snEndTime" type="datetime-local" style="width:200px"></div></div>
+
+      <div class="fs-sub">关联券模板</div>
+      <div class="form-row"><label class="fr-label">券模板</label><div class="fr-body">
+        <div class="cp-pick-list" id="snCouponPick">
+          <label class="cp-opt"><input type="checkbox" checked> 新人满99减20</label>
+          <label class="cp-opt"><input type="checkbox" checked> 无门槛5元代金券</label>
+          <label class="cp-opt"><input type="checkbox"> 会员日满200减30</label>
+          <label class="cp-opt"><input type="checkbox"> 老客回馈满150减20</label>
+        </div>
+        <div class="cp-picked-hint">已选 <b id="snPickCount">2</b> 个券模板</div>
+      </div></div>
+    </div>
+
+    <!-- 活动类型 × 阈值绑定 预览（正式以 PRD 对照表为准） -->
+    <div class="form-section">
+      <div class="fs-sub">本期活动类型 × 阈值绑定（预览，正式以 PRD 对照表为准）</div>
+      <table class="inner-tbl">
+        <thead><tr><th>活动类型</th><th>触发阈值（绑定）</th><th>关联标签（通用字段，按类型取值）</th><th>会员等级</th></tr></thead>
+        <tbody>
+          <tr><td>直播时长</td><td>观看满 X 分钟</td><td>直播标签（福利直播 / 新品直播 / 会员专享直播…）</td><td>全部 / 指定</td></tr>
+          <tr><td>分享活动</td><td>分享满 X 次（按人）</td><td>分享标签（朋友圈 / 社群 / 海报…）</td><td>全部（不限）/ 指定（含单等级）</td></tr>
+        </tbody>
+      </table>
+      <div class="fr-hint" style="margin-left:0;margin-top:10px">注：标签为<strong>通用字段</strong>，各活动类型取值不同（直播→直播标签 / 分享→分享标签…），具体取值清单补充到 PRD。上表为预览，确认合并后写入 PRD「活动类型×阈值绑定对照表」。</div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-ghost" onclick="toast('已取消（演示）')">取消</button>
+      <button class="btn-primary" onclick="saveSendForm()">保存</button>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const toast=(msg,err)=>{const t=$('toast');t.textContent=msg;t.className='toast show'+(err?' err':'');setTimeout(()=>t.classList.remove('show'),2200);};
+
+/* 活动类型切换：直播时长 / 分享活动 */
+function switchType(type){
+  document.querySelectorAll('#typeSeg .seg-item').forEach(b=>b.classList.toggle('active',b.dataset.type===type));
+  $('snTrigger').value=type;
+  const isLive = type==='live';
+  $('rowWatch').classList.toggle('hidden',!isLive);
+  $('rowLiveTag').classList.toggle('hidden',!isLive);
+  $('rowShareCount').classList.toggle('hidden',isLive);
+  $('rowShareTag').classList.toggle('hidden',isLive);
+}
+
+/* 会员等级：全部 / 指定 */
+function snLevelToggle(){
+  const v=document.querySelector('input[name=snLevel]:checked').value;
+  $('snLevelBox').classList.toggle('hidden',v!=='part');
+}
+
+/* 已选券模板计数 */
+function recalcPick(){
+  const n=document.querySelectorAll('#snCouponPick input:checked').length;
+  $('snPickCount').textContent=n;
+}
+document.querySelectorAll('#snCouponPick input').forEach(c=>c.addEventListener('change',recalcPick));
+
+/* 保存（演示校验） */
+function saveSendForm(){
+  const type=$('snTrigger').value;
+  const name=$('snName').value.trim();
+  if(!name){toast('请填写活动名称',true);return;}
+  if(type==='live'){
+    const m=+$('snThVal').value;
+    if(!m||m<1){toast('请填写有效的观看阈值（≥1 分钟）',true);return;}
+  }else{
+    const c=+$('snShareCount').value;
+    if(!c||c<1){toast('请填写有效的分享数量（≥1 次）',true);return;}
+  }
+  const picked=document.querySelectorAll('#snCouponPick input:checked').length;
+  if(!picked){toast('请至少关联一个券模板',true);return;}
+  const typeName = type==='live'?'直播时长':'分享活动';
+  toast('已保存（演示）：'+typeName+' · '+name);
+}
+</script>
+</body>
+</html>
