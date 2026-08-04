@@ -812,7 +812,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>关联券模板</td><td>本活动关联的券模板名称列表（多行展示）</td><td>取关联关系表，多券时换行显示</td></tr>
 <tr><td>已发放</td><td>已发放的券实例总数</td><td>聚合《用户券表》count(where activity_id)</td></tr>
 <tr><td>状态</td><td>活动状态 Tag（未开始 / <span style="color:#1890ff">进行中</span> / 已结束）</td><td>取 status 枚举；进行中=绿色Tag、未开始=蓝色Tag、其余灰色</td></tr>
-<tr><td><span style="color:#d32f2f;text-decoration:line-through">开始发券时间</span><span style="color:#d32f2f;font-weight:bold">活动时间</span></td><td><span style="color:#d32f2f;font-weight:bold">活动起止时间（含开始时间、关闭时间）</span></td><td><span style="color:#d32f2f">取 start_time ~ end_time（均精确到秒）</span></td></tr>
+<tr><td><span style="color:#d32f2f;text-decoration:line-through">开始发券时间</span><span style="color:#d32f2f;font-weight:bold">活动时间</span></td><td><span style="color:#d32f2f;font-weight:bold">活动起止时间（含开始时间、关闭时间）</span></td><td>取 start_time ~ end_time（<span style="color:#d32f2f;text-decoration:line-through">均精确到秒</span><span style="color:#d32f2f;font-weight:bold">datetime-local 控件，精度到分钟</span>）</td></tr>
 <tr><td>操作</td><td>操作列按钮（见下方功能按钮表）</td><td>—</td></tr>
 </tbody>
 </table>
@@ -857,7 +857,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>关联直播标签</td><td>固定显示（本期触发源恒为「直播时长」）；下拉选直播标签（数据来源：平台「营销管理」·标签类型=直播标签，默认内置标签「福利直播」（标签描述：可发券直播））</td><td><b>必选 1</b>（取直播标签启用项）</td><td>—</td></tr>
 <tr><td>适用会员等级</td><td>全部会员 / 指定等级(Lv1-8 多选 chip)</td><td>默认「全部会员」；选「指定等级」时<b>至少勾选 1 个等级</b></td><td>—</td></tr>
 <tr><td>每人限制发券上限（每种）</td><td>数字≥1，默认 1；多选券模板时每种独立限张</td><td><b>必填≥1 整数</b>；非法（0/负数/非数字）→提示"每人上限须≥1"；最大 999</td><td>呼应 v9.2 文案</td></tr>
-<tr><td><span style="color:#d32f2f;text-decoration:line-through">开始发券时间</span><span style="color:#d32f2f;font-weight:bold">活动时间</span></td><td><span style="color:#d32f2f">两段时间：开始时间（datetime-local + 秒 0-59 精确到秒）+ 关闭时间（datetime-local + 秒 0-59 精确到秒），同一表单行内联展示</span></td><td><span style="color:#d32f2f"><b>两段皆必填</b>；任一空→提示"请选择活动时间"；开始时间＜关闭时间，否则提示"开始时间须早于关闭时间"</span></td><td><span style="color:#d32f2f">异步发券，无冷却/生效时段；<b>到达关闭时间后由系统定时任务自动置为「已结束」停止发券</b>，<span style="text-decoration:line-through">活动开始后持续发券，仅可经「结束活动」手动终止</span>亦可经运营「结束活动」手动提前终止；活动生命周期为「开始时间 ≤ 当前 ＜ 关闭时间」；已发放的券实例不受活动终止影响</span></td></tr>
+<tr><td><span style="color:#d32f2f;text-decoration:line-through">开始发券时间</span><span style="color:#d32f2f;font-weight:bold">活动时间</span></td><td>两段时间：开始时间（<span style="color:#d32f2f;text-decoration:line-through">datetime-local + 秒 0-59 精确到秒</span><span style="color:#d32f2f;font-weight:bold">datetime-local 控件，精度到分钟</span>）+ 关闭时间（<span style="color:#d32f2f;text-decoration:line-through">datetime-local + 秒 0-59 精确到秒</span><span style="color:#d32f2f;font-weight:bold">datetime-local 控件，精度到分钟</span>），同一表单行内联展示，中间以「至」字分隔</td><td><span style="color:#d32f2f"><b>两段皆必填</b>；任一空→提示"请选择活动时间"；开始时间＜关闭时间，否则提示"开始时间须早于关闭时间"</span></td><td><span style="color:#d32f2f">异步发券，无冷却/生效时段；<b>到达关闭时间后由系统定时任务自动置为「已结束」停止发券</b>，<span style="text-decoration:line-through">活动开始后持续发券，仅可经「结束活动」手动终止</span>亦可经运营「结束活动」手动提前终止；活动生命周期为「开始时间 ≤ 当前 ＜ 关闭时间」；已发放的券实例不受活动终止影响</span></td></tr>
 <tr><td>关联券模板</td><td>页面内可勾选（多选），实时显示已选数</td><td><b>至少 1 个</b>；空→提示"请至少关联一个券模板"；最多 20 个</td><td>—</td></tr>
 </tbody>
 </table>
@@ -875,7 +875,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <p><b>界面与展示规则</b>：</p>
 <ul>
 <li>入参校验（P2 列表页）：触发源下拉筛选支持单选，「关联直播标签」下拉筛选支持单选（取标签管理·直播标签类型启用项）；时间范围为日期区间（开始~结束），空筛选条件默认查全部；列表无数据时显示空态"暂无发券活动"。</li>
-<li>入参校验（D3 编辑页）：活动名称文本必填，空值→提示"请填写活动名称"；关联券模板至少勾选 1 个，空→提示"请至少关联一个券模板"；每人限制发券上限≥1 的数字输入，非法（0/负数/非数字）→提示"每人上限须≥1"；<span style="color:#d32f2f;text-decoration:line-through">开始发券时间为 datetime-local 精确到秒，必填</span><span style="color:#d32f2f;font-weight:bold">活动时间（开始时间、关闭时间）均为 datetime-local 精确到秒，两段皆必填；开始时间须早于关闭时间</span>。</li>
+<li>入参校验（D3 编辑页）：活动名称文本必填，空值→提示"请填写活动名称"；关联券模板至少勾选 1 个，空→提示"请至少关联一个券模板"；每人限制发券上限≥1 的数字输入，非法（0/负数/非数字）→提示"每人上限须≥1"；<span style="color:#d32f2f;text-decoration:line-through">开始发券时间为 datetime-local 精确到秒，必填</span><span style="color:#d32f2f;font-weight:bold">活动时间（开始时间、关闭时间）均为 datetime-local 控件（精度到分钟），两段皆必填；开始时间须早于关闭时间</span>。</li>
 <li>极限值处理：活动名称最长 50 字符，超长截断并提示；每人上限最大值 999；关联券模板最多勾选 20 个。</li>
 <li>动态表单联动：本期触发源固定为「直播时长」，无切换联动；观看阈值恒为「观看满 X 分钟」，关联直播标签恒显示。</li>
 </ul>
