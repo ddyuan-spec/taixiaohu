@@ -917,7 +917,7 @@
     <div class="form-row"><label class="fr-label">活动类型</label><div class="fr-body"><select class="fr-input" id="snTrigger" style="width:200px" onchange="snToggleThreshold()"><option value="live" selected>直播时长</option><option value="share">分享活动</option></select></div></div>
     <div class="form-row" id="snThresholdRow"><label class="fr-label" id="snThresholdLabel">观看阈值</label><div class="fr-body" id="snThresholdBody">观看满 <input class="fr-input" id="snThVal" type="number" value="30" min="1" style="width:80px"> 分钟</div></div>
     <div class="form-row" id="snLiveRow"><label class="fr-label">关联直播标签</label><div class="fr-body"><select class="fr-input" id="snLive" style="width:260px"><option value="">选择直播标签</option><option value="welfare" title="可发券直播">福利直播</option><option value="newprod">新品直播</option><option value="vip">VIP 专享直播</option></select></div></div>
-    <div class="form-row hidden" id="rowShareCount"><label class="fr-label">绑定用户数量</label><div class="fr-body">满 <input class="fr-input" id="snShareCount" type="number" value="5" min="1" style="width:80px"> 人</div></div>
+    <div class="form-row hidden" id="rowShareCount"><label class="fr-label">绑定用户数量</label><div class="fr-body">每满 <input class="fr-input" id="snShareCount" type="number" value="5" min="1" style="width:80px"> 人</div></div>
     <div class="form-row hidden" id="rowShareTag"><label class="fr-label">关联分享标签</label><div class="fr-body"><select class="fr-input" id="snShareTag" style="width:260px"><option value="" selected>不限制</option><option value="circle">朋友圈</option><option value="group">社群</option><option value="poster">海报</option></select></div></div>
     <div class="form-row"><label class="fr-label">适用会员等级</label><div class="fr-body"><div class="radio-group" style="margin-bottom:8px"><label class="radio-item"><input type="radio" name="snLevel" value="all" checked onchange="snLevelToggle()"> 全部会员</label><label class="radio-item"><input type="radio" name="snLevel" value="part" onchange="snLevelToggle()"> 指定等级</label></div><div id="snLevelBox" class="level-box hidden"></div></div></div>
     <div class="form-row"><label class="fr-label">每人限制</label><div class="fr-body"><span>每人限制发券上限（每种）</span><input class="fr-input" id="snPerUser" type="number" value="1" min="1" style="width:64px"><span style="margin:0 6px">张</span></div></div>
@@ -1013,7 +1013,7 @@ function snThresholdText(v,val){
   if(v==='pay')return '支付满'+val+'元';
   if(v==='sign')return '连续签到'+val+'天';
   if(v==='browse')return '浏览满'+val+'分钟';
-  if(v==='share')return '绑定用户数量满'+val+'人';
+  if(v==='share')return '绑定用户数量每满'+val+'人';
   return '无阈值';
 }
 function snToggleThreshold(){
