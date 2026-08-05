@@ -1406,7 +1406,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <tr><td><b>阶梯优惠券</b></td><td><b>单个 Checkbox</b></td><td>勾选后本券按「每满 X 元减 Y 元」<b>循环叠加</b>计算（详见 4.1.3.3）</td><td><b>默认不选中</b>；勾选后需 X、Y 已填写完整，否则提交时提示「请先填写完整的满减规则」；<br><b>勾选后必须同时配置「阶梯上限」（否则提交时提示「请填写阶梯上限」）</b></td><td><span class="tag y">本期新增</span></td></tr>
 
-<tr><td><b>阶梯上限</b></td><td><b>数字输入（仅勾选阶梯优惠券时显示）</b></td><td><b>阶梯券最多可循环叠加的次数（n_max）。订单金额达到 n_max × X 后不再叠加，封顶不再增长</b></td><td><b>1-999 正整数；默认 1；超出 1-999 → 提示「阶梯上限需在 1-999 之间」；非整数 → 取整；与「每人领取」独立</b></td><td><span class="tag y"><span style="color:#d32f2f;font-weight:bold">本期新增</span></span> 仅勾选「阶梯优惠券」时表单显示「阶梯上限」字段并必填</td></tr>
+<tr><td><b>阶梯上限</b></td><td><b>数字输入（仅勾选阶梯优惠券时显示）</b></td><td><b>阶梯券最多可循环叠加的次数（n_max）。订单金额达到 n_max × X 后不再叠加，封顶不再增长</b></td><td><b>1-999 正整数；默认 1；超出 1-999 → 提示「阶梯上限需在 1-999 之间」；非整数 → 取整；与「每人领取」独立</b></td><td><span class="tag y"><span style="color:#000000;font-weight:bold">本期新增</span></span> 仅勾选「阶梯优惠券」时表单显示「阶梯上限」字段并必填</td></tr>
 
 <tr><td>商品选择</td><td>Radio 3 选 1</td><td>全部商品参与 / 指定商品参与 / 排除商品不参与</td><td>必选其一</td><td>选"指定/排除"时展开商品选择区</td></tr>
 
@@ -1530,7 +1530,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <tbody>
 
-<tr><td>阶梯档数 n</td><td><b><span style="color:#d32f2f">n = min( floor(订单可用商品金额 ÷ X), <b>阶梯上限</b> )</span></b>（向下取整后与「阶梯上限」取小，<b>上限即 n_max，控制本券最多循环叠加的次数，订单金额达到 n_max × X 后不再叠加</b>）</td></tr>
+<tr><td>阶梯档数 n</td><td><b><span style="color:#000000">n = min( floor(订单可用商品金额 ÷ X), <b>阶梯上限</b> )</span></b>（向下取整后与「阶梯上限」取小，<b>上限即 n_max，控制本券最多循环叠加的次数，订单金额达到 n_max × X 后不再叠加</b>）</td></tr>
 
 <tr><td>减免金额</td><td><code>减免 = n × Y</code></td></tr>
 
