@@ -133,10 +133,6 @@
   .rich-view img{max-width:100%;border-radius:4px;margin:4px 0;display:block}
   select.fr-input{width:auto;min-width:140px}
 
-  /* 阶梯试算示例 */
-  #cpLadderDemo b{color:#534AB7;font-weight:600}
-  #cpLadderDemo .demo-cap{color:#909399;font-size:11.5px;margin-top:4px}
-
   /* Radio Group */
   .radio-group{display:flex;align-items:center;gap:18px}
   .radio-item{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:13px;color:#606266}
@@ -765,7 +761,7 @@
         <table class="inner-tbl"><thead><tr><th style="width:140px">店铺</th><th style="width:120px">优惠券类型</th><th>优惠券规则</th><th style="width:100px">发行量（张）</th><th style="width:110px">每人领取（张）</th></tr></thead><tbody><tr>
           <td><select id="cpShop" style="width:100%"><option value="">全部店铺</option><option>红门旗舰店</option><option>健康生活馆</option><option>泰山滋补专营店</option></select></td>
           <td><span class="tag tag-purple" id="cpRuleType" data-value="full_discount">满减券</span></td>
-          <td id="cpRuleCell">满 <input id="cpFullAmt" type="number" min="0" placeholder="300" oninput="cpRenderLadderDemo()" style="width:70px;height:30px;border:1px solid #dcdfe6;border-radius:3px;padding:0 8px;font-size:12px;outline:none"> 元，减 <input id="cpCutAmt" type="number" min="0" placeholder="100" oninput="cpRenderLadderDemo()" style="width:70px;height:30px;border:1px solid #dcdfe6;border-radius:3px;padding:0 8px;font-size:12px;outline:none"> 元</td>
+          <td id="cpRuleCell">满 <input id="cpFullAmt" type="number" min="0" placeholder="300" style="width:70px;height:30px;border:1px solid #dcdfe6;border-radius:3px;padding:0 8px;font-size:12px;outline:none"> 元，减 <input id="cpCutAmt" type="number" min="0" placeholder="100" style="width:70px;height:30px;border:1px solid #dcdfe6;border-radius:3px;padding:0 8px;font-size:12px;outline:none"> 元</td>
           <td><input type="number" id="cpTotal" value="1" min="1"></td>
           <td><input type="number" id="cpPerUser" value="1" min="1"></td>
         </tr></tbody></table>
@@ -788,8 +784,7 @@
     <div class="form-row hidden" id="cpStepLimitRow">
       <label class="fr-label">阶梯上限<span style="color:#f56c6c">*</span></label>
       <div class="fr-body">
-        最多可阶梯 <input class="fr-input" id="cpStepLimit" type="number" min="1" max="99" value="1" style="width:80px" oninput="cpRenderLadderDemo()"> 次（1-99；上限即最多循环叠加的次数，订单金额达到该档后不再叠加）
-        <div id="cpLadderDemo" style="margin-top:10px;background:#fafbfc;border:1px dashed #dcdfe6;border-radius:4px;padding:10px 14px;font-size:12.5px;color:#606266;line-height:1.8"></div>
+        最多可阶梯 <input class="fr-input" id="cpStepLimit" type="number" min="1" max="999" value="1" style="width:80px"> 次（1-999；上限即最多循环叠加的次数，订单金额达到该档后不再叠加）
       </div>
     </div>
     <div class="form-row">
@@ -1216,7 +1211,7 @@ function resetCouponNew(){
   document.querySelectorAll('input[name=cpProd]')[0].checked=true;cpToggleProd();
   selectedProds=[];renderSelectedProds();
   $('cpRuleDesc').innerHTML='';cpUpdateRuleCount();
-  $('cpLadder').checked=false;$('cpStepLimit').value=1;$('cpStepLimitRow').classList.add('hidden');$('cpLadderDemo').innerHTML='';
+  $('cpLadder').checked=false;$('cpStepLimit').value=1;$('cpStepLimitRow').classList.add('hidden');
 }
 function cpToggleTime(){
   const isFixed=document.querySelector('input[name=cpTimeType]:checked').value==='fixed';
@@ -1226,21 +1221,6 @@ function cpToggleTime(){
 function cpToggleLadder(){
   const on=$('cpLadder').checked;
   $('cpStepLimitRow').classList.toggle('hidden',!on);
-  if(on) cpRenderLadderDemo();
-}
-function cpRenderLadderDemo(){
-  if(!$('cpLadder').checked){$('cpLadderDemo').innerHTML='';return;}
-  const x=+$('cpFullAmt').value, y=+$('cpCutAmt').value;
-  let n=Math.floor(+$('cpStepLimit').value);
-  if(!(n>=1&&n<=99)) n=1;
-  $('cpStepLimit').value=n;
-  if(!(x>0)||!(y>0)){$('cpLadderDemo').innerHTML='<span style="color:#f56c6c">请先填写完整的『满 X 元，减 Y 元』规则</span>';return;}
-  if(y>=x){$('cpLadderDemo').innerHTML='<span style="color:#f56c6c">减免金额 Y 需小于门槛金额 X</span>';return;}
-  const show=Math.min(3,n);
-  let html='<div><b>阶梯试算示例：</b></div>';
-  for(let i=1;i<=show;i++) html+='<div>· 满 <b>'+(i*x)+'</b> 元，减 <b>'+(i*y)+'</b> 元</div>';
-  if(n>3) html+='<div class="demo-cap">… 最多循环至 满 <b>'+(n*x)+'</b> 元减 <b>'+(n*y)+'</b> 元（再往上不再叠加）</div>';
-  $('cpLadderDemo').innerHTML=html;
 }
 function cpToggleProd(){
   const v=document.querySelector('input[name=cpProd]:checked').value;
@@ -1256,7 +1236,7 @@ function saveCouponNew(){
   let stepLimit=0;
   if(isLadder){
     stepLimit=Math.floor(+$('cpStepLimit').value);
-    if(!(stepLimit>=1&&stepLimit<=99)){toast('阶梯上限需在 1-99 之间',true);return;}
+    if(!(stepLimit>=1&&stepLimit<=999)){toast('阶梯上限需在 1-999 之间',true);return;}
   }
   const ruleDesc=$('cpRuleDesc').innerHTML.trim();
   const ruleLen=($('cpRuleDesc').textContent||'').trim().length;
