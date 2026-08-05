@@ -933,7 +933,7 @@
     <div class="form-row hidden" id="rowShareCount"><label class="fr-label">绑定用户数量</label><div class="fr-body">每满 <input class="fr-input" id="snShareCount" type="number" value="5" min="1" style="width:80px"> 人</div></div>
     <div class="form-row hidden" id="rowShareTag"><label class="fr-label">关联分享标签</label><div class="fr-body"><select class="fr-input" id="snShareTag" style="width:260px"><option value="" selected>不限制</option><option value="circle">朋友圈</option><option value="group">社群</option><option value="poster">海报</option></select></div></div>
     <div class="form-row"><label class="fr-label">适用会员等级</label><div class="fr-body"><div class="radio-group" style="margin-bottom:8px"><label class="radio-item"><input type="radio" name="snLevel" value="all" checked onchange="snLevelToggle()"> 全部会员</label><label class="radio-item"><input type="radio" name="snLevel" value="part" onchange="snLevelToggle()"> 指定等级</label></div><div id="snLevelBox" class="level-box hidden"></div></div></div>
-    <div class="form-row"><label class="fr-label">每人限制</label><div class="fr-body"><span>每人限制发券上限（每种）</span><input class="fr-input" id="snPerUser" type="number" value="1" min="1" style="width:64px"><span style="margin:0 6px">张</span></div></div>
+    <div class="form-row"><label class="fr-label">每人限制</label><div class="fr-body"><span>每人限制发券上限（每种）</span><input class="fr-input" id="snPerUser" type="number" value="1" min="1" style="width:64px"><span style="margin:0 6px">张</span><span style="margin:0 16px 0 6px;color:#999">|</span><span>每人每日上限（每种）</span><input class="fr-input" id="snPerDay" type="number" value="1" min="1" style="width:64px"><span style="margin:0 6px">张</span></div></div>
     <div class="form-row"><label class="fr-label">活动时间</label><div class="fr-body">开始 <input class="fr-input" id="snStartTime" type="datetime-local" style="width:200px"><span style="margin:0 12px;color:#999">至</span>关闭 <input class="fr-input" id="snEndTime" type="datetime-local" style="width:200px"></div></div>
 
     <div class="fs-sub">关联券模板</div>
@@ -1014,8 +1014,8 @@ let offlineTargetId=null;
 let offlineFromDetail=false;
 
 let sends=[
-  {id:1,name:'7月直播时长发券-A',trigger:'live',triggerName:'直播时长',thresholdText:'观看满30分钟',liveTag:'福利直播',levelMode:'all',levels:[],coupons:['新人满99减20','无门槛5元代金'],perUser:1,startTime:'2026-07-21T10:00:00',issued:89,status:'进行中',time:'2026-07-21 10:00'},
-  {id:2,name:'老带新分享发券-B',trigger:'share',triggerName:'分享活动',thresholdText:'绑定用户数量每满10人',liveTag:'',shareTag:'朋友圈',levelMode:'part',levels:['Lv4','Lv5','Lv6'],coupons:['无门槛5元代金'],perUser:3,startTime:'2026-07-25T19:30:00',issued:0,status:'未开始',time:'2026-07-25 19:00'}
+  {id:1,name:'7月直播时长发券-A',trigger:'live',triggerName:'直播时长',thresholdText:'观看满30分钟',liveTag:'福利直播',levelMode:'all',levels:[],coupons:['新人满99减20','无门槛5元代金'],perUser:1,perDay:1,startTime:'2026-07-21T10:00:00',issued:89,status:'进行中',time:'2026-07-21 10:00'},
+  {id:2,name:'老带新分享发券-B',trigger:'share',triggerName:'分享活动',thresholdText:'绑定用户数量每满10人',liveTag:'',shareTag:'朋友圈',levelMode:'part',levels:['Lv4','Lv5','Lv6'],coupons:['无门槛5元代金'],perUser:3,perDay:1,startTime:'2026-07-25T19:30:00',issued:0,status:'未开始',time:'2026-07-25 19:00'}
 ];
 
 /* 发券规则引擎：触发源 / 阈值 / 会员等级 / 券模板 辅助 */
@@ -1331,7 +1331,7 @@ function resetSendForm(){
   $('snShareCount').value=5;$('snShareTag').value='';
   document.querySelector('input[name=snLevel][value=all]').checked=true;
   $('snLevelBox').classList.add('hidden');$('snLevelBox').innerHTML='';
-  $('snPerUser').value=1;$('snStartTime').value='';
+  $('snPerUser').value=1;$('snPerDay').value=1;$('snStartTime').value='';
   buildCouponPick('snCouponPick',[],true);
 }
 function saveSendForm(){
@@ -1352,7 +1352,7 @@ function saveSendForm(){
     liveTag: trigger==='live' ? ($('snLive').options[$('snLive').selectedIndex]?$('snLive').options[$('snLive').selectedIndex].text:'') : '',
     shareTag: trigger==='share' ? ($('snShareTag').options[$('snShareTag').selectedIndex]?$('snShareTag').options[$('snShareTag').selectedIndex].text:'') : '',
     levelMode:levelMode,levels:levels,coupons:coupons,
-    perUser:+$('snPerUser').value,startTime:$('snStartTime').value,
+    perUser:+$('snPerUser').value,perDay:+$('snPerDay').value,startTime:$('snStartTime').value,
     issued:0,status:'未开始',time:new Date().toISOString().slice(0,16).replace('T',' ')};
   if(editSendId){const i=sends.findIndex(x=>x.id===editSendId);if(i>=0)sends[i]=rec;}else sends.unshift(rec);
   go('send');toast('已保存');
@@ -1390,6 +1390,7 @@ function fillSend(id){
   if(lm==='part'){[...$('snLevelBox').querySelectorAll('input')].forEach(cb=>{cb.checked=(s.levels||[]).includes(cb.value);});}
   buildCouponPick('snCouponPick',s.coupons||[],true);
   if(s.startTime){$('snStartTime').value=s.startTime;}
+  if($('snPerDay'))$('snPerDay').value=s.perDay||1;
 }
 
 
