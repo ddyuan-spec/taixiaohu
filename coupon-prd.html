@@ -1614,9 +1614,10 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <tr><td>活动名称</td><td>发券活动名称（文本）</td><td>取《发券活动表》name</td></tr>
 
-<tr><td>触发源</td><td>触发来源类型展示（如「直播时长」）</td><td>取 trigger 字段；本期固定为「直播时长」</td></tr>
+<tr><td>触发源</td><td>触发来源类型展示（如「直播时长」「分享活动」）</td><td>取 trigger 字段；<span style="color:#d32f2f;font-weight:bold">本期支持直播时长 / 分享活动两种触发源，列表触发源列直接展示类型</span></td></tr>
 
-<tr><td>关联直播标签</td><td>所关联的直播标签名称；非直播时长活动显示「—」</td><td><span class="tag y">本期新增</span> 仅当触发源=直播时长时展示（Tag 样式）；取关联标签表的 tag_name</td></tr>
+<tr><td>关联直播标签</td><td>所关联的直播标签名称；仅直播时长活动展示，分享活动显示「—」</td><td><span class="tag y">本期新增</span> <span style="color:#d32f2f;font-weight:bold">仅当触发源=直播时长时展示（Tag 样式）；取关联标签表的 tag_name；分享活动不展示本列</span></td></tr>
+<tr><td>关联分享标签</td><td>分享活动所关联的分享渠道标签；仅分享活动展示，直播时长显示「—」</td><td><span class="tag y">本期新增</span> <span style="color:#d32f2f;font-weight:bold">仅当触发源=分享活动时展示；取值：不限制 / 朋友圈 / 社群 / 海报（⚠️ 待确认 @干系人：具体取值以业务确认为准）；取关联分享标签表</span></td></tr>
 
 <tr><td>观看阈值/条件</td><td>触发条件的文本描述（如「观看满30分钟」）</td><td>取 threshold_text（由触发源+阈值数值组合生成，见 D3 表单）</td></tr>
 
@@ -1646,11 +1647,11 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <tr><td>关键词</td><td>文本输入</td><td>支持按「活动名称」模糊搜索；空=不筛选</td></tr>
 
-<tr><td>触发源</td><td>下拉单选</td><td>全部 / 直播时长；默认「全部」</td></tr>
+<tr><td>触发源</td><td>下拉单选</td><td><span style="color:#d32f2f;font-weight:bold">全部 / 直播时长 / 分享活动；默认「全部」</span></td></tr>
 
 <tr><td>状态</td><td>下拉单选</td><td>全部 / 未开始 / 进行中 / 已结束；默认「全部」</td></tr>
 
-<tr><td>关联直播标签</td><td>下拉单选</td><td><span class="tag y">本期新增</span> 取标签管理·直播标签类型启用项；与「触发源=直播时长」组合可快速定位直播发券活动；非直播时该筛选置灰或隐藏</td></tr>
+<tr><td>关联直播标签</td><td>下拉单选</td><td><span class="tag y">本期新增</span> 取标签管理·直播标签类型启用项；与「触发源=直播时长」组合可快速定位直播发券活动；<span style="color:#d32f2f;font-weight:bold">分享活动无直播标签，选本筛选时自动排除分享活动（仅对直播时长生效）</span></td></tr>
 
 </tbody>
 
