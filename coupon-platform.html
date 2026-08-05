@@ -133,6 +133,10 @@
   .rich-view img{max-width:100%;border-radius:4px;margin:4px 0;display:block}
   select.fr-input{width:auto;min-width:140px}
 
+  /* 阶梯试算示例 */
+  #cpLadderDemo b{color:#534AB7;font-weight:600}
+  #cpLadderDemo .demo-cap{color:#909399;font-size:11.5px;margin-top:4px}
+
   /* Radio Group */
   .radio-group{display:flex;align-items:center;gap:18px}
   .radio-item{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:13px;color:#606266}
@@ -761,7 +765,7 @@
         <table class="inner-tbl"><thead><tr><th style="width:140px">店铺</th><th style="width:120px">优惠券类型</th><th>优惠券规则</th><th style="width:100px">发行量（张）</th><th style="width:110px">每人领取（张）</th></tr></thead><tbody><tr>
           <td><select id="cpShop" style="width:100%"><option value="">全部店铺</option><option>红门旗舰店</option><option>健康生活馆</option><option>泰山滋补专营店</option></select></td>
           <td><span class="tag tag-purple" id="cpRuleType" data-value="full_discount">满减券</span></td>
-          <td id="cpRuleCell">满 <input id="cpFullAmt" type="number" min="0" placeholder="300" style="width:70px;height:30px;border:1px solid #dcdfe6;border-radius:3px;padding:0 8px;font-size:12px;outline:none"> 元，减 <input id="cpCutAmt" type="number" min="0" placeholder="100" style="width:70px;height:30px;border:1px solid #dcdfe6;border-radius:3px;padding:0 8px;font-size:12px;outline:none"> 元</td>
+          <td id="cpRuleCell">满 <input id="cpFullAmt" type="number" min="0" placeholder="300" oninput="cpRenderLadderDemo()" style="width:70px;height:30px;border:1px solid #dcdfe6;border-radius:3px;padding:0 8px;font-size:12px;outline:none"> 元，减 <input id="cpCutAmt" type="number" min="0" placeholder="100" oninput="cpRenderLadderDemo()" style="width:70px;height:30px;border:1px solid #dcdfe6;border-radius:3px;padding:0 8px;font-size:12px;outline:none"> 元</td>
           <td><input type="number" id="cpTotal" value="1" min="1"></td>
           <td><input type="number" id="cpPerUser" value="1" min="1"></td>
         </tr></tbody></table>
@@ -773,6 +777,19 @@
         <label class="radio-item"><input type="checkbox" name="cpShare" value="zhenxiang_points"> 臻享积分</label>
         <label class="radio-item"><input type="checkbox" name="cpShare" value="multi_box"> 多盒多折</label>
         <label class="radio-item"><input type="checkbox" name="cpShare" value="same_coupon"> 同名券</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="fr-label">阶梯优惠券</label>
+      <div class="fr-body">
+        <label class="radio-item"><input type="checkbox" id="cpLadder" onchange="cpToggleLadder()"> 开启「每满 X 减 Y」循环叠加（订单金额每达到一个 X 就多减一份 Y）</label>
+      </div>
+    </div>
+    <div class="form-row hidden" id="cpStepLimitRow">
+      <label class="fr-label">阶梯上限<span style="color:#f56c6c">*</span></label>
+      <div class="fr-body">
+        最多可阶梯 <input class="fr-input" id="cpStepLimit" type="number" min="1" max="99" value="1" style="width:80px" oninput="cpRenderLadderDemo()"> 次（1-99；上限即最多循环叠加的次数，订单金额达到该档后不再叠加）
+        <div id="cpLadderDemo" style="margin-top:10px;background:#fafbfc;border:1px dashed #dcdfe6;border-radius:4px;padding:10px 14px;font-size:12.5px;color:#606266;line-height:1.8"></div>
       </div>
     </div>
     <div class="form-row">
@@ -990,7 +1007,8 @@ function toggleGroup(el){
 
 /* ==================== DATA ==================== */
 let coupons=[
-  {id:1,name:'福利直播满100减10',shop:'红门旗舰店',type:'满减券',rule:'满100减10',status:'启用',usageStatus:'进行中',share:'不共用',valid:'领取后 24 天内有效',claimed:0,left:1,refundQty:0,refundAmt:0,date:'2026-07-01 ~ 2026-12-31',createDate:'2026-07-01'},
+{id:6,name:'老券阶梯满300减100',shop:'红门旗舰店',type:'满减券',rule:'每满 300 减 100（最多 3 次）',ladder:true,stepLimit:3,status:'启用',usageStatus:'进行中',share:'臻享积分',valid:'固定 2026-08-01 ~ 2026-12-31',claimed:42,left:458,refundQty:0,refundAmt:0,date:'2026-08-01 ~ 2026-12-31',createDate:'2026-08-01'},
+    {id:1,name:'福利直播满100减10',shop:'红门旗舰店',type:'满减券',rule:'满100减10',status:'启用',usageStatus:'进行中',share:'不共用',valid:'领取后 24 天内有效',claimed:0,left:1,refundQty:0,refundAmt:0,date:'2026-07-01 ~ 2026-12-31',createDate:'2026-07-01'},
   {id:2,name:'老券满200减30',shop:'健康生活馆',type:'满减券',rule:'满200减30',status:'下架',usageStatus:'已结束',share:'不共用',valid:'领取后 24 天内有效',claimed:0,left:1,refundQty:0,refundAmt:0,date:'2026-07-05 ~ 2026-12-31',createDate:'2026-07-05'},
   {id:3,name:'新人满99减20',shop:'红门旗舰店',type:'满减券',rule:'满99减20',status:'启用',usageStatus:'进行中',share:'臻享积分',valid:'固定 2026-07-15 ~ 2026-09-15',claimed:156,left:344,refundQty:12,refundAmt:240,date:'2026-07-15 ~ 2026-09-15',createDate:'2026-07-15'},
   {id:4,name:'老券每满300减100',shop:'泰山滋补专营店',type:'满减券',rule:'每满300减100',status:'启用',usageStatus:'未开始',share:'臻享积分、多盒多折',valid:'2026-08-15 ~ 2026-10-15',claimed:89,left:211,refundQty:7,refundAmt:700,date:'2026-08-15 ~ 2026-10-15',createDate:'2026-07-10'},
@@ -1198,11 +1216,31 @@ function resetCouponNew(){
   document.querySelectorAll('input[name=cpProd]')[0].checked=true;cpToggleProd();
   selectedProds=[];renderSelectedProds();
   $('cpRuleDesc').innerHTML='';cpUpdateRuleCount();
+  $('cpLadder').checked=false;$('cpStepLimit').value=1;$('cpStepLimitRow').classList.add('hidden');$('cpLadderDemo').innerHTML='';
 }
 function cpToggleTime(){
   const isFixed=document.querySelector('input[name=cpTimeType]:checked').value==='fixed';
   $('cpFixedRow').classList.toggle('hidden',!isFixed);
   $('cpAfterRow').classList.toggle('hidden',isFixed);
+}
+function cpToggleLadder(){
+  const on=$('cpLadder').checked;
+  $('cpStepLimitRow').classList.toggle('hidden',!on);
+  if(on) cpRenderLadderDemo();
+}
+function cpRenderLadderDemo(){
+  if(!$('cpLadder').checked){$('cpLadderDemo').innerHTML='';return;}
+  const x=+$('cpFullAmt').value, y=+$('cpCutAmt').value;
+  let n=Math.floor(+$('cpStepLimit').value);
+  if(!(n>=1&&n<=99)) n=1;
+  $('cpStepLimit').value=n;
+  if(!(x>0)||!(y>0)){$('cpLadderDemo').innerHTML='<span style="color:#f56c6c">请先填写完整的『满 X 元，减 Y 元』规则</span>';return;}
+  if(y>=x){$('cpLadderDemo').innerHTML='<span style="color:#f56c6c">减免金额 Y 需小于门槛金额 X</span>';return;}
+  const show=Math.min(3,n);
+  let html='<div><b>阶梯试算示例：</b></div>';
+  for(let i=1;i<=show;i++) html+='<div>· 满 <b>'+(i*x)+'</b> 元，减 <b>'+(i*y)+'</b> 元</div>';
+  if(n>3) html+='<div class="demo-cap">… 最多循环至 满 <b>'+(n*x)+'</b> 元减 <b>'+(n*y)+'</b> 元（再往上不再叠加）</div>';
+  $('cpLadderDemo').innerHTML=html;
 }
 function cpToggleProd(){
   const v=document.querySelector('input[name=cpProd]:checked').value;
@@ -1214,6 +1252,12 @@ function saveCouponNew(){
   if(!(x>0)){toast('请填写满减门槛金额',true);return;}
   if(!(y>0)){toast('请填写减免金额',true);return;}
   if(y>=x){toast('减免金额需小于门槛金额',true);return;}
+  const isLadder=$('cpLadder').checked;
+  let stepLimit=0;
+  if(isLadder){
+    stepLimit=Math.floor(+$('cpStepLimit').value);
+    if(!(stepLimit>=1&&stepLimit<=99)){toast('阶梯上限需在 1-99 之间',true);return;}
+  }
   const ruleDesc=$('cpRuleDesc').innerHTML.trim();
   const ruleLen=($('cpRuleDesc').textContent||'').trim().length;
   if(!ruleLen){toast('请填写券规则说明',true);return;}
@@ -1223,9 +1267,9 @@ function saveCouponNew(){
   const share=[...document.querySelectorAll('input[name=cpShare]:checked')].map(cb=>cb.parentNode.textContent.trim());
   const shopSel=$('cpShop');const shop=shopSel.value?shopSel.options[shopSel.selectedIndex].text:'全部店铺';
   coupons.unshift({id:Date.now(),name:n,shop:shop,type:'满减券',
-    rule:'满'+x+'减'+y,status:'启用',usageStatus:'进行中',
+    rule:isLadder?('每满 '+x+' 减 '+y+'（最多 '+stepLimit+' 次）'):('满 '+x+' 减 '+y),ladder:isLadder,stepLimit:stepLimit,status:'启用',usageStatus:'进行中',
     share:share.length?share.join('、'):'不共用',
-    ruleDesc:ruleDesc,
+    ruleDesc:ruleDesc,isLadder:isLadder,stepLimit:stepLimit,
     usablePorts:ports,
     valid:'固定 '+$('cpStart').value+' ~ '+$('cpEnd').value,
     claimed:0,left:+$('cpTotal').value,date:$('cpStart').value+' ~ '+$('cpEnd').value,createDate:$('cpStart').value,productScope:document.querySelector('input[name=cpProd]:checked').value,prods:selectedProds.map(p=>({id:p.id,name:p.name,price:p.price,floorPrice:p.floorPrice||''}))});
