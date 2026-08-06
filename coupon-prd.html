@@ -3568,6 +3568,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <thead><tr><th>字段名称</th><th>需求说明</th><th>取值 / 数据来源</th><th>备注</th></tr></thead>
 <tbody>
 <tr><td><span style="color:#d32f2f">观看时直播状态</span></td><td><span style="color:#d32f2f">记录用户进入直播间（或观看回放）那一刻的直播间状态；同一用户一场直播在不同状态分别产生独立观看记录</span></td><td><span style="color:#d32f2f">枚举：预告 / 直播中 / 回放；取直播回调返回的直播间状态（直播回调支持多种状态，须全量取回记录）</span></td><td><span style="color:#d32f2f">本期新增字段；与「进入时间 / 退出时间 / 观看时长」同表存储，三种状态均落库</span></td></tr>
+<tr><td><span style="color:#d32f2f">观看日期</span></td><td><span style="color:#d32f2f">本期<b>删除</b>该字段；直播观看记录列表、观看详情页、列表查询条件均不再展示「观看日期」</span></td><td><span style="color:#d32f2f">—</span></td><td><span style="color:#d32f2f">删除原因：观看日期与进入时间 / 退出时间重复，且无法精确表达「直播中→回放」状态切换后的时间归属；后续如需按天筛选可直接取进入时间日期部分</span></td></tr>
 </tbody>
 </table>
 
