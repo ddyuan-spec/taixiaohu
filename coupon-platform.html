@@ -138,6 +138,11 @@
   .radio-item{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:13px;color:#606266}
   .radio-item input[type=radio]{accent-color:#534AB7;width:15px;height:15px}
 
+  /* Checkbox Group */
+  .checkbox-group{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .cb-item{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:13px;color:#606266}
+  .cb-item input[type=checkbox]{accent-color:#534AB7;width:15px;height:15px}
+
   /* Inner Table in Form */
   .inner-tbl{width:100%;border-collapse:collapse;margin-top:8px}
   .inner-tbl th{background:#fafbfc;border:1px solid #ebeef5;color:#606266;font-weight:500;padding:8px 12px;font-size:12px;text-align:center}
@@ -936,6 +941,17 @@
     <div class="form-row"><label class="fr-label">每人限制</label><div class="fr-body"><span>每人限制发券上限（每种）</span><input class="fr-input" id="snPerUser" type="number" value="1" min="1" style="width:64px"><span style="margin:0 6px">张</span><span style="margin:0 16px 0 6px;color:#999">|</span><span>每人每日上限（每种）</span><input class="fr-input" id="snPerDay" type="number" value="1" min="1" style="width:64px"><span style="margin:0 6px">张</span></div></div>
     <div class="form-row"><label class="fr-label">活动时间</label><div class="fr-body">开始 <input class="fr-input" id="snStartTime" type="datetime-local" style="width:200px"><span style="margin:0 12px;color:#999">至</span>关闭 <input class="fr-input" id="snEndTime" type="datetime-local" style="width:200px"></div></div>
 
+    <div class="fs-sub">活动端口</div>
+    <div class="form-row"><label class="fr-label">执行端口</label><div class="fr-body">
+      <div class="checkbox-group" id="snPorts">
+        <label class="cb-item"><input type="checkbox" name="snPort" value="platform" checked> 平台端后台</label>
+        <label class="cb-item"><input type="checkbox" name="snPort" value="merchant"> 商家端后台</label>
+        <label class="cb-item"><input type="checkbox" name="snPort" value="app" checked> App</label>
+        <label class="cb-item"><input type="checkbox" name="snPort" value="h5" checked> H5</label>
+        <label class="cb-item"><input type="checkbox" name="snPort" value="miniapp" checked> 小程序</label>
+      </div>
+    </div></div>
+
     <div class="fs-sub">关联券模板</div>
     <div class="form-row"><label class="fr-label">券模板</label><div class="fr-body">
       <div class="cp-pick-list" id="snCouponPick"></div>
@@ -1014,9 +1030,9 @@ let offlineTargetId=null;
 let offlineFromDetail=false;
 
 let sends=[
-  {id:1,name:'7月直播时长发券-A',trigger:'live',triggerName:'直播时长',thresholdText:'观看满30分钟',liveTag:'福利直播',levelMode:'all',levels:[],coupons:['新人满99减20','无门槛5元代金'],perUser:1,perDay:1,startTime:'2026-07-21T10:00:00',issued:89,status:'进行中',time:'2026-07-21 10:00'},
-  {id:2,name:'老带新分享发券-B',trigger:'share',triggerName:'分享活动',thresholdText:'绑定用户数量每满10人',liveTag:'',shareTag:'朋友圈',levelMode:'part',levels:['Lv4','Lv5','Lv6'],coupons:['无门槛5元代金'],perUser:3,perDay:1,startTime:'2026-07-25T19:30:00',issued:0,status:'未开始',time:'2026-07-25 19:00'},
-  {id:3,name:'新人福利登录发券',trigger:'newuser',triggerName:'新人福利活动',thresholdText:'登录触发（9.20 起）',liveTag:'不限制',levelMode:'all',levels:[],coupons:['新人满99减20'],perUser:1,perDay:1,startTime:'2026-09-20T00:00:00',issued:0,status:'未开始',time:'2026-08-05 11:00'}
+  {id:1,name:'7月直播时长发券-A',trigger:'live',triggerName:'直播时长',thresholdText:'观看满30分钟',liveTag:'福利直播',levelMode:'all',levels:[],coupons:['新人满99减20','无门槛5元代金'],ports:['app','h5','miniapp'],perUser:1,perDay:1,startTime:'2026-07-21T10:00:00',issued:89,status:'进行中',time:'2026-07-21 10:00'},
+  {id:2,name:'老带新分享发券-B',trigger:'share',triggerName:'分享活动',thresholdText:'绑定用户数量每满10人',liveTag:'',shareTag:'朋友圈',levelMode:'part',levels:['Lv4','Lv5','Lv6'],coupons:['无门槛5元代金'],ports:['app','h5'],perUser:3,perDay:1,startTime:'2026-07-25T19:30:00',issued:0,status:'未开始',time:'2026-07-25 19:00'},
+  {id:3,name:'新人福利登录发券',trigger:'newuser',triggerName:'新人福利活动',thresholdText:'登录触发（9.20 起）',liveTag:'不限制',levelMode:'all',levels:[],coupons:['新人满99减20'],ports:['app','h5','miniapp'],perUser:1,perDay:1,startTime:'2026-09-20T00:00:00',issued:0,status:'未开始',time:'2026-08-05 11:00'}
 ];
 
 /* 发券规则引擎：触发源 / 阈值 / 会员等级 / 券模板 辅助 */
@@ -1343,6 +1359,7 @@ function resetSendForm(){
   document.querySelector('input[name=snLevel][value=all]').checked=true;
   $('snLevelBox').classList.add('hidden');$('snLevelBox').innerHTML='';
   $('snPerUser').value=1;$('snPerDay').value=1;$('snStartTime').value='';
+  document.querySelectorAll('input[name=snPort]').forEach(cb=>{cb.checked=(cb.value==='app'||cb.value==='h5'||cb.value==='miniapp');});
   buildCouponPick('snCouponPick',[],true);
 }
 function saveSendForm(){
@@ -1352,6 +1369,8 @@ function saveSendForm(){
   const levelMode=document.querySelector('input[name=snLevel]:checked').value;
   const levels=levelMode==='part'?[...$('snLevelBox').querySelectorAll('input:checked')].map(e=>e.value):[];
   const coupons=[...$('snCouponPick').querySelectorAll('input:checked')].map(e=>e.value);
+  const ports=[...document.querySelectorAll('input[name=snPort]:checked')].map(e=>e.value);
+  if(!ports.length){toast('请至少选择一个执行端口',true);return;}
   if(!coupons.length){toast('请至少关联一个券模板',true);return;}
   if(trigger==='share'){
     const c=+$('snShareCount').value; if(!c||c<1){toast('请填写有效的绑定用户数量（≥1 人）',true);return;}
@@ -1362,7 +1381,7 @@ function saveSendForm(){
     thresholdText:snThresholdText(trigger,thVal),
     liveTag: (trigger==='live'||trigger==='newuser') ? ($('snLive').options[$('snLive').selectedIndex]?$('snLive').options[$('snLive').selectedIndex].text:'') : '',
     shareTag: trigger==='share' ? ($('snShareTag').options[$('snShareTag').selectedIndex]?$('snShareTag').options[$('snShareTag').selectedIndex].text:'') : '',
-    levelMode:levelMode,levels:levels,coupons:coupons,
+    levelMode:levelMode,levels:levels,coupons:coupons,ports:ports,
     perUser:+$('snPerUser').value,perDay:+$('snPerDay').value,startTime:$('snStartTime').value,
     issued:0,status:'未开始',time:new Date().toISOString().slice(0,16).replace('T',' ')};
   if(editSendId){const i=sends.findIndex(x=>x.id===editSendId);if(i>=0)sends[i]=rec;}else sends.unshift(rec);
@@ -1402,6 +1421,7 @@ function fillSend(id){
   buildCouponPick('snCouponPick',s.coupons||[],true);
   if(s.startTime){$('snStartTime').value=s.startTime;}
   if($('snPerDay'))$('snPerDay').value=s.perDay||1;
+  document.querySelectorAll('input[name=snPort]').forEach(cb=>{cb.checked=(s.ports||[]).includes(cb.value);});
 }
 
 
