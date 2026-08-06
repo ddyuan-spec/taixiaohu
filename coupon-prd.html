@@ -3522,6 +3522,8 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <p><b><span style="color:#d32f2f">直播管理导航结构</span></b>：<span style="color:#d32f2f">平台端后台「直播管理」分组下仅保留「直播间管理」入口；原「直播预告」菜单冗余，已删除，不再提供独立页面。</span></p>
 
+<p><b><span style="color:#d32f2f">新建直播间 · 直播标签字段（本次新增）</span></b>：<span style="color:#d32f2f">在「新建直播间」独立页面（非弹窗）的「直播间名称」字段下方，新增「直播标签」字段（下拉单选，<b>必填</b>）。数据来源与发券活动「关联直播标签」同源：取「营销管理 / 会员管理 → 标签管理」中类型=直播标签、状态=启用的标签列表（详见 §10.1 与「直播标签数据源」说明，默认内置「福利直播」）；默认空，占位文案「请选择直播标签」；未选时保存拦截并提示「请选择直播标签」。该字段用于标记直播间归属的直播标签，发券活动「关联直播标签」可按此标签定位对应直播间执行发券。</span></p>
+
 <p><b>原型截图</b>：</p>
 
 <img src="https://ddyuan-spec.github.io/taixiaohu/coupon-prd-assets/assoc-live-relate.png" alt="关联直播原型" />
