@@ -934,7 +934,7 @@
     <div class="fs-sub">发券规则</div>
     <div class="form-row"><label class="fr-label">活动类型</label><div class="fr-body"><select class="fr-input" id="snTrigger" style="width:200px" onchange="snToggleThreshold()"><option value="live" selected>直播时长</option><option value="share">分享活动</option><option value="newuser">新人福利活动</option></select></div></div>
     <div class="form-row" id="snThresholdRow"><label class="fr-label" id="snThresholdLabel">观看阈值</label><div class="fr-body" id="snThresholdBody">观看满 <input class="fr-input" id="snThVal" type="number" value="30" min="1" style="width:80px"> 分钟</div></div>
-    <div class="form-row hidden" id="snReplayRow"><label class="fr-label">回放是否发券</label><div class="fr-body"><div class="radio-group"><label class="radio-item"><input type="radio" name="snReplay" value="no" checked> 否</label><label class="radio-item"><input type="radio" name="snReplay" value="yes"> 是</label></div></div></div>
+    <div class="form-row hidden" id="snReplayRow"><label class="fr-label">回放是否发券</label><div class="fr-body"><select class="fr-input" id="snReplay" style="width:120px"><option value="no" selected>否</option><option value="yes">是</option></select></div></div>
     <div class="form-row" id="snLiveRow"><label class="fr-label" id="snLiveLabel">关联直播标签</label><div class="fr-body"><select class="fr-input" id="snLive" style="width:260px"><option value="">选择直播标签</option><option value="welfare" title="可发券直播">福利直播</option><option value="newprod">新品直播</option><option value="vip">VIP 专享直播</option></select></div></div>
     <div class="form-row hidden" id="rowShareCount"><label class="fr-label">绑定用户数量</label><div class="fr-body">每满 <input class="fr-input" id="snShareCount" type="number" value="5" min="1" style="width:80px"> 人</div></div>
     <div class="form-row hidden" id="rowShareTag"><label class="fr-label">关联分享标签</label><div class="fr-body"><select class="fr-input" id="snShareTag" style="width:260px"><option value="" selected>不限制</option><option value="circle">朋友圈</option><option value="group">社群</option><option value="poster">海报</option></select></div></div>
@@ -1370,7 +1370,7 @@ function saveSendForm(){
   const levels=levelMode==='part'?[...$('snLevelBox').querySelectorAll('input:checked')].map(e=>e.value):[];
   const coupons=[...$('snCouponPick').querySelectorAll('input:checked')].map(e=>e.value);
   const ports=[...document.querySelectorAll('input[name=snPort]:checked')].map(e=>e.value);
-  const replay = document.querySelector('input[name=snReplay]:checked') ? document.querySelector('input[name=snReplay]:checked').value : 'no';
+  const replay = $('snReplay') ? $('snReplay').value : 'no';
   if(!ports.length){toast('请至少选择一个执行端口',true);return;}
   if(!coupons.length){toast('请至少关联一个券模板',true);return;}
   if(trigger==='share'){
@@ -1414,9 +1414,8 @@ function fillSend(id){
   if($('snThVal'))$('snThVal').value=(s.thresholdText.match(/\d+/)||[''])[0];
   if($('snShareCount'))$('snShareCount').value=(s.thresholdText.match(/\d+/)||[''])[0];
   [...$('snLive').options].forEach(o=>{if(o.textContent===s.liveTag)o.selected=true;});
-  const rp=s.replayIssue==='yes';
-  const rY=document.querySelector('input[name=snReplay][value=yes]'); const rN=document.querySelector('input[name=snReplay][value=no]');
-  if(rY)rY.checked=rp; if(rN)rN.checked=!rp;
+  const rp=!!s.replayIssue;
+  if($('snReplay'))$('snReplay').value=rp?'yes':'no';
   if($('snShareTag'))[...$('snShareTag').options].forEach(o=>{if(o.textContent===s.shareTag)o.selected=true;});
   const lm=s.levelMode||'all';
   document.querySelector('input[name=snLevel][value='+lm+']').checked=true;
