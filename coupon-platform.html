@@ -934,6 +934,7 @@
     <div class="fs-sub">发券规则</div>
     <div class="form-row"><label class="fr-label">活动类型</label><div class="fr-body"><select class="fr-input" id="snTrigger" style="width:200px" onchange="snToggleThreshold()"><option value="live" selected>直播时长</option><option value="share">分享活动</option><option value="newuser">新人福利活动</option></select></div></div>
     <div class="form-row" id="snThresholdRow"><label class="fr-label" id="snThresholdLabel">观看阈值</label><div class="fr-body" id="snThresholdBody">观看满 <input class="fr-input" id="snThVal" type="number" value="30" min="1" style="width:80px"> 分钟</div></div>
+    <div class="form-row hidden" id="snReplayRow"><label class="fr-label">回放是否发券</label><div class="fr-body"><div class="radio-group"><label class="radio-item"><input type="radio" name="snReplay" value="no" checked> 否</label><label class="radio-item"><input type="radio" name="snReplay" value="yes"> 是</label></div></div></div>
     <div class="form-row" id="snLiveRow"><label class="fr-label" id="snLiveLabel">关联直播标签</label><div class="fr-body"><select class="fr-input" id="snLive" style="width:260px"><option value="">选择直播标签</option><option value="welfare" title="可发券直播">福利直播</option><option value="newprod">新品直播</option><option value="vip">VIP 专享直播</option></select></div></div>
     <div class="form-row hidden" id="rowShareCount"><label class="fr-label">绑定用户数量</label><div class="fr-body">每满 <input class="fr-input" id="snShareCount" type="number" value="5" min="1" style="width:80px"> 人</div></div>
     <div class="form-row hidden" id="rowShareTag"><label class="fr-label">关联分享标签</label><div class="fr-body"><select class="fr-input" id="snShareTag" style="width:260px"><option value="" selected>不限制</option><option value="circle">朋友圈</option><option value="group">社群</option><option value="poster">海报</option></select></div></div>
@@ -1028,7 +1029,7 @@ let offlineTargetId=null;
 let offlineFromDetail=false;
 
 let sends=[
-  {id:1,name:'7月直播时长发券-A',trigger:'live',triggerName:'直播时长',thresholdText:'观看满30分钟',liveTag:'福利直播',levelMode:'all',levels:[],coupons:['新人满99减20','无门槛5元代金'],ports:['app','h5','miniapp'],perUser:1,perDay:1,startTime:'2026-07-21T10:00:00',issued:89,status:'进行中',time:'2026-07-21 10:00'},
+  {id:1,name:'7月直播时长发券-A',trigger:'live',triggerName:'直播时长',thresholdText:'观看满30分钟',liveTag:'福利直播',replayIssue:false,levelMode:'all',levels:[],coupons:['新人满99减20','无门槛5元代金'],ports:['app','h5','miniapp'],perUser:1,perDay:1,startTime:'2026-07-21T10:00:00',issued:89,status:'进行中',time:'2026-07-21 10:00'},
   {id:2,name:'老带新分享发券-B',trigger:'share',triggerName:'分享活动',thresholdText:'绑定用户数量每满10人',liveTag:'',shareTag:'朋友圈',levelMode:'part',levels:['Lv4','Lv5','Lv6'],coupons:['无门槛5元代金'],ports:['app','h5'],perUser:3,perDay:1,startTime:'2026-07-25T19:30:00',issued:0,status:'未开始',time:'2026-07-25 19:00'},
   {id:3,name:'新人福利登录发券',trigger:'newuser',triggerName:'新人福利活动',thresholdText:'登录触发（9.20 起）',liveTag:'不限制',levelMode:'all',levels:[],coupons:['新人满99减20'],ports:['app','h5','miniapp'],perUser:1,perDay:1,startTime:'2026-09-20T00:00:00',issued:0,status:'未开始',time:'2026-08-05 11:00'}
 ];
@@ -1052,6 +1053,7 @@ function snToggleThreshold(){
   const isNewUser=v==='newuser';
   // 阈值行：仅 live 显示（newuser 无阈值、share 用自己的行）
   $('snThresholdRow').classList.toggle('hidden',v!=='live');
+  $('snReplayRow').classList.toggle('hidden',v!=='live');
   // 直播/用户标签行：live 显示直播标签、newuser 显示用户标签、share 隐藏
   $('snLiveRow').classList.toggle('hidden',isShare);
   $('snLiveLabel').textContent=isNewUser?'关联用户标签':'关联直播标签';
@@ -1368,6 +1370,7 @@ function saveSendForm(){
   const levels=levelMode==='part'?[...$('snLevelBox').querySelectorAll('input:checked')].map(e=>e.value):[];
   const coupons=[...$('snCouponPick').querySelectorAll('input:checked')].map(e=>e.value);
   const ports=[...document.querySelectorAll('input[name=snPort]:checked')].map(e=>e.value);
+  const replay = document.querySelector('input[name=snReplay]:checked') ? document.querySelector('input[name=snReplay]:checked').value : 'no';
   if(!ports.length){toast('请至少选择一个执行端口',true);return;}
   if(!coupons.length){toast('请至少关联一个券模板',true);return;}
   if(trigger==='share'){
@@ -1379,7 +1382,7 @@ function saveSendForm(){
     thresholdText:snThresholdText(trigger,thVal),
     liveTag: (trigger==='live'||trigger==='newuser') ? ($('snLive').options[$('snLive').selectedIndex]?$('snLive').options[$('snLive').selectedIndex].text:'') : '',
     shareTag: trigger==='share' ? ($('snShareTag').options[$('snShareTag').selectedIndex]?$('snShareTag').options[$('snShareTag').selectedIndex].text:'') : '',
-    levelMode:levelMode,levels:levels,coupons:coupons,ports:ports,
+    levelMode:levelMode,levels:levels,coupons:coupons,ports:ports,replayIssue:replay==='yes',
     perUser:+$('snPerUser').value,perDay:+$('snPerDay').value,startTime:$('snStartTime').value,
     issued:0,status:'未开始',time:new Date().toISOString().slice(0,16).replace('T',' ')};
   if(editSendId){const i=sends.findIndex(x=>x.id===editSendId);if(i>=0)sends[i]=rec;}else sends.unshift(rec);
@@ -1411,6 +1414,9 @@ function fillSend(id){
   if($('snThVal'))$('snThVal').value=(s.thresholdText.match(/\d+/)||[''])[0];
   if($('snShareCount'))$('snShareCount').value=(s.thresholdText.match(/\d+/)||[''])[0];
   [...$('snLive').options].forEach(o=>{if(o.textContent===s.liveTag)o.selected=true;});
+  const rp=s.replayIssue==='yes';
+  const rY=document.querySelector('input[name=snReplay][value=yes]'); const rN=document.querySelector('input[name=snReplay][value=no]');
+  if(rY)rY.checked=rp; if(rN)rN.checked=!rp;
   if($('snShareTag'))[...$('snShareTag').options].forEach(o=>{if(o.textContent===s.shareTag)o.selected=true;});
   const lm=s.levelMode||'all';
   document.querySelector('input[name=snLevel][value='+lm+']').checked=true;
