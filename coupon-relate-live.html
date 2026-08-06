@@ -177,7 +177,6 @@ if(location.search.includes('embed=1')) document.body.classList.add('embed-mode'
   <div class="group">
     <div class="gtitle open"><span class="arr">▶</span> 直播管理</div>
     <a href="#直播间管理" onclick="go('liveRoom')" id="navLiveRoom" class="active">直播间管理</a>
-    <a href="#直播预告" onclick="go('livePreview')" id="navLivePreview">直播预告</a>
   </div>
 </nav>
 
@@ -214,13 +213,6 @@ if(location.search.includes('embed=1')) document.body.classList.add('embed-mode'
       <select><option>12条/页</option></select>
       <span class="pg-btn active">1</span>
     </div>
-  </div>
-
-  <!-- ==================== 直播预告（占位，保持导航完整） ==================== -->
-  <div id="viewLivePreview" class="hidden">
-    <div class="crumb"><a>首页</a> / <a>直播管理</a> / <span>直播预告</span></div>
-    <div class="phead"><h2>直播预告</h2></div>
-    <div class="empty-state"><div class="icon">📅</div><div>直播预告模块占位</div></div>
   </div>
 
   <!-- ==================== 标签管理（含直播标签类型增量） ==================== -->
@@ -530,8 +522,8 @@ function toast(msg,err){
 }
 
 /* ====== Navigation ====== */
-var PAGES = ['viewLiveRoom','viewLiveRoomAdd','viewLivePreview','viewTag','viewTagEdit','viewLiveViewLog','viewLiveViewDetail','viewAutoTag','viewAutoTagEdit'];
-var NAVMAP = { liveRoom:'navLiveRoom', livePreview:'navLivePreview', tag:'navTag', liveViewLog:'nav_liveViewLog', autoTag:'nav_autoTag' };
+var PAGES = ['viewLiveRoom','viewLiveRoomAdd','viewTag','viewTagEdit','viewLiveViewLog','viewLiveViewDetail','viewAutoTag','viewAutoTagEdit'];
+var NAVMAP = { liveRoom:'navLiveRoom', tag:'navTag', liveViewLog:'nav_liveViewLog', autoTag:'nav_autoTag' };
 function go(page){
   document.querySelectorAll('#sidebar a').forEach(function(a){a.classList.remove('active')});
   PAGES.forEach(function(p){$(p).classList.add('hidden')});
@@ -539,7 +531,6 @@ function go(page){
 
   if(page==='liveRoom'){ $('viewLiveRoom').classList.remove('hidden'); renderLiveRooms(); }
   else if(page==='liveRoomAdd'){ $('viewLiveRoomAdd').classList.remove('hidden'); resetLiveRoomAdd(); }
-  else if(page==='livePreview'){ $('viewLivePreview').classList.remove('hidden'); }
   else if(page==='tag'){ $('viewTag').classList.remove('hidden'); renderTagList(); }
   else if(page==='tagEdit'){ $('viewTagEdit').classList.remove('hidden'); }
   else if(page==='liveViewLog'){ $('viewLiveViewLog').classList.remove('hidden'); renderLiveView(); }
@@ -889,7 +880,6 @@ if(location.hash==='#tag'){ go('tag'); }
 else if(location.hash==='#liveViewLog'){ go('liveViewLog'); }
 else if(location.hash==='#autoTag'){ go('autoTag'); }
 else if(location.hash==='#直播间管理'){ go('liveRoom'); }
-else if(location.hash==='#直播预告'){ go('livePreview'); }
 else { go('liveRoom'); }
 </script>
 
