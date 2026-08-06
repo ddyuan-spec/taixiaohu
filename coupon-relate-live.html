@@ -142,16 +142,6 @@
   .room-card .info .enter{color:#534AB7;font-size:13px;cursor:pointer}
   .room-card .info .enter:hover{text-decoration:underline}
 
-  /* ===== Modal ===== */
-  .modal-mask{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:center;justify-content:center}
-  .modal{width:480px;background:#fff;border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.15);overflow:hidden}
-  .modal-hd{padding:16px 20px;border-bottom:1px solid #f0f0f0;font-size:15px;font-weight:600;color:#222}
-  .modal-bd{padding:24px 20px}
-  .modal-bd .form-row{margin-bottom:16px}
-  .modal-bd .form-row:last-child{margin-bottom:0}
-  .modal-bd .fr-label{width:100px;line-height:32px}
-  .modal-ft{padding:12px 20px;border-top:1px solid #f0f0f0;display:flex;justify-content:flex-end;gap:10px}
-
 /* embed mode: hide topbar & sidebar when ?embed=1 */
 body.embed-mode .topbar{display:none}
 body.embed-mode .side{display:none}
@@ -200,7 +190,7 @@ if(location.search.includes('embed=1')) document.body.classList.add('embed-mode'
     <div class="phead">
       <h2>直播间管理</h2>
       <div style="margin-left:auto;display:flex;gap:8px">
-        <button class="btn-primary" onclick="openLiveRoomModal()">＋ 新建直播</button>
+        <button class="btn-primary" onclick="go('liveRoomAdd')">＋ 新建直播</button>
       </div>
     </div>
 
@@ -502,26 +492,25 @@ if(location.search.includes('embed=1')) document.body.classList.add('embed-mode'
     </div>
   </div>
 
-  <!-- ==================== 新建直播间 弹窗 ==================== -->
-  <div id="liveRoomModal" class="modal-mask hidden">
-    <div class="modal">
-      <div class="modal-hd">新建直播间</div>
-      <div class="modal-bd">
-        <div class="form-row">
-          <label class="fr-label"><span class="req">*</span>直播间名称</label>
-          <div class="fr-body"><input class="fr-input" id="lmName" placeholder="请输入直播间的名称"></div>
-        </div>
-        <div class="form-row">
-          <label class="fr-label"><span class="req">*</span>直播标签</label>
-          <div class="fr-body">
-            <select class="fr-input" id="lmTag">
-              <option value="">请选择直播标签</option>
-            </select>
-          </div>
+  <!-- ==================== 新建直播间（独立页面） ==================== -->
+  <div id="viewLiveRoomAdd" class="hidden">
+    <div class="crumb"><a onclick="go('liveRoom')">首页</a> / <a onclick="go('liveRoom')">直播管理</a> / <a onclick="go('liveRoom')">直播间管理</a> / <span>新建直播间</span></div>
+    <div class="phead"><h2>新建直播间</h2></div>
+    <div class="form-section">
+      <div class="form-row">
+        <label class="fr-label"><span class="req">*</span>直播间名称</label>
+        <div class="fr-body"><input class="fr-input" id="lmName" placeholder="请输入直播间的名称"></div>
+      </div>
+      <div class="form-row">
+        <label class="fr-label"><span class="req">*</span>直播标签</label>
+        <div class="fr-body">
+          <select class="fr-input" id="lmTag">
+            <option value="">请选择直播标签</option>
+          </select>
         </div>
       </div>
-      <div class="modal-ft">
-        <button class="btn-ghost" onclick="closeLiveRoomModal()">取消</button>
+      <div class="form-actions">
+        <button class="btn-ghost" onclick="go('liveRoom')">取消</button>
         <button class="btn-primary" onclick="saveLiveRoom()">创建</button>
       </div>
     </div>
@@ -541,7 +530,7 @@ function toast(msg,err){
 }
 
 /* ====== Navigation ====== */
-var PAGES = ['viewLiveRoom','viewLivePreview','viewTag','viewTagEdit','viewLiveViewLog','viewLiveViewDetail','viewAutoTag','viewAutoTagEdit'];
+var PAGES = ['viewLiveRoom','viewLiveRoomAdd','viewLivePreview','viewTag','viewTagEdit','viewLiveViewLog','viewLiveViewDetail','viewAutoTag','viewAutoTagEdit'];
 var NAVMAP = { liveRoom:'navLiveRoom', livePreview:'navLivePreview', tag:'navTag', liveViewLog:'nav_liveViewLog', autoTag:'nav_autoTag' };
 function go(page){
   document.querySelectorAll('#sidebar a').forEach(function(a){a.classList.remove('active')});
@@ -549,6 +538,7 @@ function go(page){
   if(NAVMAP[page]) $(NAVMAP[page]).classList.add('active');
 
   if(page==='liveRoom'){ $('viewLiveRoom').classList.remove('hidden'); renderLiveRooms(); }
+  else if(page==='liveRoomAdd'){ $('viewLiveRoomAdd').classList.remove('hidden'); resetLiveRoomAdd(); }
   else if(page==='livePreview'){ $('viewLivePreview').classList.remove('hidden'); }
   else if(page==='tag'){ $('viewTag').classList.remove('hidden'); renderTagList(); }
   else if(page==='tagEdit'){ $('viewTagEdit').classList.remove('hidden'); }
@@ -617,12 +607,10 @@ function fillLiveRoomTagOptions(){
   $('lmTag').innerHTML = '<option value="">请选择直播标签</option>' +
     liveTags().map(function(t){return '<option value="'+t.name+'">'+t.name+'</option>';}).join('');
 }
-function openLiveRoomModal(){
+function resetLiveRoomAdd(){
   $('lmName').value=''; $('lmTag').value='';
   fillLiveRoomTagOptions();
-  $('liveRoomModal').classList.remove('hidden');
 }
-function closeLiveRoomModal(){ $('liveRoomModal').classList.add('hidden'); }
 function saveLiveRoom(){
   var name=$('lmName').value.trim(), tag=$('lmTag').value;
   if(!name){toast('请输入直播间名称',true);return;}
@@ -630,8 +618,7 @@ function saveLiveRoom(){
   var id='LIVE'+(liveRooms.length+1).toString().padStart(3,'0');
   liveRooms.unshift({id:id,name:name,status:'预告',time:new Date().toLocaleString().replace(/\//g,'-').slice(0,16),tag:tag});
   toast('创建成功');
-  closeLiveRoomModal();
-  renderLiveRooms();
+  go('liveRoom');
 }
 
 /* ================================================================
