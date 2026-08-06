@@ -332,10 +332,6 @@ if(location.search.includes('embed=1')) document.body.classList.add('embed-mode'
         <option>LIVE002</option>
         <option>LIVE003</option>
       </select>
-      <span class="fb-label">观看日期:</span>
-      <input type="date" id="lvDateStart" style="width:140px">
-      <span class="fb-label">至</span>
-      <input type="date" id="lvDateEnd" style="width:140px">
       <input placeholder="客户姓名 / 手机号 / 用户ID" id="lvKeyword" style="width:200px">
       <button class="btn-primary" onclick="renderLiveView()">搜索</button>
       <button class="btn-ghost" onclick="resetLiveView()">重置</button>
@@ -354,7 +350,6 @@ if(location.search.includes('embed=1')) document.body.classList.add('embed-mode'
             <th>退出时间</th>
             <th>观看时长</th>
             <th>观看时直播状态</th>
-            <th>观看日期</th>
             <th>操作</th>
           </tr>
         </thead>
@@ -719,12 +714,10 @@ var liveViewLogs = [
 ];
 
 function renderLiveView(){
-  var room=$('lvRoom').value, ds=$('lvDateStart').value, de=$('lvDateEnd').value, kw=$('lvKeyword').value.trim();
+  var room=$('lvRoom').value, kw=$('lvKeyword').value.trim();
   var rows='', cnt=0;
   liveViewLogs.forEach(function(v){
     if(room && v.roomId!==room) return;
-    if(ds && v.date<ds) return;
-    if(de && v.date>de) return;
     if(kw && v.customer.indexOf(kw)<0 && v.userId.indexOf(kw)<0) return;
     cnt++;
     rows += '<tr>'+
@@ -736,15 +729,14 @@ function renderLiveView(){
       '<td>'+v.exitTime+'</td>'+
       '<td><span class="tag '+(v.mins>=30?'tag-green':'tag-orange')+'">'+v.duration+'</span></td>'+
       '<td><span class="tag '+(v.watchStatus==='直播中'?'tag-green':v.watchStatus==='回放'?'tag-orange':'tag-blue')+'">'+v.watchStatus+'</span></td>'+
-      '<td>'+v.date+'</td>'+
       '<td class="act"><a class="btn-link" onclick="viewDetail('+v.id+')">详情</a></td>'+
       '</tr>';
   });
-  $('liveViewTbody').innerHTML = rows || '<tr><td colspan="9" style="text-align:center;padding:50px"><div class="empty-state"><div class="icon">📭</div><div>暂无数据</div></div></td></tr>';
+  $('liveViewTbody').innerHTML = rows || '<tr><td colspan="8" style="text-align:center;padding:50px"><div class="empty-state"><div class="icon">📭</div><div>暂无数据</div></div></td></tr>';
   $('lvTotal').textContent = cnt;
 }
 function resetLiveView(){
-  $('lvRoom').value=''; $('lvDateStart').value=''; $('lvDateEnd').value=''; $('lvKeyword').value='';
+  $('lvRoom').value=''; $('lvKeyword').value='';
   renderLiveView();
 }
 function exportLiveView(){ toast('已生成导出任务，请前往「下载中心」查看'); }
@@ -753,7 +745,7 @@ function viewDetail(id){
   if(!v) return;
   var cells=[
     ['客户信息',v.customer],['用户ID',v.userId],['观看直播间ID',v.roomId],['直播间名称',v.roomName],
-    ['进入时间',v.enterTime],['退出时间',v.exitTime],['观看时长',v.duration],['观看日期',v.date],['观看时直播状态',v.watchStatus],
+    ['进入时间',v.enterTime],['退出时间',v.exitTime],['观看时长',v.duration],['观看时直播状态',v.watchStatus],
     ['观看终端',v.device],['进入来源',v.source]
   ];
   $('dtGrid').innerHTML = cells.map(function(c){return '<div class="info-cell"><div class="k">'+c[0]+'</div><div class="v">'+c[1]+'</div></div>';}).join('');
