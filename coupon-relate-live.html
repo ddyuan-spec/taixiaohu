@@ -129,6 +129,29 @@
   .toast{position:fixed;top:62px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(0,0,0,.82);color:#fff;padding:10px 20px;border-radius:4px;font-size:13px;opacity:0;pointer-events:none;transition:.3s;z-index:999}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+  /* ===== 直播间管理卡片 ===== */
+  .room-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .room-card{background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.05);transition:box-shadow .2s;cursor:pointer}
+  .room-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1)}
+  .room-card .cover{height:130px;background:linear-gradient(135deg,#e0e7ff 0%,#d1d5ff 100%);display:flex;align-items:center;justify-content:center;position:relative}
+  .room-card .cover .play{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;font-size:18px;color:#534AB7;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .room-card .cover .status{position:absolute;top:10px;left:10px}
+  .room-card .info{padding:12px}
+  .room-card .info .name{font-size:14px;font-weight:600;color:#222;margin-bottom:8px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .room-card .info .meta{font-size:12px;color:#909399;margin-bottom:10px}
+  .room-card .info .enter{color:#534AB7;font-size:13px;cursor:pointer}
+  .room-card .info .enter:hover{text-decoration:underline}
+
+  /* ===== Modal ===== */
+  .modal-mask{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:center;justify-content:center}
+  .modal{width:480px;background:#fff;border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.15);overflow:hidden}
+  .modal-hd{padding:16px 20px;border-bottom:1px solid #f0f0f0;font-size:15px;font-weight:600;color:#222}
+  .modal-bd{padding:24px 20px}
+  .modal-bd .form-row{margin-bottom:16px}
+  .modal-bd .form-row:last-child{margin-bottom:0}
+  .modal-bd .fr-label{width:100px;line-height:32px}
+  .modal-ft{padding:12px 20px;border-top:1px solid #f0f0f0;display:flex;justify-content:flex-end;gap:10px}
+
 /* embed mode: hide topbar & sidebar when ?embed=1 */
 body.embed-mode .topbar{display:none}
 body.embed-mode .side{display:none}
@@ -157,17 +180,61 @@ if(location.search.includes('embed=1')) document.body.classList.add('embed-mode'
 <nav class="side" id="sidebar">
   <div class="group">
     <div class="gtitle open"><span class="arr">▶</span> 营销管理</div>
-    <a href="#" onclick="go('tag')" id="navTag" class="active">标签管理</a>
-    <a href="#" onclick="go('liveViewLog')" id="nav_liveViewLog">直播观看记录</a>
-    <a href="#" onclick="go('autoTag')" id="nav_autoTag">自动打标规则</a>
+    <a href="#tag" onclick="go('tag')" id="navTag">标签管理</a>
+    <a href="#liveViewLog" onclick="go('liveViewLog')" id="nav_liveViewLog">直播观看记录</a>
+    <a href="#autoTag" onclick="go('autoTag')" id="nav_autoTag">自动打标规则</a>
+  </div>
+  <div class="group">
+    <div class="gtitle open"><span class="arr">▶</span> 直播管理</div>
+    <a href="#直播间管理" onclick="go('liveRoom')" id="navLiveRoom" class="active">直播间管理</a>
+    <a href="#直播预告" onclick="go('livePreview')" id="navLivePreview">直播预告</a>
   </div>
 </nav>
 
 <!-- ===== Main Content ===== -->
 <main class="main" id="mainContent">
 
+  <!-- ==================== 直播间管理 ==================== -->
+  <div id="viewLiveRoom">
+    <div class="crumb"><a>首页</a> / <a>直播管理</a> / <span>直播间管理</span></div>
+    <div class="phead">
+      <h2>直播间管理</h2>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="btn-primary" onclick="openLiveRoomModal()">＋ 新建直播</button>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <span class="fb-label">状态:</span>
+      <select id="lrStatus" style="width:120px">
+        <option value="">全部状态</option>
+        <option value="预告">预告</option>
+        <option value="直播中">直播中</option>
+        <option value="已结束">已结束</option>
+      </select>
+      <input placeholder="直播间名称" id="lrKeyword" style="width:200px">
+      <button class="btn-primary" onclick="renderLiveRooms()">搜索</button>
+      <button class="btn-ghost" onclick="resetLiveRoomFilter()">重置</button>
+    </div>
+
+    <div id="liveRoomGrid" class="room-grid"></div>
+
+    <div class="pagi" style="margin-top:18px">
+      共 <b id="liveRoomCount">0</b> 条
+      <select><option>12条/页</option></select>
+      <span class="pg-btn active">1</span>
+    </div>
+  </div>
+
+  <!-- ==================== 直播预告（占位，保持导航完整） ==================== -->
+  <div id="viewLivePreview" class="hidden">
+    <div class="crumb"><a>首页</a> / <a>直播管理</a> / <span>直播预告</span></div>
+    <div class="phead"><h2>直播预告</h2></div>
+    <div class="empty-state"><div class="icon">📅</div><div>直播预告模块占位</div></div>
+  </div>
+
   <!-- ==================== 标签管理（含直播标签类型增量） ==================== -->
-  <div id="viewTag">
+  <div id="viewTag" class="hidden">
     <div class="crumb"><a>首页</a> / <a>营销管理</a> / <span>标签管理</span></div>
     <div class="phead">
       <h2>标签管理</h2>
@@ -435,6 +502,31 @@ if(location.search.includes('embed=1')) document.body.classList.add('embed-mode'
     </div>
   </div>
 
+  <!-- ==================== 新建直播间 弹窗 ==================== -->
+  <div id="liveRoomModal" class="modal-mask hidden">
+    <div class="modal">
+      <div class="modal-hd">新建直播间</div>
+      <div class="modal-bd">
+        <div class="form-row">
+          <label class="fr-label"><span class="req">*</span>直播间名称</label>
+          <div class="fr-body"><input class="fr-input" id="lmName" placeholder="请输入直播间的名称"></div>
+        </div>
+        <div class="form-row">
+          <label class="fr-label"><span class="req">*</span>直播标签</label>
+          <div class="fr-body">
+            <select class="fr-input" id="lmTag">
+              <option value="">请选择直播标签</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button class="btn-ghost" onclick="closeLiveRoomModal()">取消</button>
+        <button class="btn-primary" onclick="saveLiveRoom()">创建</button>
+      </div>
+    </div>
+  </div>
+
 </main>
 </div>
 
@@ -449,14 +541,16 @@ function toast(msg,err){
 }
 
 /* ====== Navigation ====== */
-var PAGES = ['viewTag','viewTagEdit','viewLiveViewLog','viewLiveViewDetail','viewAutoTag','viewAutoTagEdit'];
-var NAVMAP = { tag:'navTag', liveViewLog:'nav_liveViewLog', autoTag:'nav_autoTag' };
+var PAGES = ['viewLiveRoom','viewLivePreview','viewTag','viewTagEdit','viewLiveViewLog','viewLiveViewDetail','viewAutoTag','viewAutoTagEdit'];
+var NAVMAP = { liveRoom:'navLiveRoom', livePreview:'navLivePreview', tag:'navTag', liveViewLog:'nav_liveViewLog', autoTag:'nav_autoTag' };
 function go(page){
   document.querySelectorAll('#sidebar a').forEach(function(a){a.classList.remove('active')});
   PAGES.forEach(function(p){$(p).classList.add('hidden')});
   if(NAVMAP[page]) $(NAVMAP[page]).classList.add('active');
 
-  if(page==='tag'){ $('viewTag').classList.remove('hidden'); renderTagList(); }
+  if(page==='liveRoom'){ $('viewLiveRoom').classList.remove('hidden'); renderLiveRooms(); }
+  else if(page==='livePreview'){ $('viewLivePreview').classList.remove('hidden'); }
+  else if(page==='tag'){ $('viewTag').classList.remove('hidden'); renderTagList(); }
   else if(page==='tagEdit'){ $('viewTagEdit').classList.remove('hidden'); }
   else if(page==='liveViewLog'){ $('viewLiveViewLog').classList.remove('hidden'); renderLiveView(); }
   else if(page==='liveViewDetail'){ $('viewLiveViewDetail').classList.remove('hidden'); }
@@ -477,6 +571,68 @@ var tags = [
 
 function liveTags(){ return tags.filter(function(t){return t.type==='直播标签' && t.status==='启用'}); }
 function allLiveTags(){ return tags.filter(function(t){return t.type==='直播标签'}); }
+
+/* ================================================================
+   直播间管理
+   ================================================================ */
+var liveRooms = [
+  {id:'LIVE001',name:'泰小虎官方直播间',status:'预告',time:'2026-08-10 19:00',tag:'福利直播'},
+  {id:'LIVE002',name:'压力测试',status:'预告',time:'2026-08-08 16:40',tag:'福利直播'},
+  {id:'LIVE003',name:'测试泓清',status:'直播中',time:'2026-08-06 14:32',tag:'福利直播'},
+  {id:'LIVE004',name:'测试直播间123',status:'预告',time:'2026-08-11 11:31',tag:'福利直播'},
+  {id:'LIVE005',name:'环球元气超级APP线上直播发布会',status:'已结束',time:'2026-04-20 20:00',tag:'福利直播'},
+  {id:'LIVE006',name:'《很多人问：为什么Vic卡在有的地',status:'已结束',time:'2026-03-13 21:00',tag:'福利直播'},
+  {id:'LIVE007',name:'24342423',status:'已结束',time:'2026-07-31 10:28',tag:'福利直播'},
+  {id:'LIVE008',name:'直播测试',status:'已结束',time:'2026-07-09 20:00',tag:'福利直播'}
+];
+var statusCls={预告:'tag-blue',直播中:'tag-green',已结束:'tag-gray'};
+
+function renderLiveRooms(){
+  var st=$('lrStatus').value, kw=$('lrKeyword').value.trim();
+  var rows='', cnt=0, filtered=[];
+  liveRooms.forEach(function(r){
+    if(st && r.status!==st) return;
+    if(kw && r.name.indexOf(kw)<0) return;
+    filtered.push(r);
+  });
+  filtered.forEach(function(r){
+    cnt++;
+    rows += '<div class="room-card">'+
+      '<div class="cover">'+
+        '<span class="status tag '+statusCls[r.status]+'">'+r.status+'</span>'+
+        '<div class="play">▶</div>'+
+      '</div>'+
+      '<div class="info">'+
+        '<div class="name">'+r.name+'</div>'+
+        '<div class="meta">'+r.time+'</div>'+
+        '<div class="enter">观看直播</div>'+
+      '</div>'+
+    '</div>';
+  });
+  $('liveRoomGrid').innerHTML = rows || '<div class="empty-state" style="grid-column:1/-1"><div class="icon">📺</div><div>暂无直播间</div></div>';
+  $('liveRoomCount').textContent = cnt;
+}
+function resetLiveRoomFilter(){ $('lrStatus').value=''; $('lrKeyword').value=''; renderLiveRooms(); }
+function fillLiveRoomTagOptions(){
+  $('lmTag').innerHTML = '<option value="">请选择直播标签</option>' +
+    liveTags().map(function(t){return '<option value="'+t.name+'">'+t.name+'</option>';}).join('');
+}
+function openLiveRoomModal(){
+  $('lmName').value=''; $('lmTag').value='';
+  fillLiveRoomTagOptions();
+  $('liveRoomModal').classList.remove('hidden');
+}
+function closeLiveRoomModal(){ $('liveRoomModal').classList.add('hidden'); }
+function saveLiveRoom(){
+  var name=$('lmName').value.trim(), tag=$('lmTag').value;
+  if(!name){toast('请输入直播间名称',true);return;}
+  if(!tag){toast('请选择直播标签',true);return;}
+  var id='LIVE'+(liveRooms.length+1).toString().padStart(3,'0');
+  liveRooms.unshift({id:id,name:name,status:'预告',time:new Date().toLocaleString().replace(/\//g,'-').slice(0,16),tag:tag});
+  toast('创建成功');
+  closeLiveRoomModal();
+  renderLiveRooms();
+}
 
 /* ================================================================
    标签管理 — Data & Render
@@ -745,7 +901,9 @@ function deleteRule(id){ if(!confirm('确定删除该规则？')) return; rules=
 if(location.hash==='#tag'){ go('tag'); }
 else if(location.hash==='#liveViewLog'){ go('liveViewLog'); }
 else if(location.hash==='#autoTag'){ go('autoTag'); }
-else { go('liveViewLog'); }
+else if(location.hash==='#直播间管理'){ go('liveRoom'); }
+else if(location.hash==='#直播预告'){ go('livePreview'); }
+else { go('liveRoom'); }
 </script>
 
 <div class="toast" id="toast"></div>
