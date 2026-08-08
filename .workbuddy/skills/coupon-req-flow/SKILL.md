@@ -100,9 +100,10 @@ description: 泰小虎优惠券增量需求迭代工作流（仅优惠券需求�
 
 ### 步骤 8 · 收尾
 - 删除 `tasks/{task-id}/` 目录（Python `os.remove` 绝对路径，因 shell `rm` 被 safe-delete 拦截）。
+- **登记推送队列（强制）**：向 `核心业务/优惠券/.workbuddy/push-queue.json` 追加一条 `{taskId, title, files:[本任务改动的正式文件名], state:"MERGED_READY", mergedAt:<ISO>, pushedAt:null, remoteSha:null, note}`；文件不存在则先建 `{"version":1,"entries":[]}`。这是 `coupon-push` 唯一消费来源——**不登记则不会被推送**。
 - **推送不在本步骤**：本地合并完成即视为本任务「合并就绪（待推送）」；真正的 GitHub Pages 推送由用户另开的 `coupon-push` 任务统一执行。
 - 如文档升版，更新 `coupon-spec.md` §7 基线版本。
-- 向 `核心业务/优惠券/.workbuddy/memory/YYYY-MM-DD.md` 追加本次任务记录（含「已合并本地、待 coupon-push 推送」状态）。
+- 向 `核心业务/优惠券/.workbuddy/memory/YYYY-MM-DD.md` 追加本次任务记录（含「已合并本地、已登记待推」状态）。
 
 ## 关键不变量（红线）
 - 官方文档（线上 `coupon-platform.html` / `coupon-prd.html`）**永远全黑**，无红字残留。
@@ -118,8 +119,9 @@ description: 泰小虎优惠券增量需求迭代工作流（仅优惠券需求�
 > 背景：多任务并行合并时，各任务各自推送 GitHub Pages 易出现覆盖 / 冲突（见 §十二 多任务并行收口约定）。自 2026-08-08 起，**合并与推送解耦**：
 
 - **合并（本流程）**：只把草稿合入正式源文件 + 整篇转黑，**不推送**。
-- **推送（独立 `coupon-push` skill）**：用户另开一个任务，执行 `coupon-push`，由它把已合并的正式文件（coupon-platform.html、优惠券体系新需求PRD.html 及按需的 coupon-relate-live.html / coupon-rule-autogen.html 等）**逐个**推送到 GitHub Pages，推送前做范围冲突预检、推送后回读校验。
-- 这样多任务先在本地正式文件累积改动，最后由一次推送任务按顺序发布，合并操作员无需关心推送。
+- **推送（独立 `coupon-push` skill）**：用户另开一个任务，执行 `coupon-push`，由它消费 `核心业务/优惠券/.workbuddy/push-queue.json` 中 `MERGED_READY` 的任务，**一条条**推送到 GitHub Pages；每条推送前做范围/红字/待确认预检，推送后做健康检查（线上回读一致 + 红字=0 + 结构完整 + 原型关键 JS 仍在），遇阻断即停找用户确认。
+- **衔接**：本流程步骤 8 合并完须向 `push-queue.json` 登记一条 `MERGED_READY`（见步骤 8）；`coupon-push` 据此决定推什么、推完改 `PUSHED`。两 skill 仅靠这两个状态文件解耦，可跨会话协作。
+- 这样多任务先在本地正式文件累积改动，最后由一次推送任务按队列顺序发布，合并操作员无需关心推送。
 
 ## 复用现有 skill
 - PRD 结构校验：`prd-suite`（含 `prd-structure-checker`）。
