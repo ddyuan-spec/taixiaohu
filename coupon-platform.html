@@ -362,6 +362,7 @@
           <th>使用状态</th>
           <th>有效期</th>
           <th>创建日期</th>
+          <th>关联活动数</th>
           <th>操作</th>
         </tr>
       </thead>
@@ -397,7 +398,6 @@
           <th class="chk"><input type="checkbox"></th>
           <th>活动名称</th>
           <th>触发源</th>
-          <th>关联标签</th>
           <th>关联分享标签</th>
           <th>观看阈值</th>
           <th>关联券模板</th>
@@ -810,6 +810,12 @@
       </div>
     </div>
     <div class="form-row">
+      <label class="fr-label">规则自动生成</label>
+      <div class="fr-body">
+        <button type="button" class="btn-primary btn-sm" onclick="autoGenRule()">自动生成券规则</button>
+      </div>
+    </div>
+    <div class="form-row">
       <label class="fr-label">券规则说明<span style="color:#f56c6c">*</span></label>
       <div class="fr-body">
         <div class="rich-box">
@@ -900,7 +906,6 @@
     <div class="form-row"><label class="fr-label">活动类型</label><div class="fr-body"><select class="fr-input" id="snTrigger" style="width:200px" onchange="snToggleThreshold()"><option value="live" selected>直播时长</option><option value="share">分享活动</option><option value="newuser">新人福利活动</option></select></div></div>
     <div class="form-row" id="snThresholdRow"><label class="fr-label" id="snThresholdLabel">观看阈值</label><div class="fr-body" id="snThresholdBody">观看满 <input class="fr-input" id="snThVal" type="number" value="30" min="1" style="width:80px"> 分钟</div></div>
     <div class="form-row hidden" id="snReplayRow"><label class="fr-label">回放是否发券</label><div class="fr-body"><select class="fr-input" id="snReplay" style="width:120px"><option value="no" selected>否</option><option value="yes">是</option></select></div></div>
-    <div class="form-row" id="snLiveRow"><label class="fr-label" id="snLiveLabel">关联直播标签</label><div class="fr-body"><select class="fr-input" id="snLive" style="width:260px"><option value="">选择直播标签</option><option value="welfare" title="可发券直播">福利直播</option><option value="newprod">新品直播</option><option value="vip">VIP 专享直播</option></select></div></div>
     <div class="form-row hidden" id="rowShareCount"><label class="fr-label">绑定用户数量</label><div class="fr-body">每满 <input class="fr-input" id="snShareCount" type="number" value="5" min="1" style="width:80px"> 人</div></div>
     <div class="form-row hidden" id="rowShareTag"><label class="fr-label">关联分享标签</label><div class="fr-body"><select class="fr-input" id="snShareTag" style="width:260px"><option value="" selected>不限制</option><option value="circle">朋友圈</option><option value="group">社群</option><option value="poster">海报</option></select></div></div>
     <div class="form-row"><label class="fr-label">适用会员等级</label><div class="fr-body"><div class="radio-group" style="margin-bottom:8px"><label class="radio-item"><input type="radio" name="snLevel" value="all" checked onchange="snLevelToggle()"> 全部会员</label><label class="radio-item"><input type="radio" name="snLevel" value="part" onchange="snLevelToggle()"> 指定等级</label></div><div id="snLevelBox" class="level-box hidden"></div></div></div>
@@ -1019,12 +1024,7 @@ function snToggleThreshold(){
   // 阈值行：仅 live 显示（newuser 无阈值、share 用自己的行）
   $('snThresholdRow').classList.toggle('hidden',v!=='live');
   $('snReplayRow').classList.toggle('hidden',v!=='live');
-  // 直播/用户标签行：live 显示直播标签、newuser 显示用户标签、share 隐藏
-  $('snLiveRow').classList.toggle('hidden',isShare);
-  $('snLiveLabel').textContent=isNewUser?'关联用户标签':'关联直播标签';
-  $('snLive').innerHTML=isNewUser
-    ? '<option value="">不限制</option><option value="newreg">新注册用户</option><option value="active">高活跃用户</option><option value="vip">VIP 用户</option>'
-    : '<option value="">选择直播标签</option><option value="welfare" title="可发券直播">福利直播</option><option value="newprod">新品直播</option><option value="vip">VIP 专享直播</option>';
+  // 关联直播标签已移除，关联改由直播间侧选择发券活动驱动
   // 分享专属：仅 share 显示
   $('rowShareCount').classList.toggle('hidden',!isShare);
   $('rowShareTag').classList.toggle('hidden',!isShare);
@@ -1069,6 +1069,7 @@ function renderCoupons(){
       <td><span class="tag ${c.usageStatus==='进行中'?'tag-green':c.usageStatus==='未开始'?'tag-yellow':c.usageStatus==='已结束'?'tag-gray':'tag-red'}">${c.usageStatus}</span></td>
       <td>${c.valid}</td>
       <td>${c.createDate}</td>
+      <td>${sendActivitiesReferencing(c.name).length}</td>
       <td class="act">
         <a class="btn-link" onclick="viewCoupon(${c.id})">查看</a>
         ${c.status==='启用'
@@ -1079,7 +1080,7 @@ function renderCoupons(){
         ${(c.usageStatus==='未开始'||c.usageStatus==='进行中') ? `<a class="btn-link red" onclick="revokeCoupon(${c.id})">撤回</a>` : ''}
       </td>
     </tr>`).join('');
-  $('couponTbody').innerHTML=rows||'<tr><td colspan="10" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
+  $('couponTbody').innerHTML=rows||'<tr><td colspan="11" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
   $('couponPagi').innerHTML='共 <strong>'+list.length+'</strong> 条 <select><option>10条/页</option></select> <span class="pg-btn active">1</span> 跳至 <input type="number" value="1"> 页';
 }
 function resetFilter(){$('fName').value='';$('fShop').value='';$('fStatus').value='';$('fUsageStatus').value='';$('fType').value='';renderCoupons();}
@@ -1218,6 +1219,66 @@ function saveCouponNew(){
   go('list');toast('已保存');
 }
 
+function autoGenRule(){
+  const x=+$('cpFullAmt').value, y=+$('cpCutAmt').value;
+  if(!(x>0)){toast('请先填写满减门槛金额',true);return;}
+  if(!(y>0)){toast('请填写减免金额',true);return;}
+  if(y>=x){toast('减免金额需小于门槛金额',true);return;}
+  const isLadder=$('cpLadder').checked;
+  let stepLimit=0;
+  if(isLadder){
+    stepLimit=Math.floor(+$('cpStepLimit').value);
+    if(!(stepLimit>=1&&stepLimit<=999)){toast('阶梯上限需在 1-999 之间',true);return;}
+  }
+  // D1 优惠力度
+  const d1 = isLadder
+    ? `本券为满减券，订单每满${x}元减${y}元，最多可减 ${stepLimit} 次。`
+    : `本券为满减券，订单满${x}元减${y}元（仅可减 1 次）。`;
+  // D2 叠加规则
+  const shareMap={zhenxiang_points:'臻享积分',multi_box:'多盒多折',multi_use:'多张本券'};
+  const shares=[...document.querySelectorAll('input[name=cpShare]:checked')].map(cb=>shareMap[cb.value]).filter(Boolean);
+  const d2 = shares.length ? `本券可叠加：${shares.join('、')}。` : '本券为独立优惠，不可与臻享积分、多盒多折等其他优惠共用，且不可叠加多张使用。';
+  // D3 适用商品
+  const prodMode=document.querySelector('input[name=cpProd]:checked').value;
+  let d3='';
+  if(prodMode==='all'){ d3='本券全场商品通用。'; }
+  else {
+    if(!selectedProds.length){toast('请至少选择 1 件商品',true);return;}
+    const names=selectedProds.map(p=>p.name).join('、');
+    d3 = prodMode==='spec'
+      ? `本券仅限以下商品使用：${names}（共 ${selectedProds.length} 件）。`
+      : `本券全场商品可用，以下商品除外：${names}（共 ${selectedProds.length} 件）。`;
+  }
+  // D4 适用端口
+  const portMap={app:'泰小虎App',h5:'泰尔超优惠H5',mini:'泰尔超优会小程序'};
+  const ports=[...document.querySelectorAll('input[name=cpPort]:checked')].map(cb=>portMap[cb.value]).filter(Boolean);
+  let d4='';
+  if(ports.length===3){ d4='本券在泰小虎App、泰尔超优惠H5、泰尔超优会小程序均可使用。'; }
+  else if(ports.length){ d4=`本券仅可在${ports.join('、')}使用。`; }
+  // D5 有效期
+  const timeType=document.querySelector('input[name=cpTimeType]:checked').value;
+  let d5='';
+  if(timeType==='fixed'){
+    const s=$('cpStart').value,e=$('cpEnd').value;
+    if(!s||!e){toast('请填写固定有效期',true);return;}
+    d5=`本券有效期：${s} 至 ${e}。`;
+  } else {
+    const days=+$('cpValidDays').value;
+    if(!(days>0)){toast('请填写领取后有效天数',true);return;}
+    d5=`本券自领取之日起 ${days} 天内有效。`;
+  }
+  // 拼接 H + D1~D5 + T
+  const H='【泰小虎优惠券使用规则】';
+  const T='本券不可兑换现金、不可转赠；最终解释权归泰小虎平台所有。';
+  const full=[H,d1,d2,d3,d4,d5,T].filter(Boolean).join('\n');
+  // 覆盖确认
+  const hasContent=($('cpRuleDesc').textContent||'').trim().length>0;
+  if(hasContent && !confirm('将覆盖当前已编辑的规则说明，确认生成？')) return;
+  $('cpRuleDesc').innerHTML=full.replace(/\n/g,'<br>');
+  cpUpdateRuleCount();
+  toast('已按券配置自动生成规则，可继续编辑');
+}
+
 /* ---- 商品选择器弹窗 ---- */
 const MOCK_PRODUCTS=[
   {id:'p1',name:'SAIC旗下荣威i5/plus上汽大通2022款荣威新能源...',price:'¥20~40'},
@@ -1271,7 +1332,6 @@ function renderSends(){
       <td class="chk"><input type="checkbox"></td>
       <td>${s.name}</td>
       <td>${s.triggerName||snTriggerName(s.trigger)}</td>
-      <td>${(s.trigger==='live'||s.trigger==='newuser')?(s.liveTag||'不限制'):'-'}</td>
       <td>${s.trigger==='share'?(s.shareTag||'不限制'):'-'}</td>
       <td>${s.thresholdText||'-'}</td>
       <td>${(s.coupons||[]).join('<br>')}</td>
@@ -1281,7 +1341,7 @@ function renderSends(){
       <td class="act">${s.status==='已结束'
         ? `<a class="btn-link red" onclick="delSend(${s.id})">删除</a>`
         : `<a class="btn-link" onclick="editSend(${s.id})">编辑</a><a class="btn-link" style="margin-left:10px;color:#d9363e" onclick="endSend(${s.id})">结束活动</a>`}</td>
-    </tr>`).join('')||'<tr><td colspan="11" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
+    </tr>`).join('')||'<tr><td colspan="10" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
 }
 let editSendId=null;
 function resetSendForm(){
@@ -1289,7 +1349,6 @@ function resetSendForm(){
   $('sendFTitle').textContent='新建发券活动';
   $('snName').value='';
   $('snTrigger').value='live';snToggleThreshold();
-  $('snLive').value='';
   $('snShareCount').value=5;$('snShareTag').value='';
   document.querySelector('input[name=snLevel][value=all]').checked=true;
   $('snLevelBox').classList.add('hidden');$('snLevelBox').innerHTML='';
@@ -1315,7 +1374,6 @@ function saveSendForm(){
   }
   const rec={id:editSendId||Date.now(),name:n,trigger:trigger,triggerName:snTriggerName(trigger),
     thresholdText:snThresholdText(trigger,thVal),
-    liveTag: (trigger==='live'||trigger==='newuser') ? ($('snLive').options[$('snLive').selectedIndex]?$('snLive').options[$('snLive').selectedIndex].text:'') : '',
     shareTag: trigger==='share' ? ($('snShareTag').options[$('snShareTag').selectedIndex]?$('snShareTag').options[$('snShareTag').selectedIndex].text:'') : '',
     levelMode:levelMode,levels:levels,coupons:coupons,ports:ports,replayIssue:replay==='yes',
     perUser:+$('snPerUser').value,perDay:+$('snPerDay').value,startTime:$('snStartTime').value,
@@ -1348,7 +1406,6 @@ function fillSend(id){
   $('snTrigger').value=s.trigger;snToggleThreshold();
   if($('snThVal'))$('snThVal').value=(s.thresholdText.match(/\d+/)||[''])[0];
   if($('snShareCount'))$('snShareCount').value=(s.thresholdText.match(/\d+/)||[''])[0];
-  [...$('snLive').options].forEach(o=>{if(o.textContent===s.liveTag)o.selected=true;});
   const rp=!!s.replayIssue;
   if($('snReplay'))$('snReplay').value=rp?'yes':'no';
   if($('snShareTag'))[...$('snShareTag').options].forEach(o=>{if(o.textContent===s.shareTag)o.selected=true;});
