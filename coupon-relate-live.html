@@ -142,6 +142,19 @@
   .room-card .info .enter{color:#534AB7;font-size:13px;cursor:pointer}
   .room-card .info .enter:hover{text-decoration:underline}
 
+  /* ===== 新建直播间 · 发券活动九宫格选择 ===== */
+  .act-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-height:360px;overflow-y:auto;padding:2px}
+  .act-card{border:1px solid #dcdfe6;border-radius:8px;padding:12px;cursor:pointer;background:#fff;transition:border-color .15s,box-shadow .15s;position:relative}
+  .act-card:hover{border-color:#534AB7}
+  .act-card.selected{border-color:#534AB7;background:#f3f0ff;box-shadow:0 2px 8px rgba(83,74,183,.15)}
+  .act-card .act-check{position:absolute;top:10px;right:10px;width:18px;height:18px;accent-color:#534AB7;pointer-events:none}
+  .act-card .act-name{font-size:14px;font-weight:600;color:#222;margin-bottom:8px;padding-right:24px;line-height:1.4}
+  .act-card .act-row{display:flex;font-size:12px;line-height:1.7}
+  .act-card .act-k{flex:0 0 64px;color:#909399}
+  .act-card .act-v{flex:1;color:#333}
+  .act-hint{font-size:12px;color:#909399;margin-top:8px}
+  .act-hint b{color:#534AB7}
+
 /* embed mode: hide topbar & sidebar when ?embed=1 */
 body.embed-mode .topbar{display:none}
 body.embed-mode .side{display:none}
@@ -490,11 +503,10 @@ if(location.search.includes('embed=1')) document.body.classList.add('embed-mode'
         <div class="fr-body"><input class="fr-input" id="lmName" placeholder="请输入直播间的名称"></div>
       </div>
       <div class="form-row">
-        <label class="fr-label"><span class="req">*</span>直播标签</label>
+        <label class="fr-label">选择发券活动</label>
         <div class="fr-body">
-          <select class="fr-input" id="lmTag">
-            <option value="">请选择直播标签</option>
-          </select>
+          <div class="act-grid" id="actGrid"></div>
+          <div class="act-hint">已选 <b id="actCount">0</b> 个发券活动（选填，可多选）｜仅展示「进行中 / 未开始」的活动</div>
         </div>
       </div>
       <div class="form-actions">
@@ -564,6 +576,51 @@ var liveRooms = [
 ];
 var statusCls={预告:'tag-blue',直播中:'tag-green',已结束:'tag-gray'};
 
+/* ============ 发券活动（直播间新建时供选择） ============ */
+var couponActivities=[
+  {id:1,name:'7月直播时长发券-A',type:'直播时长',threshold:'观看满30分钟',coupons:['新人满99减20','无门槛5元代金'],ports:['App','H5','小程序'],levels:'全部会员',perUser:1,perDay:1,liveTag:'福利直播',status:'进行中',issued:89},
+  {id:2,name:'老带新分享发券-B',type:'分享活动',threshold:'绑定用户数量每满10人',coupons:['无门槛5元代金'],ports:['App','H5'],levels:'Lv4、Lv5、Lv6',perUser:3,perDay:1,liveTag:'',status:'未开始',issued:0},
+  {id:3,name:'新人福利登录发券',type:'新人福利活动',threshold:'登录触发（9.20 起）',coupons:['新人满99减20'],ports:['App','H5','小程序'],levels:'全部会员',perUser:1,perDay:1,liveTag:'不限制',status:'未开始',issued:0},
+  {id:4,name:'618 直播满减狂欢',type:'直播时长',threshold:'观看满15分钟',coupons:['老券满200减30','全场8折券'],ports:['App','H5','小程序'],levels:'全部会员',perUser:1,perDay:1,liveTag:'福利直播',status:'进行中',issued:212},
+  {id:5,name:'VIP 专享直播发券',type:'直播时长',threshold:'观看满60分钟',coupons:['VIP专享满500减80'],ports:['App','H5','小程序'],levels:'Lv7、Lv8',perUser:1,perDay:1,liveTag:'VIP 专享直播',status:'未开始',issued:0},
+  {id:6,name:'周末养生专场',type:'分享活动',threshold:'绑定用户数量每满5人',coupons:['无门槛5元代金','新人满99减20'],ports:['App','H5'],levels:'全部会员',perUser:2,perDay:1,liveTag:'',status:'已结束',issued:156},
+  {id:7,name:'新品首发直播间',type:'直播时长',threshold:'观看满20分钟',coupons:['新品满150减25'],ports:['App','H5','小程序'],levels:'全部会员',perUser:1,perDay:1,liveTag:'新品直播',status:'进行中',issued:78},
+  {id:8,name:'会员日双倍发券',type:'新人福利活动',threshold:'登录触发',coupons:['会员日满300减50'],ports:['App','H5','小程序'],levels:'Lv3及以上',perUser:1,perDay:2,liveTag:'不限制',status:'未开始',issued:0},
+  {id:9,name:'回放观看发券',type:'直播时长',threshold:'回放观看满10分钟',coupons:['无门槛3元代金'],ports:['App','H5','小程序'],levels:'全部会员',perUser:1,perDay:1,liveTag:'福利直播',status:'进行中',issued:45}
+];
+var actStatusCls={进行中:'tag-green',未开始:'tag-blue',已结束:'tag-gray'};
+
+function renderActGrid(){
+  $('actGrid').innerHTML = couponActivities.filter(function(a){return a.status!=='已结束';}).map(function(a){
+    var lvTxt=a.levels||'全部会员';
+    var tagTxt=a.liveTag?('<div class="act-row"><span class="act-k">直播标签</span><span class="act-v">'+a.liveTag+'</span></div>'):'';
+    return '<div class="act-card" data-id="'+a.id+'" onclick="toggleAct(this)">'+
+      '<input type="checkbox" class="act-check">'+
+      '<div class="act-name">'+a.name+'</div>'+
+      '<div class="act-row"><span class="act-k">活动类型</span><span class="act-v">'+a.type+'</span></div>'+
+      '<div class="act-row"><span class="act-k">触发条件</span><span class="act-v">'+a.threshold+'</span></div>'+
+      '<div class="act-row"><span class="act-k">关联券</span><span class="act-v">'+a.coupons.join('、')+'</span></div>'+
+      '<div class="act-row"><span class="act-k">执行端口</span><span class="act-v">'+a.ports.join('、')+'</span></div>'+
+      '<div class="act-row"><span class="act-k">会员等级</span><span class="act-v">'+lvTxt+'</span></div>'+
+      '<div class="act-row"><span class="act-k">每人限制</span><span class="act-v">'+a.perUser+' 张/人 · 每日 '+a.perDay+' 张</span></div>'+
+      tagTxt+
+      '<div class="act-row"><span class="act-k">状态</span><span class="act-v"><span class="tag '+actStatusCls[a.status]+'">'+a.status+'</span> · 已发 '+a.issued+'</span></div>'+
+    '</div>';
+  }).join('') || '<div style="grid-column:1/-1;text-align:center;color:#c0c4cc;padding:20px">暂无进行中 / 未开始的发券活动</div>';
+}
+function toggleAct(el){
+  var chk=el.querySelector('.act-check');
+  chk.checked=!chk.checked;
+  el.classList.toggle('selected',chk.checked);
+  updateActCount();
+}
+function updateActCount(){
+  $('actCount').textContent=document.querySelectorAll('#actGrid .act-card.selected').length;
+}
+function getSelectedActIds(){
+  return Array.from(document.querySelectorAll('#actGrid .act-card.selected')).map(function(c){return parseInt(c.dataset.id);});
+}
+
 function renderLiveRooms(){
   var st=$('lrStatus').value, kw=$('lrKeyword').value.trim();
   var rows='', cnt=0, filtered=[];
@@ -581,7 +638,7 @@ function renderLiveRooms(){
       '</div>'+
       '<div class="info">'+
         '<div class="name">'+r.name+'</div>'+
-        '<div class="meta">'+r.time+'</div>'+
+        '<div class="meta">'+r.time+(r.acts&&r.acts.length?(' · 关联 '+r.acts.length+' 个发券活动'):'')+'</div>'+
         '<div class="enter">观看直播</div>'+
       '</div>'+
     '</div>';
@@ -590,20 +647,17 @@ function renderLiveRooms(){
   $('liveRoomCount').textContent = cnt;
 }
 function resetLiveRoomFilter(){ $('lrStatus').value=''; $('lrKeyword').value=''; renderLiveRooms(); }
-function fillLiveRoomTagOptions(){
-  $('lmTag').innerHTML = '<option value="">请选择直播标签</option>' +
-    liveTags().map(function(t){return '<option value="'+t.name+'">'+t.name+'</option>';}).join('');
-}
 function resetLiveRoomAdd(){
-  $('lmName').value=''; $('lmTag').value='';
-  fillLiveRoomTagOptions();
+  $('lmName').value='';
+  renderActGrid();
+  updateActCount();
 }
 function saveLiveRoom(){
-  var name=$('lmName').value.trim(), tag=$('lmTag').value;
+  var name=$('lmName').value.trim();
   if(!name){toast('请输入直播间名称',true);return;}
-  if(!tag){toast('请选择直播标签',true);return;}
+  var acts=getSelectedActIds();
   var id='LIVE'+(liveRooms.length+1).toString().padStart(3,'0');
-  liveRooms.unshift({id:id,name:name,status:'预告',time:new Date().toLocaleString().replace(/\//g,'-').slice(0,16),tag:tag});
+  liveRooms.unshift({id:id,name:name,status:'预告',time:new Date().toLocaleString().replace(/\//g,'-').slice(0,16),tag:'',acts:acts});
   toast('创建成功');
   go('liveRoom');
 }
