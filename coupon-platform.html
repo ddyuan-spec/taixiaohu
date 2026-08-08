@@ -361,9 +361,6 @@
           <th>上架状态</th>
           <th>使用状态</th>
           <th>有效期</th>
-          <th>已领取</th>
-          <th>剩余</th>
-          <th>总库存</th>
           <th>创建日期</th>
           <th>操作</th>
         </tr>
@@ -672,14 +669,12 @@
       <div class="fr-body">
         <table class="inner-tbl">
           <thead>
-            <tr><th>适用店铺</th><th>优惠券规则</th><th>发行量（张）</th><th>每人限领（张）</th></tr>
+            <tr><th>适用店铺</th><th>优惠券规则</th></tr>
           </thead>
           <tbody>
             <tr>
               <td id="cdShopName">-</td>
               <td id="cdRuleText">-</td>
-              <td id="cdTotalQty">-</td>
-              <td id="cdPerLimit">-</td>
             </tr>
           </tbody>
         </table>
@@ -763,12 +758,10 @@
     <div class="form-row">
       <label class="fr-label">活动范围</label>
       <div class="fr-body">
-        <table class="inner-tbl"><thead><tr><th style="width:140px">店铺</th><th style="width:120px">优惠券类型</th><th>优惠券规则</th><th style="width:100px">发行量（张）</th><th style="width:110px">每人领取（张）</th></tr></thead><tbody><tr>
+        <table class="inner-tbl"><thead><tr><th style="width:140px">店铺</th><th style="width:120px">优惠券类型</th><th>优惠券规则</th></tr></thead><tbody><tr>
           <td><select id="cpShop" style="width:100%"><option value="">全部店铺</option><option>红门旗舰店</option><option>健康生活馆</option><option>泰山滋补专营店</option></select></td>
           <td><span class="tag tag-purple" id="cpRuleType" data-value="full_discount">满减券</span></td>
           <td id="cpRuleCell">满 <input id="cpFullAmt" type="number" min="0" placeholder="300" style="width:70px;height:30px;border:1px solid #dcdfe6;border-radius:3px;padding:0 8px;font-size:12px;outline:none"> 元，减 <input id="cpCutAmt" type="number" min="0" placeholder="100" style="width:70px;height:30px;border:1px solid #dcdfe6;border-radius:3px;padding:0 8px;font-size:12px;outline:none"> 元</td>
-          <td><input type="number" id="cpTotal" value="1" min="1"></td>
-          <td><input type="number" id="cpPerUser" value="1" min="1"></td>
         </tr></tbody></table>
       </div>
     </div>
@@ -867,34 +860,6 @@
         <button class="btn-ghost btn-sm" onclick="closeProductPicker()">取消</button>
         <button class="btn-primary btn-sm" onclick="confirmProductPicker()">确认</button>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== 增加发行量 弹窗 ==================== -->
-<div class="modal-overlay" id="stockModal" style="display:none">
-  <div class="modal-dlg" style="width:420px">
-    <div class="modal-header">
-      <span class="modal-title">增加发行量</span>
-      <button class="modal-close" onclick="closeStockModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-row" style="margin:6px 0">
-        <label class="fr-label" style="width:110px">当前总库存</label>
-        <div class="fr-body"><span id="stockCurTotal" style="font-weight:700;color:#303133">-</span> 张</div>
-      </div>
-      <div class="form-row" style="margin:6px 0">
-        <label class="fr-label" style="width:110px">增加数量<span style="color:#f56c6c">*</span></label>
-        <div class="fr-body"><input class="fr-input" id="stockAddQty" type="number" min="1" value="100" style="width:160px"> 张</div>
-      </div>
-      <div class="form-row" style="margin:6px 0">
-        <label class="fr-label" style="width:110px">增加后总额</label>
-        <div class="fr-body"><span id="stockNewTotal" style="font-weight:700;color:#67c23a">-</span> 张</div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-ghost btn-sm" onclick="closeStockModal()">取消</button>
-      <button class="btn-primary btn-sm" onclick="confirmIncreaseStock()">确认增加</button>
     </div>
   </div>
 </div>
@@ -1103,13 +1068,9 @@ function renderCoupons(){
       <td><span class="tag ${c.status==='启用'?'tag-green':'tag-gray'}">${c.status}</span></td>
       <td><span class="tag ${c.usageStatus==='进行中'?'tag-green':c.usageStatus==='未开始'?'tag-yellow':c.usageStatus==='已结束'?'tag-gray':'tag-red'}">${c.usageStatus}</span></td>
       <td>${c.valid}</td>
-      <td>${c.claimed}</td>
-      <td>${c.left}</td>
-      <td>${c.claimed+c.left}</td>
       <td>${c.createDate}</td>
       <td class="act">
         <a class="btn-link" onclick="viewCoupon(${c.id})">查看</a>
-        <a class="btn-link blue" onclick="openIncreaseStockById(${c.id})">增加发行量</a>
         ${c.status==='启用'
           ? `<a class="btn-link warn" onclick="offlineCouponById(${c.id})">下架</a>`
           : (c.usageStatus!=='进行中'
@@ -1118,7 +1079,7 @@ function renderCoupons(){
         ${(c.usageStatus==='未开始'||c.usageStatus==='进行中') ? `<a class="btn-link red" onclick="revokeCoupon(${c.id})">撤回</a>` : ''}
       </td>
     </tr>`).join('');
-  $('couponTbody').innerHTML=rows||'<tr><td colspan="13" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
+  $('couponTbody').innerHTML=rows||'<tr><td colspan="10" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
   $('couponPagi').innerHTML='共 <strong>'+list.length+'</strong> 条 <select><option>10条/页</option></select> <span class="pg-btn active">1</span> 跳至 <input type="number" value="1"> 页';
 }
 function resetFilter(){$('fName').value='';$('fShop').value='';$('fStatus').value='';$('fUsageStatus').value='';$('fType').value='';renderCoupons();}
@@ -1131,8 +1092,6 @@ function viewCoupon(id){
   $('cdEnd').value=c.date.split(' ~ ')[1];
   $('cdShopName').textContent=c.shop||'-';
   $('cdRuleText').textContent=c.rule;
-  $('cdTotalQty').textContent=c.claimed+c.left;
-  $('cdPerLimit').textContent='1';
   $('cdShare').textContent=c.share||'不共用';
   $('cdRuleDesc').innerHTML=c.ruleDesc?c.ruleDesc:'<span style="color:#c0c4cc">—</span>';
   const ptMap={app:'泰小虎App',h5:'泰尔超优惠H5',mini:'泰尔超优会小程序'};
@@ -1186,29 +1145,6 @@ function confirmOffline(){
   else { toast('已下架（原因：'+reason.slice(0,12)+(reason.length>12?'…':'')+'）'); }
 }
 
-/* ---- 增加发行量 ---- */
-function openIncreaseStockById(id){ currentCouponId=id; openIncreaseStock(); }
-function openIncreaseStock(){
-  const c=coupons.find(x=>x.id===currentCouponId);if(!c)return;
-  const total=c.claimed+c.left;
-  $('stockCurTotal').textContent=total;
-  $('stockAddQty').value=100;
-  $('stockNewTotal').textContent=total+ (+$('stockAddQty').value||0);
-  $('stockAddQty').oninput=()=>{ const add=+$('stockAddQty').value||0; $('stockNewTotal').textContent=(c.claimed+c.left)+add; };
-  $('stockModal').style.display='flex';
-}
-function closeStockModal(){ $('stockModal').style.display='none'; }
-function confirmIncreaseStock(){
-  const c=coupons.find(x=>x.id===currentCouponId);if(!c)return;
-  const add=+$('stockAddQty').value||0;
-  if(add<1){ toast('增加数量需 ≥ 1',true); return; }
-  c.left+=add;                       // 总库存 = 已领取 + 剩余，剩余增加即发行量提升
-  closeStockModal();
-  if($('cdTotalQty')) $('cdTotalQty').textContent=c.claimed+c.left;  // 刷新详情页
-  renderCoupons();                   // 刷新列表总库存列
-  toast('已增加发行量 '+add+' 张，当前总库存 '+(c.claimed+c.left)+' 张');
-}
-
 /* ==================== D2: 新增券 独立页 ==================== */
 /* ---- 券规则说明 富文本 ---- */
 function cpUpdateRuleCount(){
@@ -1234,7 +1170,6 @@ function resetCouponNew(){
   $('cpFullAmt').value='';$('cpCutAmt').value='';
   document.querySelectorAll('input[name=cpShare]').forEach(cb=>cb.checked=false);
   document.querySelectorAll('input[name=cpPort]').forEach(cb=>cb.checked=(cb.value==='app'));
-  $('cpTotal').value=1;$('cpPerUser').value=1;
   document.querySelectorAll('input[name=cpProd]')[0].checked=true;cpToggleProd();
   selectedProds=[];renderSelectedProds();
   $('cpRuleDesc').innerHTML='';cpUpdateRuleCount();
@@ -1279,7 +1214,7 @@ function saveCouponNew(){
     ruleDesc:ruleDesc,isLadder:isLadder,stepLimit:stepLimit,
     usablePorts:ports,
     valid:'固定 '+$('cpStart').value+' ~ '+$('cpEnd').value,
-    claimed:0,left:+$('cpTotal').value,date:$('cpStart').value+' ~ '+$('cpEnd').value,createDate:$('cpStart').value,productScope:document.querySelector('input[name=cpProd]:checked').value,prods:selectedProds.map(p=>({id:p.id,name:p.name,price:p.price,floorPrice:p.floorPrice||''}))});
+    date:$('cpStart').value+' ~ '+$('cpEnd').value,createDate:$('cpStart').value,productScope:document.querySelector('input[name=cpProd]:checked').value,prods:selectedProds.map(p=>({id:p.id,name:p.name,price:p.price,floorPrice:p.floorPrice||''}))});
   go('list');toast('已保存');
 }
 
