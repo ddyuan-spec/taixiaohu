@@ -499,7 +499,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
     <text x="215" y="131" text-anchor="middle" font-weight="bold">添加券</text>
 
-    <text x="215" y="148" text-anchor="middle" fill="#2e7d32" font-size="10.5">本期新增</text>
+    
 
 
 
@@ -1109,7 +1109,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <tr><td><b>单个优惠</b></td><td>单个优惠（默认）</td><td>订单金额 ≥ X 时减 Y 元，<b>只减一次</b>，与订单金额超出部分无关</td><td>满 X 减 Y</td></tr>
 
-<tr><td><b>叠加优惠</b></td><td>叠加优惠</td><td>减免金额 = <code>floor(订单金额 ÷ X) × Y</code>，订单金额每达到一个 X 的整数倍即多减一份 Y；实际最大优惠金额 = min(减Y元 × 叠加次数, 封顶金额)</td><td>每满 X 减 Y（封顶 ¥M）</td></tr>
+<tr><td><b>叠加优惠</b></td><td>叠加优惠</td><td>减免金额 = <code>floor(订单金额 ÷ X) × Y</code>，订单金额每达到一个 X 的整数倍即多减一份 Y；<span>最大优惠金额 = 减Y元 × 叠加次数，系统自动计算</span></td><td>每满 X 减 Y（最大优惠 ¥M）</td></tr>
 
 </tbody>
 
@@ -1155,7 +1155,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <div class="meta">遵循《产品需求文档规范》§四 逐功能点写法；每个页面含「原型示意 + 列表字段表 + 功能按钮权限表 + 关键按钮逐步逻辑 + 表单字段 + 查询条件 + 数据来源」。原型示意见各端链接。</div>
 
-<div class="note">📌 <b>功能范围标注规则（强制）</b>：本节每个功能点须标注 <span class="tag r">已有-沿用</span> / <span class="tag y">本期新增</span> / <span class="tag g">本期改动</span>。
+<div class="note">📌 <b>功能范围标注规则（强制）</b>：本节每个功能点须标注 已有-沿用 / 本期新增 / 本期改动。
 
 <b>已有功能</b>仅写一句「沿用现有功能，详见原型 XXX.html」，<b>不展开字段表/逻辑</b>（业务逻辑闭环在原型，PRD 不赘述）；
 
@@ -1175,7 +1175,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 
 
-<h4>4.1.1 P1 优惠券管理列表 <span class="tag r">已有-沿用</span></h4>
+<h4>4.1.1 P1 优惠券管理列表 已有-沿用</h4>
 
 <p>沿用现有功能，<span style=""><b>本期删除「已领取」「剩余」「总库存」列及「增加发行量」操作</b>；券模板不再配置发行量与每人领取量</span>，仅保留创建日期列与下架/删除按钮逻辑。</p>
 
@@ -1243,7 +1243,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 
 
-<h4>4.1.2 D1 券详情 <span class="tag y">本期新增</span></h4>
+<h4>4.1.2 D1 券详情</h4>
 
 <p><img src="coupon-prd-assets/coupon-d1-coupon-detail.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="平台端券详情页"></p>
 
@@ -1271,7 +1271,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <tr><td>领取后有效天数</td><td>数字只读：X 天内有效</td><td>time_type=after 时显示；取 valid_days</td></tr>
 
-<tr><td>优惠规则设置</td><td>内嵌表格：适用店铺 / 优惠券类型 / 优惠券规则 / 优惠规则（单个优惠 / 叠加优惠，叠加时显示「叠加 N 次，最大优惠 ¥M」）</td><td>取关联规则配置（详见 §4.1.3.3）</td></tr>
+<tr><td>优惠规则设置</td><td>内嵌表格：适用店铺 / 优惠券类型 / 优惠券规则 / 优惠规则 / <span>叠加次数 / 最大优惠金额</span>（后两列仅在叠加优惠时展示；最大优惠金额 = 减Y元 × 叠加次数，自动计算）</td><td>取关联规则配置（详见 §4.1.3.3）</td></tr>
 
 <tr><td>商品选择</td><td>Radio 只读：全部商品参与 / 指定商品参与 / 排除商品不参与</td><td>取 product_scope</td></tr>
 
@@ -1279,7 +1279,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <tr><td>可共用优惠</td><td>只读展示已勾选项（臻享积分 / 多盒多折 / 可多张使用，多项以「、」连接）；一项都没勾选时展示「不共用」</td><td>取 share_with 多值字段（详见 4.1.3.2）</td></tr>
 
-<tr><td>优惠规则</td><td>只读展示：单个优惠 / 叠加优惠（N 次，最大优惠 ¥M）</td><td>取 disc_rule / stack_times / max_amt（详见 4.1.3.3）</td></tr>
+<tr><td>优惠规则</td><td>只读展示：<span>优惠规则（单个优惠 / 叠加优惠）、叠加次数、最大优惠金额 分三列展示</span>；最大优惠金额 = 减Y元 × 叠加次数，系统自动计算</td><td>取 disc_rule / stack_times / max_amt（详见 4.1.3.3）</td></tr>
 
 <tr><td>状态</td><td>上架状态 Tag 显示（启用/下架）；使用状态 Tag 显示（未开始/进行中/已结束/已删除）</td><td>取 listing_status + usage_status 枚举（双维度独立，详见 §3.4）</td></tr>
 
@@ -1291,7 +1291,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 
 
-<h5>4.1.3.4 「底价（商品级）」字段规则 <span class="tag y">本期新增</span></h5>
+<h5>4.1.3.4 「底价（商品级）」字段规则</h5>
 
 <p><b>字段定义</b>：底价是<b>商品级</b>属性，由运营在券配置的「商品选择区」环节，对<b>每个适用商品</b>逐行录入该商品允许成交的最低实付单价。它约束的是 C 端结算时「叠加/用券后该商品实付不得低于底价」，与券面额、门槛、可共用优惠、叠加计算相互独立。</p>
 
@@ -1373,7 +1373,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 
 
-<h4>4.1.3 D2 新建优惠券 <span class="tag y">本期新增</span></h4>
+<h4>4.1.3 D2 新建优惠券</h4>
 
 <p><img src="coupon-prd-assets/coupon-d2-new-coupon.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="D2新建优惠券"></p>
 
@@ -1401,13 +1401,13 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <tr><td>店铺</td><td>下拉选择</td><td>全部店铺 / 指定店铺（单选）</td><td>必选</td><td>⚠️ 平台端独有字段</td></tr>
 
-<tr><td>优惠券类型</td><td><b>只读 Tag（非下拉）</b></td><td>固定展示「满减券」，不可选择</td><td>—</td><td><span class="tag g">本期改动</span> 一期仅满减券，下拉已删除（见 §3.5 / §十一）</td></tr>
+<tr><td>优惠券类型</td><td><b>只读 Tag（非下拉）</b></td><td>固定展示「满减券」，不可选择</td><td>—</td><td>本期改动 一期仅满减券，下拉已删除（见 §3.5 / §十一）</td></tr>
 
 <tr><td>优惠券规则</td><td>两个数字输入框</td><td>「满 <b>X</b> 元，减 <b>Y</b> 元」</td><td>X、Y 均必填且为 &gt;0 的数值；<b>Y &lt; X</b>（减免金额需小于门槛金额，否则提示「减免金额需小于门槛金额」）；X 空 → 「请填写满减门槛金额」；Y 空 → 「请填写减免金额」</td><td>cpFullAmt / cpCutAmt</td></tr>
 
-<tr><td><b>可共用优惠</b></td><td><b>多选 Checkbox（3 项）</b></td><td>臻享积分 / 多盒多折 / <b>可多张使用</b>，<b>可多选、可全不选</b>。其中「臻享积分」「多盒多折」为<b>已有功能</b>，仅表示本券可与之叠加（规则不赘述）；「<b>可多张使用</b>」含义特殊：允许同一用户在同一订单中<b>同时使用多张本券模板的券</b>（非与其他类型优惠叠加，<span style="">券模板不再配置每人领取上限，其叠加张数上限另行确认</span>）</td><td><b>默认全部不选中</b>；无必填校验，允许 0 选</td><td><span class="tag g">本期改动</span> 原「是否与其他优惠共用」Radio 二选一改造而来，字段名与控件同步变更；原「同名券」更名为「可多张使用」（见 §4.1.3.2 枚举定义）</td></tr>
+<tr><td><b>可共用优惠</b></td><td><b>多选 Checkbox（3 项）</b></td><td>臻享积分 / 多盒多折 / <b>可多张使用</b>，<b>可多选、可全不选</b>。其中「臻享积分」「多盒多折」为<b>已有功能</b>，仅表示本券可与之叠加（规则不赘述）；「<b>可多张使用</b>」含义特殊：允许同一用户在同一订单中<b>同时使用多张本券模板的券</b>（非与其他类型优惠叠加，<span style="">券模板不再配置每人领取上限，其叠加张数上限另行确认</span>）</td><td><b>默认全部不选中</b>；无必填校验，允许 0 选</td><td>本期改动 原「是否与其他优惠共用」Radio 二选一改造而来，字段名与控件同步变更；原「同名券」更名为「可多张使用」（见 §4.1.3.2 枚举定义）</td></tr>
 
-<tr><td><b>优惠规则</b></td><td><b>下拉选择（单个优惠 / 叠加优惠）</b>；选「叠加优惠」时展开「叠加次数」输入与「封顶金额」输入，并实时显示「最大优惠金额 = min(减Y元 × 叠加次数, 封顶金额)」</td><td><b>单个优惠</b>：订单满 X 元减 Y 元，只减一次（等价于原「不勾选阶梯」）。<b>叠加优惠</b>：按「每满 X 减 Y」循环叠加，减免金额 = floor(订单可用商品金额 ÷ X) × Y，实际最大优惠金额 = min(减Y元 × 叠加次数, 封顶金额)（详见 4.1.3.3）</td><td><b>默认「单个优惠」</b>；选「叠加优惠」时「叠加次数」默认 1（最小 1）、「封顶金额」默认预填为 减Y元×叠加次数（可改小）；X、Y 未填写完整时提交提示「请先填写完整的满减规则」</td><td><span class="tag y">本期新增</span> 由「优惠规则设置」区块承载，替代原「阶梯优惠券」开关 + 「阶梯上限」字段</td></tr>
+<tr><td><b>优惠规则</b></td><td><b>下拉选择（单个优惠 / 叠加优惠）</b>，同一字段的两个互斥选项；选「叠加优惠」时<b>独立展示</b>「叠加次数」输入列与「最大优惠金额」只读展示列</td><td><b>单个优惠</b>：订单满 X 元减 Y 元，只减一次（等价于原「不勾选阶梯」）。<b>叠加优惠</b>：按「每满 X 减 Y」循环叠加，减免金额 = floor(订单可用商品金额 ÷ X) × Y；<span>最大优惠金额 = 减Y元 × 叠加次数，系统自动计算并展示</span>（详见 4.1.3.3）</td><td><b>默认「单个优惠」</b>；选「叠加优惠」时「叠加次数」默认 1（最小 1），<span>「最大优惠金额」按 减Y元×叠加次数 自动计算、只读展示</span>；X、Y 未填写完整时提交提示「请先填写完整的满减规则」</td><td>本期新增 由「优惠规则设置」区块承载，替代原「阶梯优惠券」开关 + 「阶梯上限」字段</td></tr>
 
 
 
@@ -1415,7 +1415,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <tr><td>商品选择区</td><td>弹窗+标签列表</td><td>打开商品选择弹窗 → 搜索/筛选/分页勾选 → 已选商品以 chip 标签展示可删除</td><td>指定/排除模式至少选 1 件</td><td>弹窗含分类筛选+价格筛选+关键词搜索+分页</td></tr>
 
-<tr><td><b>底价（商品级）</b></td><td><b>数字输入（每个适用商品一行）</b></td><td>在「商品选择区」勾选的<b>每个适用商品</b>旁可录入该商品底价（<b>指定商品时逐行设置</b>）；底价 = 该商品允许成交的最低实付单价，叠加/用券后实付不得低于此值；<b>默认留空 = 无底价（即不限制）</b></td><td><b>≥0 数值</b>，min=0，step=0.01；<b>可留空 = 无底价（不强制必填）</b></td><td><span class="tag y">本期新增</span> 数据来源=<b>运营在券配置中录入</b>（以原型为准，非商品域只读）；存《券模板表》适用商品的 floor_price 字段；C 端用券结算时按本值做「不击穿底价」保护（详见 §4.1.3.4 / §4.3.6）</td></tr>
+<tr><td><b>底价（商品级）</b></td><td><b>数字输入（每个适用商品一行）</b></td><td>在「商品选择区」勾选的<b>每个适用商品</b>旁可录入该商品底价（<b>指定商品时逐行设置</b>）；底价 = 该商品允许成交的最低实付单价，叠加/用券后实付不得低于此值；<b>默认留空 = 无底价（即不限制）</b></td><td><b>≥0 数值</b>，min=0，step=0.01；<b>可留空 = 无底价（不强制必填）</b></td><td>本期新增 数据来源=<b>运营在券配置中录入</b>（以原型为准，非商品域只读）；存《券模板表》适用商品的 floor_price 字段；C 端用券结算时按本值做「不击穿底价」保护（详见 §4.1.3.4 / §4.3.6）</td></tr>
 
 <tr><td><b>券可使用端口</b></td><td><b>多选 Checkbox（3 项）</b></td><td>泰小虎App / 泰尔超优惠H5 / 泰尔超优会小程序，<b>可多选</b>，每个端口为独立投放渠道</td><td><b>必选至少 1 项</b>；全不选 → 提交时提示「请至少选择一个可使用端口」；<b>默认勾选「泰小虎App」</b></td><td>数据来源=运营在券配置中勾选；存《券模板表》<code>usable_ports</code>（数组）；<b>发券投放（发券活动/系统发券）</b>仅向 usable_ports 内端口投放，用户不可跨端口领取；用户<b>已持有</b>的券跨端口统一展示——若当前端口不在该券 <code>usable_ports</code> 内，状态标「生效中」但不可选，点击提示「此券仅支持在 {usable_ports 端口名称} 使用」（详见 §4.3.5）</td></tr>
 
@@ -1477,7 +1477,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 
 
-<h5>4.1.3.2 「可共用优惠」字段规则 <span class="tag g">本期改动</span></h5>
+<h5>4.1.3.2 「可共用优惠」字段规则</h5>
 
 <p><b>字段定义</b>：原「是否与其他优惠共用」（Radio 二选一：是/否）<b>改造为</b>「可共用优惠」（多选 Checkbox），从「一刀切开关」升级为「按优惠类型逐项授权」。</p>
 
@@ -1521,9 +1521,9 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 
 
-<h5>4.1.3.3 「优惠规则」计算逻辑（单个优惠 / 叠加优惠）<span class="tag y">本期新增</span></h5>
+<h5>4.1.3.3 「优惠规则」计算逻辑（单个优惠 / 叠加优惠）本期新增</h5>
 
-<p><b>功能说明</b>：满减券通过「优惠规则」下拉选择计算方式：<b>单个优惠</b>——订单满 X 元减 Y 元，<b>只减一次</b>；<b>叠加优惠</b>——订单金额<b>每满一个 X，就多减一份 Y</b>，减免金额随订单金额阶梯式增长，实际最大优惠受「封顶金额」约束。</p>
+<p><b>功能说明</b>：满减券通过「优惠规则」下拉选择计算方式：<b>单个优惠</b>——订单满 X 元减 Y 元，<b>只减一次</b>；<b>叠加优惠</b>——订单金额<b>每满一个 X，就多减一份 Y</b>，减免金额随订单金额阶梯式增长，<span>最大优惠金额由系统按「减Y元 × 叠加次数」自动计算并展示</span>。</p>
 
 <p><b>计算公式</b></p>
 <table>
@@ -1531,16 +1531,16 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tbody>
 <tr><td>叠加档数 n</td><td><b>n = min( floor(订单可用商品金额 ÷ X), 叠加次数 )</b>（向下取整后与「叠加次数」取小；叠加次数即本券最多循环叠加的次数，订单金额达到 叠加次数 × X 后不再叠加）</td></tr>
 <tr><td>减免金额</td><td><code>减免 = n × Y</code></td></tr>
-<tr><td>最大优惠金额</td><td><b>实际最大优惠金额 = min( 减Y元 × 叠加次数, 封顶金额 )</b>；封顶金额为空/0 时按 减Y元 × 叠加次数 封顶。最大优惠金额仅作展示与封顶提示，不改变计算顺序（多盒多折 → 优惠券满减 → 臻享积分抵现）。</td></tr>
+<tr><td>最大优惠金额</td><td><b>最大优惠金额 = 减Y元 × 叠加次数</b>，<span>由系统根据当前填写的「减Y元」与「叠加次数」自动计算并展示，运营侧不再单独录入封顶金额</span>。最大优惠金额仅作展示与封顶提示，不改变计算顺序（多盒多折 → 优惠券满减 → 臻享积分抵现）。</td></tr>
 <tr><td>计算基数</td><td>「订单可用商品金额」= 本券适用商品范围内的商品实付金额合计（<b>不含运费</b>；若与多盒多折共用，取多盒多折后的实付金额）。<b>指定商品券时该合计即单个 SKU 行金额，作用于 SKU 行级，不作用于订单总价</b>。</td></tr>
 <tr><td>封顶规则</td><td>减免金额 <b>不得超过</b>订单可用商品金额；超出时按订单可用商品金额封顶（订单实付不为负）</td></tr>
 <tr><td>单个优惠模式</td><td>减 Y 元，只减一次（n 恒为 1）</td></tr>
 </tbody>
 </table>
 
-<p><b>数据演练（以「满 300 减 100，叠加 3 次，封顶 ¥300」为例）</b></p>
+<p><b>数据演练（以「满 300 减 100，叠加 3 次，最大优惠 ¥300」为例）</b></p>
 <table>
-<thead><tr><th style="width:130px">订单可用商品金额</th><th style="width:150px">单个优惠</th><th style="width:170px">叠加优惠（封顶¥300）</th><th>叠加计算过程</th></tr></thead>
+<thead><tr><th style="width:130px">订单可用商品金额</th><th style="width:150px">单个优惠</th><th style="width:170px">叠加优惠（最大优惠¥300）</th><th>叠加计算过程</th></tr></thead>
 <tbody>
 <tr><td>¥ 280</td><td>不满足门槛，减 ¥0</td><td>减 ¥0</td><td>floor(280÷300)=0 → 0×100=0</td></tr>
 <tr><td>¥ 300</td><td>减 ¥100</td><td>减 ¥100</td><td>floor(300÷300)=1 → 1×100=100</td></tr>
@@ -1556,18 +1556,18 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
   <ul style="margin-top:4px">
     <li><b>单个优惠</b>：订单满 X 减 Y，只减一次，与原「不勾选阶梯」行为一致。</li>
     <li><b>叠加优惠</b>：按「每满 X 减 Y」循环叠加；<b>叠加次数</b>默认 1（最小 1，可与单个优惠等效），控制本券最多循环叠加次数。</li>
-    <li><b>封顶金额（独立配置项，本期决议新增）</b>：叠加优惠模式下展示「封顶金额」输入框（元），默认预填为 减Y元×叠加次数，可改小；实际最大优惠金额 = min(减Y元 × 叠加次数, 封顶金额)；封顶金额空/0 时按 减Y元×叠加次数 封顶。</li>
+    <li><span><b>最大优惠金额（自动计算展示）</b>：叠加优惠模式下，「优惠规则设置」表独立展示「最大优惠金额」列，系统按 <b>减Y元 × 叠加次数</b> 自动计算并只读展示，运营侧不再单独录入封顶金额。</span></li>
     <li><b>与「可多张使用」独立</b>：优惠规则控制本券<b>自身</b>的减免计算方式；「可多张使用」控制同一订单中可叠加使用的张数，两者不互通。</li>
   </ul>
 </li>
 <li><b>默认值</b>：新建券时「优惠规则」默认<b>单个优惠</b>，保持与存量券行为一致。</li>
-<li><b>后台交互</b>：选「叠加优惠」后须完整填写 X、Y，任一缺失提交时提示「请先填写完整的『满 X 元，减 Y 元』规则」；封顶金额可选填。</li>
+<li><b>后台交互</b>：选「叠加优惠」后须完整填写 X、Y，任一缺失提交时提示「请先填写完整的『满 X 元，减 Y 元』规则」；<span>「最大优惠金额」由系统根据 X、Y 与叠加次数自动计算，无需运营填写</span>。</li>
 <li><b>C 端展示文案</b>：叠加券在券包/订单详情页的面额区展示为「<b>每满 X 减 Y</b>」（单个优惠为「满 X 减 Y」），券卡片右下角追加小字「可叠加」；订单详情页选中后实时显示本单实际减免金额与封顶上限。</li>
 <li><b>与「可共用优惠」的关系</b>：两者<b>互相独立</b>——「优惠规则」控制本券<b>自身</b>的减免计算方式；「可共用优惠」控制本券<b>与其他优惠</b>能否并存。叠加券同样受可共用优惠约束。</li>
 <li><b>与「可多张使用」叠加</b>：若同时选「叠加优惠」+「可多张使用」，多张同名叠加券的减免<b>分别独立计算后相加</b>，总减免仍受订单可用商品金额封顶约束。</li>
 </ul>
 
-<h4>4.1.4 P2 发券活动管理列表 + D3 发券活动（规则引擎）<span class="tag y">本期新增</span></h4>
+<h4>4.1.4 P2 发券活动管理列表 + D3 发券活动（规则引擎）本期新增</h4>
 
 
 
@@ -1701,7 +1701,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tr><td>适用会员等级</td><td>全部会员 / 指定等级(Lv1-8 多选 chip)</td><td>默认「全部会员」；选「指定等级」时<b>至少勾选 1 个等级</b></td><td>—</td></tr>
 
 <tr><td>每人限制发券上限（每种）</td><td>数字输入，默认 1；多选券模板时每种独立限张；<b>可留空</b></td><td><b>选填</b>；留空=不限制（该用户对该券模板累计发放张数无上限）；填写时须为 <b>≥1 整数</b>，非法（0/负数/非数字）→提示"每人上限须≥1"；最大 999</td><td>呼应 v9.2 文案；原型输入框按现状（min=1、默认1），留空上限由后端逻辑兜底处理</td></tr>
-<tr><td><b><span style="color:#000000">每人每日上限（每种）</span></b></td><td><b><span style="color:#000000">数字输入；按「自然日 00:00~24:00」重置，每个用户对每种关联券模板当日累计发放张数上限</span></b></td><td><b><span style="color:#000000">默认 1，≥1 整数；非法（0/负数/非数字）→提示"每人每日上限须≥1"；最大 999；与「每人限制发券上限」独立——前者控制日累计，后者控制活动总累计</span></b></td><td><b><span style="color:#000000">本期新增</span></b></td></tr>
+<tr><td><b><span style="color:#000000">每人每日上限（每种）</span></b></td><td><b><span style="color:#000000">数字输入；按「自然日 00:00~24:00」重置，每个用户对每种关联券模板当日累计发放张数上限</span></b></td><td><b><span style="color:#000000">默认 1，≥1 整数；非法（0/负数/非数字）→提示"每人每日上限须≥1"；最大 999；与「每人限制发券上限」独立——前者控制日累计，后者控制活动总累计</span></b></td><td><b>—</b></td></tr>
 
 <tr><td>活动时间</td><td>两段时间：开始时间（datetime-local 控件，精度到分钟）+ 关闭时间（datetime-local 控件，精度到分钟），同一表单行内联展示，中间以「至」字分隔；勾选「长期活动」后仅开始时间必填，关闭时间隐藏且非必填</td><td>未勾选长期活动时<b>两段皆必填</b>；任一空→提示"请选择活动时间"；开始时间＜关闭时间，否则提示"开始时间须早于关闭时间"；<b>勾选长期活动后仅开始时间必填，关闭时间隐藏、非必填、写库时置空</b>，活动不随关闭时间自动结束，须运营「结束活动」手动终止</td><td>异步发券，无冷却/生效时段；未勾选长期活动时到达关闭时间后由系统定时任务自动置为「已结束」停止发券，亦可经运营「结束活动」手动提前终止；长期活动须运营手动「结束活动」终止；活动生命周期为「开始时间 ≤ 当前 ＜ 关闭时间」；已发放的券实例不受活动终止影响</td></tr>
 
@@ -1819,7 +1819,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 
 
-<h4>4.1.6 P4 数据看板 <span class="tag y">本期新增</span></h4>
+<h4>4.1.6 P4 数据看板</h4>
 
 <p><img src="coupon-prd-assets/coupon-p4-dashboard.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="数据看板"></p>
 
@@ -2151,7 +2151,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 
 
-<h4>4.1.7 P5 用户券查询 <span class="tag y">本期新增</span></h4>
+<h4>4.1.7 P5 用户券查询</h4>
 
 <p><b>页面原型与交互示意</b></p>
 
@@ -2291,7 +2291,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <!-- ===== 会员中心批量送券 ===== -->
 
-<h3>4.2 会员中心-批量送券 <span class="tag y">本期新增</span></h3>
+<h3>4.2 会员中心-批量送券</h3>
 
 <div class="sec">
 
@@ -2303,7 +2303,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 
 
-<h4>4.2.1 M1 会员列表 <span class="tag y">本期新增</span></h4>
+<h4>4.2.1 M1 会员列表</h4>
 
 <p><b>页面入口</b>：会员管理 / 会员列表；按钮入口位于列表左上方「批量赠送」。</p>
 
@@ -2421,7 +2421,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 
 
-<h4>4.2.2 M2 批量赠送优惠券弹窗 <span class="tag y">本期新增</span></h4>
+<h4>4.2.2 M2 批量赠送优惠券弹窗</h4>
 
 <p><b>触发方式</b>：会员列表勾选 ≥1 位用户后，点击「批量赠送」按钮；弹窗标题为「选择要赠送的优惠券」。</p>
 
@@ -2567,7 +2567,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 
 
-<h4>4.3.2 券规则页 <span class="tag y">本期新增</span></h4>
+<h4>4.3.2 券规则页</h4>
 
 <h5>4.3.2.1 原型与交互示意</h5>
 
@@ -2635,7 +2635,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 
 
-<h4>4.3.4 我的优惠券（三态）<span class="tag y">本期新增</span></h4>
+<h4>4.3.4 我的优惠券（三态）本期新增</h4>
 
 <h5>4.3.4.1 原型与交互示意</h5>
 
@@ -2783,7 +2783,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 
 
-<h4>4.3.5 券可使用端口·跨端口展示与拦截规则 <span class="tag y">本期新增</span></h4>
+<h4>4.3.5 券可使用端口·跨端口展示与拦截规则</h4>
 
 <p>券模板在平台端配置「券可使用端口」(<code>usable_ports</code>，枚举：泰小虎App / 泰尔超优惠H5 / 泰尔超优会小程序，见 §4.1.3 D2)。因 App / 小程序 / H5 账号与券包打通，用户在一个端口领取的券，在另外两个端口也能看到。本规则定义<b>已持有券</b>在当前端口的展示与可用判定（与发券投放的端口过滤互补）。</p>
 
@@ -2867,7 +2867,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 
 
-<h4>4.3.6 确认订单选券 / 核销（付款前结算页）<span class="tag y">本期新增</span></h4>
+<h4>4.3.6 确认订单选券 / 核销（付款前结算页）本期新增</h4>
 
 <h5>4.3.6.1 原型与交互示意</h5>
 
@@ -3204,7 +3204,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 
 <p>未使用 ──(提交订单)──&gt; 已预占 ──(支付成功)──&gt; 已使用；已预占 ──(支付失败/取消)──&gt; 未使用。</p>
 
-<h5>4.3.6.9 「可共用优惠」逐类型 C 端核销方案 <span class="tag y">本期新增</span></h5>
+<h5>4.3.6.9 「可共用优惠」逐类型 C 端核销方案</h5>
 
 <p>本节在 §4.1.3.2「可共用优惠」字段基础上，明确 C 端在确认订单选券 / 核销环节，针对<b>每种可共用优惠类型</b>的具体处理方案（判定时机、计算顺序、核销时机、后端校验）。三种类型<b>互相独立、可任意组合勾选</b>，C 端按下方逐类型规则叠加处理；组合时计算顺序固定为「多盒多折（商品级）→ 优惠券满减 → 臻享积分抵现（支付级）」。</p>
 
