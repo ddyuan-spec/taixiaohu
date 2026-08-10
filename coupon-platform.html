@@ -400,7 +400,7 @@
     </table>
   </div>
   <div class="pagi" id="withdrawPagi"></div>
-  <div style="margin-top:10px;color:#909399;font-size:12px;line-height:1.6">说明：勾选单个券模板后点击「撤回」，可按「全量撤回」（删除该模板所有用户券实例）或「单个撤回」（按手机号删除指定用户的券实例）。撤回仅影响已发放券实例，不改变券模板状态，也不影响其他用户。</div>
+  <div style="margin-top:10px;color:#909399;font-size:12px;line-height:1.6">说明：勾选单个券模板后点击「撤回」，可按「全量撤回」（将该模板所有「未使用」用户券实例使用状态置为已结束）或「单个撤回」（按手机号将该用户「未使用」券实例使用状态置为已结束）。撤回将未使用券实例使用状态置为已结束（已使用/已过期不受影响），不改变券模板状态，也不影响其他用户。</div>
 </div>
 
 <!-- 撤回弹窗 -->
@@ -1211,7 +1211,7 @@ function offlineCouponById(id){
   if(refs.length){toast('该券正被 '+refs.length+' 个发券活动引用，请先结束相关发券活动后再下架',true);return;}
   offlineTargetId=id;offlineFromDetail=false;openOfflineModal();
 }
-// R17：原「撤回」入口已移出券列表——撤回改为独立「撤回管理」页，对象为用户券实例，不改变券模板状态（见 §10.9）
+// R17：原「撤回」入口已移出券列表——撤回改为独立「撤回管理」页，对象为用户券实例（将「未使用」实例使用状态置为已结束），不改变券模板状态（见 §10.9）
 function offlineCoupon(){
   const c=coupons.find(x=>x.id===currentCouponId);if(!c)return;
   const refs=sendActivitiesReferencing(c.name);
@@ -1918,7 +1918,7 @@ function confirmWithdraw(){
     const n=c.issuedCount||c.claimed||0;
     if(n===0){toast('该券模板暂无可撤回的已发放券实例',true);closeWithdrawDialog();return;}
     c.issuedUsers=0;c.issuedCount=0;
-    toast('已全量撤回 '+n+' 张用户券实例（券模板状态不变）');
+    toast('已全量撤回 '+n+' 张未使用用户券实例（使用状态置为已结束，券模板状态不变）');
   }
   closeWithdrawDialog();
   renderWithdraw();
