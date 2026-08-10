@@ -674,13 +674,15 @@
       <div class="fr-body">
         <table class="inner-tbl">
           <thead>
-            <tr><th>适用店铺</th><th>优惠券规则</th><th>优惠规则</th></tr>
+            <tr><th>适用店铺</th><th>优惠券规则</th><th>优惠规则</th><th>叠加次数</th><th>最大优惠金额</th></tr>
           </thead>
           <tbody>
             <tr>
               <td id="cdShopName">-</td>
               <td id="cdRuleText">-</td>
               <td id="cdDiscRule">单个优惠</td>
+              <td id="cdStackTimes">-</td>
+              <td id="cdMaxAmt">-</td>
             </tr>
           </tbody>
         </table>
@@ -764,20 +766,18 @@
     <div class="form-row">
       <label class="fr-label">优惠规则设置</label>
       <div class="fr-body">
-        <table class="inner-tbl"><thead><tr><th style="width:140px">店铺</th><th style="width:120px">优惠券类型</th><th>优惠券规则</th><th style="width:170px">优惠规则</th></tr></thead><tbody><tr>
+        <table class="inner-tbl"><thead><tr><th style="width:140px">店铺</th><th style="width:120px">优惠券类型</th><th>优惠券规则</th><th style="width:120px">优惠规则</th><th style="width:110px" id="cpStackTimesTh">叠加次数</th><th style="width:130px" id="cpMaxAmtTh">最大优惠金额</th></tr></thead><tbody><tr>
           <td><select id="cpShop" style="width:100%"><option value="">全部店铺</option><option>红门旗舰店</option><option>健康生活馆</option><option>泰山滋补专营店</option></select></td>
           <td><span class="tag tag-purple" id="cpRuleType" data-value="full_discount">满减券</span></td>
-          <td id="cpRuleCell">满 <input id="cpFullAmt" type="number" min="0" placeholder="300" style="width:70px;height:30px;border:1px solid #dcdfe6;border-radius:3px;padding:0 8px;font-size:12px;outline:none"> 元，减 <input id="cpCutAmt" type="number" min="0" placeholder="100" style="width:70px;height:30px;border:1px solid #dcdfe6;border-radius:3px;padding:0 8px;font-size:12px;outline:none"> 元</td>
+          <td id="cpRuleCell">满 <input id="cpFullAmt" type="number" min="0" placeholder="" style="width:70px;height:30px;border:1px solid #dcdfe6;border-radius:3px;padding:0 8px;font-size:12px;outline:none"> 元，减 <input id="cpCutAmt" type="number" min="0" placeholder="" onchange="cpRecalcMaxAmt()" style="width:70px;height:30px;border:1px solid #dcdfe6;border-radius:3px;padding:0 8px;font-size:12px;outline:none"> 元</td>
           <td>
             <select id="cpDiscRule" onchange="cpToggleDiscRule()" style="width:100%">
               <option value="single">单个优惠</option>
               <option value="stack">叠加优惠</option>
             </select>
-            <div id="cpStackWrap" class="hidden" style="margin-top:6px">
-              叠加次数 <input id="cpStackTimes" type="number" min="1" value="1" style="width:60px;height:28px;border:1px solid #dcdfe6;border-radius:3px;padding:0 6px;font-size:12px;outline:none"> 次
-              <div style="color:#909399;font-size:12px;margin-top:2px">最大优惠金额 ¥<span id="cpMaxAmt">0</span>（减Y元 × 叠加次数）</div>
-            </div>
           </td>
+          <td id="cpStackTimesTd"><input id="cpStackTimes" type="number" min="1" value="1" onchange="cpRecalcMaxAmt()" style="width:60px;height:28px;border:1px solid #dcdfe6;border-radius:3px;padding:0 6px;font-size:12px;outline:none"> 次</td>
+          <td id="cpMaxAmtTd" style="color:#606266;font-size:12px">¥<span id="cpMaxAmt">0</span><br><span style="color:#909399">（减Y元 × 叠加次数）</span></td>
         </tr></tbody></table>
       </div>
     </div>
@@ -1128,7 +1128,9 @@ function viewCoupon(id){
   $('cdEnd').value=c.date.split(' ~ ')[1];
   $('cdShopName').textContent=c.shop||'-';
   $('cdRuleText').textContent=c.rule;
-  $('cdDiscRule').textContent=(c.discRule==='stack')?('叠加优惠（'+(c.stackTimes||1)+' 次，最大优惠 ¥'+(c.maxAmt||0)+'）'):'单个优惠';
+  $('cdDiscRule').textContent=(c.discRule==='stack')?'叠加优惠':'单个优惠';
+  $('cdStackTimes').textContent=(c.discRule==='stack')?(c.stackTimes||1)+' 次':'—';
+  $('cdMaxAmt').textContent=(c.discRule==='stack')?'¥'+(c.maxAmt||0):'—';
   $('cdShare').textContent=c.share||'不共用';
   $('cdRuleDesc').innerHTML=c.ruleDesc?c.ruleDesc:'<span style="color:#c0c4cc">—</span>';
   const ptMap={app:'泰小虎App',h5:'泰尔超优惠H5',mini:'泰尔超优会小程序'};
@@ -1222,7 +1224,7 @@ function fillCouponFromSource(c){
     if(isStack){
       const sm=rule.match(/最多\s*(\d+)\s*次/);
       $('cpStackTimes').value=sm?sm[1]:1;
-      $('cpCapAmt').value=0;                     // 不预填封顶，按派生值（减Y×叠加次数）封顶
+      // 最大优惠金额按 减Y×叠加次数 自动计算展示，无独立封顶输入
       cpRecalcMaxAmt();
     }
   }
@@ -1275,7 +1277,7 @@ function resetCouponNew(){
   document.querySelectorAll('input[name=cpProd]')[0].checked=true;cpToggleProd();
   selectedProds=[];renderSelectedProds();
   $('cpRuleDesc').innerHTML='';cpUpdateRuleCount();
-  $('cpDiscRule').value='single';$('cpStackWrap').classList.add('hidden');$('cpStackTimes').value=1;$('cpMaxAmt').textContent='0';
+  $('cpDiscRule').value='single';$('cpStackTimes').value=1;$('cpMaxAmt').textContent='0';cpToggleDiscRule();
 }
 function cpToggleTime(){
   const isFixed=document.querySelector('input[name=cpTimeType]:checked').value==='fixed';
@@ -1285,7 +1287,10 @@ function cpToggleTime(){
 function cpToggleDiscRule(){
   const v=$('cpDiscRule').value;
   const show=v==='stack';
-  $('cpStackWrap').classList.toggle('hidden',!show);
+  $('cpStackTimesTh').classList.toggle('hidden',!show);
+  $('cpStackTimesTd').classList.toggle('hidden',!show);
+  $('cpMaxAmtTh').classList.toggle('hidden',!show);
+  $('cpMaxAmtTd').classList.toggle('hidden',!show);
   if(show) cpRecalcMaxAmt();
 }
 function cpRecalcMaxAmt(){
