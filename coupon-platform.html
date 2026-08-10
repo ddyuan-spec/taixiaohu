@@ -310,6 +310,7 @@
       <a id="navCoupon" class="active indent" onclick="go('list')">优惠券管理</a>
       <a id="navSend" class="indent" onclick="go('send')">发券活动管理</a>
       <a id="navBoard" class="indent" onclick="go('board')">数据看板</a>
+      <a id="navWithdraw" class="indent" onclick="go('withdraw')">撤回管理</a>
     </div>
   </div>
 
@@ -373,6 +374,63 @@
 
   <!-- Pagination -->
   <div class="pagi" id="couponPagi"></div>
+</div>
+
+<!-- ==================== P1.5: 撤回管理（R17 新增 · 独立页，对象为用户券实例） ==================== -->
+<div id="viewWithdraw" class="hidden">
+  <div class="crumb">营销后台 / <span>优惠券</span> / <span>撤回管理</span></div>
+  <div class="phead"><h2>撤回管理</h2></div>
+  <div class="tabs">
+    <div class="tab active">优惠券</div>
+  </div>
+  <div class="filter-bar">
+    <input id="wName" placeholder="券名称 / 券码" oninput="renderWithdraw()">
+    <select id="wStatus" onchange="renderWithdraw()"><option value="">使用状态</option><option>未开始</option><option>进行中</option><option>已结束</option><option>已删除</option></select>
+    <span class="fb-label" style="margin-left:8px">默认全量展示全部券模板</span>
+    <button class="btn-primary btn-sm" style="margin-left:auto" onclick="openWithdrawDialog()">撤回</button>
+  </div>
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr>
+        <th class="chk">选择</th>
+        <th>券名称</th><th>券码</th><th>类型</th><th>上架状态</th><th>使用状态</th>
+        <th>已发放用户数</th><th>已发放券实例数</th><th>操作</th>
+      </tr></thead>
+      <tbody id="withdrawTbody"></tbody>
+    </table>
+  </div>
+  <div class="pagi" id="withdrawPagi"></div>
+  <div style="margin-top:10px;color:#909399;font-size:12px;line-height:1.6">说明：勾选单个券模板后点击「撤回」，可按「全量撤回」（删除该模板所有用户券实例）或「单个撤回」（按手机号删除指定用户的券实例）。撤回仅影响已发放券实例，不改变券模板状态，也不影响其他用户。</div>
+</div>
+
+<!-- 撤回弹窗 -->
+<div class="modal-overlay" id="withdrawModal" style="display:none">
+  <div class="modal-dlg" style="width:440px">
+    <div class="modal-header"><span class="modal-title">撤回优惠券</span><button class="modal-close" onclick="closeWithdrawDialog()">✕</button></div>
+    <div class="modal-body">
+      <div id="wDlgTarget" style="background:#fdf6ec;border:1px solid #f5dab1;color:#e6a23c;border-radius:4px;padding:8px 10px;font-size:12px;line-height:1.6;margin-bottom:14px"></div>
+      <div class="form-row" style="margin:6px 0;align-items:flex-start">
+        <label class="fr-label" style="width:80px;padding-top:7px">撤回范围</label>
+        <div class="fr-body" style="flex:1">
+          <select id="wScope" class="fr-input" onchange="onScopeChange()">
+            <option value="all">全量撤回（删除该模板所有用户券实例）</option>
+            <option value="single">单个撤回（按手机号删除指定用户）</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row hidden" id="wPhoneRow" style="margin:6px 0;align-items:flex-start">
+        <label class="fr-label" style="width:80px;padding-top:7px">用户手机号</label>
+        <div class="fr-body" style="flex:1">
+          <input id="wPhone" class="fr-input" placeholder="请输入用户手机号" maxlength="11">
+          <div style="font-size:12px;color:#909399;margin-top:4px">必填；仅对属于该手机号、且属于所选券模板的已发放券实例生效。</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost btn-sm" onclick="closeWithdrawDialog()">取消</button>
+      <button class="btn-primary btn-sm" onclick="confirmWithdraw()">确定</button>
+    </div>
+  </div>
 </div>
 
 
@@ -964,15 +1022,17 @@ function go(page){
     list:'viewList', send:'viewSend',
     board:'viewBoard', detail:'viewCouponDetail',
     couponNew:'viewCouponNew', sendEdit:'viewSendEdit',
-    userCoupon:'viewUserCoupon'
+    userCoupon:'viewUserCoupon',
+    withdraw:'viewWithdraw'
   };
   Object.keys(map).forEach(k=>$(map[k]).classList.toggle('hidden',k!==page));
   const navMap={
     list:'navCoupon', detail:'navCoupon', couponNew:'navCoupon',
     send:'navSend', sendEdit:'navSend',
-    board:'navBoard'
+    board:'navBoard',
+    withdraw:'navWithdraw'
   };
-  ['navCoupon','navSend','navBoard'].forEach(id=>{
+  ['navCoupon','navSend','navBoard','navWithdraw'].forEach(id=>{
     if($(id)) $(id).classList.toggle('active', navMap[page]===id);
   });
   if(page==='list') renderCoupons();
@@ -981,6 +1041,7 @@ function go(page){
   if(page==='sendEdit') resetSendForm();
   if(page==='board'){renderBoardCoupon();drawTrend();}
   if(page==='userCoupon') renderUserCoupons();
+  if(page==='withdraw') renderWithdraw();
 }
 
 /* 侧边栏分组折叠 */
@@ -1098,10 +1159,12 @@ function renderCoupons(){
         <a class="btn-link blue" onclick="copyCoupon(${c.id})">复制</a>
         ${c.status==='启用'
           ? `<a class="btn-link warn" onclick="offlineCouponById(${c.id})">下架</a>`
-          : (c.usageStatus!=='进行中'
+          : ''}
+        ${c.status==='下架' && sendActivitiesReferencing(c.name).length>0
+          ? `<a class="btn-link" style="color:#c0c4cc;cursor:not-allowed" title="存在 ${sendActivitiesReferencing(c.name).length} 个关联发券活动，不可删除">删除</a>`
+          : (c.status==='下架'
               ? `<a class="btn-link red" onclick="delCoupon(${c.id})">删除</a>`
-              : `<a class="btn-link" style="color:#c0c4cc;cursor:not-allowed" title="进行中不可删除，请先撤回">删除</a>`)}
-        ${(c.usageStatus==='未开始'||c.usageStatus==='进行中') ? `<a class="btn-link red" onclick="revokeCoupon(${c.id})">撤回</a>` : ''}
+              : '')}
       </td>
     </tr>`).join('');
   $('couponTbody').innerHTML=rows||'<tr><td colspan="11" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
@@ -1137,7 +1200,7 @@ function viewCoupon(id){
   }else{plRow.classList.add('hidden');pl.innerHTML='';}
   go('detail');
 }
-function delCoupon(id){const c=coupons.find(x=>x.id===id);if(!c)return;if(c.status!=='下架'){toast('仅下架状态的券可删除，请先下架',true);return;}if(c.usageStatus==='进行中'){toast('进行中的券不可删除，请先撤回',true);return;}if(confirm('确认删除该券？')){coupons=coupons.filter(x=>x.id!==id);renderCoupons();toast('已删除');}}
+function delCoupon(id){const c=coupons.find(x=>x.id===id);if(!c)return;if(c.status!=='下架'){toast('仅下架状态的券可删除，请先下架',true);return;}const refs=sendActivitiesReferencing(c.name).length;if(refs>0){toast('存在 '+refs+' 个关联发券活动，不可删除',true);return;}if(confirm('确认删除该券模板？删除后已发放给用户的券实例仍可正常使用（不影响用户）。')){coupons=coupons.filter(x=>x.id!==id);renderCoupons();toast('已删除券模板（用户已持有券不受影响）');}}
 // 校验某券是否被未开始/进行中的发券活动引用
 function sendActivitiesReferencing(couponName){
   return sends.filter(s=>(s.status==='进行中'||s.status==='未开始') && (s.coupons||[]).includes(couponName));
@@ -1148,7 +1211,7 @@ function offlineCouponById(id){
   if(refs.length){toast('该券正被 '+refs.length+' 个发券活动引用，请先结束相关发券活动后再下架',true);return;}
   offlineTargetId=id;offlineFromDetail=false;openOfflineModal();
 }
-function revokeCoupon(id){if(!confirm('确认撤回该券？撤回后所有已发放的用户券将立即失效，有效期截止至今天。'))return;const c=coupons.find(x=>x.id===id);if(!c)return;c.usageStatus='已结束';renderCoupons();toast('已撤回');}
+// R17：原「撤回」入口已移出券列表——撤回改为独立「撤回管理」页，对象为用户券实例，不改变券模板状态（见 §10.9）
 function offlineCoupon(){
   const c=coupons.find(x=>x.id===currentCouponId);if(!c)return;
   const refs=sendActivitiesReferencing(c.name);
@@ -1773,6 +1836,93 @@ try{
     document.getElementById('mainArea').style.paddingLeft='24px';
   }
 }catch(e){}
+
+/* ==================== R17: 撤回管理（独立页，对象为用户券实例，见 §10.9） ==================== */
+let selectedWithdrawId=null;
+// 演示用：模板 -> 手机号 -> 该用户已发放券实例数（用于「单个撤回」匹配）
+const withdrawPhoneMap={
+  6:[{phone:'13800001111',n:2},{phone:'13900002222',n:1}],
+  3:[{phone:'13700003333',n:3},{phone:'13600004444',n:2},{phone:'13500005555',n:1}]
+};
+function renderWithdraw(){
+  const kw=$('wName').value.trim();
+  const fu=$('wStatus').value;
+  const list=coupons.filter(c=>{
+    if(kw){
+      const code=c.code||('CP'+String(c.id).padStart(6,'0'));
+      if(c.name.indexOf(kw)<0 && code.indexOf(kw)<0)return false;
+    }
+    if(fu && c.usageStatus!==fu)return false;
+    return true;
+  });
+  const rows=list.map(c=>{
+    const checked=selectedWithdrawId===c.id?'checked':'';
+    const u=c.issuedUsers||c.claimed||0;
+    const n=c.issuedCount||c.claimed||0;
+    const code=c.code||('CP'+String(c.id).padStart(6,'0'));
+    return '<tr>'
+      +'<td class="chk"><input type="checkbox" '+checked+' onclick="pickWithdraw('+c.id+',this)"></td>'
+      +'<td>'+c.name+'</td>'
+      +'<td>'+code+'</td>'
+      +'<td>'+c.type+'</td>'
+      +'<td><span class="tag '+(c.status==='启用'?'tag-green':'tag-gray')+'">'+c.status+'</span></td>'
+      +'<td><span class="tag '+(c.usageStatus==='进行中'?'tag-green':c.usageStatus==='未开始'?'tag-yellow':c.usageStatus==='已结束'?'tag-gray':'tag-red')+'">'+c.usageStatus+'</span></td>'
+      +'<td>'+u+'</td>'
+      +'<td>'+n+'</td>'
+      +'<td class="act"><a class="btn-link" onclick="viewCoupon('+c.id+')">查看</a></td>'
+      +'</tr>';
+  }).join('');
+  $('withdrawTbody').innerHTML=rows||'<tr><td colspan="9" style="text-align:center;padding:30px;color:#c0c4cc">暂无数据</td></tr>';
+  $('withdrawPagi').innerHTML='共 <strong>'+list.length+'</strong> 条 <select><option>10条/页</option></select> <span class="pg-btn active">1</span> 跳至 <input type="number" value="1"> 页';
+}
+function pickWithdraw(id,el){
+  if(el.checked){
+    selectedWithdrawId=id;
+    document.querySelectorAll('#withdrawTbody input[type=checkbox]').forEach(cb=>{if(cb!==el)cb.checked=false;});
+  }else{
+    if(selectedWithdrawId===id)selectedWithdrawId=null;
+  }
+}
+function openWithdrawDialog(){
+  if(!selectedWithdrawId){toast('请勾选需要撤回的券模板',true);return;}
+  const c=coupons.find(x=>x.id===selectedWithdrawId);if(!c)return;
+  const n=c.issuedCount||c.claimed||0;
+  const code=c.code||('CP'+String(c.id).padStart(6,'0'));
+  $('wDlgTarget').textContent='目标券模板：'+c.name+'（'+code+'），当前已发放券实例 '+n+' 张。';
+  $('wScope').value='all';
+  $('wPhoneRow').classList.add('hidden');
+  $('wPhone').value='';
+  $('withdrawModal').style.display='flex';
+}
+function onScopeChange(){
+  const single=$('wScope').value==='single';
+  $('wPhoneRow').classList.toggle('hidden',!single);
+  if(single)$('wPhone').focus();
+}
+function closeWithdrawDialog(){$('withdrawModal').style.display='none';}
+function confirmWithdraw(){
+  const c=coupons.find(x=>x.id===selectedWithdrawId);if(!c)return;
+  const scope=$('wScope').value;
+  if(scope==='single'){
+    const phone=$('wPhone').value.trim();
+    if(!/^1\d{10}$/.test(phone)){toast('请输入正确的11位手机号',true);return;}
+    const arr=withdrawPhoneMap[c.id]||[];
+    const hit=arr.find(p=>p.phone===phone);
+    if(!hit){toast('未找到该手机号对应的已发放券实例',true);return;}
+    const u=c.issuedUsers||c.claimed||0;
+    const n=c.issuedCount||c.claimed||0;
+    c.issuedUsers=Math.max(0,u-1);
+    c.issuedCount=Math.max(0,n-hit.n);
+    toast('已撤回用户 '+phone+' 的 '+hit.n+' 张券实例');
+  }else{
+    const n=c.issuedCount||c.claimed||0;
+    if(n===0){toast('该券模板暂无可撤回的已发放券实例',true);closeWithdrawDialog();return;}
+    c.issuedUsers=0;c.issuedCount=0;
+    toast('已全量撤回 '+n+' 张用户券实例（券模板状态不变）');
+  }
+  closeWithdrawDialog();
+  renderWithdraw();
+}
 
 /* ---------- Init ---------- */
 renderCoupons();
