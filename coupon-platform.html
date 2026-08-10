@@ -376,7 +376,7 @@
   <div class="pagi" id="couponPagi"></div>
 </div>
 
-<!-- ==================== P1.5: 撤回管理（R17 新增 · 独立页，对象为用户券实例） ==================== -->
+<!-- ==================== P1.5: 撤回管理（R17 新增 · 独立页，对象：券模板；执行时结束模板并删除未使用实例） ==================== -->
 <div id="viewWithdraw" class="hidden">
   <div class="crumb">营销后台 / <span>优惠券</span> / <span>撤回管理</span></div>
   <div class="phead"><h2>撤回管理</h2></div>
@@ -400,7 +400,7 @@
     </table>
   </div>
   <div class="pagi" id="withdrawPagi"></div>
-  <div style="margin-top:10px;color:#909399;font-size:12px;line-height:1.6">说明：勾选单个券模板后点击「撤回」，可按「全量撤回」（将该模板所有「未使用」用户券实例使用状态置为已结束）或「单个撤回」（按手机号将该用户「未使用」券实例使用状态置为已结束）。撤回将未使用券实例使用状态置为已结束（已使用/已过期不受影响），不改变券模板状态，也不影响其他用户。</div>
+  <div style="margin-top:10px;color:#909399;font-size:12px;line-height:1.6">说明：勾选单个券模板后点击「撤回」，可按「全量撤回」（结束券模板并删除该模板所有「未使用」用户券实例）或「单个撤回」（结束券模板并按手机号删除指定用户的「未使用」券实例）。撤回将券模板使用状态置为「已结束」，已使用/已过期实例不受影响，其他用户不受影响。</div>
 </div>
 
 <!-- 撤回弹窗 -->
@@ -413,8 +413,8 @@
         <label class="fr-label" style="width:80px;padding-top:7px">撤回范围</label>
         <div class="fr-body" style="flex:1">
           <select id="wScope" class="fr-input" onchange="onScopeChange()">
-            <option value="all">全量撤回（删除该模板所有用户券实例）</option>
-            <option value="single">单个撤回（按手机号删除指定用户）</option>
+            <option value="all">全量撤回（结束券模板并删除所有未使用实例）</option>
+            <option value="single">单个撤回（结束券模板并按手机号删除指定用户未使用实例）</option>
           </select>
         </div>
       </div>
@@ -1211,7 +1211,7 @@ function offlineCouponById(id){
   if(refs.length){toast('该券正被 '+refs.length+' 个发券活动引用，请先结束相关发券活动后再下架',true);return;}
   offlineTargetId=id;offlineFromDetail=false;openOfflineModal();
 }
-// R17：原「撤回」入口已移出券列表——撤回改为独立「撤回管理」页，对象为用户券实例（将「未使用」实例使用状态置为已结束），不改变券模板状态（见 §10.9）
+// R17：原「撤回」入口已移出券列表——撤回改为独立「撤回管理」页。执行撤回时：券模板使用状态置为「已结束」，并删除该模板下「未使用」的用户券实例（已使用/已过期保留）
 function offlineCoupon(){
   const c=coupons.find(x=>x.id===currentCouponId);if(!c)return;
   const refs=sendActivitiesReferencing(c.name);
@@ -1837,7 +1837,7 @@ try{
   }
 }catch(e){}
 
-/* ==================== R17: 撤回管理（独立页，对象为用户券实例，见 §10.9） ==================== */
+/* ==================== R17: 撤回管理（独立页；对象：券模板；效果：模板结束 + 删除未使用实例） ==================== */
 let selectedWithdrawId=null;
 // 演示用：模板 -> 手机号 -> 该用户已发放券实例数（用于「单个撤回」匹配）
 const withdrawPhoneMap={
@@ -1902,23 +1902,24 @@ function onScopeChange(){
 function closeWithdrawDialog(){$('withdrawModal').style.display='none';}
 function confirmWithdraw(){
   const c=coupons.find(x=>x.id===selectedWithdrawId);if(!c)return;
+  c.usageStatus='已结束';
   const scope=$('wScope').value;
   if(scope==='single'){
     const phone=$('wPhone').value.trim();
     if(!/^1\d{10}$/.test(phone)){toast('请输入正确的11位手机号',true);return;}
     const arr=withdrawPhoneMap[c.id]||[];
     const hit=arr.find(p=>p.phone===phone);
-    if(!hit){toast('未找到该手机号对应的已发放券实例',true);return;}
+    if(!hit){toast('未找到该手机号对应的已发放券实例，券模板已结束',true);closeWithdrawDialog();return;}
     const u=c.issuedUsers||c.claimed||0;
     const n=c.issuedCount||c.claimed||0;
     c.issuedUsers=Math.max(0,u-1);
     c.issuedCount=Math.max(0,n-hit.n);
-    toast('已撤回用户 '+phone+' 的 '+hit.n+' 张券实例');
+    toast('已结束券模板 '+c.name+'，并删除用户 '+phone+' 的 '+hit.n+' 张未使用券实例');
   }else{
     const n=c.issuedCount||c.claimed||0;
-    if(n===0){toast('该券模板暂无可撤回的已发放券实例',true);closeWithdrawDialog();return;}
+    if(n===0){toast('该券模板暂无可撤回的已发放券实例，券模板已结束',true);closeWithdrawDialog();return;}
     c.issuedUsers=0;c.issuedCount=0;
-    toast('已全量撤回 '+n+' 张未使用用户券实例（使用状态置为已结束，券模板状态不变）');
+    toast('已结束券模板 '+c.name+'，并全量删除 '+n+' 张未使用用户券实例');
   }
   closeWithdrawDialog();
   renderWithdraw();
