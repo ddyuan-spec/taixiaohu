@@ -125,7 +125,6 @@
   .cp-tag{font-size:11px;padding:1px 6px;border-radius:3px}
   .cp-tag.enabled{background:#f0f9eb;color:#67c23a;border:1px solid #c2e7b0}
   .cp-tag.offline{background:#f4f4f5;color:#909399;border:1px solid #d3d4d6}
-  .cp-stock{color:#f56c6c;font-size:12px;white-space:nowrap}
   .cp-empty{text-align:center;padding:40px 0;color:#c0c4cc;font-size:13px}
   .cp-count{color:#534AB7;font-weight:600}
 
@@ -308,11 +307,11 @@ const MOCK_USERS=[
 ];
 
 const MOCK_COUPONS=[
-  {id:'C1001',name:'新人专享满99减20',type:'满减券',rule:'满99减20',start:'2026-01-01',end:'2026-12-31',stock:856,total:1000,status:'启用'},
-  {id:'C1002',name:'春节大促每满300减100',type:'满减券',rule:'每满300减100',start:'2026-01-15',end:'2026-02-15',stock:432,total:500,status:'启用'},
-  {id:'C1003',name:'臻享会员满500减80',type:'满减券',rule:'满500减80',start:'2026-01-01',end:'2026-06-30',stock:0,total:200,status:'启用'},
-  {id:'C1004',name:'已下架测试券',type:'满减券',rule:'满100减10',start:'2025-12-01',end:'2025-12-31',stock:99,total:100,status:'下架'},
-  {id:'C1005',name:'健康好物通用券',type:'满减券',rule:'满199减30',start:'2026-02-01',end:'2026-03-01',stock:1200,total:2000,status:'启用'},
+  {id:'C1001',name:'新人专享满99减20',type:'满减券',rule:'满99减20',start:'2026-01-01',end:'2026-12-31',status:'启用'},
+  {id:'C1002',name:'春节大促每满300减100',type:'满减券',rule:'每满300减100',start:'2026-01-15',end:'2026-02-15',status:'启用'},
+  {id:'C1003',name:'臻享会员满500减80',type:'满减券',rule:'满500减80',start:'2026-01-01',end:'2026-06-30',status:'启用'},
+  {id:'C1004',name:'已下架测试券',type:'满减券',rule:'满100减10',start:'2025-12-01',end:'2025-12-31',status:'下架'},
+  {id:'C1005',name:'健康好物通用券',type:'满减券',rule:'满199减30',start:'2026-02-01',end:'2026-03-01',status:'启用'},
 ];
 
 let selectedIds=new Set();
@@ -427,7 +426,6 @@ function renderCouponOptions(){
   }
   list.innerHTML=enabled.map(c=>{
     const selected=selectedCouponId===c.id;
-    const stockClass=c.stock===0?' style="color:#909399"':'';
     return `<div class="cp-item ${selected?'selected':''}" onclick="selectCoupon('${c.id}')">
       <div class="cp-radio"></div>
       <div class="cp-info">
@@ -438,7 +436,6 @@ function renderCouponOptions(){
           <span>有效期 ${c.start} ~ ${c.end}</span>
         </div>
       </div>
-      <div class="cp-stock"${stockClass}>剩余 ${c.stock} / ${c.total} 张</div>
     </div>`;
   }).join('');
   $('btnConfirmSend').disabled=!selectedCouponId;
@@ -452,8 +449,6 @@ function selectCoupon(id){
 function confirmSend(){
   if(!selectedCouponId){toast('请选择优惠券',true);return;}
   const coupon=MOCK_COUPONS.find(c=>c.id===selectedCouponId);
-  if(coupon.stock===0){toast('该优惠券库存不足',true);return;}
-  if(coupon.stock < selectedIds.size){toast(`库存不足，剩余 ${coupon.stock} 张，无法赠送给 ${selectedIds.size} 位用户`,true);return;}
   toast(`已成功向 ${selectedIds.size} 位用户赠送「${coupon.name}」`);
   closeSendModal();
   selectedIds.clear();
