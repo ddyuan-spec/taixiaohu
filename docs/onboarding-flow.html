@@ -393,6 +393,27 @@
         .upload-preview.show { display: block; }
         .upload-preview img { width: 100%; border-radius: 12px; }
 
+        /* 报告选择（有/没有） */
+        .report-options {
+            display: flex;
+            gap: 12px;
+            margin: 20px 0 8px;
+        }
+        .report-option {
+            flex: 1;
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 16px;
+            padding: 24px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .report-option:hover { background: #e8f8f0; }
+        .report-option:active { border-color: #4CD964; }
+        .report-option-icon { font-size: 36px; margin-bottom: 10px; }
+        .report-option-title { font-size: 15px; font-weight: 500; color: #333; }
+
         /* 底部按钮 */
         .footer-btn {
             position: absolute;
@@ -585,14 +606,14 @@
         <div class="step hidden" id="step2">
             <div class="header">
                 <div class="header-back" onclick="prevStep()">←</div>
-                <div class="header-title">评测</div>
+                <div class="header-title">开屏引导</div>
                 <div class="header-skip" onclick="showSkipModal()">跳过</div>
             </div>
             <div class="card">
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 28.6%;"></div>
                 </div>
-                <div class="progress-text">完成评测，为你生成专属方案</div>
+                <div class="progress-text">完成开屏引导，为你生成专属方案</div>
                 <div class="step-question">你的性别是？</div>
                 <div class="step-subtitle">这将帮助我们更准确地评估您的健康状况</div>
                 <div class="option-grid">
@@ -615,14 +636,14 @@
         <div class="step hidden" id="step3">
             <div class="header">
                 <div class="header-back" onclick="prevStep()">←</div>
-                <div class="header-title">评测</div>
+                <div class="header-title">开屏引导</div>
                 <div class="header-skip" onclick="showSkipModal()">跳过</div>
             </div>
             <div class="card">
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 42.9%;"></div>
                 </div>
-                <div class="progress-text">完成评测，为你生成专属方案</div>
+                <div class="progress-text">完成开屏引导，为你生成专属方案</div>
                 <div class="step-question">你的出生日期是？</div>
                 <div class="step-subtitle">年龄与基础代谢水平、身体活动水平息息相关</div>
                 <div class="picker-wrap">
@@ -659,14 +680,14 @@
         <div class="step hidden" id="step4">
             <div class="header">
                 <div class="header-back" onclick="prevStep()">←</div>
-                <div class="header-title">评测</div>
+                <div class="header-title">开屏引导</div>
                 <div class="header-skip" onclick="showSkipModal()">跳过</div>
             </div>
             <div class="card">
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 57.1%;"></div>
                 </div>
-                <div class="progress-text">完成评测，为你生成专属方案</div>
+                <div class="progress-text">完成开屏引导，为你生成专属方案</div>
                 <div class="step-question">你的身高是？</div>
                 <div class="step-subtitle">用于计算BMI及评估健康指标</div>
                 <div class="number-input-wrap">
@@ -686,14 +707,14 @@
         <div class="step hidden" id="step5">
             <div class="header">
                 <div class="header-back" onclick="prevStep()">←</div>
-                <div class="header-title">评测</div>
+                <div class="header-title">开屏引导</div>
                 <div class="header-skip" onclick="showSkipModal()">跳过</div>
             </div>
             <div class="card">
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 71.4%;"></div>
                 </div>
-                <div class="progress-text">完成评测，为你生成专属方案</div>
+                <div class="progress-text">完成开屏引导，为你生成专属方案</div>
                 <div class="step-question">你的体重是？</div>
                 <div class="step-subtitle">精准体重数据将用于计算你的BMI</div>
                 <div class="number-input-wrap">
@@ -733,14 +754,14 @@
         <div class="step hidden" id="step6">
             <div class="header">
                 <div class="header-back" onclick="prevStep()">←</div>
-                <div class="header-title">评测</div>
+                <div class="header-title">开屏引导</div>
                 <div class="header-skip" onclick="showSkipModal()">跳过</div>
             </div>
             <div class="card">
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 85.7%;"></div>
                 </div>
-                <div class="progress-text">完成评测，为你生成专属方案</div>
+                <div class="progress-text">完成开屏引导，为你生成专属方案</div>
                 <div class="step-question">你的睡眠情况如何？</div>
                 <div class="step-subtitle">了解睡眠习惯有助于评估您的健康状态</div>
                 <div class="sleep-inputs">
@@ -771,28 +792,48 @@
         <div class="step hidden" id="step7">
             <div class="header">
                 <div class="header-back" onclick="prevStep()">←</div>
-                <div class="header-title">评测</div>
+                <div class="header-title">开屏引导</div>
                 <div class="header-skip" onclick="showSkipModal()">跳过</div>
             </div>
             <div class="card">
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 100%;"></div>
                 </div>
-                <div class="progress-text">完成评测，为你生成专属方案</div>
-                <div class="step-question">上传体检报告</div>
-                <div class="step-subtitle">上传最近一次体检报告，AI将为您分析关键指标</div>
-                <div class="upload-area" onclick="triggerFileInput()">
-                    <div class="upload-icon">📄</div>
-                    <div class="upload-text">点击上传体检报告</div>
-                    <div class="upload-hint">支持 JPG、PNG 格式</div>
+                <div class="progress-text">完成开屏引导，为你生成专属方案</div>
+
+                <!-- 阶段1：询问是否有报告 -->
+                <div id="reportAsk">
+                    <div class="step-question">您有体检报告可以上传吗？</div>
+                    <div class="step-subtitle">体检报告能帮助 AI 更精准地分析您的健康指标；没有也没关系，稍后可在健康档案中随时补充。</div>
+                    <div class="report-options">
+                        <div class="report-option" onclick="chooseReport(true)">
+                            <div class="report-option-icon">📄</div>
+                            <div class="report-option-title">有，现在上传</div>
+                        </div>
+                        <div class="report-option" onclick="chooseReport(false)">
+                            <div class="report-option-icon">🙂</div>
+                            <div class="report-option-title">暂时没有</div>
+                        </div>
+                    </div>
                 </div>
-                <input type="file" id="fileInput" style="display:none;" accept=".jpg,.jpeg,.png" onchange="handleFile(this)">
-                <div class="upload-preview" id="uploadPreview">
-                    <img id="previewImg" src="" alt="预览">
+
+                <!-- 阶段2：上传报告（选"有"后显示，标题保持） -->
+                <div id="reportUpload" style="display:none;">
+                    <div class="step-question">上传体检报告</div>
+                    <div class="step-subtitle">上传最近一次体检报告，AI将为您分析关键指标</div>
+                    <div class="upload-area" onclick="triggerFileInput()">
+                        <div class="upload-icon">📄</div>
+                        <div class="upload-text">点击上传体检报告</div>
+                        <div class="upload-hint">支持 JPG、PNG 格式</div>
+                    </div>
+                    <input type="file" id="fileInput" style="display:none;" accept=".jpg,.jpeg,.png" onchange="handleFile(this)">
+                    <div class="upload-preview" id="uploadPreview">
+                        <img id="previewImg" src="" alt="预览">
+                    </div>
                 </div>
             </div>
             <div class="footer-btn">
-                <button class="btn-next" onclick="finish()">完成</button>
+                <button class="btn-next" id="reportFinishBtn" style="display:none;" onclick="finish()">完成</button>
             </div>
         </div>
 
@@ -800,7 +841,7 @@
         <div class="step hidden" id="stepComplete">
             <div class="header">
                 <div class="header-back" style="visibility:hidden;">←</div>
-                <div class="header-title">评测</div>
+                <div class="header-title">开屏引导</div>
                 <div class="header-skip" style="visibility:hidden;">跳过</div>
             </div>
             <div class="card">
@@ -1085,6 +1126,19 @@
             // 实际业务：调用API归档到健康档案
             document.getElementById('step' + currentStep).classList.add('hidden');
             document.getElementById('stepComplete').classList.remove('hidden');
+        }
+
+        // 体检报告：先询问是否有报告
+        function chooseReport(has) {
+            if (has) {
+                // 有报告：进入上传页（标题保持「上传体检报告」）
+                document.getElementById('reportAsk').style.display = 'none';
+                document.getElementById('reportUpload').style.display = 'block';
+                document.getElementById('reportFinishBtn').style.display = 'block';
+            } else {
+                // 没有报告：直接完成建档
+                finish();
+            }
         }
 
         function restart() {
