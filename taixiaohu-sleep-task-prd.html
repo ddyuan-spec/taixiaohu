@@ -166,10 +166,12 @@
 </svg>
 
 <p>上图为三泳道业务流程架构：用户端动作（收 PUSH → 进首页/睡眠 → 领取打卡 → 完成分享 → 得虎力值）由服务端任务引擎驱动，服务端按后台配置的「任务模板 / 候选池 / 固定首批规则 / 分享弹窗」下发任务并回流数据至后台监控。</p>
+<p><strong>涉及终端</strong>：用户端（Android / iOS App）+ 平台端后台（任务模板、候选池、规则、分享弹窗，以及「每日任务重置」与「PUSH 推送」两个独立定时任务的配置）。</p>
+<p><strong>两个相互独立定时任务</strong>：① 每日 03:00（凌晨三点）执行<strong>任务重置</strong>——批量将用户昨日未完成任务置为过期、连续天数清零、生成新日实例；② 每日 06:00（早上六点）执行<strong>PUSH 推送</strong>——向目标用户推送睡眠日报。两者分属不同定时任务，<strong>不可合并为同一时点</strong>。</p>
 <img src="prd-assets/c-notification.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="业务流程起点-消息通知">
 <p>主流程：</p>
 <ol>
-<li>服务端在每日固定时点（默认 03:00，⚠️ 待确认）向目标用户推送睡眠日报 PUSH；</li>
+<li>服务端在每日 06:00（早上六点）向目标用户推送睡眠日报 PUSH（与每日 03:00 任务重置相互独立）；</li>
 <li>用户点击 PUSH/锁屏通知进入 App 首页，首页首次弹窗提示「睡眠日报已生成」；</li>
 <li>用户可点击弹窗进入「我的睡眠」查看睡眠数据与任务卡片；</li>
 <li>任务卡片引导用户进入「健康打卡」或「领取任务」；</li>
@@ -189,15 +191,15 @@
 <div class="note">说明：本期任务模板状态机收紧为「仅草稿可编辑，上线仅可下线，下线仅可删除」，避免线上模板误改。</div>
 
 <h4>3.3.2 用户任务实例每日状态</h4>
-<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">起始状态</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">触发动作</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">前置条件</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">目标状态</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">未领取</td><td style="border:1px solid #e0e0e0;padding:8px;">领取</td><td style="border:1px solid #e0e0e0;padding:8px;">任务在候选池/固定规则生效</td><td style="border:1px solid #e0e0e0;padding:8px;">已领取</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">已领取</td><td style="border:1px solid #e0e0e0;padding:8px;">完成</td><td style="border:1px solid #e0e0e0;padding:8px;">当前日期未超时、满足任务类型规则</td><td style="border:1px solid #e0e0e0;padding:8px;">已完成</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">已完成</td><td style="border:1px solid #e0e0e0;padding:8px;">每日重置</td><td style="border:1px solid #e0e0e0;padding:8px;">到达每日重置时点（默认 03:00）</td><td style="border:1px solid #e0e0e0;padding:8px;">未领取（新实例）</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">已领取</td><td style="border:1px solid #e0e0e0;padding:8px;">断签/过期</td><td style="border:1px solid #e0e0e0;padding:8px;">连续打卡任务未在下一日完成</td><td style="border:1px solid #e0e0e0;padding:8px;">连续天数清零重计</td></tr></tbody></table>
-<div class="warn">⚠️ 待确认 @产品/研发：连续打卡「断签」判定是 T+1 未完成即清零，还是允许补签；每日重置时点是否统一 03:00。</div>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">起始状态</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">触发动作</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">前置条件</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">目标状态</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">未领取</td><td style="border:1px solid #e0e0e0;padding:8px;">领取</td><td style="border:1px solid #e0e0e0;padding:8px;">任务在候选池/固定规则生效</td><td style="border:1px solid #e0e0e0;padding:8px;">已领取</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">已领取</td><td style="border:1px solid #e0e0e0;padding:8px;">完成</td><td style="border:1px solid #e0e0e0;padding:8px;">当前日期未超时、满足任务类型规则</td><td style="border:1px solid #e0e0e0;padding:8px;">已完成</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">已完成</td><td style="border:1px solid #e0e0e0;padding:8px;">每日重置</td><td style="border:1px solid #e0e0e0;padding:8px;">到达每日重置时点（默认 03:00，独立于 PUSH 推送时点 06:00）</td><td style="border:1px solid #e0e0e0;padding:8px;">未领取（新实例）</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">已领取</td><td style="border:1px solid #e0e0e0;padding:8px;">断签/过期</td><td style="border:1px solid #e0e0e0;padding:8px;">连续打卡任务未在下一日完成</td><td style="border:1px solid #e0e0e0;padding:8px;">连续天数清零重计</td></tr></tbody></table>
+<div class="warn">⚠️ 待确认 @产品/研发：连续打卡「断签」判定是 T+1 未完成即清零，还是允许补签。</div>
 
 <h2>四、功能需求详情</h2>
 
 <h3>4.1 C端：睡眠任务闭环</h3>
 
 <h4>4.1.1 消息通知 <span class="tag y">本期新增</span></h4>
-<p><strong>需求影响范围</strong>：新增泰小虎 PUSH 通道，需接入现有消息推送能力；不影响旧版用户（未登录/未授权推送者静默）。<strong>涉及终端</strong>：Android / iOS App。</p>
+<p><strong>需求影响范围</strong>：新增泰小虎 PUSH 通道，需接入现有消息推送能力；不影响旧版用户（未登录/未授权推送者静默）。<strong>涉及终端</strong>：Android / iOS App（接收端）+ 平台端后台（PUSH 推送定时任务配置，与任务重置定时任务相互独立）。</p>
 <h5>4.1.1.1 页面原型与交互示意</h5>
 <img src="prd-assets/c-notification.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="消息通知-锁屏与PUSH">
 <h5>4.1.1.2 详细逻辑规则</h5>
@@ -428,7 +430,7 @@
 <ul>
 <li>任务名称、任务类型、任务描述、奖励虎力值为公共字段；</li>
 <li>连续打卡类型额外展示：连续天数、额外奖励；</li>
-<li>重置周期当前仅「每天」，重置时间 HH:mm（默认 03:00）。</li>
+<li>重置周期当前仅「每天」，重置时间 HH:mm（默认 03:00，即每日凌晨三点重置任务）；PUSH 推送时间由平台端独立配置（默认 06:00，每日早上六点），与任务重置分属两个定时任务、不可合并。</li>
 </ul>
 <p><strong>业务逻辑与边界条件</strong>：</p>
 <ul>
@@ -573,7 +575,7 @@
 <li><strong>极限值与空状态</strong>：任务名超长省略、任务列表为空展示空态、无睡眠数据展示「暂无数据」。</li>
 <li><strong>版本兼容性</strong>：老版本 App 不显示任务入口；后台新配置对老版本不生效。⚠️ 待确认 @研发 最低版本号。</li>
 <li><strong>并发与防重</strong>：完成任务前端防抖，后端对同一用户同一任务日维度幂等。</li>
-<li><strong>每日重置</strong>：每日重置时点批量将用户昨日未完成任务状态置为过期/清零连续天数。⚠️ 待确认 @研发。</li>
+<li><strong>每日重置</strong>：每日 03:00（凌晨三点）任务重置时点批量将用户昨日未完成任务状态置为过期、清零连续天数、生成新日实例（独立于 06:00 PUSH 推送）。⚠️ 待确认 @研发：重置时是否回退已发放虎力值。</li>
 </ul>
 
 <h2>八、文档维护与变更规范</h2>
@@ -588,7 +590,7 @@
 <li>⚠️ 待确认 @产品/运营：KPI 具体阈值（日活提升、任务领取率、首任务完成率）。</li>
 <li>⚠️ 待确认 @产品/研发：PUSH 触发时区基准、每日首完成弹窗是否强打扰、分享后是否带回增量虎力值。</li>
 <li>⚠️ 待确认 @产品/研发：连续打卡「断签」判定规则（T+1 未完成即清零 / 允许补签）。</li>
-<li>⚠️ 待确认 @产品/研发：每日重置时点是否统一 03:00，重置时是否回退虎力值。</li>
+<li>⚠️ 待确认 @产品/研发：重置时是否回退已发放虎力值（重置时点已定为每日 03:00，PUSH 推送为每日 06:00，两者独立）。</li>
 <li>⚠️ 待确认 @产品：自定义任务的创建/记录/奖励逻辑是否纳入二期。</li>
 <li>⚠️ 待确认 @产品/研发：支持的最低 App 版本、是否兼容 H5/小程序。</li>
 <li>⚠️ 待确认 @产品/研发：页面性能 SLA（首屏、接口响应、并发）。</li>
