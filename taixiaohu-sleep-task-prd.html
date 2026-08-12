@@ -55,6 +55,8 @@
 <h2>三、业务流程与架构</h2>
 <h3>3.1 业务流程图</h3>
 <p>横向泳道：用户端 / 服务端 / 平台端后台。</p>
+<img src="prd-assets/prd-flow.svg" alt="睡眠任务闭环业务流程架构图">
+<p>上图为三泳道业务流程架构：用户端动作（收 PUSH → 进首页/睡眠 → 领取打卡 → 完成分享 → 得虎力值）由服务端任务引擎驱动，服务端按后台配置的「任务模板 / 候选池 / 固定首批规则 / 分享弹窗」下发任务并回流数据至后台监控。</p>
 <img src="prd-assets/c-notification.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="业务流程起点-消息通知">
 <p>主流程：</p>
 <ol>
