@@ -440,14 +440,14 @@ function saveLiveRoom(){
    直播观看记录 — Data & Render
    ================================================================ */
 var liveViewLogs = [
-  {id:1, nickname:'张小明', phone:'13812341234', userId:'U20260715001', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-29 19:00:12', exitTime:'2026-07-29 19:47:33', duration:'47分21秒', mins:47, date:'2026-07-29', device:'iOS App', source:'APP直播入口', watchStatus:'直播中'},
-  {id:2, nickname:'李小芳', phone:'13912345678', userId:'U20260716002', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-29 19:05:44', exitTime:'2026-07-29 19:22:10', duration:'16分26秒', mins:16, date:'2026-07-29', device:'Android App', source:'消息推送', watchStatus:'直播中'},
-  {id:3, nickname:'王小强', phone:'13712349012', userId:'U20260717003', roomId:'LIVE002', roomName:'健康好物专场', enterTime:'2026-07-28 20:00:00', exitTime:'2026-07-28 21:15:30', duration:'1小时15分30秒', mins:75, date:'2026-07-28', device:'微信小程序', source:'小程序首页', watchStatus:'直播中'},
-  {id:4, nickname:'赵小敏', phone:'13612343456', userId:'U20260718004', roomId:'LIVE002', roomName:'健康好物专场', enterTime:'2026-07-28 20:10:22', exitTime:'2026-07-28 20:35:08', duration:'24分46秒', mins:24, date:'2026-07-28', device:'iOS App', source:'分享链接', watchStatus:'直播中'},
-  {id:5, nickname:'陈小伟', phone:'13512347890', userId:'U20260719005', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-27 19:30:15', exitTime:'2026-07-27 20:45:00', duration:'1小时14分45秒', mins:74, date:'2026-07-27', device:'Android App', source:'APP直播入口', watchStatus:'直播中'},
-  {id:6, nickname:'刘小芳', phone:'13412342345', userId:'U20260720006', roomId:'LIVE003', roomName:'品牌新品发布', enterTime:'2026-07-27 15:00:00', exitTime:'2026-07-27 15:08:33', duration:'8分33秒', mins:8, date:'2026-07-27', device:'H5', source:'外部分享', watchStatus:'回放'},
-  {id:7, nickname:'周小杰', phone:'13312346789', userId:'U20260721007', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-26 19:00:05', exitTime:'2026-07-26 19:55:42', duration:'55分37秒', mins:55, date:'2026-07-26', device:'iOS App', source:'APP直播入口', watchStatus:'回放'},
-  {id:8, nickname:'吴小静', phone:'13212340123', userId:'U20260722008', roomId:'LIVE003', roomName:'品牌新品发布', enterTime:'2026-07-26 15:05:18', exitTime:'2026-07-26 16:30:00', duration:'1小时24分42秒', mins:84, date:'2026-07-26', device:'微信小程序', source:'小程序首页', watchStatus:'预告'}
+  {id:1, nickname:'张小明', phone:'13812341234', userId:'U20260715001', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-29 19:00:12', exitTime:'2026-07-29 19:47:33', duration:'47分21秒', mins:47, date:'2026-07-29', device:'iOS App', watchStatus:'直播中'},
+  {id:2, nickname:'李小芳', phone:'13912345678', userId:'U20260716002', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-29 19:05:44', exitTime:'2026-07-29 19:22:10', duration:'16分26秒', mins:16, date:'2026-07-29', device:'Android App', watchStatus:'直播中'},
+  {id:3, nickname:'王小强', phone:'13712349012', userId:'U20260717003', roomId:'LIVE002', roomName:'健康好物专场', enterTime:'2026-07-28 20:00:00', exitTime:'2026-07-28 21:15:30', duration:'1小时15分30秒', mins:75, date:'2026-07-28', device:'微信小程序', watchStatus:'直播中'},
+  {id:4, nickname:'赵小敏', phone:'13612343456', userId:'U20260718004', roomId:'LIVE002', roomName:'健康好物专场', enterTime:'2026-07-28 20:10:22', exitTime:'2026-07-28 20:35:08', duration:'24分46秒', mins:24, date:'2026-07-28', device:'iOS App', watchStatus:'直播中'},
+  {id:5, nickname:'陈小伟', phone:'13512347890', userId:'U20260719005', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-27 19:30:15', exitTime:'2026-07-27 20:45:00', duration:'1小时14分45秒', mins:74, date:'2026-07-27', device:'Android App', watchStatus:'直播中'},
+  {id:6, nickname:'刘小芳', phone:'13412342345', userId:'U20260720006', roomId:'LIVE003', roomName:'品牌新品发布', enterTime:'2026-07-27 15:00:00', exitTime:'2026-07-27 15:08:33', duration:'8分33秒', mins:8, date:'2026-07-27', device:'H5', watchStatus:'回放'},
+  {id:7, nickname:'周小杰', phone:'13312346789', userId:'U20260721007', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-26 19:00:05', exitTime:'2026-07-26 19:55:42', duration:'55分37秒', mins:55, date:'2026-07-26', device:'iOS App', watchStatus:'回放'},
+  {id:8, nickname:'吴小静', phone:'13212340123', userId:'U20260722008', roomId:'LIVE003', roomName:'品牌新品发布', enterTime:'2026-07-26 15:05:18', exitTime:'2026-07-26 16:30:00', duration:'1小时24分42秒', mins:84, date:'2026-07-26', device:'微信小程序', watchStatus:'预告'}
 ];
 
 function renderLiveView(){
@@ -484,7 +484,7 @@ function viewDetail(id){
   var cells=[
     ['昵称',v.nickname],['手机号',v.phone],['用户ID',v.userId],['观看直播间ID',v.roomId],['直播间名称',v.roomName],
     ['进入时间',v.enterTime],['退出时间',v.exitTime],['观看时长',v.duration],['观看时直播状态',v.watchStatus],
-    ['观看终端',v.device],['进入来源',v.source]
+    ['观看终端',v.device]
   ];
   $('dtGrid').innerHTML = cells.map(function(c){return '<div class="info-cell"><div class="k">'+c[0]+'</div><div class="v">'+c[1]+'</div></div>';}).join('');
   go('liveViewDetail');
