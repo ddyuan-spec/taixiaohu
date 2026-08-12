@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>泰小虎 · 睡眠任务闭环一期 · 原型平铺图集</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+         margin: 0; background: #f6f7f9; color: #1f2329; }
+  header { padding: 28px 32px 12px; }
+  header h1 { margin: 0 0 6px; font-size: 22px; }
+  header p { margin: 0; color: #646a73; font-size: 13px; }
+  main { padding: 12px 32px 48px; }
+  .group { margin-top: 28px; }
+  .group h2 { font-size: 16px; border-left: 4px solid #3370ff; padding-left: 10px; margin: 0 0 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .card { margin: 0; background: #fff; border: 1px solid #e5e6eb; border-radius: 10px; overflow: hidden;
+          box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+  .card img { width: 100%; display: block; cursor: zoom-in; background: #fafbfc; }
+  .card figcaption { display: flex; align-items: center; justify-content: space-between; gap: 8px;
+                     padding: 8px 10px; border-top: 1px solid #f0f1f3; }
+  .name { font-size: 12px; color: #41464c; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .copy { flex: 0 0 auto; border: 1px solid #d0d3d9; background: #fff; color: #3370ff;
+          border-radius: 6px; padding: 4px 10px; font-size: 12px; cursor: pointer; }
+  .copy:hover { background: #f0f5ff; }
+  .copy.done { color: #2ea121; border-color: #b7eb8f; }
+</style>
+</head>
+<body>
+<header>
+  <h1>泰小虎 · 睡眠任务闭环一期 · 原型平铺图集</h1>
+  <p>线下制作的 C 端平铺原型（共 15 张）· 来源压缩包「泰小虎睡眠任务闭环一期 (1).zip」· 归档于 GitHub Pages，供后续撰写 PRD 引用</p>
+</header>
+<main>
+    <section class="group">
+      <h2>首页</h2>
+      <div class="grid">
+      <figure class="card">
+        <img loading="lazy" src="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E9%A6%96%E9%A1%B5-%E6%97%A0%E4%BB%BB%E5%8A%A1.png" alt="首页-无任务.png" onclick="window.open('https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E9%A6%96%E9%A1%B5-%E6%97%A0%E4%BB%BB%E5%8A%A1.png','_blank')">
+        <figcaption>
+          <span class="name" title="首页-无任务.png">首页-无任务.png</span>
+          <button class="copy" data-url="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E9%A6%96%E9%A1%B5-%E6%97%A0%E4%BB%BB%E5%8A%A1.png" onclick="copyUrl(this)">复制链接</button>
+        </figcaption>
+      </figure>
+      <figure class="card">
+        <img loading="lazy" src="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E9%A6%96%E9%A1%B5-%E6%9C%89%E4%BB%BB%E5%8A%A1.png" alt="首页-有任务.png" onclick="window.open('https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E9%A6%96%E9%A1%B5-%E6%9C%89%E4%BB%BB%E5%8A%A1.png','_blank')">
+        <figcaption>
+          <span class="name" title="首页-有任务.png">首页-有任务.png</span>
+          <button class="copy" data-url="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E9%A6%96%E9%A1%B5-%E6%9C%89%E4%BB%BB%E5%8A%A1.png" onclick="copyUrl(this)">复制链接</button>
+        </figcaption>
+      </figure>
+      <figure class="card">
+        <img loading="lazy" src="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E9%A6%96%E9%A1%B5-%E6%9C%89%E4%BB%BB%E5%8A%A1%20%E2%80%94%E5%B7%B2%E5%AE%8C%E6%88%90.png" alt="首页-有任务 —已完成.png" onclick="window.open('https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E9%A6%96%E9%A1%B5-%E6%9C%89%E4%BB%BB%E5%8A%A1%20%E2%80%94%E5%B7%B2%E5%AE%8C%E6%88%90.png','_blank')">
+        <figcaption>
+          <span class="name" title="首页-有任务 —已完成.png">首页-有任务 —已完成.png</span>
+          <button class="copy" data-url="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E9%A6%96%E9%A1%B5-%E6%9C%89%E4%BB%BB%E5%8A%A1%20%E2%80%94%E5%B7%B2%E5%AE%8C%E6%88%90.png" onclick="copyUrl(this)">复制链接</button>
+        </figcaption>
+      </figure>
+      <figure class="card">
+        <img loading="lazy" src="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E9%A6%96%E9%A1%B5-%E5%81%A5%E5%BA%B7%E6%97%A5%E6%8A%A5%E7%94%9F%E6%88%90%E5%BC%B9%E7%AA%97.png" alt="首页-健康日报生成弹窗.png" onclick="window.open('https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E9%A6%96%E9%A1%B5-%E5%81%A5%E5%BA%B7%E6%97%A5%E6%8A%A5%E7%94%9F%E6%88%90%E5%BC%B9%E7%AA%97.png','_blank')">
+        <figcaption>
+          <span class="name" title="首页-健康日报生成弹窗.png">首页-健康日报生成弹窗.png</span>
+          <button class="copy" data-url="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E9%A6%96%E9%A1%B5-%E5%81%A5%E5%BA%B7%E6%97%A5%E6%8A%A5%E7%94%9F%E6%88%90%E5%BC%B9%E7%AA%97.png" onclick="copyUrl(this)">复制链接</button>
+        </figcaption>
+      </figure>
+      </div>
+    </section>
+    <section class="group">
+      <h2>睡眠</h2>
+      <div class="grid">
+      <figure class="card">
+        <img loading="lazy" src="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E7%9D%A1%E7%9C%A0%E2%80%94%E6%97%A0%E4%BB%BB%E5%8A%A1.png" alt="睡眠—无任务.png" onclick="window.open('https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E7%9D%A1%E7%9C%A0%E2%80%94%E6%97%A0%E4%BB%BB%E5%8A%A1.png','_blank')">
+        <figcaption>
+          <span class="name" title="睡眠—无任务.png">睡眠—无任务.png</span>
+          <button class="copy" data-url="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E7%9D%A1%E7%9C%A0%E2%80%94%E6%97%A0%E4%BB%BB%E5%8A%A1.png" onclick="copyUrl(this)">复制链接</button>
+        </figcaption>
+      </figure>
+      <figure class="card">
+        <img loading="lazy" src="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E7%9D%A1%E7%9C%A0%20%E2%80%94%E6%9C%89%E4%BB%BB%E5%8A%A1.png" alt="睡眠 —有任务.png" onclick="window.open('https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E7%9D%A1%E7%9C%A0%20%E2%80%94%E6%9C%89%E4%BB%BB%E5%8A%A1.png','_blank')">
+        <figcaption>
+          <span class="name" title="睡眠 —有任务.png">睡眠 —有任务.png</span>
+          <button class="copy" data-url="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E7%9D%A1%E7%9C%A0%20%E2%80%94%E6%9C%89%E4%BB%BB%E5%8A%A1.png" onclick="copyUrl(this)">复制链接</button>
+        </figcaption>
+      </figure>
+      <figure class="card">
+        <img loading="lazy" src="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E7%9D%A1%E7%9C%A0%20%E2%80%94%E6%9C%89%E4%BB%BB%E5%8A%A1%20%E5%B7%B2%E5%AE%8C%E6%88%90.png" alt="睡眠 —有任务 已完成.png" onclick="window.open('https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E7%9D%A1%E7%9C%A0%20%E2%80%94%E6%9C%89%E4%BB%BB%E5%8A%A1%20%E5%B7%B2%E5%AE%8C%E6%88%90.png','_blank')">
+        <figcaption>
+          <span class="name" title="睡眠 —有任务 已完成.png">睡眠 —有任务 已完成.png</span>
+          <button class="copy" data-url="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E7%9D%A1%E7%9C%A0%20%E2%80%94%E6%9C%89%E4%BB%BB%E5%8A%A1%20%E5%B7%B2%E5%AE%8C%E6%88%90.png" onclick="copyUrl(this)">复制链接</button>
+        </figcaption>
+      </figure>
+      </div>
+    </section>
+    <section class="group">
+      <h2>健康打卡</h2>
+      <div class="grid">
+      <figure class="card">
+        <img loading="lazy" src="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E5%81%A5%E5%BA%B7%E6%89%93%E5%8D%A1%E2%80%94%E6%97%A0%E4%BB%BB%E5%8A%A1.png" alt="健康打卡—无任务.png" onclick="window.open('https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E5%81%A5%E5%BA%B7%E6%89%93%E5%8D%A1%E2%80%94%E6%97%A0%E4%BB%BB%E5%8A%A1.png','_blank')">
+        <figcaption>
+          <span class="name" title="健康打卡—无任务.png">健康打卡—无任务.png</span>
+          <button class="copy" data-url="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E5%81%A5%E5%BA%B7%E6%89%93%E5%8D%A1%E2%80%94%E6%97%A0%E4%BB%BB%E5%8A%A1.png" onclick="copyUrl(this)">复制链接</button>
+        </figcaption>
+      </figure>
+      <figure class="card">
+        <img loading="lazy" src="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E5%81%A5%E5%BA%B7%E6%89%93%E5%8D%A1%E2%80%94%E6%9C%89%E4%BB%BB%E5%8A%A1.png" alt="健康打卡—有任务.png" onclick="window.open('https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E5%81%A5%E5%BA%B7%E6%89%93%E5%8D%A1%E2%80%94%E6%9C%89%E4%BB%BB%E5%8A%A1.png','_blank')">
+        <figcaption>
+          <span class="name" title="健康打卡—有任务.png">健康打卡—有任务.png</span>
+          <button class="copy" data-url="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E5%81%A5%E5%BA%B7%E6%89%93%E5%8D%A1%E2%80%94%E6%9C%89%E4%BB%BB%E5%8A%A1.png" onclick="copyUrl(this)">复制链接</button>
+        </figcaption>
+      </figure>
+      <figure class="card">
+        <img loading="lazy" src="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E5%81%A5%E5%BA%B7%E6%89%93%E5%8D%A1%E2%80%94%E9%A2%86%E5%8F%96%E4%BB%BB%E5%8A%A1.png" alt="健康打卡—领取任务.png" onclick="window.open('https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E5%81%A5%E5%BA%B7%E6%89%93%E5%8D%A1%E2%80%94%E9%A2%86%E5%8F%96%E4%BB%BB%E5%8A%A1.png','_blank')">
+        <figcaption>
+          <span class="name" title="健康打卡—领取任务.png">健康打卡—领取任务.png</span>
+          <button class="copy" data-url="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E5%81%A5%E5%BA%B7%E6%89%93%E5%8D%A1%E2%80%94%E9%A2%86%E5%8F%96%E4%BB%BB%E5%8A%A1.png" onclick="copyUrl(this)">复制链接</button>
+        </figcaption>
+      </figure>
+      <figure class="card">
+        <img loading="lazy" src="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E5%81%A5%E5%BA%B7%E6%89%93%E5%8D%A1%E2%80%94%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BB%BB%E5%8A%A1.png" alt="健康打卡—添加自定义任务.png" onclick="window.open('https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E5%81%A5%E5%BA%B7%E6%89%93%E5%8D%A1%E2%80%94%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BB%BB%E5%8A%A1.png','_blank')">
+        <figcaption>
+          <span class="name" title="健康打卡—添加自定义任务.png">健康打卡—添加自定义任务.png</span>
+          <button class="copy" data-url="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E5%81%A5%E5%BA%B7%E6%89%93%E5%8D%A1%E2%80%94%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BB%BB%E5%8A%A1.png" onclick="copyUrl(this)">复制链接</button>
+        </figcaption>
+      </figure>
+      <figure class="card">
+        <img loading="lazy" src="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E5%81%A5%E5%BA%B7%E6%89%93%E5%8D%A1%E2%80%94%E5%85%A8%E9%83%A8%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90.png" alt="健康打卡—全部任务完成.png" onclick="window.open('https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E5%81%A5%E5%BA%B7%E6%89%93%E5%8D%A1%E2%80%94%E5%85%A8%E9%83%A8%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90.png','_blank')">
+        <figcaption>
+          <span class="name" title="健康打卡—全部任务完成.png">健康打卡—全部任务完成.png</span>
+          <button class="copy" data-url="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E5%81%A5%E5%BA%B7%E6%89%93%E5%8D%A1%E2%80%94%E5%85%A8%E9%83%A8%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90.png" onclick="copyUrl(this)">复制链接</button>
+        </figcaption>
+      </figure>
+      </div>
+    </section>
+    <section class="group">
+      <h2>任务详情 / 通知 / 弹窗</h2>
+      <div class="grid">
+      <figure class="card">
+        <img loading="lazy" src="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E4%BB%BB%E5%8A%A1%E8%AF%A6%E6%83%85%E9%A1%B5.png" alt="任务详情页.png" onclick="window.open('https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E4%BB%BB%E5%8A%A1%E8%AF%A6%E6%83%85%E9%A1%B5.png','_blank')">
+        <figcaption>
+          <span class="name" title="任务详情页.png">任务详情页.png</span>
+          <button class="copy" data-url="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E4%BB%BB%E5%8A%A1%E8%AF%A6%E6%83%85%E9%A1%B5.png" onclick="copyUrl(this)">复制链接</button>
+        </figcaption>
+      </figure>
+      <figure class="card">
+        <img loading="lazy" src="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E6%AF%8F%E6%97%A5%E6%B6%88%E6%81%AF%E9%80%9A%E7%9F%A5.png" alt="每日消息通知.png" onclick="window.open('https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E6%AF%8F%E6%97%A5%E6%B6%88%E6%81%AF%E9%80%9A%E7%9F%A5.png','_blank')">
+        <figcaption>
+          <span class="name" title="每日消息通知.png">每日消息通知.png</span>
+          <button class="copy" data-url="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E6%AF%8F%E6%97%A5%E6%B6%88%E6%81%AF%E9%80%9A%E7%9F%A5.png" onclick="copyUrl(this)">复制链接</button>
+        </figcaption>
+      </figure>
+      <figure class="card">
+        <img loading="lazy" src="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E6%AF%8F%E6%97%A5%E9%A6%96%E6%AC%A1%E5%AE%8C%E6%88%90%E4%BB%BB%E5%8A%A1%E5%BC%B9%E7%AA%97.png" alt="每日首次完成任务弹窗.png" onclick="window.open('https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E6%AF%8F%E6%97%A5%E9%A6%96%E6%AC%A1%E5%AE%8C%E6%88%90%E4%BB%BB%E5%8A%A1%E5%BC%B9%E7%AA%97.png','_blank')">
+        <figcaption>
+          <span class="name" title="每日首次完成任务弹窗.png">每日首次完成任务弹窗.png</span>
+          <button class="copy" data-url="https://ddyuan-spec.github.io/taixiaohu/睡眠任务闭环一期/画布/%E6%AF%8F%E6%97%A5%E9%A6%96%E6%AC%A1%E5%AE%8C%E6%88%90%E4%BB%BB%E5%8A%A1%E5%BC%B9%E7%AA%97.png" onclick="copyUrl(this)">复制链接</button>
+        </figcaption>
+      </figure>
+      </div>
+    </section>
+</main>
+<script>
+  function copyUrl(btn) {
+    const u = btn.getAttribute('data-url');
+    navigator.clipboard.writeText(u).then(() => {
+      btn.textContent = '已复制'; btn.classList.add('done');
+      setTimeout(() => { btn.textContent = '复制链接'; btn.classList.remove('done'); }, 1500);
+    });
+  }
+</script>
+</body>
+</html>
