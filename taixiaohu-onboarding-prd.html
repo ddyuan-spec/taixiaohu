@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泰小虎开屏引导优化 - PRD</title>
+    <style>
+        :root{ --bg:#f6f7f9; --card:#fff; --text:#1a1a1a; --sub:#666; --border:#e0e0e0; --green:#4CD964; --red:#ff4d4f; --orange:#ff9f43; --blue:#4A90D9; }
+        body{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background:var(--bg); color:var(--text); line-height:1.7; max-width:960px; margin:0 auto; padding:32px 24px; }
+        h1{ font-size:28px; font-weight:700; margin-bottom:8px; }
+        .subtitle{ color:var(--sub); font-size:14px; margin-bottom:24px; }
+        h2{ font-size:22px; font-weight:600; margin-top:36px; padding-bottom:8px; border-bottom:2px solid var(--green); }
+        h3{ font-size:18px; font-weight:600; margin-top:28px; }
+        h4{ font-size:16px; font-weight:600; margin-top:22px; color:#222; }
+        h5{ font-size:15px; font-weight:600; margin-top:18px; color:#333; }
+        p{ margin:10px 0; }
+        ul,ol{ padding-left:22px; }
+        li{ margin:6px 0; }
+        table{ width:100%; border-collapse:collapse; margin:14px 0; table-layout:fixed; word-break:break-all; overflow-wrap:break-word; font-size:14px; }
+        th,td{ border:1px solid var(--border); padding:10px 12px; text-align:left; vertical-align:top; }
+        thead th{ background:#f2f2f2; font-weight:600; }
+        .tag{ display:inline-block; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:500; margin-left:8px; }
+        .tag.y{ background:#fff7e6; color:#d46b08; }
+        .tag.r{ background:#fff1f0; color:#cf1322; }
+        .tag.g{ background:#f6ffed; color:#389e0d; }
+        .note{ background:#f6ffed; border-left:4px solid var(--green); padding:10px 14px; margin:14px 0; font-size:14px; }
+        .warn{ background:#fff7e6; border-left:4px solid var(--orange); padding:10px 14px; margin:14px 0; font-size:14px; }
+        .todo{ color:var(--red); font-weight:500; }
+        img{ max-width:100%; max-height:800px; border:1px solid var(--border); border-radius:8px; object-fit:contain; display:block; margin:12px 0; }
+        code{ background:#f2f2f2; padding:2px 6px; border-radius:4px; font-family: Consolas, monospace; font-size:13px; }
+        .svg-flow{ background:var(--card); border:1px solid var(--border); border-radius:8px; padding:20px; margin:14px 0; text-align:center; }
+    </style>
+</head>
+<body>
+
+<h1>泰小虎开屏引导优化 — 产品需求文档（PRD）</h1>
+<div class="subtitle">版本 V1.0 · 2026-08-12 · 状态：已定稿</div>
+
+<h2>一、文档基本信息</h2>
+<table>
+    <thead>
+        <tr><th>字段</th><th>内容</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>项目名称</td><td>泰小虎开屏引导优化（随机昵称 + 体检报告前置询问 + 标题统一）</td></tr>
+        <tr><td>创建时间</td><td>2026-08-12</td></tr>
+        <tr><td>PM</td><td>（待填）</td></tr>
+        <tr><td>技术 Owner</td><td>（待填）</td></tr>
+        <tr><td>测试负责人</td><td>（待填）</td></tr>
+        <tr><td>文档状态</td><td>已定稿</td></tr>
+    </tbody>
+</table>
+
+<h3>历史修订记录</h3>
+<table>
+    <thead>
+        <tr><th>版本号</th><th>修订日期</th><th>修订人</th><th>修订内容简述</th><th>状态</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>V1.0</td>
+            <td>2026-08-12</td>
+            <td>PM</td>
+            <td>初版</td>
+            <td>已定稿</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>二、项目背景与目标</h2>
+
+<h3>2.1 业务背景（痛点）</h3>
+<ul>
+    <li>原开屏引导流程直接进入健康档案填写，缺少一个亲切化的「昵称」入口，用户感受不到产品人格，首屏冷冰冰。</li>
+    <li>体检报告步骤直接展示上传区，很多用户没有最近一次体检报告，反复询问「没有体检报告怎么办」，导致该步骤流失率偏高。</li>
+    <li>所有步骤的头部标题均显示为「评测」，与实际业务场景（开屏引导 / 健康档案初始化）不符，容易引起用户误解。</li>
+</ul>
+
+<h3>2.2 项目目标</h3>
+<ul>
+    <li><strong>业务目标</strong>：降低开屏引导流失率，提高档案创建完成率；消除无体检报告用户的焦虑。</li>
+    <li><strong>用户目标</strong>：让用户一进入产品就获得一个亲切、吉利的昵称；明确告知没有体检报告也可以先完成建档；清楚知道自己正在完成「开屏引导」。</li>
+</ul>
+
+<h3>2.3 衡量指标（KPI）</h3>
+<table>
+    <thead>
+        <tr><th>指标</th><th>定义</th><th>目标</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>开屏引导完成率</td><td>完成建档用户数 / 进入 Step1 用户数</td><td>不低于原流程完成率</td></tr>
+        <tr><td>昵称步骤完成率</td><td>选择或自定义昵称后进入 Step2 用户数 / 进入 Step1 用户数</td><td>≥ 90%</td></tr>
+        <tr><td>体检报告页流失率</td><td>进入 Step7 后未到达完成页用户数 / 进入 Step7 用户数</td><td>较旧版下降 ≥ 30%</td></tr>
+        <tr><td>建档完成率</td><td>到达完成页用户数 / 进入 Step1 用户数</td><td>不低于原流程</td></tr>
+    </tbody>
+</table>
+
+<h2>三、业务流程与架构</h2>
+
+<h3>3.1 本期范围与影响</h3>
+<table>
+    <thead>
+        <tr><th>维度</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>涉及端口</td><td>用户端 App / 小程序 / H5</td></tr>
+        <tr><td>涉及模块</td><td>开屏引导、健康档案初始化</td></tr>
+        <tr><td>本期改动点</td><td>新增 Step1 昵称选择；Step7 改为「有 / 没有」前置询问；全站标题「评测」→「开屏引导」</td></tr>
+        <tr><td>已有-沿用</td><td>Step2 性别、Step3 出生日期、Step4 身高、Step5 体重/BMI、Step6 睡眠、完成页逻辑</td></tr>
+        <tr><td>不涉及</td><td>商家端后台、回放、火山 SaaS 配置、平台运营后台配置</td></tr>
+    </tbody>
+</table>
+
+<h3>3.2 业务流程图</h3>
+<div class="svg-flow">
+<svg viewBox="0 0 640 620" width="640" height="620" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .node{ fill:#fff; stroke:#4CD964; stroke-width:2; rx:8; }
+      .start{ fill:#e8f8f0; stroke:#4CD964; stroke-width:2; rx:8; }
+      .decision{ fill:#fff; stroke:#ff9f43; stroke-width:2; rx:8; }
+      .end{ fill:#fff7e6; stroke:#ff9f43; stroke-width:2; rx:8; }
+      text{ font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif; font-size:13px; fill:#1a1a1a; text-anchor:middle; }
+      .label{ font-size:12px; fill:#666; }
+      line{ stroke:#999; stroke-width:1.5; }
+    </style>
+  </defs>
+  <rect x="270" y="10" width="100" height="36" class="start"/>
+  <text x="320" y="33">App 启动</text>
+  <line x1="320" y1="46" x2="320" y2="70"/>
+
+  <rect x="220" y="70" width="200" height="36" class="node"/>
+  <text x="320" y="93">Step1：选一个昵称吧（本期新增）</text>
+  <line x1="320" y1="106" x2="320" y2="130"/>
+
+  <rect x="270" y="130" width="100" height="36" class="node"/>
+  <text x="320" y="153">Step2：性别</text>
+  <line x1="320" y1="166" x2="320" y2="190"/>
+
+  <rect x="250" y="190" width="140" height="36" class="node"/>
+  <text x="320" y="213">Step3：出生日期</text>
+  <line x1="320" y1="226" x2="320" y2="250"/>
+
+  <rect x="270" y="250" width="100" height="36" class="node"/>
+  <text x="320" y="273">Step4：身高</text>
+  <line x1="320" y1="286" x2="320" y2="310"/>
+
+  <rect x="250" y="310" width="140" height="36" class="node"/>
+  <text x="320" y="333">Step5：体重 / BMI</text>
+  <line x1="320" y1="346" x2="320" y2="370"/>
+
+  <rect x="270" y="370" width="100" height="36" class="node"/>
+  <text x="320" y="393">Step6：睡眠</text>
+  <line x1="320" y1="406" x2="320" y2="430"/>
+
+  <rect x="210" y="430" width="220" height="36" class="decision"/>
+  <text x="320" y="453">Step7：有体检报告可上传吗？</text>
+
+  <line x1="320" y1="466" x2="170" y2="466"/>
+  <line x1="170" y1="466" x2="170" y2="510"/>
+  <text x="170" y="485" class="label">有</text>
+  <rect x="120" y="510" width="100" height="36" class="node"/>
+  <text x="170" y="533">上传报告</text>
+  <line x1="170" y1="546" x2="170" y2="580"/>
+
+  <line x1="320" y1="466" x2="470" y2="466"/>
+  <line x1="470" y1="466" x2="470" y2="580"/>
+  <text x="470" y="485" class="label">没有</text>
+
+  <line x1="170" y1="580" x2="320" y2="580"/>
+  <line x1="470" y1="580" x2="320" y2="580"/>
+
+  <rect x="250" y="580" width="140" height="36" class="end"/>
+  <text x="320" y="603">完成页 → 进入首页</text>
+</svg>
+</div>
+<p>📎 权威来源：本流程图引自 <a href="https://ddyuan-spec.github.io/taixiaohu/onboarding-flow.html" target="_blank">onboarding-flow.html</a>（当前线上原型 / 全链路主流程），依据已梳理确认的开屏引导主流程绘制，与 7 步结构保持一致。</p>
+
+<h3>3.3 信息架构</h3>
+<table>
+    <thead>
+        <tr><th>层级</th><th>职责</th><th>涉及内容</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>前端展示层</td><td>开屏引导页面渲染、用户交互、本地状态</td><td>昵称卡片、自定义输入、报告选择、上传组件、步骤进度、标题文案</td></tr>
+        <tr><td>业务逻辑层</td><td>建档流程编排、数据校验、接口调用</td><td>步骤推进、档案归档、体检报告上传、完成页跳转</td></tr>
+        <tr><td>数据层</td><td>持久化用户档案与上传记录</td><td>用户表、健康档案表、体检报告记录表、localStorage 昵称占用缓存</td></tr>
+    </tbody>
+</table>
+
+<h3>3.4 状态机与状态流转</h3>
+<p>本需求涉及的核心业务实体为「用户健康档案」。完整状态枚举：<strong>未建档、建档中、已建档</strong>。</p>
+<p>建档状态流转如下：</p>
+<table>
+    <thead>
+        <tr><th>起始状态</th><th>触发动作</th><th>前置条件</th><th>目标状态</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>未建档</td><td>进入开屏引导 Step1</td><td>首次启动且未填写健康档案</td><td>建档中</td></tr>
+        <tr><td>建档中</td><td>提交任意一步</td><td>该步骤必填字段已填写</td><td>建档中</td></tr>
+        <tr><td>建档中</td><td>完成 Step7（有报告上传 / 无报告直接完成）</td><td>所有步骤已处理</td><td>已建档</td></tr>
+        <tr><td>建档中</td><td>点击「跳过」并确认</td><td>用户主动选择跳过</td><td>已建档（字段完整度按实际已填计算）</td></tr>
+    </tbody>
+</table>
+
+<h2>四、功能需求详情</h2>
+
+<h3>4.1 用户端 C 端开屏引导</h3>
+<p>本次对开屏引导共产生 3 类改动：</p>
+<ol>
+    <li>新增 Step1「昵称选择」页面；</li>
+    <li>改动 Step7「上传体检报告」页面，先询问用户是否有报告；</li>
+    <li>全局文案调整：所有步骤头部标题及进度文案中的「评测」统一为「开屏引导」。</li>
+</ol>
+
+<h4>4.1.1 开屏引导首屏（昵称选择） <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：首次进入 App / 小程序 / H5 且未建立健康档案的新用户。<br>
+<strong>涉及终端明细</strong>：iOS App、Android App、微信小程序、H5。</p>
+
+<h5>4.1.1.1 页面原型与交互示意</h5>
+<img src="onboarding-prd-assets/step1-nickname.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="开屏引导首屏-昵称选择">
+<p>交互说明：</p>
+<ul>
+    <li>页面进入时默认展示 4 张随机昵称卡片；</li>
+    <li>点击卡片后卡片高亮并显示「✓」；</li>
+    <li>点击「换一批」重新生成 4 张不重复卡片；</li>
+    <li>点击输入框可手动输入昵称；</li>
+    <li>选中推荐卡片或输入合法自定义昵称后，「下一步」按钮由置灰变为可用。</li>
+</ul>
+
+<h5>4.1.1.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong></p>
+<ul>
+    <li>标题栏显示「开屏引导」，右侧保留「跳过」入口；</li>
+    <li>进度条显示 1 / 7（14.3%），进度文案显示「完成开屏引导，为你生成专属方案」；</li>
+    <li>主标题「选一个昵称吧」，副标题说明已为用户准备了一些好听昵称；</li>
+    <li>昵称卡片区域每次展示 4 条，采用「前缀 + 的 + 后缀」组合形式；</li>
+    <li>同一次展示的 4 条昵称后缀不重复，避免视觉重复；</li>
+    <li>卡片下方提供「换一批」按钮与自定义输入框，输入框 12 字上限并实时计数。</li>
+</ul>
+
+<p><strong>业务逻辑与边界条件</strong></p>
+<ul>
+    <li>昵称总池由 99 个健康/长寿/福气/好眠等前缀 × 16 个自然后缀组合而成；</li>
+    <li>同一用户会话内已展示过的昵称不再重复展示；</li>
+    <li>localStorage 中维护「已占用昵称」集合，避免不同用户在同一设备上被推荐相同昵称；</li>
+    <li>用户选择推荐昵称或完成自定义输入后，方可点击「下一步」；</li>
+    <li>若用户输入与本地已占用昵称重复，Toast 提示「该昵称已被使用，试试其他的吧」，并清空输入框。</li>
+</ul>
+
+<h5>4.1.1.3 列表字段表（昵称卡片）</h5>
+<table>
+    <thead>
+        <tr><th>字段名称</th><th>需求说明</th><th>备注</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>昵称文案</td><td>展示完整昵称，格式：前缀 +「的」+ 后缀</td><td>如「静好的匠人」「顺心的旅人」</td></tr>
+        <tr><td>选中态</td><td>用户点击后卡片边框变为绿色并显示「✓」</td><td>单选</td></tr>
+        <tr><td>主题来源</td><td>记录该昵称所属主题（长寿/顺遂/福气/喜乐/好眠/家和/盈满）</td><td>仅本地展示使用，不显示主题标签</td></tr>
+        <tr><td>已占用标记</td><td>被选中或手动输入并提交后，加入 localStorage 已占用集合</td><td>同设备下不去重</td></tr>
+    </tbody>
+</table>
+
+<h5>4.1.1.4 功能按钮总表</h5>
+<table>
+    <thead>
+        <tr><th>功能名称</th><th>功能说明</th><th>备注</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>换一批</td><td>重新生成 4 张昵称卡片</td><td>同一会话内去重；池耗尽后允许重复</td></tr>
+        <tr><td>自己取一个</td><td>手动输入 12 字以内昵称</td><td>输入即启用下一步；重复时 Toast 提示</td></tr>
+        <tr><td>下一步</td><td>保存 nickname 并进入 Step2</td><td>未选择或未输入时置灰不可点</td></tr>
+    </tbody>
+</table>
+
+<h5>4.1.1.5 【换一批】功能</h5>
+<ul>
+    <li><strong>功能说明</strong>：为用户重新推荐 4 条昵称。</li>
+    <li><strong>显示位置</strong>：昵称卡片列表下方，绿色描边按钮。</li>
+    <li><strong>权限</strong>：所有用户可见可点。</li>
+    <li><strong>前置条件</strong>：页面已进入且昵称池非空。</li>
+    <li><strong>功能实现</strong>：
+        <ol>
+            <li>从全部组合池中剔除本会话已展示过的昵称；</li>
+            <li>随机打乱后取前 4 条，并保证这 4 条后缀不重复；</li>
+            <li>将本次取出的 4 条加入会话已展示集合；</li>
+            <li>渲染到卡片区域，清除之前的选中态。</li>
+        </ol>
+    </li>
+    <li><strong>异常分支</strong>：若池子耗尽（极端情况），允许从全池中重新随机取 4 条，避免无卡可换。</li>
+</ul>
+
+<h5>4.1.1.6 【自己取一个（自定义输入）】功能</h5>
+<ul>
+    <li><strong>功能说明</strong>：允许用户输入自己喜欢的昵称。</li>
+    <li><strong>显示位置</strong>：「换一批」按钮下方，输入框 placeholder 为「输入你的专属昵称」。</li>
+    <li><strong>权限</strong>：所有用户。</li>
+    <li><strong>前置条件</strong>：页面已进入。</li>
+    <li><strong>功能实现</strong>：
+        <ol>
+            <li>用户输入时实时显示字数计数，例如「3/12」；</li>
+            <li>超过 12 字时禁止继续输入；</li>
+            <li>输入非空时「下一步」按钮可用；</li>
+            <li>点击下一步时校验是否与 localStorage 已占用集合重复；</li>
+            <li>重复则 Toast 提示并清空输入框；不重复则保存 nickname 并进入 Step2。</li>
+        </ol>
+    </li>
+    <li><strong>校验提示文案</strong>：「该昵称已被使用，试试其他的吧」。</li>
+</ul>
+
+<h5>4.1.1.7 【下一步】功能</h5>
+<ul>
+    <li><strong>功能说明</strong>：保存用户选中的昵称并进入下一步。</li>
+    <li><strong>显示位置</strong>：页面底部固定「下一步」按钮。</li>
+    <li><strong>权限</strong>：所有用户。</li>
+    <li><strong>前置条件</strong>：已选中推荐昵称或已输入合法自定义昵称。</li>
+    <li><strong>功能实现</strong>：
+        <ol>
+            <li>若来自推荐卡片，将 card 上的 name 写入 <code>userData.nickname</code>；</li>
+            <li>若来自自定义输入，将输入框内容写入 <code>userData.nickname</code>；</li>
+            <li>将该昵称加入 localStorage 已占用集合；</li>
+            <li>隐藏 Step1，显示 Step2。</li>
+        </ol>
+    </li>
+</ul>
+
+<h5>4.1.1.8 数据来源（字段级）</h5>
+<table>
+    <thead>
+        <tr><th>字段名称</th><th>取值逻辑说明</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>推荐昵称池</td><td>前端本地常量：99 个前缀 × 16 个后缀组合生成，不调用后端</td></tr>
+        <tr><td>本会话已展示集合</td><td>前端内存 Set，页面刷新后重置</td></tr>
+        <tr><td>已占用昵称集合</td><td>localStorage 键 <code>txh_taken_nick</code>，长期保存于设备</td></tr>
+        <tr><td>用户选中/输入的 nickname</td><td>写入 <code>userData.nickname</code> 并随健康档案提交</td></tr>
+    </tbody>
+</table>
+
+<h4>4.1.2 上传体检报告页 <span class="tag r">本期改动</span></h4>
+<p><strong>需求影响范围</strong>：进入 Step7 的所有用户。<br>
+<strong>涉及终端明细</strong>：iOS App、Android App、微信小程序、H5。</p>
+
+<h5>4.1.2.1 页面原型与交互示意</h5>
+<img src="onboarding-prd-assets/step7-report-ask.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="上传体检报告页-前置询问">
+<p>交互说明：</p>
+<ul>
+    <li>Step7 进入时首先展示询问卡片，而非直接显示上传区；</li>
+    <li>用户点击「有，现在上传」后，询问区隐藏，上传区与「完成」按钮出现；</li>
+    <li>用户点击「暂时没有」后，直接进入完成页。</li>
+</ul>
+
+<h5>4.1.2.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong></p>
+<ul>
+    <li>标题栏显示「开屏引导」；</li>
+    <li>进度条显示 7 / 7（100%），进度文案「完成开屏引导，为你生成专属方案」；</li>
+    <li>默认展示询问区：主标题「您有体检报告可以上传吗？」、副标题说明没有报告也可后续补充、两个大选项卡；</li>
+    <li>底部「完成」按钮初始隐藏，只有选择「有，现在上传」后才显示；</li>
+    <li>选择「有，现在上传」后，上传区标题保持「上传体检报告」不变，与旧版一致。</li>
+</ul>
+
+<p><strong>业务逻辑与边界条件</strong></p>
+<ul>
+    <li>选择「暂时没有」视为用户主动放弃本次上传，直接进入完成页；</li>
+    <li>选择「有，现在上传」后，流程与旧版体检报告上传完全一致；</li>
+    <li>用户可点击返回键回到 Step6；</li>
+    <li>右上角「跳过」仍保留，点击后弹出跳过确认弹窗。</li>
+</ul>
+
+<h5>4.1.2.3 列表字段表</h5>
+<table>
+    <thead>
+        <tr><th>字段名称</th><th>需求说明</th><th>备注</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>选项标题</td><td>「有，现在上传」/「暂时没有」</td><td>双选</td></tr>
+        <tr><td>选项图标</td><td>📄 / 🙂</td><td>纯展示</td></tr>
+        <tr><td>是否有报告</td><td>记录用户本次选择</td><td>影响后续是否展示上传区及完成页逻辑</td></tr>
+    </tbody>
+</table>
+
+<h5>4.1.2.4 功能按钮总表</h5>
+<table>
+    <thead>
+        <tr><th>功能名称</th><th>功能说明</th><th>备注</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>有，现在上传</td><td>进入上传体检报告子流程</td><td>询问区隐藏，上传区与完成按钮显示</td></tr>
+        <tr><td>暂时没有</td><td>跳过上传，直接完成建档</td><td>不调用上传接口，直接进入完成页</td></tr>
+        <tr><td>完成</td><td>提交并完成建档</td><td>仅在选择「有」并上传后可见；沿用旧版逻辑</td></tr>
+    </tbody>
+</table>
+
+<h5>4.1.2.5 【有，现在上传】功能</h5>
+<ul>
+    <li><strong>功能说明</strong>：用户确认有体检报告，进入上传页面。</li>
+    <li><strong>显示位置</strong>：询问区左侧选项卡。</li>
+    <li><strong>权限</strong>：所有用户。</li>
+    <li><strong>前置条件</strong>：Step7 已进入且处于询问阶段。</li>
+    <li><strong>功能实现</strong>：
+        <ol>
+            <li>隐藏 <code>#reportAsk</code>；</li>
+            <li>显示 <code>#reportUpload</code> 与「完成」按钮；</li>
+            <li>用户后续点击上传区、选择图片、点击完成，逻辑与旧版完全一致。</li>
+        </ol>
+    </li>
+</ul>
+
+<h5>4.1.2.6 【暂时没有】功能</h5>
+<ul>
+    <li><strong>功能说明</strong>：用户没有体检报告，直接完成建档。</li>
+    <li><strong>显示位置</strong>：询问区右侧选项卡。</li>
+    <li><strong>权限</strong>：所有用户。</li>
+    <li><strong>前置条件</strong>：Step7 已进入且处于询问阶段。</li>
+    <li><strong>功能实现</strong>：
+        <ol>
+            <li>调用 <code>finish()</code>；</li>
+            <li>隐藏 Step7，显示完成页；</li>
+            <li>不上传任何报告文件；</li>
+            <li>用户可在后续从健康档案中补充体检报告。</li>
+        </ol>
+    </li>
+</ul>
+
+<h5>4.1.2.7 数据来源（字段级）</h5>
+<table>
+    <thead>
+        <tr><th>字段名称</th><th>取值逻辑说明</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>是否有报告</td><td>前端本地记录用户本次选择（有 / 没有）</td></tr>
+        <tr><td>上传文件</td><td>用户相册或文件选择，调用体检报告上传接口</td></tr>
+        <tr><td>上传结果</td><td>接口返回成功 / 失败</td></tr>
+    </tbody>
+</table>
+
+<h4>4.1.3 其他开屏引导步骤 <span class="tag g">已有-沿用</span></h4>
+<p>沿用现有功能。</p>
+
+<h2>五、非功能性需求</h2>
+
+<h3>5.1 性能</h3>
+<ul>
+    <li>昵称池在前端本地计算，初始化无网络请求；</li>
+    <li>体检报告上传图片压缩、断点续传逻辑沿用旧版，本期无改动。</li>
+</ul>
+
+<h3>5.2 兼容性</h3>
+<ul>
+    <li>iOS / Android App WebView、微信小程序 WebView、H5 浏览器均须兼容；</li>
+    <li>localStorage 在微信小程序中须使用 wx.setStorageSync 等兼容实现（若小程序使用原生 storage）。</li>
+</ul>
+
+<h3>5.3 安全</h3>
+<ul>
+    <li>自定义昵称前端需过滤敏感词（调用已有敏感词服务或本地敏感词库）；</li>
+    <li>埋点上报不得包含真实健康数据、体检报告内容、用户昵称原文；</li>
+    <li>体检报告上传接口须校验文件类型与大小，沿用旧版安全策略。</li>
+</ul>
+
+<h3>5.4 埋点需求</h3>
+<p>本需求埋点事件与属性严格遵循《泰小虎埋点规范 v2.3》。</p>
+<p><a href="https://ddyuan-spec.github.io/taixiaohu/taixiaohu-tracking-spec.html" target="_blank">泰小虎埋点规范 v2.3（在线查阅）</a></p>
+
+<p>本期涉及事件清单：</p>
+<table>
+    <thead>
+        <tr><th>事件英文名</th><th>事件显示名</th><th>所属层</th><th>平台</th><th>触发时机</th><th>必含上报参数</th><th>备注</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>profile_submit</td>
+            <td>提交健康档案（首次建档）</td>
+            <td>L2</td>
+            <td>Android/iOS</td>
+            <td>用户完成开屏引导某一步并提交</td>
+            <td>步骤序号、步骤名称、档案字段列表、完成度</td>
+            <td>新增 Step1 后步骤序号范围可能扩展为 1-7</td>
+        </tr>
+        <tr>
+            <td>report_upload</td>
+            <td>上传体检报告</td>
+            <td>L2</td>
+            <td>Android/iOS</td>
+            <td>用户发起上传后，单次任务返回结果</td>
+            <td>上传任务ID、报告类型、上传来源、文件类型、上传结果、失败原因</td>
+            <td>仅用户选择「有，现在上传」并实际上传时触发</td>
+        </tr>
+        <tr>
+            <td>profile_complete</td>
+            <td>完整建档完成</td>
+            <td> L2</td>
+            <td>Android/iOS</td>
+            <td>用户档案完整度首次达到100%</td>
+            <td>完成来源、引导总耗时、完成度、已填字段总数、是否上传报告</td>
+            <td>has_report 字段用于区分有无上传报告</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>六、验收标准</h2>
+<ul>
+    <li><strong>AC1</strong>：Given 新用户首次启动 App，When 进入开屏引导，Then 首屏展示「选一个昵称吧」及 4 张昵称卡片。</li>
+    <li><strong>AC2</strong>：Given 在昵称页，When 点击任意推荐昵称卡片，Then 该卡片高亮显示「✓」，底部「下一步」按钮由灰变绿。</li>
+    <li><strong>AC3</strong>：Given 在昵称页，When 在「自己取一个」输入框输入 12 字以内昵称并点击下一步，Then 保存 nickname 并进入 Step2（性别）。</li>
+    <li><strong>AC4</strong>：Given 用户到达体检报告步骤，When 页面加载完成，Then 默认显示「您有体检报告可以上传吗？」及「有，现在上传」「暂时没有」两个选项，不直接显示上传区。</li>
+    <li><strong>AC5</strong>：Given 在体检报告询问页，When 点击「暂时没有」，Then 直接进入「档案创建完成」完成页，不调用上传接口。</li>
+    <li><strong>AC6</strong>：Given 在体检报告询问页，When 点击「有，现在上传」，Then 显示上传体检报告区域及底部「完成」按钮。</li>
+    <li><strong>AC7</strong>：Given 用户浏览任意开屏引导步骤，Then 顶部标题均为「开屏引导」，进度文案均为「完成开屏引导，为你生成专属方案」，无残留「评测」。</li>
+    <li><strong>AC8</strong>：Given 在昵称页点击「换一批」，When 多次刷新，Then 同一会话内已展示过的昵称不再重复出现（池耗尽除外）。</li>
+</ul>
+
+<h2>七、关键边界设计检查清单</h2>
+<table>
+    <thead>
+        <tr><th>检查项</th><th>结论</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>网络与异常状态</td><td>昵称选择纯前端，弱网无影响；体检报告上传失败沿用旧版重试/Toast。</td></tr>
+        <tr><td>登录与游客态</td><td>未登录可进入；登录后档案合并方式待确认（§9）。</td></tr>
+        <tr><td>极限值与空状态</td><td>昵称输入上限 12 字；昵称池 99×16 组合，理论上不易耗尽；空输入时下一步置灰。</td></tr>
+        <tr><td>版本兼容性</td><td>老版本升级用户是否重走开屏引导待确认（§9）。</td></tr>
+        <tr><td>逆向流 / 退款</td><td>本需求无交易逆向流。</td></tr>
+        <tr><td>高并发与防重</td><td>「换一批」「下一步」前端做短暂防抖，避免快速连点。</td></tr>
+    </tbody>
+</table>
+
+<h2>八、文档维护与变更规范</h2>
+<ul>
+    <li>版本号规范：大迭代升主版本（V1.0 / V2.0），小修改升次版本（V1.1 / V1.2）。</li>
+    <li>定稿后若发生需求变更，须在「历史修订记录」中新增一行，并在正文用高亮底色标出变更处，同时 @ 对应开发和测试。</li>
+    <li>PRD 中所有「⚠️ 待确认」项在评审会前必须全部清掉或转为已确认。</li>
+</ul>
+
+<h2>九、待确认项汇总</h2>
+<table>
+    <thead>
+        <tr><th>#</th><th>事项</th><th>干系人</th><th>状态</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>nickname 持久化位置（用户主表 / 档案本地字段）</td>
+            <td>后端 / PM</td>
+            <td class="todo">待确认</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>profile_submit step_index 是否扩展为 1-7，step_name 是否新增「昵称」</td>
+            <td>数据 / 埋点</td>
+            <td class="todo">待确认</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>报告选「无」时是否触发 profile_submit / profile_complete</td>
+            <td>数据 / 后端</td>
+            <td class="todo">待确认</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>是否新增「换一批 / 昵称选择 / 报告选择」埋点事件</td>
+            <td>埋点</td>
+            <td class="todo">待确认</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>老版本已建档用户升级后是否补录昵称</td>
+            <td>PM / 运营</td>
+            <td class="todo">待确认</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
