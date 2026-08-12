@@ -239,7 +239,7 @@ if(location.search.includes('embed=1')) document.body.classList.add('embed-mode'
         <option>LIVE002</option>
         <option>LIVE003</option>
       </select>
-      <input placeholder="客户姓名 / 手机号 / 用户ID" id="lvKeyword" style="width:200px">
+      <input placeholder="昵称 / 手机号 / 用户ID" id="lvKeyword" style="width:200px">
       <button class="btn-primary" onclick="renderLiveView()">搜索</button>
       <button class="btn-ghost" onclick="resetLiveView()">重置</button>
       <button class="btn-ghost" onclick="exportLiveView()">导出</button>
@@ -250,7 +250,8 @@ if(location.search.includes('embed=1')) document.body.classList.add('embed-mode'
         <thead>
           <tr>
             <th class="chk"><input type="checkbox"></th>
-            <th>客户信息</th>
+            <th>昵称</th>
+            <th>手机号</th>
             <th>用户ID</th>
             <th>观看直播间ID</th>
             <th>进入时间</th>
@@ -439,14 +440,14 @@ function saveLiveRoom(){
    直播观看记录 — Data & Render
    ================================================================ */
 var liveViewLogs = [
-  {id:1, customer:'张*明（138****1234）', userId:'U20260715001', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-29 19:00:12', exitTime:'2026-07-29 19:47:33', duration:'47分21秒', mins:47, date:'2026-07-29', device:'iOS App', source:'APP直播入口', watchStatus:'直播中'},
-  {id:2, customer:'李*芳（139****5678）', userId:'U20260716002', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-29 19:05:44', exitTime:'2026-07-29 19:22:10', duration:'16分26秒', mins:16, date:'2026-07-29', device:'Android App', source:'消息推送', watchStatus:'直播中'},
-  {id:3, customer:'王*强（137****9012）', userId:'U20260717003', roomId:'LIVE002', roomName:'健康好物专场', enterTime:'2026-07-28 20:00:00', exitTime:'2026-07-28 21:15:30', duration:'1小时15分30秒', mins:75, date:'2026-07-28', device:'微信小程序', source:'小程序首页', watchStatus:'直播中'},
-  {id:4, customer:'赵*敏（136****3456）', userId:'U20260718004', roomId:'LIVE002', roomName:'健康好物专场', enterTime:'2026-07-28 20:10:22', exitTime:'2026-07-28 20:35:08', duration:'24分46秒', mins:24, date:'2026-07-28', device:'iOS App', source:'分享链接', watchStatus:'直播中'},
-  {id:5, customer:'陈*伟（135****7890）', userId:'U20260719005', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-27 19:30:15', exitTime:'2026-07-27 20:45:00', duration:'1小时14分45秒', mins:74, date:'2026-07-27', device:'Android App', source:'APP直播入口', watchStatus:'直播中'},
-  {id:6, customer:'刘*芳（134****2345）', userId:'U20260720006', roomId:'LIVE003', roomName:'品牌新品发布', enterTime:'2026-07-27 15:00:00', exitTime:'2026-07-27 15:08:33', duration:'8分33秒', mins:8, date:'2026-07-27', device:'H5', source:'外部分享', watchStatus:'回放'},
-  {id:7, customer:'周*杰（133****6789）', userId:'U20260721007', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-26 19:00:05', exitTime:'2026-07-26 19:55:42', duration:'55分37秒', mins:55, date:'2026-07-26', device:'iOS App', source:'APP直播入口', watchStatus:'回放'},
-  {id:8, customer:'吴*静（132****0123）', userId:'U20260722008', roomId:'LIVE003', roomName:'品牌新品发布', enterTime:'2026-07-26 15:05:18', exitTime:'2026-07-26 16:30:00', duration:'1小时24分42秒', mins:84, date:'2026-07-26', device:'微信小程序', source:'小程序首页', watchStatus:'预告'}
+  {id:1, nickname:'张小明', phone:'13812341234', userId:'U20260715001', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-29 19:00:12', exitTime:'2026-07-29 19:47:33', duration:'47分21秒', mins:47, date:'2026-07-29', device:'iOS App', source:'APP直播入口', watchStatus:'直播中'},
+  {id:2, nickname:'李小芳', phone:'13912345678', userId:'U20260716002', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-29 19:05:44', exitTime:'2026-07-29 19:22:10', duration:'16分26秒', mins:16, date:'2026-07-29', device:'Android App', source:'消息推送', watchStatus:'直播中'},
+  {id:3, nickname:'王小强', phone:'13712349012', userId:'U20260717003', roomId:'LIVE002', roomName:'健康好物专场', enterTime:'2026-07-28 20:00:00', exitTime:'2026-07-28 21:15:30', duration:'1小时15分30秒', mins:75, date:'2026-07-28', device:'微信小程序', source:'小程序首页', watchStatus:'直播中'},
+  {id:4, nickname:'赵小敏', phone:'13612343456', userId:'U20260718004', roomId:'LIVE002', roomName:'健康好物专场', enterTime:'2026-07-28 20:10:22', exitTime:'2026-07-28 20:35:08', duration:'24分46秒', mins:24, date:'2026-07-28', device:'iOS App', source:'分享链接', watchStatus:'直播中'},
+  {id:5, nickname:'陈小伟', phone:'13512347890', userId:'U20260719005', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-27 19:30:15', exitTime:'2026-07-27 20:45:00', duration:'1小时14分45秒', mins:74, date:'2026-07-27', device:'Android App', source:'APP直播入口', watchStatus:'直播中'},
+  {id:6, nickname:'刘小芳', phone:'13412342345', userId:'U20260720006', roomId:'LIVE003', roomName:'品牌新品发布', enterTime:'2026-07-27 15:00:00', exitTime:'2026-07-27 15:08:33', duration:'8分33秒', mins:8, date:'2026-07-27', device:'H5', source:'外部分享', watchStatus:'回放'},
+  {id:7, nickname:'周小杰', phone:'13312346789', userId:'U20260721007', roomId:'LIVE001', roomName:'福利直播间·滋补专场', enterTime:'2026-07-26 19:00:05', exitTime:'2026-07-26 19:55:42', duration:'55分37秒', mins:55, date:'2026-07-26', device:'iOS App', source:'APP直播入口', watchStatus:'回放'},
+  {id:8, nickname:'吴小静', phone:'13212340123', userId:'U20260722008', roomId:'LIVE003', roomName:'品牌新品发布', enterTime:'2026-07-26 15:05:18', exitTime:'2026-07-26 16:30:00', duration:'1小时24分42秒', mins:84, date:'2026-07-26', device:'微信小程序', source:'小程序首页', watchStatus:'预告'}
 ];
 
 function renderLiveView(){
@@ -454,11 +455,12 @@ function renderLiveView(){
   var rows='', cnt=0;
   liveViewLogs.forEach(function(v){
     if(room && v.roomId!==room) return;
-    if(kw && v.customer.indexOf(kw)<0 && v.userId.indexOf(kw)<0) return;
+    if(kw && v.nickname.indexOf(kw)<0 && v.phone.indexOf(kw)<0 && v.userId.indexOf(kw)<0) return;
     cnt++;
     rows += '<tr>'+
       '<td class="chk"><input type="checkbox"></td>'+
-      '<td>'+v.customer+'</td>'+
+      '<td>'+v.nickname+'</td>'+
+      '<td>'+v.phone+'</td>'+
       '<td>'+v.userId+'</td>'+
       '<td><span class="tag tag-blue">'+v.roomId+'</span></td>'+
       '<td>'+v.enterTime+'</td>'+
@@ -468,7 +470,7 @@ function renderLiveView(){
       '<td class="act"><a class="btn-link" onclick="viewDetail('+v.id+')">详情</a></td>'+
       '</tr>';
   });
-  $('liveViewTbody').innerHTML = rows || '<tr><td colspan="8" style="text-align:center;padding:50px"><div class="empty-state"><div class="icon">📭</div><div>暂无数据</div></div></td></tr>';
+  $('liveViewTbody').innerHTML = rows || '<tr><td colspan="10" style="text-align:center;padding:50px"><div class="empty-state"><div class="icon">📭</div><div>暂无数据</div></div></td></tr>';
   $('lvTotal').textContent = cnt;
 }
 function resetLiveView(){
@@ -480,7 +482,7 @@ function viewDetail(id){
   var v=liveViewLogs.filter(function(x){return x.id===id})[0];
   if(!v) return;
   var cells=[
-    ['客户信息',v.customer],['用户ID',v.userId],['观看直播间ID',v.roomId],['直播间名称',v.roomName],
+    ['昵称',v.nickname],['手机号',v.phone],['用户ID',v.userId],['观看直播间ID',v.roomId],['直播间名称',v.roomName],
     ['进入时间',v.enterTime],['退出时间',v.exitTime],['观看时长',v.duration],['观看时直播状态',v.watchStatus],
     ['观看终端',v.device],['进入来源',v.source]
   ];
