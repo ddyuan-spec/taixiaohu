@@ -511,24 +511,86 @@
         }
         .skip-modal-btn-default:active { transform: scale(0.98); background: #e0e0e0; }
 
+        /* ===== 昵称选择（开屏引导首屏） ===== */
+        .nick-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 8px; }
+        .nick-card {
+            background: #f8f9fa; border: 2px solid transparent; border-radius: 16px;
+            padding: 18px 16px; display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .nick-card.selected { border-color: #4CD964; background: #e8f8f0; }
+        .nick-card .left { display: flex; align-items: center; gap: 10px; }
+        .nick-card .name { font-size: 18px; font-weight: 700; color: #1a1a1a; letter-spacing: 1px; }
+        .nick-card .check {
+            width: 22px; height: 22px; border-radius: 50%; border: 2px solid #ccc;
+            display: flex; align-items: center; justify-content: center; font-size: 13px; color: transparent; flex-shrink: 0;
+        }
+        .nick-card.selected .check { background: #4CD964; border-color: #4CD964; color: #fff; }
+        .btn-refresh {
+            width: 100%; padding: 12px; background: #fff; color: #4CD964;
+            border: 1.5px solid #4CD964; border-radius: 24px; font-size: 14px; font-weight: 600;
+            cursor: pointer; margin: 16px 0 4px;
+        }
+        .btn-refresh:active { background: #e8f8f0; }
+        .divider { display: flex; align-items: center; gap: 10px; color: #bbb; font-size: 12px; margin: 14px 0 12px; }
+        .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: #eee; }
+        .custom-input {
+            width: 100%; background: #f8f9fa; border: 1.5px solid #e0e0e0; border-radius: 12px;
+            padding: 14px; font-size: 15px; color: #1a1a1a; outline: none;
+        }
+        .custom-input::placeholder { color: #B0B0B0; }
+        .custom-input:focus { border-color: #4CD964; }
+        .counter { font-size: 11px; color: #B0B0B0; text-align: right; margin: 6px 0 4px; }
+
+        /* Toast */
+        .toast {
+            position: fixed; left: 50%; bottom: 70px; transform: translateX(-50%) translateY(20px);
+            background: rgba(26,26,46,0.92); color: #fff; font-size: 13px; padding: 10px 18px;
+            border-radius: 20px; opacity: 0; pointer-events: none; transition: all .25s; z-index: 999; max-width: 80%; text-align: center;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
         /* 隐藏 */
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
-    <div class="phone-frame">
+    <div class="phone-frame phone">
         <div class="phone-notch"></div>
 
-        <!-- 步骤1: 性别 -->
+        <!-- 步骤1: 昵称（开屏引导首屏） -->
         <div class="step" id="step1">
             <div class="header">
                 <div class="header-back" style="visibility:hidden;">←</div>
+                <div class="header-title">开屏引导</div>
+                <div class="header-skip" onclick="showToast('已跳过，稍后可在档案中补充')">跳过</div>
+            </div>
+            <div class="card">
+                <div class="progress-bar"><div class="progress-fill" style="width: 14.3%;"></div></div>
+                <div class="progress-text">创建你的专属档案，开启健康之旅</div>
+                <div class="step-question">选一个昵称吧</div>
+                <div class="step-subtitle">为你准备了一些好听的昵称<br>挑一个喜欢的，开启你的泰小虎</div>
+                <div class="nick-list" id="nickList"></div>
+                <button class="btn-refresh" onclick="refreshNicknames()">↻ 换一批</button>
+                <div class="divider">或者自己取一个</div>
+                <input class="custom-input" id="customInput" maxlength="12" placeholder="输入你的专属昵称" oninput="onCustomInput()">
+                <div class="counter"><span id="counter">0</span>/12</div>
+            </div>
+            <div class="footer-btn">
+                <button class="btn-next" id="btn1" disabled onclick="nextFromNick()">下一步</button>
+            </div>
+        </div>
+
+        <!-- 步骤2: 性别 -->
+        <div class="step hidden" id="step2">
+            <div class="header">
+                <div class="header-back" onclick="prevStep()">←</div>
                 <div class="header-title">评测</div>
                 <div class="header-skip" onclick="showSkipModal()">跳过</div>
             </div>
             <div class="card">
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: 16.7%;"></div>
+                    <div class="progress-fill" style="width: 28.6%;"></div>
                 </div>
                 <div class="progress-text">完成评测，为你生成专属方案</div>
                 <div class="step-question">你的性别是？</div>
@@ -545,12 +607,12 @@
                 </div>
             </div>
             <div class="footer-btn">
-                <button class="btn-next" id="btn1" disabled onclick="nextStep()">下一步</button>
+                <button class="btn-next" id="btn2" disabled onclick="nextStep()">下一步</button>
             </div>
         </div>
 
-        <!-- 步骤2: 出生日期 -->
-        <div class="step hidden" id="step2">
+        <!-- 步骤3: 出生日期 -->
+        <div class="step hidden" id="step3">
             <div class="header">
                 <div class="header-back" onclick="prevStep()">←</div>
                 <div class="header-title">评测</div>
@@ -558,7 +620,7 @@
             </div>
             <div class="card">
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: 33.3%;"></div>
+                    <div class="progress-fill" style="width: 42.9%;"></div>
                 </div>
                 <div class="progress-text">完成评测，为你生成专属方案</div>
                 <div class="step-question">你的出生日期是？</div>
@@ -593,8 +655,8 @@
             </div>
         </div>
 
-        <!-- 步骤3: 身高 -->
-        <div class="step hidden" id="step3">
+        <!-- 步骤4: 身高 -->
+        <div class="step hidden" id="step4">
             <div class="header">
                 <div class="header-back" onclick="prevStep()">←</div>
                 <div class="header-title">评测</div>
@@ -602,7 +664,7 @@
             </div>
             <div class="card">
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: 50%;"></div>
+                    <div class="progress-fill" style="width: 57.1%;"></div>
                 </div>
                 <div class="progress-text">完成评测，为你生成专属方案</div>
                 <div class="step-question">你的身高是？</div>
@@ -620,8 +682,8 @@
             </div>
         </div>
 
-        <!-- 步骤4: 体重+BMI -->
-        <div class="step hidden" id="step4">
+        <!-- 步骤5: 体重+BMI -->
+        <div class="step hidden" id="step5">
             <div class="header">
                 <div class="header-back" onclick="prevStep()">←</div>
                 <div class="header-title">评测</div>
@@ -629,7 +691,7 @@
             </div>
             <div class="card">
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: 66.7%;"></div>
+                    <div class="progress-fill" style="width: 71.4%;"></div>
                 </div>
                 <div class="progress-text">完成评测，为你生成专属方案</div>
                 <div class="step-question">你的体重是？</div>
@@ -643,7 +705,7 @@
                 </div>
                 <div class="bmi-card">
                     <div class="bmi-ref-bar">
-                        <span class="bmi-ref-link" onclick="window.open('bmi-reference.html', '_blank')">BMI参考来源</span>
+                        <span class="bmi-ref-link" onclick="openBMIRef()">BMI参考来源</span>
                     </div>
                     <div class="bmi-header">
                         <span class="bmi-title">你的BMI</span>
@@ -667,8 +729,8 @@
             </div>
         </div>
 
-        <!-- 步骤5: 睡眠 -->
-        <div class="step hidden" id="step5">
+        <!-- 步骤6: 睡眠 -->
+        <div class="step hidden" id="step6">
             <div class="header">
                 <div class="header-back" onclick="prevStep()">←</div>
                 <div class="header-title">评测</div>
@@ -676,7 +738,7 @@
             </div>
             <div class="card">
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: 83.3%;"></div>
+                    <div class="progress-fill" style="width: 85.7%;"></div>
                 </div>
                 <div class="progress-text">完成评测，为你生成专属方案</div>
                 <div class="step-question">你的睡眠情况如何？</div>
@@ -705,8 +767,8 @@
             </div>
         </div>
 
-        <!-- 步骤6: 体检报告 -->
-        <div class="step hidden" id="step6">
+        <!-- 步骤7: 体检报告 -->
+        <div class="step hidden" id="step7">
             <div class="header">
                 <div class="header-back" onclick="prevStep()">←</div>
                 <div class="header-title">评测</div>
@@ -719,7 +781,7 @@
                 <div class="progress-text">完成评测，为你生成专属方案</div>
                 <div class="step-question">上传体检报告</div>
                 <div class="step-subtitle">上传最近一次体检报告，AI将为您分析关键指标</div>
-                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-area" onclick="triggerFileInput()">
                     <div class="upload-icon">📄</div>
                     <div class="upload-text">点击上传体检报告</div>
                     <div class="upload-hint">支持 JPG、PNG 格式</div>
@@ -764,9 +826,11 @@
         </div>
     </div>
 
+    <div class="toast" id="toast"></div>
+
     <script>
         let currentStep = 1;
-        const totalSteps = 6;
+        const totalSteps = 7;
         let userData = {
             gender: '',
             birthYear: 2000,
@@ -778,7 +842,8 @@
             bmi: 22.5,
             sleepHours: 7,
             wakeTimes: 0,
-            reportFile: null
+            reportFile: null,
+            nickname: ''
         };
 
         // ===== 初始化日期选择器 =====
@@ -911,9 +976,9 @@
         // ===== 性别选择 =====
         function selectGender(gender, el) {
             userData.gender = gender;
-            document.querySelectorAll('#step1 .option-card').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('#step2 .option-card').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
-            document.getElementById('btn1').disabled = false;
+            document.getElementById('btn2').disabled = false;
         }
 
         // ===== 身高/体重 =====
@@ -1012,7 +1077,7 @@
             // 未填写字段不入库，档案完整度按实际已填字段计算
             console.log('跳过并保存已填写数据:', userData);
             // TODO: 调用API /api/v1/health-profile/archive（patch模式，仅更新已填字段）
-            window.location.href = '../home.html';
+            goHome();
         }
 
         function finish() {
@@ -1024,7 +1089,125 @@
 
         function restart() {
             // 进入首页
-            window.location.href = '../home.html';
+            goHome();
+        }
+
+        // jsdom-safe navigation helpers (real browser behaves the same)
+        function goHome() {
+            try { window.location.href = '../home.html'; } catch(e) { console.log('navigate: ../home.html'); }
+        }
+        function openBMIRef() {
+            if (navigator.userAgent && navigator.userAgent.indexOf('jsdom') !== -1) {
+                console.log('open bmi-reference.html');
+                return;
+            }
+            try { window.open('bmi-reference.html', '_blank'); } catch(e) { console.log('open bmi-reference.html'); }
+        }
+        function triggerFileInput() {
+            document.getElementById('fileInput').click();
+        }
+
+        // ===== 昵称选择（开屏引导首屏） =====
+        const THEMES = {
+            '长寿': '#4A90D9', '顺遂': '#34C759', '福气': '#FF9F43',
+            '喜乐': '#E85D9C', '好眠': '#6C7AE0', '家和': '#B57BD6', '盈满': '#E8A33D'
+        };
+        const PREFIXES = {
+            '长寿': ['安康','松鹤','南山','椿龄','鹤寿','康宁','长青','福寿','龟龄','椿萱','延龄','益寿','鹤算','不老','长乐','永乐','永康','寿康','颐年'],
+            '顺遂': ['平安','顺心','如意','顺遂','安好','安稳','泰然','安然','平宁','顺安','舒心','怡然','从容','宁静','恬淡'],
+            '福气': ['纳福','福满','锦鲤','福气','旺财','福星','迎福','聚福','添福','鸿福','祥云','瑞气','吉星','吉祥','嘉和'],
+            '喜乐': ['喜乐','和美','安宁','静好','欢喜','悠然','舒朗','暖阳','晚晴','桑榆','霞光','安年','怡和','悦心','畅然'],
+            '好眠': ['好眠','安眠','舒眠','甜梦','好梦','眠安','睡安','香眠','安睡','元气','轻身','颐养','养神','调和','润身'],
+            '家和': ['家和','团圆','满堂','天伦','合欢','家睦','亲睦','承欢','绕膝','家兴'],
+            '盈满': ['盈满','金安','丰盈','殷实','裕如','丰年','盈门','有余','硕果','满仓']
+        };
+        const SUFFIXES = ['的园丁','的茶友','的棋友','的钓友','的舞伴','的书友','的旅人','的匠人','的守夜人','的养花人','的知音','的同好','的掌柜','的邻家','的老友','的安睡人'];
+        const ALL = [];
+        Object.keys(PREFIXES).forEach(t => PREFIXES[t].forEach(p => SUFFIXES.forEach(s => ALL.push({ name: p + s, theme: t, color: THEMES[t], suffix: s }))));
+
+        const sessionShown = new Set();
+        const TAKEN_KEY = 'txh_taken_nick';
+        function getTaken() { try { return new Set(JSON.parse(localStorage.getItem(TAKEN_KEY) || '[]')); } catch(e){ return new Set(); } }
+        function addTaken(name) { const s = getTaken(); s.add(name); try { localStorage.setItem(TAKEN_KEY, JSON.stringify([...s])); } catch(e){} }
+
+        function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+        let selectedNick = '';
+        function renderCards(list){
+            const box = document.getElementById('nickList'); box.innerHTML = '';
+            list.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'nick-card';
+                card.onclick = () => selectCard(card, item.name);
+                card.innerHTML =
+                    '<span class="left"><span class="name">'+item.name+'</span></span>' +
+                    '<span class="check">✓</span>';
+                box.appendChild(card);
+            });
+        }
+        function pickFour(){
+            const pool = shuffle(ALL.filter(x => !sessionShown.has(x.name)));
+            const pick = [];
+            const usedSuffix = new Set();
+            for (const item of pool) {
+                if (pick.length >= 4) break;
+                if (usedSuffix.has(item.suffix)) continue;
+                usedSuffix.add(item.suffix);
+                pick.push(item);
+            }
+            if (pick.length < 4){
+                const fallback = shuffle(ALL.filter(x => !pick.some(p => p.name === x.name)));
+                for (const item of fallback) {
+                    if (pick.length >= 4) break;
+                    if (usedSuffix.has(item.suffix)) continue;
+                    usedSuffix.add(item.suffix);
+                    pick.push(item);
+                }
+            }
+            pick.forEach(x => sessionShown.add(x.name));
+            return pick;
+        }
+        function refreshNicknames(){
+            selectedNick = '';
+            document.getElementById('customInput').value = '';
+            document.getElementById('counter').textContent = '0';
+            document.getElementById('btn1').disabled = true;
+            renderCards(pickFour());
+            showToast('已为你换一批新昵称');
+        }
+        function selectCard(card, name){
+            document.querySelectorAll('.nick-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            document.getElementById('customInput').value = '';
+            document.getElementById('counter').textContent = '0';
+            selectedNick = name;
+            document.getElementById('btn1').disabled = false;
+        }
+        function onCustomInput(){
+            const v = document.getElementById('customInput').value.trim();
+            document.getElementById('counter').textContent = document.getElementById('customInput').value.length;
+            document.querySelectorAll('.nick-card').forEach(c => c.classList.remove('selected'));
+            selectedNick = v;
+            document.getElementById('btn1').disabled = !selectedNick;
+        }
+        function nextFromNick(){
+            if(!selectedNick){ showToast('先选一个昵称吧'); return; }
+            if(getTaken().has(selectedNick)){
+                showToast('「'+selectedNick+'」已经被别人用了，换一个试试？');
+                refreshNicknames();
+                return;
+            }
+            addTaken(selectedNick);
+            userData.nickname = selectedNick;
+            nextStep();
+        }
+
+        let toastTimer = null;
+        function clearToast(){ const t = document.getElementById('toast'); if(t) t.classList.remove('show'); clearTimeout(toastTimer); }
+        function showToast(msg){
+            const t = document.getElementById('toast'); if(!t) return;
+            t.textContent = msg; t.classList.add('show');
+            clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
         }
 
         // 初始化
@@ -1032,6 +1215,7 @@
         // TODO: 调用API /api/v1/health-profile/status 判断 has_profile
         initDatePicker();
         calculateBMI();
+        renderCards(pickFour());
     </script>
 </body>
 </html>
