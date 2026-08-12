@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰小虎 · 睡眠任务闭环 PRD</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7;color:#333;max-width:960px;margin:0 auto;padding:24px;background:#fff;}
+  h1{font-size:26px;color:#1f2937;border-bottom:3px solid #534AB7;padding-bottom:8px;}
+  h2{font-size:20px;color:#534AB7;margin-top:32px;border-left:4px solid #534AB7;padding-left:10px;}
+  h3{font-size:17px;color:#1f2937;margin-top:26px;}
+  h4{font-size:15px;color:#1f2937;margin-top:22px;padding:6px 10px;background:#f5f6fa;border-radius:6px;}
+  .tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:4px;margin-left:8px;}
+  .tag.y{background:#fff7e6;color:#d46b08;}
+  .tag.g{background:#f6ffed;color:#389e0d;}
+  .tag.r{background:#f5f5f5;color:#595959;}
+  .warn{background:#fffbe6;border:1px solid #ffe58f;padding:10px 14px;border-radius:6px;margin:10px 0;color:#ad6800;}
+  .note{background:#f0f5ff;border:1px solid #adc6ff;padding:10px 14px;border-radius:6px;margin:10px 0;color:#1d39c4;}
+  ul,ol{margin:8px 0;}
+  li{margin:4px 0;}
+  code{background:#f4f4f5;padding:1px 4px;border-radius:3px;font-size:12px;}
+  p{margin:8px 0;}
+  table{border-collapse:collapse;width:100%;margin:8px 0;font-size:13px;table-layout:fixed;word-break:break-all;overflow-wrap:break-word;}
+</style>
+</head>
+<body>
+
+<h1>泰小虎 · 睡眠任务闭环 PRD</h1>
+
+<h2>一、文档基本信息</h2>
+<table style="width:100%;border-collapse:collapse;margin:8px 0;font-size:13px;">
+  <tr><td style="border:1px solid #e0e0e0;padding:8px;width:140px;">项目名称</td><td style="border:1px solid #e0e0e0;padding:8px;">泰小虎 · 睡眠任务闭环</td></tr>
+  <tr><td style="border:1px solid #e0e0e0;padding:8px;">创建时间</td><td style="border:1px solid #e0e0e0;padding:8px;">2026-08-12</td></tr>
+  <tr><td style="border:1px solid #e0e0e0;padding:8px;">文档状态</td><td style="border:1px solid #e0e0e0;padding:8px;">评审中</td></tr>
+  <tr><td style="border:1px solid #e0e0e0;padding:8px;">负责人</td><td style="border:1px solid #e0e0e0;padding:8px;">PM / 技术 Owner / 测试负责人 ⚠️待确认</td></tr>
+</table>
+
+<h3>历史修订记录</h3>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">版本号</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">修订日期</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">修订人</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">修订内容简述</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">状态</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">V0.1</td><td style="border:1px solid #e0e0e0;padding:8px;">2026-08-12</td><td style="border:1px solid #e0e0e0;padding:8px;">AI 助手</td><td style="border:1px solid #e0e0e0;padding:8px;">基于 v7 C端原型与 punch-admin 后台原型，输出一~九骨架与§四逐页初稿</td><td style="border:1px solid #e0e0e0;padding:8px;">评审中</td></tr></tbody></table>
+
+<h2>二、项目背景与目标</h2>
+<h3>2.1 业务背景</h3>
+<p>泰小虎 App 用户在健康场景下缺乏围绕睡眠/习惯的低门槛任务闭环。当前首页、我的睡眠、健康打卡等页面相互独立，缺少把「睡眠数据→任务推荐→打卡完成→分享激励」串起来的主线，导致用户打卡动力不足、健康档案行为数据缺失。</p>
+
+<h3>2.2 项目目标</h3>
+<ul>
+<li><strong>用户目标</strong>：每日获得睡眠日报提醒，领取并完成轻量健康任务，获取虎力值，养成连续记录习惯。</li>
+<li><strong>业务目标</strong>：提升 App DAU、健康打卡完成率、健康档案行为字段完整度；通过分享传播获取自然增量。</li>
+<li><strong>运营目标</strong>：后台可配置任务模板、候选任务池、固定首批规则与分享弹窗，支持无需发版调整 C端任务策略。</li>
+</ul>
+
+<h3>2.3 衡量指标（KPI）<span class="tag y">待确认</span></h3>
+<div class="warn">⚠️ 待确认 @产品/运营：具体 KPI 阈值（如日活提升 X%、任务领取率 Y%、首任务完成率 Z%）需由业务方给定。</div>
+
+<h2>三、业务流程与架构</h2>
+<h3>3.1 业务流程图</h3>
+<p>横向泳道：用户端 / 服务端 / 平台端后台。</p>
+<img src="prd-assets/c-notification.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="业务流程起点-消息通知">
+<p>主流程：</p>
+<ol>
+<li>服务端在每日固定时点（默认 03:00，⚠️ 待确认）向目标用户推送睡眠日报 PUSH；</li>
+<li>用户点击 PUSH/锁屏通知进入 App 首页，首页首次弹窗提示「睡眠日报已生成」；</li>
+<li>用户可点击弹窗进入「我的睡眠」查看睡眠数据与任务卡片；</li>
+<li>任务卡片引导用户进入「健康打卡」或「领取任务」；</li>
+<li>用户在「领取任务」页选择 1~5 个任务加入当日任务列表；</li>
+<li>用户在「健康打卡」完成任务（有详情页则先进 H5 详情，无详情则点击直接完成）；</li>
+<li>首次完成任务后弹出「太棒了」完成弹窗，用户可分享或继续领任务；</li>
+<li>完成任务获得虎力值，可在「虎力值任务中心」查看。</li>
+</ol>
+<div class="warn">⚠️ 待确认 @产品/研发：PUSH 触发时区基准、每日首任务完成弹窗是否强打扰、分享后是否带回增量虎力值。</div>
+
+<h3>3.2 信息架构</h3>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">层级</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">C端</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">平台端后台</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">数据层</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">展示层</td><td style="border:1px solid #e0e0e0;padding:8px;">消息通知、首页、我的睡眠、健康打卡、领取任务、任务详情、虎力值</td><td style="border:1px solid #e0e0e0;padding:8px;">任务模板管理、候选任务池、固定首批规则、每日首完成分享弹窗</td><td style="border:1px solid #e0e0e0;padding:8px;">前端本地状态 + 服务端接口</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">配置层</td><td style="border:1px solid #e0e0e0;padding:8px;">-</td><td style="border:1px solid #e0e0e0;padding:8px;">任务模板、推荐池 inPool 标记、规则（标签/已选任务/生效时间）、分享弹窗配置</td><td style="border:1px solid #e0e0e0;padding:8px;">《任务模板表》《候选任务池表》《固定首批规则表》《分享弹窗配置表》</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">数据层</td><td style="border:1px solid #e0e0e0;padding:8px;">用户任务实例、完成记录、虎力值</td><td style="border:1px solid #e0e0e0;padding:8px;">任务状态机、规则状态、下发日志</td><td style="border:1px solid #e0e0e0;padding:8px;">用户任务日表、任务完成记录表、虎力值流水表</td></tr></tbody></table>
+
+<h3>3.3 状态机与状态流转规则</h3>
+<h4>3.3.1 任务模板状态机</h4>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">起始状态</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">触发动作</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">前置条件</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">目标状态</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">草稿</td><td style="border:1px solid #e0e0e0;padding:8px;">上线</td><td style="border:1px solid #e0e0e0;padding:8px;">表单校验通过</td><td style="border:1px solid #e0e0e0;padding:8px;">上线</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">上线</td><td style="border:1px solid #e0e0e0;padding:8px;">下线</td><td style="border:1px solid #e0e0e0;padding:8px;">-</td><td style="border:1px solid #e0e0e0;padding:8px;">下线</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">下线</td><td style="border:1px solid #e0e0e0;padding:8px;">删除</td><td style="border:1px solid #e0e0e0;padding:8px;">无进行中的用户实例/未关联生效规则</td><td style="border:1px solid #e0e0e0;padding:8px;">已删除（物理/逻辑）</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">上线</td><td style="border:1px solid #e0e0e0;padding:8px;">编辑</td><td style="border:1px solid #e0e0e0;padding:8px;">不允许，需先下线</td><td style="border:1px solid #e0e0e0;padding:8px;">-</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">下线</td><td style="border:1px solid #e0e0e0;padding:8px;">编辑</td><td style="border:1px solid #e0e0e0;padding:8px;">不允许，仅可删除</td><td style="border:1px solid #e0e0e0;padding:8px;">-</td></tr></tbody></table>
+<div class="note">说明：本期任务模板状态机收紧为「仅草稿可编辑，上线仅可下线，下线仅可删除」，避免线上模板误改。</div>
+
+<h4>3.3.2 用户任务实例每日状态</h4>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">起始状态</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">触发动作</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">前置条件</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">目标状态</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">未领取</td><td style="border:1px solid #e0e0e0;padding:8px;">领取</td><td style="border:1px solid #e0e0e0;padding:8px;">任务在候选池/固定规则生效</td><td style="border:1px solid #e0e0e0;padding:8px;">已领取</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">已领取</td><td style="border:1px solid #e0e0e0;padding:8px;">完成</td><td style="border:1px solid #e0e0e0;padding:8px;">当前日期未超时、满足任务类型规则</td><td style="border:1px solid #e0e0e0;padding:8px;">已完成</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">已完成</td><td style="border:1px solid #e0e0e0;padding:8px;">每日重置</td><td style="border:1px solid #e0e0e0;padding:8px;">到达每日重置时点（默认 03:00）</td><td style="border:1px solid #e0e0e0;padding:8px;">未领取（新实例）</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">已领取</td><td style="border:1px solid #e0e0e0;padding:8px;">断签/过期</td><td style="border:1px solid #e0e0e0;padding:8px;">连续打卡任务未在下一日完成</td><td style="border:1px solid #e0e0e0;padding:8px;">连续天数清零重计</td></tr></tbody></table>
+<div class="warn">⚠️ 待确认 @产品/研发：连续打卡「断签」判定是 T+1 未完成即清零，还是允许补签；每日重置时点是否统一 03:00。</div>
+
+<h2>四、功能需求详情</h2>
+
+<h3>4.1 C端：睡眠任务闭环</h3>
+
+<h4>4.1.1 消息通知 <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：新增泰小虎 PUSH 通道，需接入现有消息推送能力；不影响旧版用户（未登录/未授权推送者静默）。<strong>涉及终端</strong>：Android / iOS App。</p>
+<h5>4.1.1.1 页面原型与交互示意</h5>
+<img src="prd-assets/c-notification.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="消息通知-锁屏与PUSH">
+<h5>4.1.1.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：锁屏/通知中心显示泰小虎 PUSH 卡片，标题「泰小虎」，正文包含睡眠日报摘要与「点击查看」引导。</p>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>点击 PUSH 任意区域进入 App 首页；</li>
+<li>若用户未登录，点击后先跳转登录页，登录后回到首页；</li>
+<li>若用户关闭通知权限，本 PUSH 不再发送。</li>
+</ul>
+<h5>4.1.1.3 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">通知标题</td><td style="border:1px solid #e0e0e0;padding:8px;">固定文案「泰小虎」，取《消息推送配置表》.app_name</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">通知正文</td><td style="border:1px solid #e0e0e0;padding:8px;">取服务端动态组装：睡眠时长 + 引导语</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">跳转目标</td><td style="border:1px solid #e0e0e0;padding:8px;">App 首页 deeplink</td></tr></tbody></table>
+
+<h4>4.1.2 首页（泰小虎Tab） <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：在现有首页插入睡眠任务入口卡片，不替换顶部 Tab 与问答卡片；旧版无任务态兼容。<strong>涉及终端</strong>：Android / iOS App。</p>
+<h5>4.1.2.1 页面原型与交互示意</h5>
+<img src="prd-assets/c-home.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="首页-任务入口卡片">
+<h5>4.1.2.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：任务入口卡片位于首页蓝色卡片下方、问答卡片上方，根据用户当日任务状态展示三态：</p>
+<ul>
+<li><strong>无任务</strong>：文案「领取任务开启健康打卡」，按钮「去完成」；</li>
+<li><strong>有未完成</strong>：文案「今日任务 + 第一个未完成任务名称」，按钮「去完成」；</li>
+<li><strong>全部完成</strong>：文案「今日任务 + 任务名称」，按钮「更多任务」。</li>
+</ul>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>点击无任务/有未完成态卡片：有详情页则进任务详情，无详情则直接完成并弹窗；</li>
+<li>点击全部完成态卡片：跳转「健康打卡」任务列表；</li>
+<li>首次进入首页（自然日首次）自动弹出健康日报弹窗（见 4.1.3）。</li>
+</ul>
+<h5>4.1.2.3 功能按钮总表</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">功能名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">功能说明</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">备注</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">去完成</td><td style="border:1px solid #e0e0e0;padding:8px;">根据任务状态进入领取/完成/详情流程</td><td style="border:1px solid #e0e0e0;padding:8px;">首页任务卡片</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">更多任务</td><td style="border:1px solid #e0e0e0;padding:8px;">跳转健康打卡列表</td><td style="border:1px solid #e0e0e0;padding:8px;">全部完成态</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">健康Tab</td><td style="border:1px solid #e0e0e0;padding:8px;">跳转「我的睡眠」</td><td style="border:1px solid #e0e0e0;padding:8px;">顶部导航</td></tr></tbody></table>
+<h5>4.1.2.4 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">卡片文案</td><td style="border:1px solid #e0e0e0;padding:8px;">由 state.myTasks + state.completedToday 派生，前端本地计算</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">首个未完成任务</td><td style="border:1px solid #e0e0e0;padding:8px;">取《用户任务实例日表》今日已领取且未完成记录的第一条</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务名称</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》.name</td></tr></tbody></table>
+
+<h4>4.1.3 健康日报弹窗（首页弹窗） <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：新增首页 modal，每日首次进入首页触发；需控制展示频次避免打扰。<strong>涉及终端</strong>：Android / iOS App。</p>
+<h5>4.1.3.1 页面原型与交互示意</h5>
+<img src="prd-assets/c-daily-report.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="首页弹窗-健康日报">
+<h5>4.1.3.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：居中单按钮弹窗，标题「你的健康日报已经生成快来看看吧」，按钮「立即查看」。</p>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>触发时机：每日首次进入首页（自然日维度，以本地记录 last_daily_report_date 判断）；</li>
+<li>点击「立即查看」关闭弹窗并跳转「我的睡眠」；</li>
+<li>点击弹窗外遮罩关闭弹窗，留在首页；</li>
+<li>若服务端未生成日报（无睡眠数据），不弹窗。</li>
+</ul>
+<h5>4.1.3.3 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">弹窗标题</td><td style="border:1px solid #e0e0e0;padding:8px;">固定文案，取《文案配置表》.daily_report_title</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">展示控制</td><td style="border:1px solid #e0e0e0;padding:8px;">本地标记 last_daily_report_date + 服务端「今日日报是否生成」接口</td></tr></tbody></table>
+
+<h4>4.1.4 我的睡眠 <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：在「我的睡眠」页新增任务卡片，引导用户领取/完成健康任务；睡眠数据展示区保持现有。<strong>涉及终端</strong>：Android / iOS App。</p>
+<h5>4.1.4.1 页面原型与交互示意</h5>
+<img src="prd-assets/c-sleep.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="我的睡眠-任务卡片三态">
+<h5>4.1.4.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：任务卡片位于「昨晚睡眠数据」模块上方，状态与首页卡片一致：</p>
+<ul>
+<li>无任务：「领取任务开启健康打卡」+「去领取」；</li>
+<li>有未完成：「进入{任务名}立即完成」+「去完成」；</li>
+<li>全部完成：「进入任务立即完成」+「查看更多任务」。</li>
+</ul>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>点击「去领取」跳转「领取任务」；</li>
+<li>点击「去完成」：有详情跳详情，无详情直接完成；</li>
+<li>点击「查看更多任务」跳转「健康打卡」；</li>
+<li>每日完成首个任务触发「太棒了」弹窗（见 4.1.9）。</li>
+</ul>
+<h5>4.1.4.3 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务卡片状态</td><td style="border:1px solid #e0e0e0;padding:8px;">由《用户任务实例日表》今日记录派生</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">睡眠数据</td><td style="border:1px solid #e0e0e0;padding:8px;">取《睡眠记录表》昨日记录，无则展示「暂无数据」</td></tr></tbody></table>
+
+<h4>4.1.5 健康打卡（健康任务页面） <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：对「健康打卡」Tab 进行大改版，移除旧版非任务内容，仅保留任务列表与自定义任务入口。<strong>涉及终端</strong>：Android / iOS App。</p>
+<h5>4.1.5.1 页面原型与交互示意</h5>
+<p>列表态：</p>
+<img src="prd-assets/c-tasks-list.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="健康打卡-有任务列表">
+<p>空态：</p>
+<img src="prd-assets/c-tasks-empty.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="健康打卡-无任务空态">
+<h5>4.1.5.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：</p>
+<ul>
+<li>无任务：空态卡片（mascot + 文案 +「领取今日任务」按钮）+「添加自定义任务」按钮；</li>
+<li>有任务：任务列表，每个任务显示图标、名称、描述、奖励虎力值、完成勾选；</li>
+<li>已完成任务卡片背景置灰/浅绿，勾选打勾，奖励后显示 ✓。</li>
+</ul>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>点击未完成任务：hasDetail=true 跳转任务详情，否则直接完成；</li>
+<li>点击「探索新任务」/「+ 探索新任务」跳转「领取任务」；</li>
+<li>点击「添加自定义任务」跳转自定义任务页；</li>
+<li>所有任务完成后显示「赚取更多虎力值」按钮（跳转虎力值页）。</li>
+</ul>
+<p><strong>前置条件与权限</strong>：用户须处于登录态方可操作本人任务；未登录时点击任务/领取先拉起登录。任务完成仅作用于当前用户自身实例，无跨用户数据权限。</p>
+<h5>4.1.5.3 列表字段表</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">需求说明</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">备注</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务图标</td><td style="border:1px solid #e0e0e0;padding:8px;">任务模板配置的 emoji 图标</td><td style="border:1px solid #e0e0e0;padding:8px;">展示在列表左侧</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务名称</td><td style="border:1px solid #e0e0e0;padding:8px;">取任务模板名称</td><td style="border:1px solid #e0e0e0;padding:8px;">单行，超出省略</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务描述</td><td style="border:1px solid #e0e0e0;padding:8px;">一句话说明任务行为</td><td style="border:1px solid #e0e0e0;padding:8px;">单行，超出省略</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">奖励虎力值</td><td style="border:1px solid #e0e0e0;padding:8px;">完成任务可获得的虎力值</td><td style="border:1px solid #e0e0e0;padding:8px;">+N 展示</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">完成状态</td><td style="border:1px solid #e0e0e0;padding:8px;">未完成/已完成</td><td style="border:1px solid #e0e0e0;padding:8px;">已完成背景高亮并显示勾选</td></tr></tbody></table>
+<h5>4.1.5.4 功能按钮总表</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">功能名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">功能说明</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">备注</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">完成任务</td><td style="border:1px solid #e0e0e0;padding:8px;">点击任务行完成打卡</td><td style="border:1px solid #e0e0e0;padding:8px;">无详情直接完成，有详情先跳详情</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">领取今日任务</td><td style="border:1px solid #e0e0e0;padding:8px;">跳转领取任务页</td><td style="border:1px solid #e0e0e0;padding:8px;">空态卡片</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">探索新任务</td><td style="border:1px solid #e0e0e0;padding:8px;">跳转领取任务页</td><td style="border:1px solid #e0e0e0;padding:8px;">列表底部</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">添加自定义任务</td><td style="border:1px solid #e0e0e0;padding:8px;">跳转添加自定义任务页</td><td style="border:1px solid #e0e0e0;padding:8px;">列表底部/空态</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">赚取更多虎力值</td><td style="border:1px solid #e0e0e0;padding:8px;">跳转虎力值任务中心</td><td style="border:1px solid #e0e0e0;padding:8px;">全部完成后</td></tr></tbody></table>
+<h5>4.1.5.5 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务列表</td><td style="border:1px solid #e0e0e0;padding:8px;">取《用户任务实例日表》.task_id 关联《任务模板表》</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">完成状态</td><td style="border:1px solid #e0e0e0;padding:8px;">取《用户任务实例日表》.completed_at 是否非空</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">虎力值奖励</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》.points</td></tr></tbody></table>
+
+<h4>4.1.6 领取健康任务 <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：新增独立领取任务页，从候选池随机推荐 5 个任务，支持多选与换一批。<strong>涉及终端</strong>：Android / iOS App。</p>
+<h5>4.1.6.1 页面原型与交互示意</h5>
+<img src="prd-assets/c-claim.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="领取任务页">
+<h5>4.1.6.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：</p>
+<ul>
+<li>顶部标题「领取健康任务」；</li>
+<li>右上角「可多选」标签；</li>
+<li>任务列表展示 5 个候选任务：图标、名称、描述、奖励、勾选框；</li>
+<li>底部「换一批」+「选好了，去完成任务（已选 N 个）」按钮。</li>
+</ul>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>进入页面时，从候选池排除已领取任务后随机抽取 5 个；</li>
+<li>用户可点击任务行切换选中/取消；</li>
+<li>点击「换一批」重新随机抽取 5 个，排除当前已领取任务与上一批（默认开启排除上一批）；</li>
+<li>点击确认：未选中≥1 个则提示「请至少选择一个任务」；选中后写入用户任务实例日表并返回健康打卡；</li>
+<li>固定首批规则：命中特定用户标签的用户，首批任务优先按后台规则中的固定任务填充（见 4.2.6）。</li>
+</ul>
+<h5>4.1.6.3 查询条件/推荐规则</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">查询条件</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">查询说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">候选池</td><td style="border:1px solid #e0e0e0;padding:8px;">取后台「候选任务池」中 inPool=true 且状态为「上线」的任务模板</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">排除已领取</td><td style="border:1px solid #e0e0e0;padding:8px;">过滤掉用户今日已领取的 task_id</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">排除上一批</td><td style="border:1px solid #e0e0e0;padding:8px;">换一批时默认排除上一批展示过的 5 个 task_id</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">固定首批</td><td style="border:1px solid #e0e0e0;padding:8px;">命中用户标签时，优先从《固定首批规则表》取最多 3 个固定任务前置展示</td></tr></tbody></table>
+<h5>4.1.6.4 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">候选任务池</td><td style="border:1px solid #e0e0e0;padding:8px;">调「推荐任务池」接口：返回 inPool=true & status=online 的任务列表</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">已领取任务</td><td style="border:1px solid #e0e0e0;padding:8px;">取《用户任务实例日表》.task_id</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">用户标签</td><td style="border:1px solid #e0e0e0;padding:8px;">取《用户画像表》.tags</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">固定规则</td><td style="border:1px solid #e0e0e0;padding:8px;">取《固定首批规则表》生效中记录</td></tr></tbody></table>
+
+<h4>4.1.7 添加自定义任务 <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：新增自定义任务入口页，仅作展示占位；具体自定义任务创建/记录能力本期不实现。<strong>涉及终端</strong>：Android / iOS App。</p>
+<h5>4.1.7.1 页面原型与交互示意</h5>
+<img src="prd-assets/c-custom.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="添加自定义任务页">
+<h5>4.1.7.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：顶部「添加自定义任务」，展示系统预置自定义任务列表（标题、描述、记录人数），底部「返回」按钮。</p>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>点击「记录」按钮 Toast「记录 {任务名}」，本期仅占位；</li>
+<li>点击「返回」返回健康打卡。</li>
+</ul>
+<div class="warn">⚠️ 待确认 @产品：自定义任务的创建、记录、虎力值奖励逻辑是否纳入二期？</div>
+<h5>4.1.7.3 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">自定义任务列表</td><td style="border:1px solid #e0e0e0;padding:8px;">取《自定义任务表》（本期为写死预置数据）</td></tr></tbody></table>
+
+<h4>4.1.8 任务详情（活动H5） <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：为有详情页的任务（如「7天体重记录免费得体脂秤」）提供 H5/原生详情页承载；无详情任务直接完成。<strong>涉及终端</strong>：Android / iOS App。</p>
+<h5>4.1.8.1 页面原型与交互示意</h5>
+<img src="prd-assets/c-detail.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="任务详情-活动H5">
+<h5>4.1.8.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：顶部标题（长标题截断省略）、Banner、报名信息、挑战天数、目标、奖励预览、底部「立即参与」按钮。</p>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>进入详情页时记录「待完成」任务 ID；</li>
+<li>点击「立即参与」视为完成任务，返回健康打卡并打勾；</li>
+<li>若用户从详情页返回未点击参与，任务保持未领取/未完成状态。</li>
+</ul>
+<h5>4.1.8.3 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">详情页内容</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》.detail.h5_url 或 .detail.content 渲染</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">报名/活动时间</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》.detail.activity_time</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">奖励预览</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》.detail.reward_desc</td></tr></tbody></table>
+
+<h4>4.1.9 每日完成弹窗 <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：每日首次完成任务后触发，引导分享或继续领任务。<strong>涉及终端</strong>：Android / iOS App。</p>
+<h5>4.1.9.1 页面原型与交互示意</h5>
+<img src="prd-assets/c-completion.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="每日完成弹窗">
+<h5>4.1.9.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：居中奖杯图标、标题「太棒了！」、描述「你已完成今日首次任务打卡…」、双按钮「分享健康好习惯」「获取更多任务」。</p>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>触发时机：每日首次完成任务时；</li>
+<li>同一自然日重复完成任务不再弹出；</li>
+<li>点击「分享」拉起分享面板；</li>
+<li>点击「获取更多任务」跳转领取任务页。</li>
+</ul>
+<h5>4.1.9.3 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">弹窗文案</td><td style="border:1px solid #e0e0e0;padding:8px;">取后台「每日首完成分享弹窗配置」.title / .body</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">展示频次</td><td style="border:1px solid #e0e0e0;padding:8px;">本地记录 completionShown_date，每日首次完成触发</td></tr></tbody></table>
+
+<h4>4.1.10 分享面板 <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：从每日完成弹窗唤起，提供微信好友/保存本地两渠道；具体分享能力复用 App 现有分享 SDK。<strong>涉及终端</strong>：Android / iOS App。</p>
+<h5>4.1.10.1 页面原型与交互示意</h5>
+<img src="prd-assets/c-share.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="分享面板">
+<h5>4.1.10.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：底部弹出面板，标题「分享健康好习惯」，两列：微信好友、保存本地，底部「取消」。</p>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>点击「微信好友」调起微信分享 SDK，分享文案取后台配置；</li>
+<li>点击「保存本地」将分享海报保存到相册；</li>
+<li>点击「取消」或遮罩关闭面板；</li>
+<li>分享海报背景图可后台上传配置（见 4.2.8）。</li>
+</ul>
+<h5>4.1.10.3 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享标题/正文</td><td style="border:1px solid #e0e0e0;padding:8px;">取后台「每日首完成分享弹窗配置」</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享海报背景</td><td style="border:1px solid #e0e0e0;padding:8px;">取后台配置并透传分享 SDK</td></tr></tbody></table>
+
+<h4>4.1.11 虎力值任务中心 <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：展示当前虎力值与每日任务入口，引导用户继续赚虎力值。<strong>涉及终端</strong>：Android / iOS App。</p>
+<h5>4.1.11.1 页面原型与交互示意</h5>
+<img src="prd-assets/c-huli.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="虎力值任务中心">
+<h5>4.1.11.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：顶部绿渐变头显示当前虎力值，下方「每日任务」列表展示高收益/有详情任务。</p>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>完成任务时实时累加虎力值；</li>
+<li>点击任务进入对应详情页；</li>
+<li>虎力值上限、兑换规则本期不展开（沿用现有虎力值体系）。</li>
+</ul>
+<h5>4.1.11.3 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">当前虎力值</td><td style="border:1px solid #e0e0e0;padding:8px;">取《虎力值账户表》.balance</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">每日任务</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》中 points 较高且 hasDetail=true 的任务</td></tr></tbody></table>
+
+<h3>4.2 平台端后台：打卡任务体系</h3>
+
+<h4>4.2.1 任务模板管理 <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：后台新增任务模板生命周期管理能力，替代原分散配置。<strong>涉及终端</strong>：平台端后台（运营/产品）。</p>
+<h5>4.2.1.1 页面原型与交互示意</h5>
+<img src="prd-assets/b-list.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="任务模板管理-列表">
+<h5>4.2.1.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：左侧打卡任务体系导航，主区为任务模板列表，含筛选条件、批量操作占位、新建按钮、分页。</p>
+<p><strong>前置条件与权限</strong>：仅运营/产品角色可见与操作系统；编辑操作仅草稿态开放，上线/下线/删除受状态机约束（见 3.3.1）。批量操作本期为占位，暂不开放。</p>
+<h5>4.2.1.3 列表字段表</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">需求说明</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">备注</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务名称</td><td style="border:1px solid #e0e0e0;padding:8px;">任务模板名称</td><td style="border:1px solid #e0e0e0;padding:8px;">支持模糊搜索</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务类型</td><td style="border:1px solid #e0e0e0;padding:8px;">一键打卡 / 连续打卡</td><td style="border:1px solid #e0e0e0;padding:8px;">筛选条件</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务说明</td><td style="border:1px solid #e0e0e0;padding:8px;">cfgSummary 摘要</td><td style="border:1px solid #e0e0e0;padding:8px;">展示规则简述</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">奖励虎力值</td><td style="border:1px solid #e0e0e0;padding:8px;">+N 虎力值</td><td style="border:1px solid #e0e0e0;padding:8px;">列表展示</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">详情页</td><td style="border:1px solid #e0e0e0;padding:8px;">有/无</td><td style="border:1px solid #e0e0e0;padding:8px;">是否有 H5 详情页</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">状态</td><td style="border:1px solid #e0e0e0;padding:8px;">草稿/上线/下线</td><td style="border:1px solid #e0e0e0;padding:8px;">状态标签</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">创建时间</td><td style="border:1px solid #e0e0e0;padding:8px;">YYYY-MM-DD HH:mm</td><td style="border:1px solid #e0e0e0;padding:8px;">默认倒序</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">操作</td><td style="border:1px solid #e0e0e0;padding:8px;">编辑/详情/下线/删除</td><td style="border:1px solid #e0e0e0;padding:8px;">根据状态显示不同操作</td></tr></tbody></table>
+<h5>4.2.1.4 功能按钮总表</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">功能名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">功能说明</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">备注</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">新建任务模板</td><td style="border:1px solid #e0e0e0;padding:8px;">跳转新建任务模板表单</td><td style="border:1px solid #e0e0e0;padding:8px;">仅列表页</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">编辑</td><td style="border:1px solid #e0e0e0;padding:8px;">进入编辑态，仅草稿可编辑</td><td style="border:1px solid #e0e0e0;padding:8px;">状态=草稿</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">详情</td><td style="border:1px solid #e0e0e0;padding:8px;">查看任务模板详情</td><td style="border:1px solid #e0e0e0;padding:8px;">各状态</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">上线</td><td style="border:1px solid #e0e0e0;padding:8px;">将草稿发布上线</td><td style="border:1px solid #e0e0e0;padding:8px;">状态=草稿</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">下线</td><td style="border:1px solid #e0e0e0;padding:8px;">将上线任务下线</td><td style="border:1px solid #e0e0e0;padding:8px;">状态=上线</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">删除</td><td style="border:1px solid #e0e0e0;padding:8px;">删除草稿/下线任务</td><td style="border:1px solid #e0e0e0;padding:8px;">状态=草稿/下线，需二次确认</td></tr></tbody></table>
+<h5>4.2.1.5 查询条件</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">查询条件</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">查询说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务名称</td><td style="border:1px solid #e0e0e0;padding:8px;">文本输入，模糊匹配</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务类型</td><td style="border:1px solid #e0e0e0;padding:8px;">下拉：一键打卡 / 连续打卡 / 全部</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">状态</td><td style="border:1px solid #e0e0e0;padding:8px;">下拉：草稿 / 上线 / 下线 / 全部</td></tr></tbody></table>
+<h5>4.2.1.6 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">列表数据</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》，按创建时间倒序，默认分页 10/20/50</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">状态标签</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》.status 映射 STATUS 字典</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">类型标签</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》.type 映射 TASK_TYPES 字典</td></tr></tbody></table>
+
+<h4>4.2.2 新建/编辑任务模板 <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：统一任务模板的创建与编辑入口，含任务类型、奖励、重置规则、连续打卡配置。<strong>涉及终端</strong>：平台端后台。</p>
+<h5>4.2.2.1 页面原型与交互示意</h5>
+<img src="prd-assets/b-edit.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="新建/编辑任务模板">
+<h5>4.2.2.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：表单分基础信息与规则配置：</p>
+<ul>
+<li>任务名称、任务类型、任务描述、奖励虎力值为公共字段；</li>
+<li>连续打卡类型额外展示：连续天数、额外奖励；</li>
+<li>重置周期当前仅「每天」，重置时间 HH:mm（默认 03:00）。</li>
+</ul>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>保存时校验：名称为必填、奖励虎力值为正整数、连续天数为正整数、重置时间格式合法；</li>
+<li>仅草稿态可保存编辑；</li>
+<li>切换任务类型时，cfg 区域联动显示/隐藏。</li>
+</ul>
+<h5>4.2.2.3 编辑/新增表单</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">区域</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">功能逻辑说明</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">备注</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">基础信息</td><td style="border:1px solid #e0e0e0;padding:8px;">任务名称</td><td style="border:1px solid #e0e0e0;padding:8px;">必填，文本，长度 ⚠️ 待确认</td><td style="border:1px solid #e0e0e0;padding:8px;">唯一性待确认</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">基础信息</td><td style="border:1px solid #e0e0e0;padding:8px;">任务类型</td><td style="border:1px solid #e0e0e0;padding:8px;">单选：一键打卡 / 连续打卡</td><td style="border:1px solid #e0e0e0;padding:8px;">决定 cfg 字段</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">基础信息</td><td style="border:1px solid #e0e0e0;padding:8px;">任务描述</td><td style="border:1px solid #e0e0e0;padding:8px;">非必填，文本</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">基础信息</td><td style="border:1px solid #e0e0e0;padding:8px;">奖励虎力值</td><td style="border:1px solid #e0e0e0;padding:8px;">必填，正整数</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">连续打卡配置</td><td style="border:1px solid #e0e0e0;padding:8px;">连续天数</td><td style="border:1px solid #e0e0e0;padding:8px;">任务类型=连续打卡时必填，正整数，默认 7</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">连续打卡配置</td><td style="border:1px solid #e0e0e0;padding:8px;">额外奖励</td><td style="border:1px solid #e0e0e0;padding:8px;">任务类型=连续打卡时必填，正整数，默认 10</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">重置设置</td><td style="border:1px solid #e0e0e0;padding:8px;">重置周期</td><td style="border:1px solid #e0e0e0;padding:8px;">下拉：每天（本期唯一选项）</td><td style="border:1px solid #e0e0e0;padding:8px;">本期唯一选项</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">重置设置</td><td style="border:1px solid #e0e0e0;padding:8px;">重置时间</td><td style="border:1px solid #e0e0e0;padding:8px;">HH:mm，默认 03:00</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr></tbody></table>
+<h5>4.2.2.4 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">表单默认值</td><td style="border:1px solid #e0e0e0;padding:8px;">新建：系统默认值；编辑：取《任务模板表》当前记录</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务类型枚举</td><td style="border:1px solid #e0e0e0;padding:8px;">系统字典 TASK_TYPES</td></tr></tbody></table>
+
+<h4>4.2.3 任务模板详情 <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：展示任务模板完整信息，支持从详情进入编辑（仅草稿）。<strong>涉及终端</strong>：平台端后台。</p>
+<h5>4.2.3.1 页面原型与交互示意</h5>
+<img src="prd-assets/b-detail.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="任务模板详情">
+<h5>4.2.3.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：只读展示各字段，含状态、创建/更新时间、重置规则。</p>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>详情页「编辑」按钮仅当状态=草稿时显示；</li>
+<li>上线/下线/删除操作与列表页一致。</li>
+</ul>
+<h5>4.2.3.3 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">详情字段</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》单条记录全字段</td></tr></tbody></table>
+
+<h4>4.2.4 候选任务池 <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：运营可控制哪些任务进入 C端领取池，并查看在池状态。<strong>涉及终端</strong>：平台端后台。</p>
+<h5>4.2.4.1 页面原型与交互示意</h5>
+<img src="prd-assets/b-pool.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="候选任务池">
+<h5>4.2.4.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：列表展示任务名称、任务描述、类型、在池状态；支持按在池状态筛选、分页。</p>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>任务模板默认 inPool=false；</li>
+<li>运营可点击「移入池」/「移出池」改变 inPool 标记；</li>
+<li>仅状态=上线的任务可移入池；</li>
+<li>移出池不影响已领取用户的今日任务。</li>
+</ul>
+<h5>4.2.4.3 列表字段表</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">需求说明</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">备注</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务名称</td><td style="border:1px solid #e0e0e0;padding:8px;">任务模板名称</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务描述</td><td style="border:1px solid #e0e0e0;padding:8px;">任务模板描述</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务类型</td><td style="border:1px solid #e0e0e0;padding:8px;">一键打卡/连续打卡</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">在池状态</td><td style="border:1px solid #e0e0e0;padding:8px;">在池 / 不在池</td><td style="border:1px solid #e0e0e0;padding:8px;">可切换</td></tr></tbody></table>
+<h5>4.2.4.4 查询条件</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">查询条件</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">查询说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务名称</td><td style="border:1px solid #e0e0e0;padding:8px;">文本模糊搜索</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">在池状态</td><td style="border:1px solid #e0e0e0;padding:8px;">下拉：全部 / 在池 / 不在池</td></tr></tbody></table>
+<h5>4.2.4.5 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">列表数据</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》.inPool + 状态筛选</td></tr></tbody></table>
+
+<h4>4.2.5 固定首批规则 <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：支持按用户标签固定某些任务出现在该标签用户的首批推荐中（最多 3 个）。<strong>涉及终端</strong>：平台端后台。</p>
+<h5>4.2.5.1 页面原型与交互示意</h5>
+<img src="prd-assets/b-rule.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="固定首批规则-列表">
+<h5>4.2.5.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：列表展示规则名称、用户标签、已选任务、生效时间、优先级、状态、操作。</p>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>多条规则按优先级倒序匹配，标签命中即生效；</li>
+<li>规则状态：启用/停用；</li>
+<li>停用规则不再影响 C端推荐。</li>
+</ul>
+<h5>4.2.5.3 列表字段表</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">需求说明</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">备注</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">规则名称</td><td style="border:1px solid #e0e0e0;padding:8px;">规则名称</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">用户标签</td><td style="border:1px solid #e0e0e0;padding:8px;">命中该规则的用户标签</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">已选任务</td><td style="border:1px solid #e0e0e0;padding:8px;">最多 3 个任务名称</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">生效时间</td><td style="border:1px solid #e0e0e0;padding:8px;">YYYY-MM-DD ~ YYYY-MM-DD</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">优先级</td><td style="border:1px solid #e0e0e0;padding:8px;">数字越大越优先</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">状态</td><td style="border:1px solid #e0e0e0;padding:8px;">启用/停用</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">操作</td><td style="border:1px solid #e0e0e0;padding:8px;">编辑/详情/停用/启用/删除</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr></tbody></table>
+<h5>4.2.5.4 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">列表数据</td><td style="border:1px solid #e0e0e0;padding:8px;">取《固定首批规则表》</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">已选任务名称</td><td style="border:1px solid #e0e0e0;padding:8px;">规则.tasks 关联《任务模板表》.name</td></tr></tbody></table>
+
+<h4>4.2.6 固定首批规则编辑 <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：配置规则的标签、任务、生效时间与优先级。<strong>涉及终端</strong>：平台端后台。</p>
+<h5>4.2.6.1 页面原型与交互示意</h5>
+<img src="prd-assets/b-ruleedit.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="固定首批规则编辑">
+<h5>4.2.6.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：表单含规则名称、用户标签下拉、生效时间（起止日期）、优先级、已选任务标签区、候选任务筛选表格。</p>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>已选任务以紫色标签展示，最多 3 个，超过时 Toast「首批固定任务最多选择 3 个」；</li>
+<li>候选任务表格支持按任务名称、在池状态筛选；</li>
+<li>保存校验：规则名称必填、已选任务 1~3 个、开始日期≤结束日期；</li>
+<li>日期段未到/过期规则状态自动停用（或由调度任务处理）。</li>
+</ul>
+<h5>4.2.6.3 编辑/新增表单</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">区域</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">功能逻辑说明</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">备注</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">基础信息</td><td style="border:1px solid #e0e0e0;padding:8px;">规则名称</td><td style="border:1px solid #e0e0e0;padding:8px;">必填，文本</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">基础信息</td><td style="border:1px solid #e0e0e0;padding:8px;">用户标签</td><td style="border:1px solid #e0e0e0;padding:8px;">下拉多选，取已有用户标签体系</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">基础信息</td><td style="border:1px solid #e0e0e0;padding:8px;">生效时间</td><td style="border:1px solid #e0e0e0;padding:8px;">日期段选择器，开始≤结束</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">基础信息</td><td style="border:1px solid #e0e0e0;padding:8px;">优先级</td><td style="border:1px solid #e0e0e0;padding:8px;">必填，整数，越大越优先</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务选择</td><td style="border:1px solid #e0e0e0;padding:8px;">已选任务</td><td style="border:1px solid #e0e0e0;padding:8px;">标签展示，最多 3 个，可删除</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务选择</td><td style="border:1px solid #e0e0e0;padding:8px;">候选任务表</td><td style="border:1px solid #e0e0e0;padding:8px;">按名称/在池状态筛选，点击选中/取消</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr></tbody></table>
+<h5>4.2.6.4 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">用户标签</td><td style="border:1px solid #e0e0e0;padding:8px;">取《用户标签体系表》（已有体系，复用）</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">候选任务</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》inPool=true & status=online</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">已选任务</td><td style="border:1px solid #e0e0e0;padding:8px;">编辑时取《固定首批规则表》.tasks</td></tr></tbody></table>
+
+<h4>4.2.7 固定首批规则详情 <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：展示固定规则详情。<strong>涉及终端</strong>：平台端后台。</p>
+<h5>4.2.7.1 页面原型与交互示意</h5>
+<img src="prd-assets/b-ruledetail.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="固定首批规则详情">
+<h5>4.2.7.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：只读展示规则名称、标签、已选任务、生效时间、优先级、状态。</p>
+<h5>4.2.7.3 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">详情字段</td><td style="border:1px solid #e0e0e0;padding:8px;">取《固定首批规则表》单条记录</td></tr></tbody></table>
+
+<h4>4.2.8 每日首完成分享弹窗配置 <span class="tag y">本期新增</span></h4>
+<p><strong>需求影响范围</strong>：运营可配置 C端每日首完成弹窗的文案、背景图与每日次数。<strong>涉及终端</strong>：平台端后台。</p>
+<h5>4.2.8.1 页面原型与交互示意</h5>
+<img src="prd-assets/b-share.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="每日首完成分享弹窗配置">
+<h5>4.2.8.2 详细逻辑规则</h5>
+<p><strong>界面与展示规则</strong>：表单含启用开关、弹窗背景图上传、标题、正文（选填）、每日次数、预览弹窗。</p>
+<p><strong>业务逻辑与边界条件</strong>：</p>
+<ul>
+<li>启用开关关闭时，C端不弹窗；</li>
+<li>背景图上传后生成缩略图预览，支持删除；</li>
+<li>正文非必填，预览时空正文不渲染；</li>
+<li>保存后即时生效。</li>
+</ul>
+<h5>4.2.8.3 编辑表单</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">区域</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">功能逻辑说明</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">备注</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">基础设置</td><td style="border:1px solid #e0e0e0;padding:8px;">启用开关</td><td style="border:1px solid #e0e0e0;padding:8px;">布尔，默认关闭</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">基础设置</td><td style="border:1px solid #e0e0e0;padding:8px;">弹窗背景图</td><td style="border:1px solid #e0e0e0;padding:8px;">文件上传，accept=image/*，前端 base64 预览</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">文案</td><td style="border:1px solid #e0e0e0;padding:8px;">标题</td><td style="border:1px solid #e0e0e0;padding:8px;">必填，文本</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">文案</td><td style="border:1px solid #e0e0e0;padding:8px;">正文</td><td style="border:1px solid #e0e0e0;padding:8px;">选填，文本</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">规则</td><td style="border:1px solid #e0e0e0;padding:8px;">每日次数</td><td style="border:1px solid #e0e0e0;padding:8px;">必填，正整数，默认 1</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr></tbody></table>
+<h5>4.2.8.4 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">配置数据</td><td style="border:1px solid #e0e0e0;padding:8px;">取《分享弹窗配置表》单条记录（全局唯一配置）</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">背景图</td><td style="border:1px solid #e0e0e0;padding:8px;">配置表 .bg_image / 上传后转存对象存储</td></tr></tbody></table>
+
+<h2>五、非功能性需求</h2>
+<h3>5.1 性能要求</h3>
+<div class="warn">⚠️ 待确认 @产品/研发：页面首屏加载时间、接口响应时间 SLA、并发用户量。</div>
+<h3>5.2 安全与隐私</h3>
+<ul>
+<li>健康打卡数据、睡眠记录属于用户敏感数据，接口须鉴权；</li>
+<li>后台操作须记录操作日志；</li>
+<li>自定义任务内容前端展示需做 XSS 过滤。</li>
+</ul>
+<h3>5.3 兼容性</h3>
+<div class="warn">⚠️ 待确认 @产品/研发：支持的最低 App 版本、是否兼容 H5、小程序。</div>
+<h3>5.4 埋点需求</h3>
+<p>本需求埋点事件与属性严格遵循《泰小虎埋点规范 v2.3》。</p>
+<p><a href="https://ddyuan-spec.github.io/taixiaohu/taixiaohu-tracking-spec.html" target="_blank">泰小虎埋点规范 v2.3（在线查阅）</a></p>
+<p>本期涉及事件清单：</p>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">事件英文名</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">事件显示名</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">所属层</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">平台</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">触发时机</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">必含上报参数(友盟中文名)</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">备注</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">page_view</td><td style="border:1px solid #e0e0e0;padding:8px;">页面浏览</td><td style="border:1px solid #e0e0e0;padding:8px;">L1</td><td style="border:1px solid #e0e0e0;padding:8px;">Android/iOS</td><td style="border:1px solid #e0e0e0;padding:8px;">进入各页面</td><td style="border:1px solid #e0e0e0;padding:8px;">页面名称/页面路径/来源页面</td><td style="border:1px solid #e0e0e0;padding:8px;">各新页面</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">tab_switch</td><td style="border:1px solid #e0e0e0;padding:8px;">Tab切换</td><td style="border:1px solid #e0e0e0;padding:8px;">L1</td><td style="border:1px solid #e0e0e0;padding:8px;">Android/iOS</td><td style="border:1px solid #e0e0e0;padding:8px;">健康/泰小虎/服务 Tab 切换</td><td style="border:1px solid #e0e0e0;padding:8px;">来源Tab/目标Tab</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">button_click</td><td style="border:1px solid #e0e0e0;padding:8px;">按钮点击</td><td style="border:1px solid #e0e0e0;padding:8px;">L1</td><td style="border:1px solid #e0e0e0;padding:8px;">Android/iOS</td><td style="border:1px solid #e0e0e0;padding:8px;">点击任务/领取/完成/分享等按钮</td><td style="border:1px solid #e0e0e0;padding:8px;">页面名称/按钮名称</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">popup_view</td><td style="border:1px solid #e0e0e0;padding:8px;">弹窗曝光</td><td style="border:1px solid #e0e0e0;padding:8px;">L1</td><td style="border:1px solid #e0e0e0;padding:8px;">Android/iOS</td><td style="border:1px solid #e0e0e0;padding:8px;">日报弹窗/完成弹窗/分享面板展示</td><td style="border:1px solid #e0e0e0;padding:8px;">弹窗实例ID/弹窗名称/弹窗类型</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">popup_close</td><td style="border:1px solid #e0e0e0;padding:8px;">弹窗关闭</td><td style="border:1px solid #e0e0e0;padding:8px;">L1</td><td style="border:1px solid #e0e0e0;padding:8px;">Android/iOS</td><td style="border:1px solid #e0e0e0;padding:8px;">弹窗关闭</td><td style="border:1px solid #e0e0e0;padding:8px;">弹窗实例ID/关闭方式/停留时长</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">task_claim</td><td style="border:1px solid #e0e0e0;padding:8px;">领取任务</td><td style="border:1px solid #e0e0e0;padding:8px;">L2/L3</td><td style="border:1px solid #e0e0e0;padding:8px;">Android/iOS</td><td style="border:1px solid #e0e0e0;padding:8px;">用户确认领取任务</td><td style="border:1px solid #e0e0e0;padding:8px;">任务ID列表</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @数据：30事件目录未覆盖，需埋点评审</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">task_complete</td><td style="border:1px solid #e0e0e0;padding:8px;">完成任务</td><td style="border:1px solid #e0e0e0;padding:8px;">L2/L3</td><td style="border:1px solid #e0e0e0;padding:8px;">Android/iOS</td><td style="border:1px solid #e0e0e0;padding:8px;">用户完成打卡</td><td style="border:1px solid #e0e0e0;padding:8px;">任务ID/任务类型</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @数据：30事件目录未覆盖，需埋点评审</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">task_share</td><td style="border:1px solid #e0e0e0;padding:8px;">任务分享</td><td style="border:1px solid #e0e0e0;padding:8px;">L2/L3</td><td style="border:1px solid #e0e0e0;padding:8px;">Android/iOS</td><td style="border:1px solid #e0e0e0;padding:8px;">用户点击分享</td><td style="border:1px solid #e0e0e0;padding:8px;">分享渠道</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @数据：30事件目录未覆盖，需埋点评审</td></tr></tbody></table>
+
+<h2>六、验收标准</h2>
+<ol>
+<li><strong>AC1 任务领取</strong>：Given 用户无任务，When 进入领取任务页，Then 展示 5 个候选任务，支持多选与换一批。</li>
+<li><strong>AC2 任务完成</strong>：Given 用户有已领取任务，When 点击无详情任务，Then 任务状态变为已完成，虎力值实时累加。</li>
+<li><strong>AC3 详情任务</strong>：Given 用户领取了有详情任务，When 点击任务，Then 进入任务详情，点击「立即参与」后完成任务。</li>
+<li><strong>AC4 每日首完成弹窗</strong>：Given 用户当日首次完成任务，When 完成动画结束，Then 弹出「太棒了」弹窗，支持分享或继续领任务。</li>
+<li><strong>AC5 后台状态机</strong>：Given 任务模板为草稿，When 点击上线，Then 状态变为上线；Given 上线状态，Then 仅可下线，不可编辑。</li>
+<li><strong>AC6 固定首批规则</strong>：Given 用户命中某标签，When 进入领取任务页，Then 首批推荐包含该标签规则下的固定任务（最多3个）。</li>
+<li><strong>AC7 分享弹窗配置</strong>：Given 后台启用分享弹窗并上传背景图，When C端用户首次完成任务，Then 弹窗展示配置文案与背景图。</li>
+<li><strong>AC8 候选任务池</strong>：Given 运营将任务移出候选池，When 新用户进入领取任务页，Then 不再展示该任务。</li>
+</ol>
+
+<h2>七、关键边界设计检查清单</h2>
+<ul>
+<li><strong>网络与异常</strong>：弱网/断网时，任务完成操作本地排队，恢复后补上报；服务端 500 时按钮可重试。⚠️ 待确认 @研发 具体重试策略。</li>
+<li><strong>登录与游客态</strong>：未登录用户点击任务/领取时拉起登录，登录后自动续作。</li>
+<li><strong>极限值与空状态</strong>：任务名超长省略、任务列表为空展示空态、无睡眠数据展示「暂无数据」。</li>
+<li><strong>版本兼容性</strong>：老版本 App 不显示任务入口；后台新配置对老版本不生效。⚠️ 待确认 @研发 最低版本号。</li>
+<li><strong>并发与防重</strong>：完成任务前端防抖，后端对同一用户同一任务日维度幂等。</li>
+<li><strong>每日重置</strong>：每日重置时点批量将用户昨日未完成任务状态置为过期/清零连续天数。⚠️ 待确认 @研发。</li>
+</ul>
+
+<h2>八、文档维护与变更规范</h2>
+<ul>
+<li>版本号：V1.0 为初稿；后续小改 V1.1/V1.2；大迭代 V2.0。</li>
+<li>修订记录：任何修改须在历史修订记录表中登记版本号、日期、修订人、内容。</li>
+<li>变更周知：定稿后修改须在文档中高亮标出，并 @ 对应研发、测试、设计。</li>
+</ul>
+
+<h2>九、待确认项汇总</h2>
+<ol>
+<li>⚠️ 待确认 @产品/运营：KPI 具体阈值（日活提升、任务领取率、首任务完成率）。</li>
+<li>⚠️ 待确认 @产品/研发：PUSH 触发时区基准、每日首完成弹窗是否强打扰、分享后是否带回增量虎力值。</li>
+<li>⚠️ 待确认 @产品/研发：连续打卡「断签」判定规则（T+1 未完成即清零 / 允许补签）。</li>
+<li>⚠️ 待确认 @产品/研发：每日重置时点是否统一 03:00，重置时是否回退虎力值。</li>
+<li>⚠️ 待确认 @产品：自定义任务的创建/记录/奖励逻辑是否纳入二期。</li>
+<li>⚠️ 待确认 @产品/研发：支持的最低 App 版本、是否兼容 H5/小程序。</li>
+<li>⚠️ 待确认 @产品/研发：页面性能 SLA（首屏、接口响应、并发）。</li>
+<li>⚠️ 待确认 @数据/研发：打卡模块新增埋点事件（task_claim / task_complete / task_share）需走埋点评审。</li>
+<li>⚠️ 待确认 @产品：任务模板「任务名称」唯一性规则、字符长度限制。</li>
+<li>⚠️ 待确认 @产品/研发：后台编辑表单字段长度/小数位/枚举值边界。</li>
+</ol>
+
+</body>
+</html>
