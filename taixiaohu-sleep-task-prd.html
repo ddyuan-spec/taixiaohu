@@ -17,6 +17,10 @@
   .tag.r{background:#f5f5f5;color:#595959;}
   .warn{background:#fffbe6;border:1px solid #ffe58f;padding:10px 14px;border-radius:6px;margin:10px 0;color:#ad6800;}
   .note{background:#f0f5ff;border:1px solid #adc6ff;padding:10px 14px;border-radius:6px;margin:10px 0;color:#1d39c4;}
+  .solve{background:#f9f7ff;border:1px solid #d3cafc;padding:8px 14px;border-radius:6px;margin:8px 0;color:#3b2f8c;font-size:13px;}
+  .solve-list{margin:4px 0 0 0;padding-left:20px;}
+  .solve-list li{margin:3px 0;font-size:13px;line-height:1.5;}
+  .solve-no{font-weight:700;color:#722ed1;margin-right:4px;}
   ul,ol{margin:8px 0;}
   li{margin:4px 0;}
   code{background:#f4f4f5;padding:1px 4px;border-radius:3px;font-size:12px;}
@@ -37,7 +41,7 @@
 </table>
 
 <h3>历史修订记录</h3>
-<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">版本号</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">修订日期</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">修订人</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">修订内容简述</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">状态</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">V0.1</td><td style="border:1px solid #e0e0e0;padding:8px;">2026-08-12</td><td style="border:1px solid #e0e0e0;padding:8px;">AI 助手</td><td style="border:1px solid #e0e0e0;padding:8px;">基于 v7 C端原型与 punch-admin 后台原型，输出一~九骨架与§四逐页初稿</td><td style="border:1px solid #e0e0e0;padding:8px;">评审中</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">V0.2</td><td style="border:1px solid #e0e0e0;padding:8px;">2026-08-12</td><td style="border:1px solid #e0e0e0;padding:8px;">AI 助手</td><td style="border:1px solid #e0e0e0;padding:8px;">补全薄板块（KPI口径/异常分支/信息架构说明/非功能细节/验收扩展/边界策略），落定「重置不回退」「自定义任务沿用」，新增「每日可完成次数」衍生需求字段</td><td style="border:1px solid #e0e0e0;padding:8px;">评审中</td></tr></tbody></table>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">版本号</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">修订日期</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">修订人</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">修订内容简述</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">状态</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">V0.1</td><td style="border:1px solid #e0e0e0;padding:8px;">2026-08-12</td><td style="border:1px solid #e0e0e0;padding:8px;">AI 助手</td><td style="border:1px solid #e0e0e0;padding:8px;">基于 v7 C端原型与 punch-admin 后台原型，输出一~九骨架与§四逐页初稿</td><td style="border:1px solid #e0e0e0;padding:8px;">评审中</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">V0.2</td><td style="border:1px solid #e0e0e0;padding:8px;">2026-08-12</td><td style="border:1px solid #e0e0e0;padding:8px;">AI 助手</td><td style="border:1px solid #e0e0e0;padding:8px;">补全薄板块（KPI口径/异常分支/信息架构说明/非功能细节/验收扩展/边界策略），落定「重置不回退」「自定义任务沿用」，新增「每日可完成次数」衍生需求字段</td><td style="border:1px solid #e0e0e0;padding:8px;">评审中</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">V0.3</td><td style="border:1px solid #e0e0e0;padding:8px;">2026-08-13</td><td style="border:1px solid #e0e0e0;padding:8px;">AI 助手</td><td style="border:1px solid #e0e0e0;padding:8px;">草稿：结合《以睡眠健康为主线…分析》补充 §2.4 用户痛点图谱 + 每个功能点「解决痛点」序号化标注（①②③），待确认后定稿推送</td><td style="border:1px solid #e0e0e0;padding:8px;">草稿</td></tr></tbody></table>
 
 <h2>二、项目背景与目标</h2>
 <h3>2.1 业务背景</h3>
@@ -54,6 +58,11 @@
 <p>本期围绕「拉新促活 → 行为养成 → 分享传播」三层目标设定指标。下列为<strong>指标口径</strong>（计算方式），具体<strong>目标阈值</strong>由业务方给定（标 ⚠️ 待确认）。</p>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">指标</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">口径定义</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">目标阈值</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">DAU / 日活提升</td><td style="border:1px solid #e0e0e0;padding:8px;">接入睡眠任务闭环后的 App 日活跃用户数，相对接入前基线提升比例</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品/运营</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务领取率</td><td style="border:1px solid #e0e0e0;padding:8px;">当日领取任务 UV / 当日触达任务入口 UV（含 PUSH、首页、我的睡眠入口）</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品/运营</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">首任务完成率</td><td style="border:1px solid #e0e0e0;padding:8px;">当日完成首个任务 UV / 当日领取任务 UV</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品/运营</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">健康档案行为字段完整度</td><td style="border:1px solid #e0e0e0;padding:8px;">完成过健康任务用户中，健康档案行为字段（睡眠/打卡/任务）非空占比</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品/运营</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享传播增量</td><td style="border:1px solid #e0e0e0;padding:8px;">发起分享 UV / 完成首任务 UV；分享回流带来的新注册/唤醒 UV</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品/运营</td></tr></tbody></table>
 <div class="warn">⚠️ 待确认 @产品/运营：上述指标的具体目标阈值（如日活提升 X%、任务领取率 Y%、首任务完成率 Z%）。</div>
+
+<h3>2.4 用户痛点与功能映射（结合《以睡眠健康为主线，对泰小虎APP产品形态进行分析》）</h3>
+<p>本节将《以睡眠健康为主线，对泰小虎APP产品形态进行分析》中梳理的<strong>六大用户痛点</strong>作为本期需求的价值锚点，并把 §四 每个功能点对应到其解决的痛点，确保「功能不为做而做」。痛点归类如下：</p>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">编号</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">用户痛点</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">核心解法（摘自分析文档）</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">对应维度</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">P1</td><td style="border:1px solid #e0e0e0;padding:8px;">为什么每天要打开 App？（动力问题）</td><td style="border:1px solid #e0e0e0;padding:8px;">主动唤醒 + 情绪价值 + 即时价值交付（晨间 PUSH、打开即给晨报）</td><td style="border:1px solid #e0e0e0;padding:8px;">行动/基础·情绪/奖赏</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">P2</td><td style="border:1px solid #e0e0e0;padding:8px;">怎么记录更简单？（门槛问题）</td><td style="border:1px solid #e0e0e0;padding:8px;">无感自动化 + 一键式盲操 + AI 语音盲录</td><td style="border:1px solid #e0e0e0;padding:8px;">理智/功能</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">P3</td><td style="border:1px solid #e0e0e0;padding:8px;">怎么坚持去打卡？（习惯与粘性问题）</td><td style="border:1px solid #e0e0e0;padding:8px;">习惯梯级激励 + 不中断容错机制（补签容错、连续打卡阶梯奖励）</td><td style="border:1px solid #e0e0e0;padding:8px;">心理/习惯</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">P4</td><td style="border:1px solid #e0e0e0;padding:8px;">健康任务如何通用且促进使用？（履约问题）</td><td style="border:1px solid #e0e0e0;padding:8px;">模组化任务库 + 场景化原子任务 + 差异化履约</td><td style="border:1px solid #e0e0e0;padding:8px;">理智/履约</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">P5</td><td style="border:1px solid #e0e0e0;padding:8px;">后续怎么转化？（商业闭环问题）</td><td style="border:1px solid #e0e0e0;padding:8px;">分析-任务-商品/服务自然链路闭环</td><td style="border:1px solid #e0e0e0;padding:8px;">商业/转化</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">P6</td><td style="border:1px solid #e0e0e0;padding:8px;">打卡信息如何融入健康社区？（社交与共鸣问题）</td><td style="border:1px solid #e0e0e0;padding:8px;">脱敏打卡海报 + 话题同频 + 泰小虎 AI 社区驻场</td><td style="border:1px solid #e0e0e0;padding:8px;">情感/社交</td></tr></tbody></table>
+<p>各功能点对应的痛点标注见 §四 每个功能点标题下方的「解决痛点」说明。</p>
 
 <h2>三、业务流程与架构</h2>
 <h3>3.1 业务流程图</h3>
@@ -103,8 +112,12 @@
 
   <!-- 服务端 y=262 -->
   <rect x="150" y="262" width="150" height="50" rx="8" fill="#ffffff" stroke="#6b46c1"></rect>
-  <text x="225" y="280" text-anchor="middle" font-size="12" fill="#222">每日 03:00</text>
+  <text x="225" y="280" text-anchor="middle" font-size="12" fill="#222">每日 06:00</text>
   <text x="225" y="298" text-anchor="middle" font-size="12" fill="#222">触发 PUSH</text>
+
+  <rect x="330" y="262" width="150" height="50" rx="8" fill="#ffffff" stroke="#6b46c1"></rect>
+  <text x="405" y="280" text-anchor="middle" font-size="12" fill="#222">每日 03:00</text>
+  <text x="405" y="298" text-anchor="middle" font-size="12" fill="#222">触发 重置</text>
 
   <rect x="510" y="262" width="150" height="50" rx="8" fill="#ffffff" stroke="#6b46c1"></rect>
   <text x="585" y="292" text-anchor="middle" font-size="13" fill="#222">任务下发引擎</text>
@@ -141,7 +154,7 @@
   <line x1="945" y1="146" x2="945" y2="156" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"></line>
   <line x1="840" y1="183" x2="868" y2="183" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"></line>
 
-  <line x1="300" y1="287" x2="508" y2="287" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"></line>
+  <line x1="480" y1="287" x2="508" y2="287" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"></line>
   <line x1="660" y1="287" x2="688" y2="287" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"></line>
   <line x1="840" y1="287" x2="868" y2="287" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"></line>
 
@@ -151,7 +164,7 @@
   <line x1="840" y1="449" x2="868" y2="449" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"></line>
 
   <!-- ===== 跨泳道箭头 ===== -->
-  <!-- S1 -> N1 (触发PUSH) -->
+  <!-- 06:00 PUSH -> C端 收到PUSH/通知 -->
   <line x1="225" y1="262" x2="225" y2="148" stroke="#6b46c1" stroke-width="1.6" marker-end="url(#arr)"></line>
   <!-- S2 -> N4 (任务下发) -->
   <line x1="585" y1="262" x2="765" y2="148" stroke="#6b46c1" stroke-width="1.6" marker-end="url(#arr)"></line>
@@ -216,7 +229,7 @@
 
 <h3>4.1 C端：睡眠任务闭环</h3>
 
-<h4>4.1.1 消息通知 <span class="tag y">本期新增</span></h4>
+4.1.1 消息通知 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P1 动力问题：每日 06:00 PUSH 主动唤醒，给即时价值（晨报/能量恢复指数），解决「重要不紧急、无痛点不打开」</li></ul></div>
 <p><strong>需求影响范围</strong>：新增泰小虎 PUSH 通道，需接入现有消息推送能力；不影响旧版用户（未登录/未授权推送者静默）。<strong>涉及终端</strong>：Android / iOS App（接收端）+ 平台端后台（PUSH 推送定时任务配置，与任务重置定时任务相互独立）。</p>
 <h5>4.1.1.1 页面原型与交互示意</h5>
 <img src="prd-assets/c-notification.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="消息通知-锁屏与PUSH">
@@ -231,7 +244,7 @@
 <h5>4.1.1.3 数据来源</h5>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">通知标题</td><td style="border:1px solid #e0e0e0;padding:8px;">固定文案「泰小虎」，取《消息推送配置表》.app_name</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">通知正文</td><td style="border:1px solid #e0e0e0;padding:8px;">取服务端动态组装：睡眠时长 + 引导语</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">跳转目标</td><td style="border:1px solid #e0e0e0;padding:8px;">App 首页 deeplink</td></tr></tbody></table>
 
-<h4>4.1.2 首页（泰小虎Tab） <span class="tag y">本期新增</span></h4>
+4.1.2 首页（泰小虎Tab） <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P1 动力问题：首页即给任务入口与价值曝光，打开即见任务、降低进入门槛</li><li><span class="solve-no">②</span>P4 履约问题：任务入口前置曝光，降低履约启动成本</li></ul></div>
 <p><strong>需求影响范围</strong>：在现有首页插入睡眠任务入口卡片，不替换顶部 Tab 与问答卡片；旧版无任务态兼容。<strong>涉及终端</strong>：Android / iOS App。</p>
 <h5>4.1.2.1 页面原型与交互示意</h5>
 <img src="prd-assets/c-home.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="首页-任务入口卡片">
@@ -253,7 +266,7 @@
 <h5>4.1.2.4 数据来源</h5>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">卡片文案</td><td style="border:1px solid #e0e0e0;padding:8px;">由 state.myTasks + state.completedToday 派生，前端本地计算</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">首个未完成任务</td><td style="border:1px solid #e0e0e0;padding:8px;">取《用户任务实例日表》今日已领取且未完成记录的第一条</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务名称</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》.name</td></tr></tbody></table>
 
-<h4>4.1.3 健康日报弹窗（首页弹窗） <span class="tag y">本期新增</span></h4>
+4.1.3 健康日报弹窗（首页弹窗） <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P1 动力问题：打开即给价值（晨报），避免先做苦力</li><li><span class="solve-no">②</span>P2 门槛问题：承载极速录入入口，降低记录门槛</li></ul></div>
 <p><strong>需求影响范围</strong>：新增首页 modal，每日首次进入首页触发；需控制展示频次避免打扰。<strong>涉及终端</strong>：Android / iOS App。</p>
 <h5>4.1.3.1 页面原型与交互示意</h5>
 <img src="prd-assets/c-daily-report.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="首页弹窗-健康日报">
@@ -269,7 +282,7 @@
 <h5>4.1.3.3 数据来源</h5>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">弹窗标题</td><td style="border:1px solid #e0e0e0;padding:8px;">固定文案，取《文案配置表》.daily_report_title</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">展示控制</td><td style="border:1px solid #e0e0e0;padding:8px;">本地标记 last_daily_report_date + 服务端「今日日报是否生成」接口</td></tr></tbody></table>
 
-<h4>4.1.4 我的睡眠 <span class="tag y">本期新增</span></h4>
+4.1.4 我的睡眠 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P2 门槛问题：极速录入（一滑一点 3–5 秒）解决手动填表繁琐</li><li><span class="solve-no">②</span>P4 履约问题：并展示睡眠数据，让履约有即时反馈</li></ul></div>
 <p><strong>需求影响范围</strong>：在「我的睡眠」页新增任务卡片，引导用户领取/完成健康任务；睡眠数据展示区保持现有。<strong>涉及终端</strong>：Android / iOS App。</p>
 <h5>4.1.4.1 页面原型与交互示意</h5>
 <img src="prd-assets/c-sleep.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="我的睡眠-任务卡片三态">
@@ -290,7 +303,7 @@
 <h5>4.1.4.3 数据来源</h5>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务卡片状态</td><td style="border:1px solid #e0e0e0;padding:8px;">由《用户任务实例日表》今日记录派生</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">睡眠数据</td><td style="border:1px solid #e0e0e0;padding:8px;">取《睡眠记录表》昨日记录，无则展示「暂无数据」</td></tr></tbody></table>
 
-<h4>4.1.5 健康打卡（健康任务页面） <span class="tag y">本期新增</span></h4>
+4.1.5 健康打卡（健康任务页面） <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P4 履约问题：以模组化任务库 + 场景化原子任务曝光，任务轻量易完成、不像做作业</li></ul></div>
 <p><strong>需求影响范围</strong>：对「健康打卡」Tab 进行大改版，移除旧版非任务内容，仅保留任务列表与自定义任务入口。<strong>涉及终端</strong>：Android / iOS App。</p>
 <h5>4.1.5.1 页面原型与交互示意</h5>
 <p>列表态：</p>
@@ -319,7 +332,7 @@
 <h5>4.1.5.5 数据来源</h5>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务列表</td><td style="border:1px solid #e0e0e0;padding:8px;">取《用户任务实例日表》.task_id 关联《任务模板表》</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">完成状态</td><td style="border:1px solid #e0e0e0;padding:8px;">取《用户任务实例日表》.completed_at 是否非空</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">虎力值奖励</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》.points</td></tr></tbody></table>
 
-<h4>4.1.6 领取健康任务 <span class="tag y">本期新增</span></h4>
+4.1.6 领取健康任务 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P4 履约问题：领取即进入习惯养成；原子任务领取降低履约阻力</li><li><span class="solve-no">②</span>P3 习惯粘性：领取动作本身启动习惯养成回路</li></ul></div>
 <p><strong>需求影响范围</strong>：新增独立领取任务页，从候选池随机推荐 5 个任务，支持多选与换一批。<strong>涉及终端</strong>：Android / iOS App。</p>
 <h5>4.1.6.1 页面原型与交互示意</h5>
 <img src="prd-assets/c-claim.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="领取任务页">
@@ -344,14 +357,14 @@
 <h5>4.1.6.4 数据来源</h5>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">候选任务池</td><td style="border:1px solid #e0e0e0;padding:8px;">调「推荐任务池」接口：返回 inPool=true & status=online 的任务列表</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">已领取任务</td><td style="border:1px solid #e0e0e0;padding:8px;">取《用户任务实例日表》.task_id</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">用户标签</td><td style="border:1px solid #e0e0e0;padding:8px;">取《用户画像表》.tags</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">固定规则</td><td style="border:1px solid #e0e0e0;padding:8px;">取《固定首批规则表》生效中记录</td></tr></tbody></table>
 
-<h4>4.1.7 添加自定义任务 <span class="tag r">已有-沿用</span></h4>
+4.1.7 添加自定义任务 <span class="tag r">已有-沿用</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P2 门槛问题：用户自建自定义任务，降低记录/任务门槛</li><li><span class="solve-no">②</span>P4 履约问题：支持差异化履约，适配不同用户</li></ul></div>
 <p><strong>需求影响范围</strong>：自定义任务为<strong>已有功能</strong>，本期 C端沿用现有「添加自定义任务」入口与记录能力，仅确保其在改版后的健康打卡页正常可达（列表底部/空态的「添加自定义任务」按钮跳转）。<strong>涉及终端</strong>：Android / iOS App。</p>
 <h5>4.1.7.1 页面原型与交互示意</h5>
 <img src="prd-assets/c-custom.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="添加自定义任务页">
 <h5>4.1.7.2 详细逻辑规则</h5>
 <p>沿用现有功能。</p>
 
-<h4>4.1.8 任务详情（活动H5） <span class="tag y">本期新增</span></h4>
+4.1.8 任务详情（活动H5） <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P5 商业闭环：任务详情 H5 从任务/报告自然导出配套商品/服务，形成分析-任务-商品链路</li><li><span class="solve-no">②</span>P4 履约问题：履约后自然承接转化</li></ul></div>
 <p><strong>需求影响范围</strong>：为有详情页的任务（如「7天体重记录免费得体脂秤」）提供 H5/原生详情页承载；无详情任务直接完成。<strong>涉及终端</strong>：Android / iOS App。</p>
 <h5>4.1.8.1 页面原型与交互示意</h5>
 <img src="prd-assets/c-detail.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="任务详情-活动H5">
@@ -366,7 +379,7 @@
 <h5>4.1.8.3 数据来源</h5>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">详情页内容</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》.detail.h5_url 或 .detail.content 渲染</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">报名/活动时间</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》.detail.activity_time</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">奖励预览</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》.detail.reward_desc</td></tr></tbody></table>
 
-<h4>4.1.9 每日完成弹窗 <span class="tag y">本期新增</span></h4>
+4.1.9 每日完成弹窗 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P1 动力问题：完成弹窗给即时正反馈（虎力值+被夸）强化动力</li><li><span class="solve-no">②</span>P6 社交共鸣：并触发分享欲，连接社交</li></ul></div>
 <p><strong>需求影响范围</strong>：每日首次完成任务后触发，引导分享或继续领任务。<strong>涉及终端</strong>：Android / iOS App。</p>
 <h5>4.1.9.1 页面原型与交互示意</h5>
 <img src="prd-assets/c-completion.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="每日完成弹窗">
@@ -385,7 +398,7 @@
 <p>C端每日完成弹窗样式为固定设计规范，除背景图、标题、正文、按钮文案外，颜色/字号/圆角/尺寸/动效均不通过后台配置，确保全平台体验一致。</p>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">元素</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">样式规格</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">备注</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">遮罩层</td><td style="border:1px solid #e0e0e0;padding:8px;">颜色 #000000，透明度 50%；点击可关闭弹窗</td><td style="border:1px solid #e0e0e0;padding:8px;">与分享面板共用同一遮罩组件</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">弹窗容器</td><td style="border:1px solid #e0e0e0;padding:8px;">宽度 280dp（iOS 270pt），最大 80% 屏宽；高度随内容自适应；垂直居中；圆角 16dp；背景 #FFFFFF</td><td style="border:1px solid #e0e0e0;padding:8px;">无背景图时为白底</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">弹窗背景图</td><td style="border:1px solid #e0e0e0;padding:8px;">取后台配置，按比例缩放覆盖整个弹窗容器（object-fit: cover）</td><td style="border:1px solid #e0e0e0;padding:8px;">上传图需保证文字区域可读性，建议上下留白</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">奖杯图标</td><td style="border:1px solid #e0e0e0;padding:8px;">尺寸 72×72dp，居中；主色 #FFC107（金），无描边/阴影</td><td style="border:1px solid #e0e0e0;padding:8px;">可用 Lottie 或静态图</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">标题</td><td style="border:1px solid #e0e0e0;padding:8px;">字号 20sp，字重 Bold，颜色 #333333，居中，距图标 16dp</td><td style="border:1px solid #e0e0e0;padding:8px;">后台 title 字段</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">描述</td><td style="border:1px solid #e0e0e0;padding:8px;">字号 14sp，颜色 #666666，居中，行高 1.5，距标题 8dp</td><td style="border:1px solid #e0e0e0;padding:8px;">后台 body 字段，空时不渲染</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">主按钮「分享健康好习惯」</td><td style="border:1px solid #e0e0e0;padding:8px;">宽度 100%（扣除内边距），高度 44dp，圆角 22dp；背景品牌绿 #07C160；文字 #FFFFFF，16sp，Medium；距描述 24dp</td><td style="border:1px solid #e0e0e0;padding:8px;">文案对应后台「按钮文案」字段</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">次按钮「获取更多任务」</td><td style="border:1px solid #e0e0e0;padding:8px;">同主按钮尺寸；背景透明，文字品牌绿 #07C160，16sp，Medium；1dp 品牌绿描边；距主按钮 12dp</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">关闭 icon（可选）</td><td style="border:1px solid #e0e0e0;padding:8px;">右上角 24×24dp，#999999；默认不展示，点击遮罩关闭</td><td style="border:1px solid #e0e0e0;padding:8px;">如运营需要可全局开启</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">入场动效</td><td style="border:1px solid #e0e0e0;padding:8px;">弹窗从 0.9 缩放到 1.0 + 透明度 0→1，时长 250ms；遮罩渐显 200ms</td><td style="border:1px solid #e0e0e0;padding:8px;">使用系统默认弹性曲线</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">退场动效</td><td style="border:1px solid #e0e0e0;padding:8px;">弹窗缩放 1.0→0.95 + 透明度 1→0，时长 200ms；遮罩渐隐 200ms</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr></tbody></table>
 
-<h4>4.1.10 分享面板 <span class="tag y">本期新增</span></h4>
+4.1.10 分享面板 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P6 社交共鸣：脱敏打卡海报一键分享微信/朋友圈，满足分享欲且保护隐私</li></ul></div>
 <p><strong>需求影响范围</strong>：从每日完成弹窗唤起，提供微信好友/保存本地两渠道；具体分享能力复用 App 现有分享 SDK。<strong>涉及终端</strong>：Android / iOS App。</p>
 <h5>4.1.10.1 页面原型与交互示意</h5>
 <img src="prd-assets/c-share.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="分享面板">
@@ -409,7 +422,7 @@
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">内容项</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值 / 默认值</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">说明</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">状态</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享标题</td><td style="border:1px solid #e0e0e0;padding:8px;">默认「分享健康好习惯」</td><td style="border:1px solid #e0e0e0;padding:8px;">分享卡片主标题、微信会话内卡片标题</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品：参照既有分享弹窗需求定稿</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享图片（海报）</td><td style="border:1px solid #e0e0e0;padding:8px;">后台上传背景图；缺省用默认渐变海报</td><td style="border:1px solid #e0e0e0;padding:8px;">微信会话缩略图 thumb + 落地页头图</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品：图尺寸 / 比例 / 默认素材</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享文案</td><td style="border:1px solid #e0e0e0;padding:8px;">默认「每天打卡，养成健康好习惯，领取虎力值换好礼」</td><td style="border:1px solid #e0e0e0;padding:8px;">微信会话描述 desc</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品：参照既有分享弹窗需求</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">落地页链接</td><td style="border:1px solid #e0e0e0;padding:8px;">默认 https://h5.taixiaohu.com/sleep-share?from=share&task=first</td><td style="border:1px solid #e0e0e0;padding:8px;">点击分享卡片 / 链接跳转目标（见 4.1.12）</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品/研发：落地页域名与路径</td></tr></tbody></table>
 <div class="warn">⚠️ 待确认 @产品：上述「标题 / 图片 / 文案 / 落地页链接」具体值，需参照既有分享弹窗需求（历史分享类需求）对齐后定稿，本期不臆造。</div>
 
-<h4>4.1.11 虎力值任务中心 <span class="tag y">本期新增</span></h4>
+4.1.11 虎力值任务中心 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P3 习惯粘性：虎力值任务中心做阶梯激励闭环</li><li><span class="solve-no">②</span>P5 商业闭环：并可兑换健康好物，打通变现</li></ul></div>
 <p><strong>需求影响范围</strong>：展示当前虎力值与每日任务入口，引导用户继续赚虎力值。<strong>涉及终端</strong>：Android / iOS App。</p>
 <h5>4.1.11.1 页面原型与交互示意</h5>
 <img src="prd-assets/c-huli.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="虎力值任务中心">
@@ -424,7 +437,7 @@
 <h5>4.1.11.3 数据来源</h5>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">当前虎力值</td><td style="border:1px solid #e0e0e0;padding:8px;">取《虎力值账户表》.balance</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">每日任务</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》中 hasDetail=true 的任务</td></tr></tbody></table>
 
-<h4>4.1.12 分享落地页 <span class="tag y">本期新增</span></h4>
+4.1.12 分享落地页 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P6 社交共鸣：分享落地页承接分享回流，拉新/唤醒并提供同频共鸣入口</li></ul></div>
 <p><strong>需求影响范围</strong>：分享卡片 / 链接点击后打开的落地页（H5），承载分享内容展示与 App 拉新转化。<strong>涉及终端</strong>：H5（微信 / 浏览器内打开）+ Android / iOS App（深链回跳）。</p>
 <h5>4.1.12.1 页面原型与交互示意</h5>
 <img src="prd-assets/c-share-landing.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="分享落地页">
@@ -443,7 +456,7 @@
 
 <h3>4.2 平台端后台：打卡任务体系</h3>
 
-<h4>4.2.1 任务模板管理 <span class="tag y">本期新增</span></h4>
+4.2.1 任务模板管理 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P4 履约问题：后台管理通用任务架构（模组化任务库），支撑场景化原子任务</li></ul></div>
 <p><strong>需求影响范围</strong>：后台新增任务模板生命周期管理能力，替代原分散配置。<strong>涉及终端</strong>：平台端后台（运营/产品）。</p>
 <h5>4.2.1.1 页面原型与交互示意</h5>
 <img src="prd-assets/b-list.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="任务模板管理-列表">
@@ -459,7 +472,7 @@
 <h5>4.2.1.6 数据来源</h5>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">列表数据</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》，按创建时间倒序，默认分页 10/20/50</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">状态标签</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》.status 映射 STATUS 字典</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">类型标签</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》.type 映射 TASK_TYPES 字典</td></tr></tbody></table>
 
-<h4>4.2.2 新建/编辑任务模板 <span class="tag y">本期新增</span></h4>
+4.2.2 新建/编辑任务模板 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P4 履约问题：配置模组化任务模板（基础养成/睡眠定向等类型），支撑差异化履约</li></ul></div>
 <p><strong>需求影响范围</strong>：统一任务模板的创建与编辑入口，含任务类型、奖励、重置规则、连续打卡配置。<strong>涉及终端</strong>：平台端后台。</p>
 <h5>4.2.2.1 页面原型与交互示意</h5>
 <img src="prd-assets/b-edit.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="新建/编辑任务模板">
@@ -481,7 +494,7 @@
 <h5>4.2.2.4 数据来源</h5>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">表单默认值</td><td style="border:1px solid #e0e0e0;padding:8px;">新建：系统默认值；编辑：取《任务模板表》当前记录</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务类型枚举</td><td style="border:1px solid #e0e0e0;padding:8px;">系统字典 TASK_TYPES</td></tr></tbody></table>
 
-<h4>4.2.3 任务模板详情 <span class="tag y">本期新增</span></h4>
+4.2.3 任务模板详情 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P4 履约问题：任务模板详情查看，保障配置可追溯</li></ul></div>
 <p><strong>需求影响范围</strong>：展示任务模板完整信息，支持从详情进入编辑（仅草稿）。<strong>涉及终端</strong>：平台端后台。</p>
 <h5>4.2.3.1 页面原型与交互示意</h5>
 <img src="prd-assets/b-detail.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="任务模板详情">
@@ -495,7 +508,7 @@
 <h5>4.2.3.3 数据来源</h5>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">详情字段</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》单条记录全字段</td></tr></tbody></table>
 
-<h4>4.2.4 候选任务池 <span class="tag y">本期新增</span></h4>
+4.2.4 候选任务池 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P4 履约问题：候选任务池沉淀场景化原子任务，按标签差异化下发</li></ul></div>
 <p><strong>需求影响范围</strong>：运营可控制哪些任务进入 C端领取池，并查看在池状态。<strong>涉及终端</strong>：平台端后台。</p>
 <h5>4.2.4.1 页面原型与交互示意</h5>
 <img src="prd-assets/b-pool.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="候选任务池">
@@ -515,7 +528,7 @@
 <h5>4.2.4.5 数据来源</h5>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">列表数据</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》.inPool + 状态筛选</td></tr></tbody></table>
 
-<h4>4.2.5 固定首批规则 <span class="tag y">本期新增</span></h4>
+4.2.5 固定首批规则 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P4 履约问题：固定首批规则按用户标签差异化首批下发，避免千人一面</li></ul></div>
 <p><strong>需求影响范围</strong>：支持按用户标签固定某些任务出现在该标签用户的首批推荐中（最多 3 个）。<strong>涉及终端</strong>：平台端后台。</p>
 <h5>4.2.5.1 页面原型与交互示意</h5>
 <img src="prd-assets/b-rule.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="固定首批规则-列表">
@@ -532,7 +545,7 @@
 <h5>4.2.5.4 数据来源</h5>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">列表数据</td><td style="border:1px solid #e0e0e0;padding:8px;">取《固定首批规则表》</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">已选任务名称</td><td style="border:1px solid #e0e0e0;padding:8px;">规则.tasks 关联《任务模板表》.name</td></tr></tbody></table>
 
-<h4>4.2.6 固定首批规则编辑 <span class="tag y">本期新增</span></h4>
+4.2.6 固定首批规则编辑 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P4 履约问题：规则编辑配置，支撑差异化履约策略调整</li></ul></div>
 <p><strong>需求影响范围</strong>：配置规则的标签、任务、生效时间与优先级。<strong>涉及终端</strong>：平台端后台。</p>
 <h5>4.2.6.1 页面原型与交互示意</h5>
 <img src="prd-assets/b-ruleedit.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="固定首批规则编辑">
@@ -550,7 +563,7 @@
 <h5>4.2.6.4 数据来源</h5>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">用户标签</td><td style="border:1px solid #e0e0e0;padding:8px;">取《用户标签体系表》（已有体系，复用）</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">候选任务</td><td style="border:1px solid #e0e0e0;padding:8px;">取《任务模板表》inPool=true & status=online</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">已选任务</td><td style="border:1px solid #e0e0e0;padding:8px;">编辑时取《固定首批规则表》.tasks</td></tr></tbody></table>
 
-<h4>4.2.7 固定首批规则详情 <span class="tag y">本期新增</span></h4>
+4.2.7 固定首批规则详情 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P4 履约问题：规则详情查看，保障配置可追溯</li></ul></div>
 <p><strong>需求影响范围</strong>：展示固定规则详情。<strong>涉及终端</strong>：平台端后台。</p>
 <h5>4.2.7.1 页面原型与交互示意</h5>
 <img src="prd-assets/b-ruledetail.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="固定首批规则详情">
@@ -559,7 +572,7 @@
 <h5>4.2.7.3 数据来源</h5>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">详情字段</td><td style="border:1px solid #e0e0e0;padding:8px;">取《固定首批规则表》单条记录</td></tr></tbody></table>
 
-<h4>4.2.8 每日首完成分享弹窗配置 <span class="tag y">本期新增</span></h4>
+4.2.8 每日首完成分享弹窗配置 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P6 社交共鸣：配置脱敏打卡海报（标题/图片/文案/落地页），驱动分享欲与社交裂变</li></ul></div>
 <p><strong>需求影响范围</strong>：运营可配置 C端每日首完成弹窗的文案、背景图与每日次数。<strong>涉及终端</strong>：平台端后台。</p>
 <h5>4.2.8.1 页面原型与交互示意</h5>
 <img src="prd-assets/b-share.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="每日首完成分享弹窗配置">
