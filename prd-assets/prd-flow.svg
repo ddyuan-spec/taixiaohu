@@ -43,8 +43,12 @@
 
   <!-- 服务端 y=262 -->
   <rect x="150" y="262" width="150" height="50" rx="8" fill="#ffffff" stroke="#6b46c1"></rect>
-  <text x="225" y="280" text-anchor="middle" font-size="12" fill="#222">每日 03:00</text>
+  <text x="225" y="280" text-anchor="middle" font-size="12" fill="#222">每日 06:00</text>
   <text x="225" y="298" text-anchor="middle" font-size="12" fill="#222">触发 PUSH</text>
+
+  <rect x="330" y="262" width="150" height="50" rx="8" fill="#ffffff" stroke="#6b46c1"></rect>
+  <text x="405" y="280" text-anchor="middle" font-size="12" fill="#222">每日 03:00</text>
+  <text x="405" y="298" text-anchor="middle" font-size="12" fill="#222">触发 重置</text>
 
   <rect x="510" y="262" width="150" height="50" rx="8" fill="#ffffff" stroke="#6b46c1"></rect>
   <text x="585" y="292" text-anchor="middle" font-size="13" fill="#222">任务下发引擎</text>
@@ -81,7 +85,7 @@
   <line x1="945" y1="146" x2="945" y2="156" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"></line>
   <line x1="840" y1="183" x2="868" y2="183" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"></line>
 
-  <line x1="300" y1="287" x2="508" y2="287" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"></line>
+  <line x1="480" y1="287" x2="508" y2="287" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"></line>
   <line x1="660" y1="287" x2="688" y2="287" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"></line>
   <line x1="840" y1="287" x2="868" y2="287" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"></line>
 
@@ -91,7 +95,7 @@
   <line x1="840" y1="449" x2="868" y2="449" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"></line>
 
   <!-- ===== 跨泳道箭头 ===== -->
-  <!-- S1 -> N1 (触发PUSH) -->
+  <!-- 06:00 PUSH -> C端 收到PUSH/通知 -->
   <line x1="225" y1="262" x2="225" y2="148" stroke="#6b46c1" stroke-width="1.6" marker-end="url(#arr)"></line>
   <!-- S2 -> N4 (任务下发) -->
   <line x1="585" y1="262" x2="765" y2="148" stroke="#6b46c1" stroke-width="1.6" marker-end="url(#arr)"></line>
