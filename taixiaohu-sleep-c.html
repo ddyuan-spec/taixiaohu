@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>泰小虎 · 睡眠任务闭环</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; background: #e5e7eb; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    display: flex; justify-content: center; align-items: center; min-height: 100vh;
+  }
+  .phone {
+    width: 375px; height: 812px; background: #f5f7fa; position: relative;
+    border-radius: 40px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.18);
+    display: flex; flex-direction: column;
+  }
+  .statusbar {
+    height: 44px; background: transparent; display: flex; align-items: center;
+    justify-content: space-between; padding: 0 24px; font-size: 14px; font-weight: 600; color: #1f2937;
+    position: absolute; top: 0; left: 0; right: 0; z-index: 100;
+  }
+  .page {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow-y: auto;
+    display: none; padding-top: 44px; background: #f5f7fa;
+  }
+  .page.active { display: block; }
+
+  /* Header */
+  .app-header {
+    height: 52px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px; background: linear-gradient(135deg, #6FCEB3 0%, #5EDFA2 100%);
+    color: #fff; position: relative; z-index: 10;
+  }
+  .app-header.light { background: #fff; color: #1f2937; }
+  .app-header .menu { width: 24px; height: 24px; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
+  .app-header .menu span { height: 2px; background: currentColor; border-radius: 1px; }
+  .app-header .menu span:nth-child(1) { width: 16px; }
+  .app-header .menu span:nth-child(2) { width: 12px; }
+  .app-header .menu span:nth-child(3) { width: 16px; }
+  .app-header .tabs { display: flex; gap: 24px; font-size: 16px; font-weight: 600; }
+  .app-header .tabs .tab { opacity: .7; }
+  .app-header .tabs .tab.active { opacity: 1; position: relative; }
+  .app-header .tabs .tab.active::after { content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 20px; height: 3px; background: currentColor; border-radius: 2px; }
+  .app-header .more { width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; }
+  .app-header .more span { width: 4px; height: 4px; background: currentColor; border-radius: 50%; box-shadow: -7px 0 0 currentColor, 7px 0 0 currentColor; }
+
+  /* Member chips */
+  .member-bar {
+    display: flex; gap: 10px; padding: 12px 16px; background: linear-gradient(135deg, #6FCEB3 0%, #5EDFA2 100%);
+    align-items: center;
+  }
+  .member-bar .chip {
+    display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px;
+    background: rgba(255,255,255,.2); color: #fff; font-size: 13px; font-weight: 500;
+  }
+  .member-bar .chip.active { background: rgba(0,0,0,.55); }
+  .member-bar .chip .avatar { width: 20px; height: 20px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+  .member-bar .chip.add { background: rgba(255,255,255,.25); padding: 5px 10px; }
+  .member-bar .chip.manage { background: rgba(255,255,255,.25); padding: 5px 10px; }
+
+  /* Sub tabs */
+  .sub-tabs {
+    display: flex; gap: 20px; padding: 0 16px; background: linear-gradient(135deg, #6FCEB3 0%, #5EDFA2 100%);
+    color: #fff; font-size: 14px; padding-bottom: 10px; overflow-x: auto;
+  }
+  .sub-tabs::-webkit-scrollbar { display: none; }
+  .sub-tabs .tab { opacity: .75; white-space: nowrap; }
+  .sub-tabs .tab.active { opacity: 1; font-weight: 600; }
+
+  /* Common cards */
+  .card {
+    background: #fff; border-radius: 16px; margin: 12px 16px; padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  }
+  .section-title { font-size: 16px; font-weight: 700; color: #1f2937; margin: 0 0 8px; }
+  .section-title-row { display: flex; justify-content: space-between; align-items: center; margin: 16px 16px 8px; }
+  .section-title-row .title { font-size: 16px; font-weight: 700; color: #1f2937; }
+  .section-title-row .more { font-size: 13px; color: #9ca3af; }
+
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; justify-content: center; border: none; border-radius: 24px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity .15s; }
+  .btn:active { opacity: .85; }
+  .btn-green { background: #00D6A6; color: #fff; }
+  .btn-outline { background: #fff; color: #00D6A6; border: 1px solid #00D6A6; }
+  .btn-blue { background: #3B8CFF; color: #fff; }
+  .btn-blue-outline { background: #fff; color: #3B8CFF; border: 1px solid #3B8CFF; }
+  .btn-gray { background: #F3F4F6; color: #374151; }
+  .btn-block { width: calc(100% - 32px); margin: 12px 16px; height: 48px; border-radius: 24px; }
+
+  /* Mascot */
+  .mascot-wrap { text-align: center; }
+  .mascot {
+    width: 84px; height: 84px; margin: 0 auto 12px; position: relative;
+  }
+  .mascot-face { width: 100%; height: 100%; border-radius: 50%; background: #FF9F43; position: relative; overflow: hidden; }
+  .mascot-face .ear { position: absolute; top: -4px; width: 22px; height: 22px; border-radius: 50%; background: #FF9F43; }
+  .mascot-face .ear.left { left: 6px; }
+  .mascot-face .ear.right { right: 6px; }
+  .mascot-face .stripe { position: absolute; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 10px solid #1f2937; }
+  .mascot-face .stripe.s1 { top: 16px; left: 50%; transform: translateX(-50%); }
+  .mascot-face .stripe.s2 { top: 28px; left: 22%; transform: rotate(-15deg); }
+  .mascot-face .stripe.s3 { top: 28px; right: 22%; transform: rotate(15deg); }
+  .mascot-face .eye { position: absolute; top: 38px; width: 9px; height: 9px; border-radius: 50%; background: #1f2937; }
+  .mascot-face .eye.left { left: 26px; }
+  .mascot-face .eye.right { right: 26px; }
+  .mascot-face .mouth { position: absolute; top: 54px; left: 50%; transform: translateX(-50%); width: 18px; height: 8px; border-bottom: 2px solid #1f2937; border-radius: 0 0 12px 12px; }
+  .mascot-face .headphone { position: absolute; top: -8px; left: -6px; right: -6px; height: 44px; border: 5px solid #3B8CFF; border-bottom: none; border-radius: 34px 34px 0 0; }
+  .mascot-face .headphone::after { content: ''; position: absolute; top: 26px; left: -9px; width: 14px; height: 22px; background: #3B8CFF; border-radius: 6px; box-shadow: 86px 0 0 #3B8CFF; }
+
+  /* Home specific */
+  .home-header { background: linear-gradient(180deg, #E8F9F3 0%, #F5F7FA 100%); padding: 16px 16px 8px; }
+  .home-top { display: flex; align-items: flex-start; gap: 12px; }
+  .home-greeting { flex: 1; }
+  .home-greeting .hi { font-size: 18px; font-weight: 700; color: #1f2937; line-height: 1.4; }
+  .home-greeting .pills { display: flex; gap: 8px; margin-top: 8px; }
+  .pill { padding: 4px 10px; border-radius: 14px; background: #fff; color: #6B7280; font-size: 11px; border: 1px solid #E5E7EB; }
+  .home-blue-card {
+    background: #3B8CFF; border-radius: 16px; height: 120px; margin: 12px 16px;
+    background: linear-gradient(135deg, #5B9DFF 0%, #3B8CFF 100%); position: relative; overflow: hidden;
+  }
+  .home-blue-card::after { content: ''; position: absolute; right: -20px; bottom: -20px; width: 120px; height: 120px; background: rgba(255,255,255,.12); border-radius: 50%; }
+  .question-card {
+    display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: #fff; border-radius: 12px;
+    margin: 8px 16px; box-shadow: 0 1px 4px rgba(0,0,0,.03);
+  }
+  .question-card .tag { width: 22px; height: 22px; border-radius: 50%; background: #00D6A6; color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center; flex: 0 0 22px; }
+  .question-card .txt { flex: 1; font-size: 14px; color: #1f2937; }
+  .question-card .arrow { color: #9CA3AF; font-size: 16px; }
+  .home-task-card {
+    display: flex; align-items: center; justify-content: space-between; padding: 16px; background: #fff; border-radius: 12px;
+    margin: 8px 16px; box-shadow: 0 1px 4px rgba(0,0,0,.03); cursor: pointer;
+  }
+  .home-task-card .title { font-size: 15px; color: #1f2937; }
+  .home-task-card .btn-mini { padding: 6px 14px; border-radius: 16px; font-size: 13px; }
+
+  .quick-actions { display: flex; justify-content: space-around; padding: 16px; }
+  .quick-actions .item { text-align: center; font-size: 12px; color: #4B5563; }
+  .quick-actions .icon { width: 36px; height: 36px; border-radius: 12px; background: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-size: 18px; box-shadow: 0 1px 4px rgba(0,0,0,.04); }
+  .input-bar {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 56px; background: #fff;
+    display: flex; align-items: center; gap: 10px; padding: 0 14px; border-top: 1px solid #F3F4F6;
+  }
+  .input-bar .mic { width: 28px; height: 28px; border-radius: 50%; background: #F3F4F6; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .input-bar .field { flex: 1; height: 38px; border-radius: 19px; background: #F3F4F6; display: flex; align-items: center; padding: 0 14px; color: #9CA3AF; font-size: 14px; }
+  .input-bar .send { width: 36px; height: 36px; border-radius: 50%; background: #1F2937; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+
+  /* Notification - lock screen / notification centre */
+  .notification-screen {
+    background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"375\" height=\"812\"><defs><linearGradient id=\"g\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\"><stop offset=\"0%\" style=\"stop-color:%230f2027\"/><stop offset=\"50%\" style=\"stop-color:%2320343c\"/><stop offset=\"100%\" style=\"stop-color:%232c5364\"/></linearGradient></defs><rect width=\"375\" height=\"812\" fill=\"url(%23g)\"/></svg>'); background-size: cover;
+  }
+  .notification-screen .statusbar { color: #fff; }
+  .notification-screen .lock-time { text-align: center; padding-top: 54px; font-size: 64px; font-weight: 300; color: #fff; letter-spacing: 1px; }
+  .notification-screen .lock-date { text-align: center; font-size: 15px; color: rgba(255,255,255,.85); margin-top: 6px; }
+  .notification-stack { padding: 36px 16px 0; }
+  .notification-item {
+    background: rgba(245,247,250,.88); backdrop-filter: blur(14px); border-radius: 20px; padding: 14px 16px;
+    margin-bottom: 10px; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,.12);
+  }
+  .notification-item .app { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #6B7280; margin-bottom: 6px; }
+  .notification-item .app .icon { width: 20px; height: 20px; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; font-weight: 600; }
+  .notification-item .title { font-size: 14px; font-weight: 700; color: #1f2937; }
+  .notification-item .body { font-size: 13px; color: #4B5563; margin-top: 3px; line-height: 1.45; }
+  .lock-bottom { position: absolute; bottom: 34px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,.7); font-size: 13px; }
+  .lock-bottom .bar { width: 120px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.6); margin: 12px auto 0; }
+
+  /* Sleep page */
+  .sleep-task-banner {
+    display: flex; align-items: center; justify-content: space-between; margin: 12px 16px; padding: 14px 16px;
+    background: #fff; border-radius: 12px; cursor: pointer;
+  }
+  .sleep-task-banner .left { font-size: 14px; color: #1f2937; }
+  .sleep-data { margin: 0 16px; padding: 16px; background: #fff; border-radius: 16px; }
+  .sleep-data .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .sleep-data .head .title { font-size: 16px; font-weight: 700; color: #1f2937; }
+  .sleep-data .head .sub { font-size: 12px; color: #9CA3AF; }
+  .sleep-data .head .all { font-size: 12px; color: #9CA3AF; }
+  .sleep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .sleep-grid .item { background: #F8FAFC; border-radius: 12px; padding: 12px; }
+  .sleep-grid .item .label { font-size: 13px; color: #6B7280; }
+  .sleep-grid .item .plus { float: right; color: #9CA3AF; font-size: 16px; }
+  .sleep-grid .item .value { font-size: 18px; font-weight: 700; color: #1f2937; margin-top: 6px; }
+  .sleep-grid .item .empty { font-size: 13px; color: #9CA3AF; margin-top: 6px; }
+  .sleep-record-row {
+    display: flex; align-items: center; justify-content: space-between; margin: 12px 16px 0;
+    padding: 14px 16px; background: #fff; border-radius: 12px;
+  }
+  .sleep-record-row .q { font-size: 14px; color: #1f2937; font-weight: 500; }
+  .sleep-record-row .go { font-size: 13px; color: #9CA3AF; }
+  .sleep-tip {
+    margin: 12px 16px; padding: 14px; background: #fff; border-radius: 12px; display: flex; gap: 10px;
+  }
+  .sleep-tip .icon { font-size: 20px; }
+  .sleep-tip .txt { font-size: 12px; color: #6B7280; line-height: 1.5; }
+  .sleep-locked {
+    margin: 12px 16px; padding: 20px; background: #fff; border-radius: 16px; text-align: center;
+  }
+  .sleep-locked .lock-icon { font-size: 24px; color: #00D6A6; }
+  .sleep-locked .title { font-size: 14px; font-weight: 600; color: #00D6A6; margin-top: 8px; }
+  .sleep-locked .desc { font-size: 12px; color: #9CA3AF; margin-top: 4px; }
+
+  /* Tasks page */
+  .empty-task-card {
+    text-align: center; padding: 32px 20px; background: linear-gradient(135deg, #E8FAF4 0%, #F0FDF9 100%); border-radius: 16px;
+    margin: 12px 16px;
+  }
+  .empty-task-card .title { font-size: 16px; font-weight: 700; color: #1f2937; margin-top: 12px; }
+  .empty-task-card .desc { font-size: 13px; color: #6B7280; margin-top: 6px; line-height: 1.5; }
+  .empty-task-card .btn { margin-top: 16px; padding: 10px 28px; border-radius: 24px; }
+  .task-list { padding: 0 16px; }
+  .task-item {
+    display: flex; align-items: center; gap: 12px; padding: 14px; background: #fff; border-radius: 14px;
+    margin-bottom: 10px; cursor: pointer; border: 1px solid transparent;
+  }
+  .task-item.done { background: #F0FAF5; }
+  .task-item.selected { border-color: #00D6A6; }
+  .task-item .icon-box { width: 42px; height: 42px; border-radius: 12px; background: #F3F4F6; display: flex; align-items: center; justify-content: center; font-size: 22px; flex: 0 0 42px; }
+  .task-item .info { flex: 1; }
+  .task-item .info .title { font-size: 15px; font-weight: 600; color: #1f2937; }
+  .task-item .info .desc { font-size: 12px; color: #9CA3AF; margin-top: 2px; }
+  .task-item .reward { font-size: 15px; font-weight: 700; color: #FF9F43; display: flex; align-items: center; gap: 4px; }
+  .task-item .check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid #D1D5DB; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; }
+  .task-item.done .check { background: #00D6A6; border-color: #00D6A6; }
+  .task-item.selected .check.right { background: #00D6A6; border-color: #00D6A6; color: #fff; }
+  .explore-more {
+    margin: 12px 16px; padding: 14px; border-radius: 14px; border: 1px dashed #00D6A6;
+    text-align: center; color: #00D6A6; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  .huli-btn, .custom-btn {
+    display: block; width: calc(100% - 32px); margin: 10px 16px; padding: 14px; text-align: center;
+    border-radius: 24px; font-size: 15px; font-weight: 600; background: #fff; color: #1f2937; border: 1px solid #E5E7EB; cursor: pointer;
+  }
+
+  /* Claim page */
+  .claim-list { padding: 12px 16px 90px; }
+  .claim-item { position: relative; }
+  .claim-item .check.right { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); }
+  .claim-bottom {
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 16px 24px; background: #fff;
+    border-top: 1px solid #F3F4F6; display: flex; flex-direction: column; gap: 10px;
+  }
+  .claim-bottom .swap { text-align: center; color: #FF9F43; font-size: 14px; cursor: pointer; }
+  .claim-bottom .swap span { color: #3B8CFF; }
+  .claim-header { display: flex; justify-content: space-between; align-items: center; padding: 0 16px; }
+  .claim-header .tag { padding: 4px 10px; background: rgba(0,214,166,.12); color: #00A884; font-size: 12px; border-radius: 12px; }
+
+  /* Detail */
+  .detail-banner { width: 100%; height: 260px; background: linear-gradient(135deg, #FF7A45 0%, #FF4D00 100%); position: relative; overflow: hidden; }
+  .detail-banner .big-txt { position: absolute; top: 40px; left: 20px; font-size: 38px; font-weight: 900; color: #fff; line-height: 1.2; }
+  .detail-banner .sub-txt { position: absolute; top: 130px; left: 20px; font-size: 16px; font-weight: 700; color: #fff; background: #1f2937; padding: 2px 8px; transform: rotate(-4deg); }
+  .detail-info { padding: 20px 16px; }
+  .detail-info .title { font-size: 18px; font-weight: 700; color: #1f2937; }
+  .detail-info .row { display: flex; margin-top: 12px; font-size: 14px; }
+  .detail-info .row .label { color: #6B7280; width: 70px; }
+  .detail-info .row .value { color: #1f2937; font-weight: 500; }
+  .detail-info .tag { display: inline-block; padding: 2px 8px; background: #FF9F43; color: #fff; font-size: 12px; border-radius: 4px; margin-left: 8px; }
+
+  /* Custom tasks list */
+  .custom-list { padding: 12px 16px; }
+  .custom-item { display: flex; align-items: center; gap: 12px; padding: 14px; background: #fff; border-radius: 14px; margin-bottom: 10px; }
+  .custom-item .check { width: 24px; height: 24px; border-radius: 6px; border: 2px solid #00D6A6; color: #00D6A6; display: flex; align-items: center; justify-content: center; }
+  .custom-item .info { flex: 1; }
+  .custom-item .info .title { font-size: 15px; color: #1f2937; font-weight: 600; }
+  .custom-item .info .desc { font-size: 12px; color: #9CA3AF; margin-top: 2px; }
+  .custom-item .record { padding: 6px 14px; border-radius: 14px; background: #00D6A6; color: #fff; font-size: 13px; font-weight: 600; }
+  .custom-meta { font-size: 11px; color: #9CA3AF; margin-top: 4px; }
+  .add-custom-card {
+    margin: 12px 16px; padding: 14px; border-radius: 14px; border: 1px dashed #00D6A6;
+    text-align: center; color: #00D6A6; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  .pagination { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 16px; color: #9CA3AF; font-size: 14px; }
+  .pagination .num { color: #1f2937; font-weight: 600; }
+  .privacy-tip { text-align: center; font-size: 11px; color: #9CA3AF; margin: 8px 16px 20px; }
+  .section-title-row .action { font-size: 13px; color: #00D6A6; font-weight: 600; cursor: pointer; }
+
+  /* Overlays */
+  .overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: none; z-index: 200; }
+  .overlay.active { display: flex; }
+  .modal-overlay { background: rgba(0,0,0,.5); align-items: center; justify-content: center; padding: 24px; }
+  .modal-card {
+    background: #fff; border-radius: 20px; padding: 28px 24px 20px; width: 100%; max-width: 300px; text-align: center;
+    animation: popIn .2s ease-out;
+  }
+  @keyframes popIn { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal-card .icon { width: 64px; height: 64px; border-radius: 50%; background: #E8FAF4; color: #00D6A6; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 16px; }
+  .modal-card .title { font-size: 18px; font-weight: 700; color: #1f2937; }
+  .modal-card .desc { font-size: 14px; color: #6B7280; margin-top: 8px; line-height: 1.5; }
+  .modal-card .btn { margin-top: 16px; width: 100%; height: 44px; border-radius: 22px; }
+  .modal-card .btn+.btn { margin-top: 10px; }
+
+  .bottom-sheet-overlay { background: rgba(0,0,0,.5); align-items: flex-end; justify-content: center; }
+  .bottom-sheet {
+    background: #fff; border-radius: 20px 20px 0 0; width: 100%; padding: 20px 16px 28px;
+    animation: slideUp .2s ease-out;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .bottom-sheet .title { text-align: center; font-size: 16px; font-weight: 700; color: #1f2937; margin-bottom: 16px; }
+  .share-options { display: flex; justify-content: center; gap: 40px; margin-bottom: 20px; }
+  .share-options .opt { text-align: center; cursor: pointer; }
+  .share-options .opt .circle { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 30px; }
+  .share-options .opt.wechat .circle { background: #07C160; color: #fff; }
+  .share-options .opt.save .circle { background: #FF9500; color: #fff; }
+  .share-options .opt .label { font-size: 13px; color: #4B5563; }
+  .share-card { background: linear-gradient(135deg,#6FCEB3 0%,#5EDFA2 100%); border-radius: 12px; padding: 18px; margin-bottom: 16px; text-align: center; color: #fff; }
+  .share-poster { font-size: 48px; line-height: 1; margin-bottom: 10px; }
+  .share-title { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+  .share-desc { font-size: 13px; opacity: .92; line-height: 1.5; }
+  .share-link { font-size: 13px; color: #2563EB; text-align: center; padding: 12px 0 4px; cursor: pointer; }
+  .page-share-landing .landing-poster { font-size: 64px; text-align: center; margin: 30px 0 16px; }
+  .page-share-landing .landing-title { font-size: 20px; font-weight: 700; text-align: center; margin: 0 20px 10px; }
+  .page-share-landing .landing-desc { font-size: 14px; color: #666; text-align: center; line-height: 1.6; margin: 0 24px 24px; }
+  .page-share-landing .landing-card { margin: 0 20px 20px; border: 1px solid #eee; border-radius: 12px; padding: 14px; display: flex; justify-content: space-between; align-items: center; }
+  .bottom-sheet .cancel { width: 100%; height: 46px; border-radius: 23px; background: #F3F4F6; color: #4B5563; font-size: 15px; font-weight: 600; border: none; cursor: pointer; }
+
+  /* Utility */
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="statusbar">
+    <span id="sb-time">13:39</span>
+    <span>5G 🔋</span>
+  </div>
+
+  <!-- ===== 消息通知（锁屏/通知中心） ===== -->
+  <div class="page notification-screen" id="page-notification" data-page="notification">
+    <div class="lock-time" id="lock-time">13:39</div>
+    <div class="lock-date" id="lock-date">8月12日 星期三</div>
+    <div class="notification-stack">
+      <div class="notification-item" onclick="go('page-home')">
+        <div class="app"><div class="icon" style="background:#07C160">微</div><span>微信 · 现在</span></div>
+        <div class="title">微信</div>
+        <div class="body">1个联系人发来1条消息</div>
+      </div>
+      <div class="notification-item" onclick="go('page-home')">
+        <div class="app"><div class="icon" style="background:#00D6A6">泰</div><span>泰小虎 · 现在</span></div>
+        <div class="title">泰小虎</div>
+        <div class="body">早安，昨晚你睡了7小时32分<br>今日健康打卡已就绪，点击查看睡眠日报并领取任务。</div>
+      </div>
+    </div>
+    <div class="lock-bottom" onclick="go('page-home')">
+      <div>上滑解锁</div>
+      <div class="bar"></div>
+    </div>
+  </div>
+
+  <!-- ===== 首页 ===== -->
+  <div class="page" id="page-home" data-page="home">
+    <div class="app-header light">
+      <div class="menu"><span></span><span></span><span></span></div>
+      <div class="tabs">
+        <div class="tab" onclick="go('page-sleep')" style="cursor:pointer;">健康</div>
+        <div class="tab active">泰小虎</div>
+        <div class="tab" onclick="toast('服务页')" style="cursor:pointer;">服务</div>
+      </div>
+      <div class="more"><span></span></div>
+    </div>
+    <div class="home-header">
+      <div class="home-top">
+        <div class="mascot" style="width:64px;height:64px;margin:0;">
+          <div class="mascot-face"><div class="ear left"></div><div class="ear right"></div><div class="stripe s1"></div><div class="stripe s2"></div><div class="stripe s3"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div><div class="headphone"></div></div>
+        </div>
+        <div class="home-greeting">
+          <div class="hi">晚上好🥱<br>我是你的好朋友泰小虎</div>
+          <div class="pills"><span class="pill">AI服务说明</span><span class="pill">参考来源</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="home-blue-card"></div>
+    <div class="question-card" onclick="toast('问答详情待展开')">
+      <div class="tag">#</div>
+      <div class="txt">多梦易醒是睡眠质量差吗？</div>
+      <div class="arrow">›</div>
+    </div>
+    <div class="question-card" onclick="toast('问答详情待展开')">
+      <div class="tag">#</div>
+      <div class="txt">肠胃不好日常怎么养胃？</div>
+      <div class="arrow">›</div>
+    </div>
+    <div id="home-task-card" class="home-task-card" onclick="handleHomeTask()">
+      <div class="title" id="home-task-title">领取任务开启健康打卡</div>
+      <div class="btn btn-blue-outline btn-mini" id="home-task-btn">去完成</div>
+    </div>
+    <div class="quick-actions">
+      <div class="item" onclick="toast('健康小目标')"><div class="icon">🎯</div><div>健康小目标</div></div>
+      <div class="item" onclick="toast('看舌苔')"><div class="icon">👅</div><div>看舌苔</div></div>
+      <div class="item" onclick="toast('报告解读')"><div class="icon">📋</div><div>报告解读</div></div>
+    </div>
+    <div class="input-bar">
+      <div class="mic">🎤</div>
+      <div class="field">输入或按住说话</div>
+      <div class="send">🐯</div>
+    </div>
+  </div>
+
+  <!-- ===== 我的睡眠 ===== -->
+  <div class="page" id="page-sleep" data-page="sleep">
+    <div class="app-header" style="background:linear-gradient(135deg,#6FCEB3 0%,#5EDFA2 100%);color:#fff;">
+      <div class="menu"><span></span><span></span><span></span></div>
+      <div class="tabs"><div class="tab">健康</div><div class="tab">泰小虎</div><div class="tab">服务</div></div>
+      <div class="more"><span></span></div>
+    </div>
+    <div class="member-bar">
+      <div class="chip active"><div class="avatar">👦</div><span>本人</span></div>
+      <div class="chip"><div class="avatar">👩</div><span>妻子</span></div>
+      <div class="chip add">＋ 添加</div>
+      <div class="chip manage">⚙ 管理</div>
+    </div>
+    <div class="sub-tabs">
+      <div class="tab">基础信息</div>
+      <div class="tab active">我的睡眠</div>
+      <div class="tab" onclick="go('page-tasks')" style="cursor:pointer;">健康打卡</div>
+      <div class="tab">百宝箱</div>
+      <div class="tab">运动健康</div>
+    </div>
+    <div class="sleep-task-banner" id="sleep-task-banner" onclick="handleSleepTask()">
+      <div class="left" id="sleep-task-text">领取任务开启健康打卡</div>
+      <div class="btn btn-blue-outline btn-mini" id="sleep-task-btn">去领取</div>
+    </div>
+    <div class="section-title-row">
+      <div class="title">昨晚睡眠数据</div>
+      <div class="more">查看全部睡眠数据 ›</div>
+    </div>
+    <div class="sleep-data">
+      <div class="head">
+        <div>
+          <div class="title">昨晚睡眠数据</div>
+          <div class="sub">8月已记录 0 天</div>
+        </div>
+        <div class="all">查看全部睡眠数据 ›</div>
+      </div>
+      <div class="sleep-grid">
+        <div class="item"><div class="label"><span class="plus">+</span>睡眠时长</div><div class="empty">暂无数据</div><div class="value" style="color:#9CA3AF">-- 小时</div></div>
+        <div class="item"><div class="label"><span class="plus">+</span>起夜次数</div><div class="empty">暂无数据</div><div class="value" style="color:#9CA3AF">-- 次</div></div>
+      </div>
+    </div>
+    <div class="sleep-record-row" onclick="toast('去记录睡眠')">
+      <div class="q">昨晚睡得怎么样？</div>
+      <div class="go">去记录 ›</div>
+    </div>
+    <div class="sleep-tip">
+      <div class="icon">😴</div>
+      <div class="txt">智能设备同步能力准备中，后续将支持手环、手表等设备自动同步睡眠数据。当前可先手动记录昨晚睡眠，连续记录后也能生成趋势和月报。</div>
+    </div>
+    <div class="sleep-locked">
+      <div class="lock-icon">🔒</div>
+      <div class="title">待解锁</div>
+      <div class="desc">连续记录2天睡眠日<br>即可生成趋势波动对比</div>
+    </div>
+  </div>
+
+  <!-- ===== 健康打卡 ===== -->
+  <div class="page" id="page-tasks" data-page="tasks">
+    <div class="app-header" style="background:linear-gradient(135deg,#6FCEB3 0%,#5EDFA2 100%);color:#fff;">
+      <div class="menu"><span></span><span></span><span></span></div>
+      <div class="tabs"><div class="tab">健康</div><div class="tab">泰小虎</div><div class="tab">服务</div></div>
+      <div class="more"><span></span></div>
+    </div>
+    <div class="member-bar">
+      <div class="chip active"><div class="avatar">👦</div><span>本人</span></div>
+      <div class="chip"><div class="avatar">👨</div><span>老公</span></div>
+      <div class="chip add">＋</div>
+      <div class="chip manage">⚙</div>
+    </div>
+    <div class="sub-tabs">
+      <div class="tab">基础信息</div>
+      <div class="tab" onclick="go('page-sleep')" style="cursor:pointer;">我的睡眠</div>
+      <div class="tab active">健康打卡</div>
+      <div class="tab">百宝箱</div>
+      <div class="tab">运动健康</div>
+    </div>
+    <div class="section-title-row" style="margin-top:12px;">
+      <div class="title">健康打卡</div>
+    </div>
+    <div id="tasks-content"></div>
+  </div>
+
+  <!-- ===== 领取任务 ===== -->
+  <div class="page" id="page-claim" data-page="claim">
+    <div class="app-header" style="background:linear-gradient(135deg,#6FCEB3 0%,#5EDFA2 100%);color:#fff;">
+      <div class="menu" onclick="go('page-tasks')" style="cursor:pointer;"><span></span><span></span><span></span></div>
+      <div class="tabs"><div class="tab active" style="opacity:1;">领取健康任务</div></div>
+      <div></div>
+    </div>
+    <div class="claim-header" style="margin-top:12px;">
+      <div></div>
+      <div class="tag">可多选</div>
+    </div>
+    <div class="claim-list" id="claim-list"></div>
+    <div class="claim-bottom">
+      <div class="swap" onclick="refreshClaimList()">不喜欢？<span>点击这里换一批</span></div>
+      <button class="btn btn-green btn-block" style="margin:0;width:100%;" id="claim-confirm" onclick="confirmClaim()">选好了，去完成任务（已选 0 个）</button>
+    </div>
+  </div>
+
+  <!-- ===== 添加自定义任务（已有自定义任务列表） ===== -->
+  <div class="page" id="page-custom" data-page="custom">
+    <div class="app-header" style="background:linear-gradient(135deg,#6FCEB3 0%,#5EDFA2 100%);color:#fff;">
+      <div class="menu" onclick="go('page-tasks')" style="cursor:pointer;"><span></span><span></span><span></span></div>
+      <div class="tabs"><div class="tab active" style="opacity:1;">添加自定义任务</div></div>
+      <div></div>
+    </div>
+    <div class="section-title-row" style="margin-top:12px;">
+      <div class="title">健康打卡</div>
+      <div class="action" onclick="toast('添加新的自定义任务')">+ 添加任务</div>
+    </div>
+    <div style="margin:0 16px;font-size:14px;color:#6B7280;">2026年08月12日</div>
+    <div class="custom-list" id="custom-list"></div>
+    <div class="add-custom-card" onclick="toast('添加新的自定义任务')">+ 添加自定义任务</div>
+    <div class="pagination">
+      <span>‹</span><span class="num">1/1</span><span>›</span>
+    </div>
+    <div class="privacy-tip">🛡 档案内容仅供您本人使用，我们将严格保护您的隐私安全</div>
+    <button class="btn btn-blue btn-block" onclick="go('page-tasks')">返回</button>
+  </div>
+
+  <!-- ===== 任务详情 ===== -->
+  <div class="page" id="page-detail" data-page="detail">
+    <div class="app-header" style="background:#fff;color:#1f2937;">
+      <div class="menu" onclick="go('page-tasks')" style="cursor:pointer;"><span></span><span></span><span></span></div>
+      <div class="tabs"><div class="tab active" style="opacity:1;font-size:14px;white-space:nowrap;max-width:220px;overflow:hidden;text-overflow:ellipsis;">新人专享福利 | 7天体重记录免费得体脂秤</div></div>
+      <div class="more"><span></span></div>
+    </div>
+    <div class="detail-banner">
+      <div class="big-txt">7天记录体重<br>免费得<br>体脂秤</div>
+      <div class="sub-txt">你挑战 我买单</div>
+    </div>
+    <div class="detail-info">
+      <div class="title">新人专享福利 | 7天体重记录免费得*体脂秤</div>
+      <div class="row"><div class="label">报名时间</div><div class="value">2025.2.07-12.31<span class="tag">进行中</span></div></div>
+      <div class="row"><div class="label">挑战天数</div><div class="value">15天</div></div>
+      <div class="row"><div class="label">挑战目标</div><div class="value">薄荷智能秤记录 | 累计 7天</div></div>
+      <div class="row"><div class="label">奖励预览</div><div class="value">薄荷健康体脂秤&69元商城券</div></div>
+      <button class="btn btn-block" style="background:#FF9F43;color:#fff;margin-top:24px;" onclick="joinDetail()">立即参与</button>
+    </div>
+  </div>
+
+  <!-- ===== 虎力值 ===== -->
+  <!-- ===== 分享落地页（分享出去点击跳转的目标页） ===== -->
+  <div class="page" id="page-share-landing" data-page="share-landing">
+    <div class="app-header" style="background:linear-gradient(135deg,#6FCEB3 0%,#5EDFA2 100%);color:#fff;">
+      <div class="menu" onclick="go('page-home')" style="cursor:pointer;"><span></span><span></span><span></span></div>
+      <div class="tabs"><div class="tab active" style="opacity:1;">健康好习惯</div></div>
+      <div></div>
+    </div>
+    <div class="landing-poster" id="landing-poster">🌙</div>
+    <div class="landing-title" id="landing-title">分享健康好习惯</div>
+    <div class="landing-desc" id="landing-desc">每天打卡，养成健康好习惯，领取虎力值换好礼</div>
+    <div class="landing-card">
+      <div>
+        <div style="font-size:14px;font-weight:600;">今日睡眠任务</div>
+        <div style="font-size:12px;color:#999;margin-top:4px;">完成打卡领虎力值，可兑换体脂秤等好礼</div>
+      </div>
+      <div style="color:#07C160;font-weight:700;font-size:18px;">+5</div>
+    </div>
+    <div style="padding:0 20px;">
+      <button class="btn btn-green" style="width:100%;margin-bottom:12px;" onclick="openApp()">打开泰小虎 App</button>
+      <button class="btn btn-gray" style="width:100%;" onclick="toast('正在前往应用商店…')">下载泰小虎</button>
+    </div>
+  </div>
+
+  <!-- ===== Overlays ===== -->
+  <div class="overlay modal-overlay" id="overlay-daily-report">
+    <div class="modal-card">
+      <div class="title" style="font-size:22px;line-height:1.4;">你的健康日报<br>已经生成快来<br>看看吧</div>
+      <button class="btn btn-blue" onclick="viewDailyReport()">立即查看</button>
+    </div>
+  </div>
+
+  <div class="overlay modal-overlay" id="overlay-completion">
+    <div class="modal-card">
+      <div class="icon">🎉</div>
+      <div class="title">太棒了！</div>
+      <div class="desc">你已完成今日首次任务打卡<br>继续保持，身体会越来越棒</div>
+      <button class="btn btn-green" onclick="shareFromCompletion()">分享健康好习惯</button>
+      <button class="btn btn-gray" onclick="moreTasksFromCompletion()">获取更多任务</button>
+    </div>
+  </div>
+
+  <div class="overlay bottom-sheet-overlay" id="overlay-share">
+    <div class="bottom-sheet">
+      <div class="share-card">
+        <div class="share-poster" id="share-poster">🌙</div>
+        <div class="share-title" id="share-title">分享健康好习惯</div>
+        <div class="share-desc" id="share-desc">每天打卡，养成健康好习惯，领取虎力值换好礼</div>
+      </div>
+      <div class="title">分享到</div>
+      <div class="share-options">
+        <div class="opt wechat" onclick="wechatShare()"><div class="circle">💬</div><div class="label">微信好友</div></div>
+        <div class="opt save" onclick="saveSharePoster()"><div class="circle">💾</div><div class="label">保存本地</div></div>
+      </div>
+      <div class="share-link" onclick="openShareLanding()">查看分享页面 ↗</div>
+      <button class="cancel" onclick="closeShare()">取消</button>
+    </div>
+  </div>
+
+  <div id="toast" style="position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:8px 14px;border-radius:16px;font-size:13px;display:none;z-index:300;"></div>
+</div>
+
+<script>
+// ===== Data model =====
+const ALL_TASKS = [
+  { id: 't1', title: '晨间一杯水', icon: '💧', desc: '起床先喝一杯温水，唤醒身体', reward: 2, hasDetail: false },
+  { id: 't2', title: '洗漱', icon: '🪥', desc: '早晚认真刷牙洗脸', reward: 2, hasDetail: false },
+  { id: 't3', title: '舒筋活血', icon: '🧘', desc: '简单拉伸，舒展筋骨', reward: 3, hasDetail: false },
+  { id: 't4', title: '按揉面部', icon: '💆', desc: '用手指轻揉面部，促进循环', reward: 3, hasDetail: false },
+  { id: 't5', title: '晨间伸展', icon: '🏃', desc: '舒展四肢，唤醒肌肉', reward: 2, hasDetail: false },
+  { id: 't6', title: '睡前深呼吸', icon: '🫁', desc: '睡前深呼吸，放松助眠', reward: 3, hasDetail: false },
+  { id: 't7', title: '体重记录挑战', icon: '⚖️', desc: '7天记录体重，免费得体脂秤', reward: 5, hasDetail: true },
+  { id: 't8', title: '冥想放松', icon: '🧠', desc: '冥想5分钟，缓解压力', reward: 3, hasDetail: false }
+];
+const CUSTOM_TASKS = [
+  { id: 'c1', title: '晨跑3公里', desc: '客厅里', recorded: '1人/0人已记录' },
+  { id: 'c2', title: '阅读30分钟', desc: '442', recorded: '1人/0人已记录' }
+];
+
+let state = {
+  myTasks: [],        // ids
+  completedToday: [], // ids
+  huLi: 0,
+  claimList: [],      // task ids currently shown in claim page
+  selectedClaim: [],  // ids selected in claim page
+  dailyReportShown: false,
+  completionShown: false,
+  pendingDetailTask: null
+};
+
+// ===== Router =====
+function go(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  if (pageId === 'page-home' && !state.dailyReportShown) {
+    state.dailyReportShown = true;
+    showOverlay('overlay-daily-report');
+  }
+  if (pageId === 'page-tasks') renderTasks();
+  if (pageId === 'page-claim') renderClaim();
+  if (pageId === 'page-custom') renderCustom();
+  renderHome(); renderSleep();
+}
+
+function showOverlay(id) { document.getElementById(id).classList.add('active'); }
+function hideOverlay(id) { document.getElementById(id).classList.remove('active'); }
+
+// ===== Home =====
+function renderHome() {
+  const title = document.getElementById('home-task-title');
+  const btn = document.getElementById('home-task-btn');
+  if (state.myTasks.length === 0) {
+    title.textContent = '领取任务开启健康打卡';
+    btn.textContent = '去完成';
+    btn.className = 'btn btn-blue-outline btn-mini';
+  } else {
+    const unDone = state.myTasks.filter(id => !state.completedToday.includes(id));
+    if (unDone.length > 0) {
+      const t = taskById(unDone[0]);
+      title.textContent = '今日任务' + t.title;
+      btn.textContent = '去完成';
+      btn.className = 'btn btn-blue-outline btn-mini';
+    } else {
+      const t = taskById(state.myTasks[0]);
+      title.textContent = '今日任务' + t.title;
+      btn.textContent = '更多任务';
+      btn.className = 'btn btn-blue-outline btn-mini';
+    }
+  }
+}
+function handleHomeTask() {
+  if (state.myTasks.length === 0) {
+    go('page-claim');
+    return;
+  }
+  const unDone = state.myTasks.filter(id => !state.completedToday.includes(id));
+  if (unDone.length > 0) {
+    completeTask(unDone[0]);
+  } else {
+    go('page-tasks');
+  }
+}
+function viewDailyReport() { hideOverlay('overlay-daily-report'); go('page-sleep'); }
+function closeDailyReport() { hideOverlay('overlay-daily-report'); }
+
+// ===== Sleep =====
+function renderSleep() {
+  const txt = document.getElementById('sleep-task-text');
+  const btn = document.getElementById('sleep-task-btn');
+  const banner = document.getElementById('sleep-task-banner');
+  if (state.myTasks.length === 0) {
+    txt.textContent = '领取任务开启健康打卡';
+    btn.textContent = '去领取';
+  } else {
+    const unDone = state.myTasks.filter(id => !state.completedToday.includes(id));
+    if (unDone.length > 0) {
+      const t = taskById(unDone[0]);
+      txt.textContent = '进入' + t.title + '立即完成';
+      btn.textContent = '去完成';
+    } else {
+      txt.textContent = '进入任务立即完成';
+      btn.textContent = '查看更多任务';
+    }
+  }
+  banner.onclick = handleSleepTask;
+}
+function handleSleepTask() {
+  if (state.myTasks.length === 0) {
+    go('page-claim');
+    return;
+  }
+  const unDone = state.myTasks.filter(id => !state.completedToday.includes(id));
+  if (unDone.length > 0) {
+    completeTask(unDone[0]);
+  } else {
+    go('page-tasks');
+  }
+}
+
+// ===== Tasks =====
+function renderTasks() {
+  const container = document.getElementById('tasks-content');
+  const activeIds = state.myTasks;
+  if (activeIds.length === 0) {
+    container.innerHTML = `
+      <div class="empty-task-card">
+        <div class="mascot" style="width:72px;height:72px;"><div class="mascot-face"><div class="ear left"></div><div class="ear right"></div><div class="stripe s1"></div><div class="stripe s2"></div><div class="stripe s3"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div></div>
+        <div class="title">今日还没有健康任务</div>
+        <div class="desc">先去领取几个想完成的小任务<br>完成后就能攒虎力值啦</div>
+        <button class="btn btn-green" onclick="go('page-claim')">领取今日任务</button>
+      </div>
+      <button class="custom-btn" onclick="go('page-custom')">添加自定义任务</button>
+    `;
+    return;
+  }
+  let html = '<div class="task-list">';
+  activeIds.forEach(id => {
+    const t = taskById(id);
+    const done = state.completedToday.includes(id);
+    html += taskItemHtml(t, done);
+  });
+  html += '</div>';
+  html += '<div class="explore-more" onclick="go(\'page-claim\')">+ 探索新任务</div>';
+  const allDone = activeIds.length > 0 && activeIds.every(id => state.completedToday.includes(id));
+  if (allDone) {
+    html += `<button class="huli-btn" onclick="toast('跳转当前虎力值任务页面')">赚取更多虎力值</button>`;
+    html += `<button class="custom-btn" onclick="go('page-custom')">添加自定义任务</button>`;
+  } else {
+    html += `<button class="custom-btn" onclick="go('page-custom')">添加自定义任务</button>`;
+  }
+  container.innerHTML = html;
+}
+function taskItemHtml(t, done) {
+  return `
+    <div class="task-item ${done ? 'done' : ''}" onclick="completeTask('${t.id}')">
+      <div class="icon-box">${t.icon}</div>
+      <div class="info">
+        <div class="title">${t.title}</div>
+        <div class="desc">${t.desc}</div>
+      </div>
+      <div class="reward">+${t.reward}${done ? ' ✓' : ''}</div>
+      <div class="check">${done ? '✓' : ''}</div>
+    </div>
+  `;
+}
+
+// ===== Completion logic =====
+function taskById(id) { return ALL_TASKS.find(t => t.id === id) || CUSTOM_TASKS.find(t => t.id === id); }
+function completeTask(id) {
+  const t = taskById(id);
+  if (!t) return;
+  if (state.completedToday.includes(id)) return;
+  if (t.hasDetail) {
+    state.pendingDetailTask = id;
+    go('page-detail');
+    return;
+  }
+  state.completedToday.push(id);
+  state.huLi += t.reward;
+  renderAll();
+  const wasFirst = state.completedToday.length === 1 && !state.completionShown;
+  if (wasFirst) {
+    state.completionShown = true;
+    setTimeout(() => showOverlay('overlay-completion'), 250);
+  }
+}
+function joinDetail() {
+  if (state.pendingDetailTask) {
+    completeTaskAfterDetail(state.pendingDetailTask);
+    state.pendingDetailTask = null;
+  }
+}
+function completeTaskAfterDetail(id) {
+  const t = taskById(id);
+  if (!t || state.completedToday.includes(id)) return;
+  state.completedToday.push(id);
+  state.huLi += t.reward;
+  renderAll();
+  if (state.completedToday.length === 1 && !state.completionShown) {
+    state.completionShown = true;
+    setTimeout(() => showOverlay('overlay-completion'), 250);
+  }
+}
+function renderAll() {
+  renderHome(); renderSleep(); renderTasks();
+}
+
+// ===== Claim =====
+function renderClaim() {
+  if (state.claimList.length === 0) refreshClaimList();
+  const list = document.getElementById('claim-list');
+  let html = '';
+  state.claimList.forEach(id => {
+    const t = taskById(id);
+    const selected = state.selectedClaim.includes(id);
+    html += `
+      <div class="task-item claim-item ${selected ? 'selected' : ''}" onclick="toggleClaim('${id}')">
+        <div class="icon-box">${t.icon}</div>
+        <div class="info">
+          <div class="title">${t.title}</div>
+          <div class="desc">${t.desc}</div>
+        </div>
+        <div class="reward">+${t.reward}</div>
+        <div class="check right">${selected ? '✓' : ''}</div>
+      </div>
+    `;
+  });
+  list.innerHTML = html;
+  const n = state.selectedClaim.length;
+  document.getElementById('claim-confirm').textContent = `选好了，去完成任务（已选 ${n} 个）`;
+}
+function refreshClaimList() {
+  // exclude tasks already in myTasks; keep detail tasks claimable so detail flow can be exercised
+  const pool = ALL_TASKS.filter(t => !state.myTasks.includes(t.id));
+  // shuffle
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  state.claimList = pool.slice(0, 5).map(t => t.id);
+  state.selectedClaim = [];
+  renderClaim();
+}
+function toggleClaim(id) {
+  if (state.selectedClaim.includes(id)) {
+    state.selectedClaim = state.selectedClaim.filter(x => x !== id);
+  } else {
+    state.selectedClaim.push(id);
+  }
+  renderClaim();
+}
+function confirmClaim() {
+  if (state.selectedClaim.length === 0) {
+    toast('请至少选择一个任务');
+    return;
+  }
+  state.myTasks = state.myTasks.concat(state.selectedClaim);
+  state.selectedClaim = [];
+  go('page-tasks');
+}
+
+// ===== Custom =====
+function renderCustom() {
+  const list = document.getElementById('custom-list');
+  let html = '';
+  CUSTOM_TASKS.forEach(c => {
+    html += `
+      <div class="custom-item">
+        <div class="check">✓</div>
+        <div class="info">
+          <div class="title">${c.title}</div>
+          <div class="desc">${c.desc}</div>
+          <div class="custom-meta">${c.recorded}</div>
+        </div>
+        <button class="record" onclick="toast('记录 ${c.title}')">记录</button>
+      </div>
+    `;
+  });
+  list.innerHTML = html;
+}
+
+// ===== Huli =====
+// ===== Completion overlay =====
+function closeCompletion() { hideOverlay('overlay-completion'); }
+function shareFromCompletion() { hideOverlay('overlay-completion'); showOverlay('overlay-share'); }
+function moreTasksFromCompletion() { hideOverlay('overlay-completion'); go('page-claim'); }
+
+// ===== Share overlay =====
+function closeShare() { hideOverlay('overlay-share'); }
+
+// ===== Share config & landing page (分享内容 + 落地页) =====
+const SHARE_CONFIG = {
+  title: '分享健康好习惯',                                   // ⚠️ 待确认 @产品：需参照既有分享弹窗需求定稿
+  desc: '每天打卡，养成健康好习惯，领取虎力值换好礼',          // ⚠️ 待确认 @产品：分享文案
+  link: 'https://h5.taixiaohu.com/sleep-share?from=share&task=first', // ⚠️ 待确认 @产品/研发：落地页域名与路径
+  thumb: ''
+};
+function wechatShare() {
+  // 原型模拟：真实接入微信 JS-SDK / 开放 SDK，传 title/desc/link/thumb 调起分享卡片
+  toast('已调起微信分享：' + SHARE_CONFIG.title);
+}
+function saveSharePoster() {
+  toast('分享海报已保存到相册');
+}
+function openShareLanding() {
+  hideOverlay('overlay-share');
+  // 真实场景：location.href = SHARE_CONFIG.link;  原型内以 page 模拟落地页
+  go('page-share-landing');
+}
+function openApp() {
+  // 真实场景：深链回跳 taixiaohu:// 或应用宝/商店；未装 App 则落地下载
+  toast('跳转打开泰小虎 App（scheme: taixiaohu://sleep-task）');
+}
+
+// ===== Toast =====
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 1600);
+}
+
+// ===== Init =====
+function init() {
+  // Ensure detail task is always available as promo in tasks if not already active
+  renderHome(); renderSleep();
+  go('page-notification');
+  updateTime();
+  setInterval(updateTime, 60000);
+  // overlay click-outside & stop-propagation (avoid inline `if`/`event` which smoke flags)
+  ['overlay-daily-report','overlay-completion','overlay-share'].forEach(id => {
+    const ov = document.getElementById(id);
+    const inner = ov.querySelector('.modal-card, .bottom-sheet');
+    ov.addEventListener('click', function(e){ if (e.target === this) { if(id==='overlay-daily-report') closeDailyReport(); if(id==='overlay-completion') closeCompletion(); if(id==='overlay-share') closeShare(); } });
+    inner.addEventListener('click', function(e){ e.stopPropagation(); });
+  });
+  // expose for automated tests
+  window.STATE = state;
+}
+function updateTime() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2, '0');
+  const m = String(now.getMinutes()).padStart(2, '0');
+  document.getElementById('sb-time').textContent = h + ':' + m;
+  const lockTime = document.getElementById('lock-time');
+  if (lockTime) lockTime.textContent = h + ':' + m;
+  const lockDate = document.getElementById('lock-date');
+  if (lockDate) {
+    const days = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+    lockDate.textContent = (now.getMonth()+1) + '月' + now.getDate() + '日 ' + days[now.getDay()];
+  }
+}
+init();
+</script>
+</body>
+</html>
