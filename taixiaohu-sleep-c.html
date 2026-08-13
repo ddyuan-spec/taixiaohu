@@ -323,20 +323,47 @@
     <span>5G 🔋</span>
   </div>
 
-  <!-- ===== 消息通知（锁屏/通知中心） ===== -->
+  <!-- ===== 消息通知（锁屏/通知中心）· 2026-08-13 需求草稿：PUSH 时间 08:00 + 三分支文案 ===== -->
   <div class="page notification-screen" id="page-notification" data-page="notification">
-    <div class="lock-time" id="lock-time">13:39</div>
-    <div class="lock-date" id="lock-date">8月12日 星期三</div>
+    <div class="lock-time" id="lock-time">08:00</div>
+    <div class="lock-date" id="lock-date">8月13日 星期四</div>
     <div class="notification-stack">
       <div class="notification-item" onclick="go('page-home')">
         <div class="app"><div class="icon" style="background:#07C160">微</div><span>微信 · 现在</span></div>
         <div class="title">微信</div>
         <div class="body">1个联系人发来1条消息</div>
       </div>
+
+      <!-- 分支A：有睡眠数据 → 沿用现有 PUSH（正文不变） -->
       <div class="notification-item" onclick="go('page-home')">
-        <div class="app"><div class="icon" style="background:#00D6A6">泰</div><span>泰小虎 · 现在</span></div>
+        <div class="app"><div class="icon" style="background:#00D6A6">泰</div><span>泰小虎 · 早上8:00</span></div>
+        <div style="display:inline-block;font-size:10px;color:#fff;background:#FF8A3D;padding:1px 6px;border-radius:8px;margin:2px 0 4px;">触发：有睡眠数据</div>
         <div class="title">泰小虎</div>
         <div class="body">早安，昨晚你睡了7小时32分<br>今日健康打卡已就绪，点击查看睡眠日报并领取任务。</div>
+      </div>
+
+      <!-- 分支B：有任务（无睡眠数据）→ 早上好… → 健康打卡页 page-tasks -->
+      <div class="notification-item" onclick="go('page-tasks')">
+        <div class="app"><div class="icon" style="background:#00D6A6">泰</div><span>泰小虎 · 早上8:00</span></div>
+        <div style="display:inline-block;font-size:10px;color:#fff;background:#FF8A3D;padding:1px 6px;border-radius:8px;margin:2px 0 4px;">触发：有任务</div>
+        <div class="title">泰小虎</div>
+        <div class="body">早上好，准备好开启今天健康生活了吗</div>
+      </div>
+
+      <!-- 分支C：无健康档案·无任务 → 填写健康档案… → 开屏引导（首屏已改为性别，原昵称步已删除） -->
+      <div class="notification-item" onclick="goOnboarding()">
+        <div class="app"><div class="icon" style="background:#00D6A6">泰</div><span>泰小虎 · 早上8:00</span></div>
+        <div style="display:inline-block;font-size:10px;color:#fff;background:#FF8A3D;padding:1px 6px;border-radius:8px;margin:2px 0 4px;">触发：无健康档案·无任务</div>
+        <div class="title">泰小虎</div>
+        <div class="body">填写健康档案开启健康打卡生活</div>
+      </div>
+
+      <!-- 分支D（2026-08-13 新增）：有健康档案·无任务·无睡眠数据 → 打卡赚虎力值 → 领取任务页 page-claim -->
+      <div class="notification-item" onclick="go('page-claim')">
+        <div class="app"><div class="icon" style="background:#00D6A6">泰</div><span>泰小虎 · 早上8:00</span></div>
+        <div style="display:inline-block;font-size:10px;color:#fff;background:#FF8A3D;padding:1px 6px;border-radius:8px;margin:2px 0 4px;">触发：有档案·无任务·无睡眠</div>
+        <div class="title">泰小虎</div>
+        <div class="body">早上好，快来一起健康打卡赚虎力值吧</div>
       </div>
     </div>
     <div class="lock-bottom" onclick="go('page-home')">
@@ -638,6 +665,12 @@ function go(pageId) {
   if (pageId === 'page-claim') renderClaim();
   if (pageId === 'page-custom') renderCustom();
   renderHome(); renderSleep();
+}
+
+/* 2026-08-13 需求草稿：分支C 无健康档案·无任务 → 开屏引导（首屏=性别，原昵称步已删除，直接落首屏） */
+function goOnboarding() {
+  toast('→ 开屏引导·健康档案填写（首屏=性别，已无昵称步）');
+  setTimeout(function () { window.location.href = 'onboarding-flow.html'; }, 600);
 }
 
 function showOverlay(id) { document.getElementById(id).classList.add('active'); }
