@@ -12,7 +12,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hira
 .topbar .title{font-size:15px;font-weight:600;color:#333}
 .topbar .copy-btn{background:#5e4bfa;color:#fff;border:none;padding:7px 14px;border-radius:16px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 2px 6px rgba(94,75,250,.25)}
 .topbar .copy-btn:active{transform:scale(.97)}
-.phone{width:414px;height:820px;background:#1c1c1e;border-radius:48px;padding:14px;box-shadow:0 16px 48px rgba(0,0,0,.28);flex-shrink:0}
+.phone{width:414px;height:820px;background:#1c1c1e;border-radius:48px;padding:14px;box-shadow:0 16px 48px rgba(0,0,0,.28);flex-shrink:0;position:relative;overflow:hidden}
 .screen{width:386px;height:792px;background:#f7f8fa;border-radius:36px;overflow:hidden;position:relative;display:flex;flex-direction:column}
 .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:28px;background:#1c1c1e;border-bottom-left-radius:16px;border-bottom-right-radius:16px;z-index:10}
 .statusbar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px 6px;font-size:13px;color:#fff;font-weight:600;position:relative;z-index:5}
@@ -23,12 +23,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hira
 .statusbar .bat{width:22px;height:11px;border:1px solid #fff;border-radius:3px;position:relative;padding:1px}
 .statusbar .bat::after{content:'';position:absolute;right:-3px;top:3px;width:2px;height:5px;background:#fff;border-radius:0 1px 1px 0}
 .statusbar .bat i{display:block;height:100%;background:#fff;border-radius:1px;width:80%}
-.nav{background:#5e4bfa;padding:13px 16px;display:flex;align-items:center;position:relative;z-index:5}
-.nav-back{font-size:24px;color:#fff;width:28px;cursor:default;line-height:1}
-.nav-title{flex:1;text-align:center;font-size:17px;font-weight:600;color:#fff;margin-right:28px}
+.nav{background:#fff;padding:13px 16px;display:flex;align-items:center;position:relative;z-index:5;box-shadow:0 1px 0 rgba(0,0,0,.05)}
+.nav-back{font-size:24px;color:#333;width:28px;cursor:default;line-height:1}
+.nav-title{flex:1;text-align:center;font-size:17px;font-weight:600;color:#333;margin-right:28px}
 .content{flex:1;overflow-y:auto;padding:12px;padding-bottom:80px}
 .card{background:#fff;border-radius:12px;margin-bottom:12px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
 .card-title{font-size:14px;font-weight:700;color:#333;margin-bottom:10px}
+.addr-row{display:flex;align-items:flex-start;gap:10px}
+.addr-icon{width:22px;height:22px;background:#5e4bfa;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;flex-shrink:0;margin-top:2px}
+.addr-info{flex:1}
+.addr-name{font-size:15px;font-weight:600;color:#333}
+.addr-phone{font-size:13px;color:#999;margin-left:6px}
+.addr-txt{font-size:13px;color:#666;margin-top:4px;line-height:1.5}
+.store{font-size:12px;color:#999;margin-bottom:8px}
 .product{display:flex;align-items:center}
 .product .thumb{width:60px;height:60px;background:#f5f5f5;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;margin-right:12px;flex-shrink:0}
 .product .info{flex:1}
@@ -39,36 +46,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hira
 .summary-row .k{color:#666}
 .summary-row .v{color:#333}
 .summary-row .v.red{color:#f5222d;font-weight:600}
-.summary-row .v.green{color:#00c853}
 .divider{height:1px;background:#f0f0f0;margin:8px 0}
-/* 优惠券折叠行 */
-.coupon-row{background:#fff;border-radius:12px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.04);overflow:hidden}
-.cr-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer}
-.cr-title{font-size:15px;font-weight:600;color:#333}
-.cr-sub{font-size:12px;color:#999;margin-top:3px}
-.cr-right{display:flex;align-items:center;gap:8px}
-.cr-info{font-size:14px;color:#5e4bfa;font-weight:600}
-.cr-arrow{font-size:18px;color:#999;transition:transform .2s}
-.coupon-row.expanded .cr-arrow{transform:rotate(180deg)}
-.coupon-list{display:none;padding:0 16px 14px}
-.coupon-row.expanded .coupon-list{display:block}
-.coupon-option{display:flex;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f5f5f5;cursor:pointer}
-.coupon-option:last-child{border-bottom:none}
-.coupon-option .radio{width:20px;height:20px;border:2px solid #ccc;border-radius:50%;margin-right:12px;margin-top:2px;position:relative;flex-shrink:0}
-.coupon-option.selected .radio{border-color:#5e4bfa;background:#5e4bfa}
-.coupon-option.selected .radio::after{content:'';position:absolute;left:5px;top:2px;width:4px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
-.coupon-option .info{flex:1}
-.coupon-option .info .top{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.coupon-option .info .amt{font-size:18px;font-weight:700;color:#f5222d}
-.coupon-option .info .name{font-size:14px;font-weight:600;color:#333}
-.coupon-option .info .tag-rec{font-size:10px;color:#fff;background:#5e4bfa;border-radius:4px;padding:1px 5px}
-.coupon-option .info .rule{font-size:12px;color:#999;margin-top:4px}
-.coupon-option .info .reason{font-size:11px;color:#f5222d;margin-top:3px}
-.coupon-option.disabled{opacity:.55}
+/* 优惠券入口行 */
+.coupon-entry{background:#fff;border-radius:12px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.04);overflow:hidden}
+.ce-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer}
+.ce-title{font-size:15px;font-weight:600;color:#333}
+.ce-right{display:flex;align-items:center;gap:8px}
+.ce-info{font-size:14px;color:#f5222d;font-weight:600}
+.ce-arrow{font-size:18px;color:#999}
+/* 底部弹窗 */
+.popup-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:20;display:none;opacity:0;transition:opacity .25s}
+.popup-overlay.show{display:block;opacity:1}
+.popup-sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top-left-radius:20px;border-top-right-radius:20px;z-index:21;transform:translateY(100%);transition:transform .25s;max-height:72%;display:flex;flex-direction:column}
+.popup-sheet.show{transform:translateY(0)}
+.popup-handle{width:36px;height:5px;background:#ddd;border-radius:3px;margin:10px auto 6px}
+.popup-title{text-align:center;font-size:17px;font-weight:600;color:#333;margin-bottom:10px}
+.popup-list{flex:1;overflow-y:auto;padding:12px 16px 16px}
+.coupon-card{display:flex;align-items:stretch;background:#fff;border-radius:12px;margin-bottom:12px;box-shadow:0 1px 6px rgba(0,0,0,.06);overflow:hidden;border:1px solid #f5f5f5;cursor:pointer}
+.coupon-card.selected{border-color:#ff4d4f}
+.coupon-card.disabled{opacity:.55;background:#f9f9f9}
+.cc-left{width:88px;background:linear-gradient(135deg,#ff6b35,#ff4d4f);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;flex-shrink:0;padding:10px 0}
+.cc-left .amt{font-size:26px;font-weight:700}
+.cc-left .amt small{font-size:14px;font-weight:600}
+.cc-left .rule{font-size:11px;margin-top:4px;opacity:.95}
+.cc-mid{flex:1;padding:12px;display:flex;flex-direction:column;justify-content:center}
+.cc-name{font-size:15px;font-weight:600;color:#333;line-height:1.3}
+.cc-row{display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap}
+.cc-exp{font-size:12px;color:#999}
+.cc-rule{font-size:12px;color:#5e4bfa}
+.cc-reason{font-size:11px;color:#cf1322;margin-top:8px;background:#fff1f0;border:1px solid #ffa39e;border-radius:6px;padding:6px 8px;line-height:1.45;display:flex;align-items:center;gap:4px}
+.cc-tag{font-size:10px;color:#fff;background:#ff4d4f;border-radius:4px;padding:1px 5px}
+.cc-right{width:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-left:1px dashed #f0f0f0;flex-shrink:0;gap:8px}
+.cc-radio{width:20px;height:20px;border:2px solid #ccc;border-radius:50%;position:relative}
+.cc-radio.on{border-color:#ff4d4f;background:#ff4d2f}
+.cc-radio.on::after{content:'';position:absolute;left:4px;top:1px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.cc-stepper{display:flex;align-items:center;gap:6px}
+.cc-stepper button{width:22px;height:22px;border:1px solid #ddd;background:#fff;border-radius:50%;font-size:14px;color:#666;line-height:1;display:flex;align-items:center;justify-content:center}
+.cc-stepper button:disabled{border-color:#eee;color:#ccc}
+.cc-stepper span{font-size:14px;font-weight:600;color:#333;min-width:18px;text-align:center}
+.no-coupon{display:flex;align-items:center;padding:14px 0;cursor:pointer}
+.no-coupon .radio{width:20px;height:20px;border:2px solid #ccc;border-radius:50%;margin-right:12px;position:relative}
+.no-coupon .radio.on{border-color:#ff4d4f;background:#ff4d2f}
+.no-coupon .radio.on::after{content:'';position:absolute;left:4px;top:1px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.no-coupon .txt{font-size:15px;color:#666}
 /* 底部提交栏 */
 .bottom-bar{position:absolute;bottom:0;left:0;right:0;background:#fff;padding:10px 16px;border-top:1px solid #eee;display:flex;align-items:center;justify-content:space-between;z-index:8}
 .bottom-bar .total{font-size:14px;color:#333}
 .bottom-bar .total b{font-size:20px;color:#f5222d;margin-left:4px}
+.bottom-bar .save{font-size:12px;color:#f5222d;margin-left:6px}
 .bottom-bar .submit{background:#5e4bfa;color:#fff;border:none;padding:11px 28px;border-radius:22px;font-size:15px;font-weight:600;cursor:pointer}
 .bottom-bar .submit:active{transform:scale(.97)}
 .toast{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.75);color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;display:none;z-index:100;max-width:80%;text-align:center}
@@ -81,7 +106,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hira
   <button class="copy-btn" onclick="copySource()">复制源码</button>
 </div>
 
-<div class="phone">
+<div class="phone" id="phone">
   <div class="screen">
     <div class="notch"></div>
     <div class="statusbar">
@@ -98,9 +123,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hira
 
     <div class="content">
 
+      <!-- 收货地址 -->
+      <div class="card">
+        <div class="addr-row">
+          <div class="addr-icon">📍</div>
+          <div class="addr-info">
+            <div class="addr-name">张小虎<span class="addr-phone">13712349042</span></div>
+            <div class="addr-txt">浙江省杭州市余杭区文一西路 969 号 泰小虎健康大厦 8 楼</div>
+          </div>
+        </div>
+      </div>
+
       <!-- 商品 -->
       <div class="card">
-        <div class="card-title">商品</div>
+        <div class="store">泰小虎健康旗舰店</div>
         <div class="product">
           <div class="thumb">🦐</div>
           <div class="info">
@@ -117,71 +153,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hira
           <span class="k">商品总价</span>
           <span class="v" id="goodsTotal">¥239.00</span>
         </div>
+        <div class="summary-row">
+          <span class="k">运费</span>
+          <span class="v">¥0.00</span>
+        </div>
       </div>
 
-      <!-- 优惠券折叠行 -->
-      <div class="coupon-row expanded" id="couponRow">
-        <div class="cr-head" onclick="toggleCoupon()">
-          <div>
-            <div class="cr-title">优惠券</div>
-            <div class="cr-sub">手动勾选，系统已为你推荐最大抵扣</div>
-          </div>
-          <div class="cr-right">
-            <span class="cr-info" id="couponBrief">-¥40.00</span>
-            <span class="cr-arrow">⌄</span>
-          </div>
-        </div>
-        <div class="coupon-list">
-          <div class="coupon-option selected" data-index="0" data-name="满200减40" data-amt="40" data-rule="满200元可用" onclick="selectCoupon(0)">
-            <div class="radio"></div>
-            <div class="info">
-              <div class="top">
-                <span class="amt">¥40</span>
-                <span class="name">满200减40</span>
-                <span class="tag-rec">推荐</span>
-              </div>
-              <div class="rule">满200元可用 · 有效期至 2026-08-15</div>
-            </div>
-          </div>
-          <div class="coupon-option" data-index="1" data-name="满99减10" data-amt="10" data-rule="满99元可用" onclick="selectCoupon(1)">
-            <div class="radio"></div>
-            <div class="info">
-              <div class="top">
-                <span class="amt">¥10</span>
-                <span class="name">满99减10</span>
-              </div>
-              <div class="rule">满99元可用 · 有效期至 2026-08-10</div>
-            </div>
-          </div>
-          <div class="coupon-option disabled" data-index="2" data-name="满300减50" data-amt="0" data-rule="满300元可用" onclick="showToast('当前订单金额未满300元，本券本次不抵扣')">
-            <div class="radio"></div>
-            <div class="info">
-              <div class="top">
-                <span class="amt">¥50</span>
-                <span class="name">满300减50</span>
-              </div>
-              <div class="rule">满300元可用 · 有效期至 2026-08-20</div>
-              <div class="reason">未满 ¥300，本次不抵扣</div>
-            </div>
-          </div>
-          <div class="coupon-option disabled" data-index="3" data-name="App专享券" data-amt="0" data-rule="满100元可用" onclick="showToast('此券仅支持在泰小虎App使用')">
-            <div class="radio"></div>
-            <div class="info">
-              <div class="top">
-                <span class="amt">¥20</span>
-                <span class="name">App专享券</span>
-              </div>
-              <div class="rule">满100元可用 · 有效期至 2026-08-18</div>
-              <div class="reason">生效中 · 当前端口不可用</div>
-            </div>
-          </div>
-          <div class="coupon-option" data-index="-1" onclick="noCoupon()">
-            <div class="radio"></div>
-            <div class="info">
-              <div class="top">
-                <span class="name" style="color:#666">不使用优惠券</span>
-              </div>
-            </div>
+      <!-- 优惠券入口 -->
+      <div class="coupon-entry" id="couponEntry" onclick="openCouponPopup()">
+        <div class="ce-head">
+          <span class="ce-title">优惠券</span>
+          <div class="ce-right">
+            <span class="ce-info" id="couponBrief">-¥30.00</span>
+            <span class="ce-arrow">›</span>
           </div>
         </div>
       </div>
@@ -190,16 +174,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hira
       <div class="card">
         <div class="summary-row">
           <span class="k">优惠券抵扣</span>
-          <span class="v red" id="couponDiscount">-¥40.00</span>
-        </div>
-        <div class="summary-row">
-          <span class="k">运费</span>
-          <span class="v">¥0.00</span>
+          <span class="v red" id="couponDiscount">-¥30.00</span>
         </div>
         <div class="divider"></div>
         <div class="summary-row">
           <span class="k">实付金额</span>
-          <span class="v red" id="payAmount">¥199.00</span>
+          <span class="v red" id="payAmount">¥209.00</span>
         </div>
       </div>
 
@@ -207,11 +187,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hira
 
     <!-- 底部提交栏 -->
     <div class="bottom-bar">
-      <div class="total">合计：<b id="bottomTotal">¥199.00</b></div>
-      <button class="submit" onclick="submitOrder()">确认购买</button>
+      <div class="total">实付<b id="bottomTotal">¥209.00</b><span class="save" id="bottomSave">已省¥30.00</span></div>
+      <button class="submit" onclick="submitOrder()">提交订单</button>
     </div>
 
   </div>
+
+  <!-- 优惠券选择弹窗 -->
+  <div class="popup-overlay" id="popupOverlay" onclick="closeCouponPopup()"></div>
+  <div class="popup-sheet" id="popupSheet">
+    <div class="popup-handle"></div>
+    <div class="popup-title">优惠券</div>
+    <div class="popup-list" id="popupList">
+      <!-- 由 JS 渲染 -->
+    </div>
+  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
@@ -219,43 +210,126 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hira
 <script>
 var goodsTotal=239;
 var coupons=[
-  {name:'满200减40',amt:40,rule:'满200元可用'},
-  {name:'满99减10',amt:10,rule:'满99元可用'},
-  {name:'满300减50',amt:0,rule:'满300元可用'},
-  {name:'App专享券',amt:0,rule:'满100元可用'}
+  {id:1,name:'福利直播满100减10',amt:10,threshold:100,exp:'2026-08-14',multi:true,usable:true,obtain:'2026-08-01',reason:''},
+  {id:2,name:'新人满99减20',amt:20,threshold:99,exp:'2026-08-15',multi:false,usable:true,obtain:'2026-08-02',reason:''},
+  {id:3,name:'会员日满200减30',amt:30,threshold:200,exp:'2026-08-19',multi:false,usable:true,obtain:'2026-08-03',reason:''},
+  {id:4,name:'老客回馈无门槛10元',amt:10,threshold:0,exp:'2026-08-21',multi:false,usable:false,obtain:'2026-08-04',reason:'仅限（App / H5）可使用'},
+  {id:5,name:'满50减5',amt:5,threshold:50,exp:'2026-08-25',multi:true,usable:true,obtain:'2026-08-04',reason:''},
+  {id:6,name:'指定商品满80减15',amt:15,threshold:80,exp:'2026-08-30',multi:false,usable:false,obtain:'2026-08-05',reason:'仅限「虾-泰香脆Q56」可使用'},
+  {id:7,name:'老客回馈满100减10',amt:10,threshold:100,exp:'2026-08-14',multi:false,usable:true,obtain:'2026-08-07',reason:''},
+  {id:8,name:'指定店铺满150减25',amt:25,threshold:150,exp:'2026-09-01',multi:false,usable:false,obtain:'2026-08-06',reason:'仅限「泰小虎健康旗舰店」可使用'}
 ];
-var selectedIndex=0; // 默认选中推荐券（抵扣最大）
+var quantities={}; // id -> count
+coupons.forEach(function(c){quantities[c.id]=1;});
+var selectedId=bestUsableDiscount(); // 默认选中「优惠最高」的可用券
 
 function formatMoney(n){return '¥'+n.toFixed(2);}
+function currentCoupon(){return coupons.find(function(c){return c.id==selectedId;});}
+function effectiveDiscountOf(c){
+  if(!c||!c.usable)return 0;
+  var q=quantities[c.id]||1;
+  if(c.multi){
+    // 逐张门槛重判简化：最多可用张数受剩余实付限制
+    var remain=goodsTotal,total=0,i;
+    for(i=0;i<q;i++){
+      if(remain>=c.threshold){total+=c.amt;remain-=c.amt;}
+      else break;
+    }
+    return total;
+  }
+  return (goodsTotal>=c.threshold||c.threshold===0)?c.amt:0;
+}
+function effectiveDiscount(){return effectiveDiscountOf(currentCoupon());}
+function bestUsableDiscount(){
+  // 默认选中「优惠最高」的可用券（叠加券按当前持有可叠加张数上限计入）
+  var best=0,bestVal=-1;
+  coupons.forEach(function(c){
+    if(!c.usable)return;
+    var d=effectiveDiscountOf(c);
+    if(d>bestVal){bestVal=d;best=c.id;}
+  });
+  return best;
+}
+function sortCoupons(a,b){
+  if(b.amt!==a.amt) return b.amt-a.amt;              // 优惠金额降序
+  if(a.multi!==b.multi) return a.multi?-1:1;          // 叠加券优先于非叠加券
+  if(a.exp!==b.exp) return a.exp<b.exp?1:-1;          // 到期时间倒序（晚过期在前）
+  return a.obtain<b.obtain?1:-1;                       // 获得时间倒序（晚获得在前）
+}
 function updateAmounts(){
-  var discount=selectedIndex>=0?coupons[selectedIndex].amt:0;
+  var discount=effectiveDiscount();
   var pay=goodsTotal-discount;
   document.getElementById('couponDiscount').textContent='-'+formatMoney(discount);
   document.getElementById('payAmount').textContent=formatMoney(pay);
   document.getElementById('bottomTotal').textContent=formatMoney(pay);
-  document.getElementById('couponBrief').textContent=selectedIndex>=0?'-'+formatMoney(discount):'未使用';
+  document.getElementById('bottomSave').textContent='已省'+formatMoney(discount);
+  document.getElementById('couponBrief').textContent=selectedId?'-'+formatMoney(discount):'未使用';
 }
-function selectCoupon(idx){
-  selectedIndex=idx;
-  var opts=document.querySelectorAll('.coupon-option');
-  opts.forEach(function(o){o.classList.remove('selected');});
-  var sel=document.querySelector('.coupon-option[data-index="'+idx+'"]');
-  if(sel) sel.classList.add('selected');
+function renderPopupList(){
+  var list=document.getElementById('popupList');
+  var sorted=coupons.slice().sort(sortCoupons);
+  var html='';
+  sorted.forEach(function(c){
+    var isSel=c.id==selectedId;
+    var disabled=!c.usable;
+    html+='<div class="coupon-card '+(isSel?'selected':'')+(disabled?' disabled':'')+'" onclick="selectCoupon('+c.id+','+disabled+')">';
+    html+='<div class="cc-left"><div class="amt"><small>¥</small>'+c.amt+'</div><div class="rule">'+(c.threshold?('满'+c.threshold):'无门槛')+'</div></div>';
+    html+='<div class="cc-mid">';
+    html+='<div class="cc-name">'+c.name+'</div>';
+    html+='<div class="cc-row"><span class="cc-exp">有效期至 '+c.exp+'</span>'+(isSel&&c.usable?'<span class="cc-tag">推荐</span>':'')+'</div>';
+    if(c.usable) html+='<div class="cc-row"><span class="cc-rule">券规则›</span></div>';
+    if(c.reason) html+='<div class="cc-reason">⚠️ '+c.reason+'</div>';
+    html+='</div>';
+    html+='<div class="cc-right">';
+    html+='<div class="cc-radio '+(isSel?'on':'')+'"></div>';
+    if(isSel&&c.multi&&c.usable){
+      html+='<div class="cc-stepper"><button onclick="event.stopPropagation();changeQty('+c.id+',-1)">−</button><span>'+(quantities[c.id]||1)+'</span><button onclick="event.stopPropagation();changeQty('+c.id+',1)">+</button></div>';
+    }
+    html+='</div></div>';
+  });
+  html+='<div class="no-coupon" onclick="noCoupon()"><div class="radio '+(selectedId?'':'on')+'"></div><span class="txt">不使用优惠券</span></div>';
+  list.innerHTML=html;
+}
+function openCouponPopup(){
+  document.getElementById('popupOverlay').classList.add('show');
+  document.getElementById('popupSheet').classList.add('show');
+  renderPopupList();
+}
+function closeCouponPopup(){
+  document.getElementById('popupOverlay').classList.remove('show');
+  document.getElementById('popupSheet').classList.remove('show');
+}
+function selectCoupon(id,disabled){
+  if(disabled){
+    var c=coupons.find(function(x){return x.id==id;});
+    showToast(c.reason||'当前不可用');
+    return;
+  }
+  selectedId=id;
+  quantities[id]=quantities[id]||1;
   updateAmounts();
+  renderPopupList();
+}
+function changeQty(id,delta){
+  var c=coupons.find(function(x){return x.id==id;});
+  var q=quantities[id]||1;
+  var max=Math.min(5,Math.floor(goodsTotal/c.threshold||1)); // 简化上限
+  var newQ=q+delta;
+  if(newQ<1)return;
+  if(newQ>max){showToast('本券在本单已达可用上限');return;}
+  quantities[id]=newQ;
+  updateAmounts();
+  renderPopupList();
 }
 function noCoupon(){
-  selectedIndex=-1;
-  var opts=document.querySelectorAll('.coupon-option');
-  opts.forEach(function(o){o.classList.remove('selected');});
-  document.querySelector('.coupon-option[data-index="-1"]').classList.add('selected');
+  selectedId=0;
   updateAmounts();
-}
-function toggleCoupon(){
-  document.getElementById('couponRow').classList.toggle('expanded');
+  renderPopupList();
 }
 function submitOrder(){
-  if(selectedIndex>=0){
-    showToast('提交订单并预占券：'+coupons[selectedIndex].name+'\n应付 ¥'+(goodsTotal-coupons[selectedIndex].amt).toFixed(2));
+  if(selectedId){
+    var c=currentCoupon();
+    showToast('提交订单并预占券：'+c.name+'\n应付 ¥'+(goodsTotal-effectiveDiscount()).toFixed(2));
   }else{
     showToast('提交订单，不使用优惠券\n应付 ¥'+goodsTotal.toFixed(2));
   }
@@ -274,16 +348,56 @@ function fallbackCopy(src,ok,fail){
   try{document.execCommand('copy');ok();}catch(e){fail();}
   document.body.removeChild(ta);
 }
+/* ===== 平铺源码：确认订单整页 + 优惠券弹窗（不区分类型 · 统一列表）===== */
+function renderFlatListHTML(){
+  var sorted=coupons.slice().sort(sortCoupons);
+  var h='<div style="font-size:13px;font-weight:700;color:#333;margin:16px 0 8px;padding-left:6px;border-left:3px solid #5e4bfa;">优惠券（不区分类型 · 统一列表）</div>';
+  sorted.forEach(function(c){
+    var isSel=c.id==selectedId;
+    var disabled=!c.usable;
+    h+='<div class="coupon-card '+(isSel?'selected':'')+(disabled?' disabled':'')+'">';
+    h+='<div class="cc-left"><div class="amt"><small>¥</small>'+c.amt+'</div><div class="rule">'+(c.threshold?('满'+c.threshold):'无门槛')+'</div></div>';
+    h+='<div class="cc-mid">';
+    h+='<div class="cc-name">'+c.name+'</div>';
+    h+='<div class="cc-row"><span class="cc-exp">有效期至 '+c.exp+'</span>'+(isSel&&c.usable?'<span class="cc-tag">推荐</span>':'')+'</div>';
+    if(c.usable) h+='<div class="cc-row"><span class="cc-rule">券规则›</span></div>';
+    if(c.reason) h+='<div class="cc-reason">⚠️ '+c.reason+'</div>';
+    h+='</div>';
+    h+='<div class="cc-right"><div class="cc-radio '+(isSel?'on':'')+'"></div></div>';
+    h+='</div>';
+  });
+  h+='<div class="no-coupon"><div class="radio '+(selectedId?'':'on')+'"></div><span class="txt">不使用优惠券</span></div>';
+  return h;
+}
 function copySource(){
-  var src='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
-  function ok(){showToast('已复制完整源码');}
+  // 复制「确认订单整页」源码：页面其它元素齐全，券弹窗展开，统一列表（不区分类型）
+  var phone=document.getElementById('phone').cloneNode(true);
+  phone.querySelectorAll('script').forEach(function(s){s.remove();});
+  phone.removeAttribute('id');
+  phone.style.height='auto';
+  phone.style.overflow='visible';
+  var ov=phone.querySelector('.popup-overlay'); if(ov){ov.style.display='none';}
+  var sheet=phone.querySelector('.popup-sheet');
+  sheet.classList.add('show');
+  sheet.style.position='relative';
+  sheet.style.transform='none';
+  sheet.style.maxHeight='none';
+  sheet.style.marginTop='16px';
+  var list=phone.querySelector('#popupList');
+  list.innerHTML=renderFlatListHTML();
+  list.style.overflow='visible';
+  list.style.maxHeight='none';
+  var styleText=document.querySelector('head style').textContent;
+  var payload='<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<title>确认订单·选券 平铺（弹窗展开·统一列表）</title>\n<style>'+styleText+'</style>\n</head>\n<body>\n'+phone.outerHTML+'\n</body>\n</html>';
+  function ok(){showToast('已复制平铺源码（整页+弹窗统一列表）');}
   function fail(){showToast('复制失败，请手动复制');}
   if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(src).then(ok,function(){fallbackCopy(src,ok,fail);});
+    navigator.clipboard.writeText(payload).then(ok,function(){fallbackCopy(payload,ok,fail);});
   }else{
-    fallbackCopy(src,ok,fail);
+    fallbackCopy(payload,ok,fail);
   }
 }
+updateAmounts();
 </script>
 </body>
 </html>
