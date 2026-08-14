@@ -414,7 +414,7 @@
 <p>C端每日完成弹窗样式为固定设计规范，除背景图、标题、正文、按钮文案外，颜色/字号/圆角/尺寸/动效均不通过后台配置，确保全平台体验一致。</p>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">元素</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">样式规格</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">备注</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">遮罩层</td><td style="border:1px solid #e0e0e0;padding:8px;">颜色 #000000，透明度 50%；点击可关闭弹窗</td><td style="border:1px solid #e0e0e0;padding:8px;">与分享面板共用同一遮罩组件</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">弹窗容器</td><td style="border:1px solid #e0e0e0;padding:8px;">宽度 280dp（iOS 270pt），最大 80% 屏宽；高度随内容自适应；垂直居中；圆角 16dp；背景 #FFFFFF</td><td style="border:1px solid #e0e0e0;padding:8px;">无背景图时为白底</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">弹窗背景图</td><td style="border:1px solid #e0e0e0;padding:8px;">取后台配置，按比例缩放覆盖整个弹窗容器（object-fit: cover）</td><td style="border:1px solid #e0e0e0;padding:8px;">上传图需保证文字区域可读性，建议上下留白</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">奖杯图标</td><td style="border:1px solid #e0e0e0;padding:8px;">尺寸 72×72dp，居中；主色 #FFC107（金），无描边/阴影</td><td style="border:1px solid #e0e0e0;padding:8px;">可用 Lottie 或静态图</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">标题</td><td style="border:1px solid #e0e0e0;padding:8px;">字号 20sp，字重 Bold，颜色 #333333，居中，距图标 16dp</td><td style="border:1px solid #e0e0e0;padding:8px;">后台 title 字段</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">描述</td><td style="border:1px solid #e0e0e0;padding:8px;">字号 14sp，颜色 #666666，居中，行高 1.5，距标题 8dp</td><td style="border:1px solid #e0e0e0;padding:8px;">后台 body 字段，空时不渲染</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">主按钮「分享健康好习惯」</td><td style="border:1px solid #e0e0e0;padding:8px;">宽度 100%（扣除内边距），高度 44dp，圆角 22dp；背景品牌绿 #07C160；文字 #FFFFFF，16sp，Medium；距描述 24dp</td><td style="border:1px solid #e0e0e0;padding:8px;">文案对应后台「按钮文案」字段</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">次按钮「获取更多任务」</td><td style="border:1px solid #e0e0e0;padding:8px;">同主按钮尺寸；背景透明，文字品牌绿 #07C160，16sp，Medium；1dp 品牌绿描边；距主按钮 12dp</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">关闭 icon（可选）</td><td style="border:1px solid #e0e0e0;padding:8px;">右上角 24×24dp，#999999；默认不展示，点击遮罩关闭</td><td style="border:1px solid #e0e0e0;padding:8px;">如运营需要可全局开启</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">入场动效</td><td style="border:1px solid #e0e0e0;padding:8px;">弹窗从 0.9 缩放到 1.0 + 透明度 0→1，时长 250ms；遮罩渐显 200ms</td><td style="border:1px solid #e0e0e0;padding:8px;">使用系统默认弹性曲线</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">退场动效</td><td style="border:1px solid #e0e0e0;padding:8px;">弹窗缩放 1.0→0.95 + 透明度 1→0，时长 200ms；遮罩渐隐 200ms</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr></tbody></table>
 
-4.1.10 分享面板 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P6 社交共鸣：脱敏打卡海报一键分享微信/朋友圈，满足分享欲且保护隐私</li></ul></div>
+4.1.10 分享海报弹窗 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P6 社交共鸣：脱敏打卡海报一键分享微信/朋友圈，满足分享欲且保护隐私</li></ul></div>
 <p><strong>需求影响范围</strong>：从每日完成弹窗唤起，提供微信好友/保存本地两渠道；具体分享能力复用 App 现有分享 SDK。<strong>涉及终端</strong>：Android / iOS App。</p>
 <h5>4.1.10.1 页面原型与交互示意</h5>
 <img src="prd-assets/c-share.png" style="max-width:100%;max-height:800px;border:1px solid #e0e0e0;border-radius:8px;object-fit:contain;" alt="分享海报弹窗">
@@ -429,21 +429,81 @@
 </ul>
 <p><strong>业务逻辑与边界条件</strong>：</p>
 <ul>
-<li>点击「微信好友」调起微信分享 SDK，分享文案取后台配置；</li>
-<li>点击「保存本地」将分享海报保存到相册；</li>
+<li>分享海报仅在用户完成当日全部任务后，通过每日完成弹窗「分享健康好习惯」按钮唤起；</li>
+<li>点击「微信好友」调起微信分享 SDK，分享卡片取本小节 4.1.10.6 内容规格；</li>
+<li>点击「保存本地」将海报图片保存到系统相册；</li>
 <li>点击「取消」或遮罩关闭海报；</li>
 <li>分享动作（微信好友/保存本地）触发虎力值一次性发放（须当日全部任务完成，见 3.3.3）；</li>
-<li>分享海报背景图可后台上传配置（见 4.2.8）。</li>
+<li>分享海报背景图、二维码、标题前缀文案由后台上传配置（见 4.2.8）。</li>
 </ul>
-<h5>4.1.10.3 数据来源</h5>
-<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享标题</td><td style="border:1px solid #e0e0e0;padding:8px;">取「我已坚持健康打卡 X 天，和我一起打卡开启健康生活」，X=累计打卡天数（后台可配置固定前缀文案）</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">今日任务列表截图</td><td style="border:1px solid #e0e0e0;padding:8px;">取《用户任务实例日表》当日任务动态渲染</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">下载二维码</td><td style="border:1px solid #e0e0e0;padding:8px;">取后台「分享弹窗配置」中配置的泰小虎下载二维码</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享海报背景</td><td style="border:1px solid #e0e0e0;padding:8px;">取后台配置并透传分享 SDK</td></tr></tbody></table>
-<h5>4.1.10.4 视觉样式规范</h5>
+
+<h5>4.1.10.3 分享场景详细功能表</h5>
+<p>本弹窗在 App 内出现的场景、海报示例、推荐关系及三种扫码入口的落地页如下：</p>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">app分享场景</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">分享海报示例图</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">是否带推荐关系</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">扫码方式</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">落地页</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">扫码方式</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">落地页</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">扫码方式</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">落地页</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">健康任务-每日完成分享</td><td style="border:1px solid #e0e0e0;padding:8px;">健康打卡海报（标题+当日任务列表+下载二维码）</td><td style="border:1px solid #e0e0e0;padding:8px;">是</td><td style="border:1px solid #e0e0e0;padding:8px;">微信扫码（微信内长按识别/扫一扫）</td><td style="border:1px solid #e0e0e0;padding:8px;">H5 分享落地页（见 4.1.12）→ 未安装引导下载，已安装调起 App</td><td style="border:1px solid #e0e0e0;padding:8px;">App扫码（泰小虎 App 内置扫一扫）</td><td style="border:1px solid #e0e0e0;padding:8px;">识别不到（二维码仅含下载/落地页链接，无 App 内深链）</td><td style="border:1px solid #e0e0e0;padding:8px;">手机相机扫码</td><td style="border:1px solid #e0e0e0;padding:8px;">H5 分享落地页（见 4.1.12）→ 引导下载泰小虎</td></tr></tbody></table>
+<div class="warn">⚠️ 待确认 @产品/研发：App 扫码是否支持识别并直接打开 App 内健康打卡页？当前按示例图规范填「识别不到」；若业务需要 App 扫码直跳，须明确深链 scheme 与参数。</div>
+
+<h5>4.1.10.4 扫码与落地页跳转规则</h5>
+<p><strong>微信扫码（微信内识别）</strong>：</p>
+<ul>
+<li>识别后进入 H5 分享落地页（4.1.12），URL 中携带 <code>inviter_id</code>、<code>from=wechat</code>、<code>task=first</code> 等参数；</li>
+<li>落地页顶部展示海报图、中部展示任务卡片与虎力值奖励、底部提供「打开泰小虎 App」和「下载泰小虎」按钮；</li>
+<li>未安装 App 时点击「打开泰小虎 App」降级到应用宝 / App Store 下载页。</li>
+</ul>
+<p><strong>App 扫码（泰小虎 App 内置扫一扫）</strong>：</p>
+<ul>
+<li>当前二维码仅包含 H5 落地页短链，App 内置扫一扫识别后按普通 H5 打开落地页；</li>
+<li>若后续支持 App 扫码直跳，须替换为带深链参数的二维码/短链，跳转原生健康打卡页。</li>
+</ul>
+<p><strong>手机相机扫码（系统相机 / 第三方扫码）</strong>：</p>
+<ul>
+<li>识别二维码中的 H5 落地页 URL，使用默认浏览器打开；</li>
+<li>落地页根据 UA 判断已安装则尝试调起 App，未安装则展示下载引导。</li>
+</ul>
+<p><strong>推荐关系处理</strong>：</p>
+<ul>
+<li>分享时，在落地页 URL 的 query 中写入分享用户 ID（<code>inviter_id={user_id}</code>）；</li>
+<li>新用户/回流用户通过落地页点击「打开/下载 App」并完成注册/登录后，将 <code>inviter_id</code> 与当前用户绑定为推荐关系；</li>
+<li>推荐关系有效期：从点击落地页开始 7 个自然日内完成注册/登录视为有效推荐（⚠️ 待确认 @产品：有效期规则）；</li>
+<li>同一设备/同一手机号已被绑定过推荐关系时，以最近一次有效的 <code>inviter_id</code> 覆盖（⚠️ 待确认 @产品：覆盖策略）。</li>
+</ul>
+
+<h5>4.1.10.5 功能按钮总表</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">功能名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">功能说明</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">显示位置</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">备注</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">微信好友</td><td style="border:1px solid #e0e0e0;padding:8px;">调起微信分享 SDK，发送分享卡片给微信好友</td><td style="border:1px solid #e0e0e0;padding:8px;">海报底部分享操作栏</td><td style="border:1px solid #e0e0e0;padding:8px;">分享成功后触发虎力值发放</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">保存本地</td><td style="border:1px solid #e0e0e0;padding:8px;">将当前海报图片保存到系统相册</td><td style="border:1px solid #e0e0e0;padding:8px;">海报底部分享操作栏</td><td style="border:1px solid #e0e0e0;padding:8px;">保存成功后触发虎力值发放</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">取消</td><td style="border:1px solid #e0e0e0;padding:8px;">关闭分享海报弹窗</td><td style="border:1px solid #e0e0e0;padding:8px;">海报底部分享操作栏</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr></tbody></table>
+
+<h5>4.1.10.6 按钮逐步逻辑与异常分支</h5>
+<p><strong>微信好友</strong>：</p>
+<ol>
+<li>用户点击「微信好友」；</li>
+<li>前端调用 App 分享 SDK（WeChatShare），传入分享标题、描述、缩略图、落地页链接；</li>
+<li>若分享成功回调：调用服务端虎力值发放接口，将当日 pendingHuLi 一次性转为到账虎力值，toast「虎力值已到账 +N」；</li>
+<li>若分享失败/取消：关闭 SDK 页面，弹窗保持打开，不发放虎力值；</li>
+<li>若未安装微信：toast「未安装微信」。</li>
+</ol>
+<p><strong>保存本地</strong>：</p>
+<ol>
+<li>用户点击「保存本地」；</li>
+<li>前端将海报容器渲染为图片（html2canvas / 原生截图），调用系统相册保存接口；</li>
+<li>保存成功后：同微信好友成功回调，发放虎力值并 toast「虎力值已到账 +N / 已保存到相册」；</li>
+<li>保存失败：toast「保存失败，请检查存储权限」；不发放虎力值；</li>
+<li>用户拒绝存储权限：首次提示「保存图片需要存储权限」，再次拒绝则不弹权限引导。</li>
+</ol>
+<p><strong>取消</strong>：</p>
+<ol>
+<li>用户点击「取消」或点击遮罩；</li>
+<li>弹窗执行退场动效后关闭；</li>
+<li>不触发任何奖励发放。</li>
+</ol>
+
+<h5>4.1.10.7 数据来源</h5>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">字段名称</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值逻辑说明</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享标题</td><td style="border:1px solid #e0e0e0;padding:8px;">取「我已坚持健康打卡 X 天，和我一起打卡开启健康生活」，X=累计打卡天数（后台可配置固定前缀文案）</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">今日任务列表截图</td><td style="border:1px solid #e0e0e0;padding:8px;">取《用户任务实例日表》当日任务动态渲染</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">下载二维码</td><td style="border:1px solid #e0e0e0;padding:8px;">取后台「分享弹窗配置」中配置的泰小虎下载二维码</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">落地页链接</td><td style="border:1px solid #e0e0e0;padding:8px;">取后台「分享弹窗配置」.landing_url，默认 https://h5.taixiaohu.com/sleep-share?from=share&task=first（⚠️ 待确认 @产品/研发）</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">推荐人参数 inviter_id</td><td style="border:1px solid #e0e0e0;padding:8px;">取当前登录用户 ID，分享时写入落地页 URL</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享海报背景</td><td style="border:1px solid #e0e0e0;padding:8px;">取后台「分享弹窗配置」.poster_bg 并透传分享 SDK</td></tr></tbody></table>
+
+<h5>4.1.10.8 视觉样式规范</h5>
 <p>分享弹窗为<strong>全屏海报式卡片（Poster）</strong>，视觉样式固定；海报标题（含累计打卡天数）、任务列表截图、二维码及提示文案由 C端按本规范渲染，仅分享渠道项文案可通过后台配置（本期微信好友 / 保存本地 / 取消 前端写死）。</p>
 <table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">元素</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">样式规格</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">备注</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">遮罩层</td><td style="border:1px solid #e0e0e0;padding:8px;">颜色 #000000，透明度 50%；点击关闭海报</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">海报卡片</td><td style="border:1px solid #e0e0e0;padding:8px;">居中卡片，圆角 16dp，背景 #FFFFFF，高度随内容自适应</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">顶部品牌区</td><td style="border:1px solid #e0e0e0;padding:8px;">左侧泰小虎 logo + 「泰小虎 · 健康打卡」</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">海报标题</td><td style="border:1px solid #e0e0e0;padding:8px;">字号 18sp，字重 Bold，颜色 #1f2937，居中</td><td style="border:1px solid #e0e0e0;padding:8px;">「我已坚持健康打卡 X 天，和我一起打卡开启健康生活」，X=累计打卡天数</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">任务列表截图区</td><td style="border:1px solid #e0e0e0;padding:8px;">展示「今日健康打卡」标题 + 当日任务列表卡片</td><td style="border:1px solid #e0e0e0;padding:8px;">动态填充当日任务</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">二维码区</td><td style="border:1px solid #e0e0e0;padding:8px;">左下二维码（占位，上线替换）+ 提示「扫描二维码下载泰小虎 查看每日打卡任务」</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享操作栏</td><td style="border:1px solid #e0e0e0;padding:8px;">居中：微信好友 / 保存本地 两渠道项，下方「取消」按钮</td><td style="border:1px solid #e0e0e0;padding:8px;">渠道项图标圆角方形 56×56dp</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">入场动效</td><td style="border:1px solid #e0e0e0;padding:8px;">海报缩放 0.9→1.0 + 透明度 0→1，时长 250ms；遮罩渐显 200ms</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">退场动效</td><td style="border:1px solid #e0e0e0;padding:8px;">海报缩放 1.0→0.95 + 透明度 1→0，时长 200ms；遮罩渐隐 200ms</td><td style="border:1px solid #e0e0e0;padding:8px;">—</td></tr></tbody></table>
 
-<h5>4.1.10.5 分享内容规格（标题 / 图片 / 文案 / 落地页）</h5>
-<p>分享弹窗实际下发的分享内容由后台「每日首完成分享弹窗配置」提供，C端按以下规格组装分享卡片与分享面板：</p>
-<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">内容项</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值 / 默认值</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">说明</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">状态</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享标题</td><td style="border:1px solid #e0e0e0;padding:8px;">默认「我已坚持健康打卡 X 天，和我一起打卡开启健康生活」（X=累计打卡天数）</td><td style="border:1px solid #e0e0e0;padding:8px;">分享海报主标题</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品：文案与累计天数口径</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享图片（海报）</td><td style="border:1px solid #e0e0e0;padding:8px;">后台上传背景图；缺省用默认渐变海报</td><td style="border:1px solid #e0e0e0;padding:8px;">微信会话缩略图 thumb + 落地页头图</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品：图尺寸 / 比例 / 默认素材</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享文案</td><td style="border:1px solid #e0e0e0;padding:8px;">默认「每天打卡，养成健康好习惯，领取虎力值换好礼」</td><td style="border:1px solid #e0e0e0;padding:8px;">微信会话描述 desc</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品：参照既有分享弹窗需求</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">落地页链接</td><td style="border:1px solid #e0e0e0;padding:8px;">默认 https://h5.taixiaohu.com/sleep-share?from=share&task=first</td><td style="border:1px solid #e0e0e0;padding:8px;">点击分享卡片 / 链接跳转目标（见 4.1.12）</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品/研发：落地页域名与路径</td></tr></tbody></table>
+<h5>4.1.10.9 分享内容规格（标题 / 图片 / 文案 / 落地页）</h5>
+<p>分享弹窗实际下发的分享内容由后台「每日首完成分享弹窗配置」提供，C端按以下规格组装分享卡片：</p>
+<table><thead style="background:#f5f6fa"><tr><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">内容项</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">取值 / 默认值</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">说明</th><th style="border:1px solid #e0e0e0;padding:8px;text-align:left;">状态</th></tr></thead><tbody><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享标题</td><td style="border:1px solid #e0e0e0;padding:8px;">默认「我已坚持健康打卡 X 天，和我一起打卡开启健康生活」（X=累计打卡天数）</td><td style="border:1px solid #e0e0e0;padding:8px;">分享海报主标题</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品：文案与累计天数口径</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享图片（海报）</td><td style="border:1px solid #e0e0e0;padding:8px;">后台上传背景图；缺省用默认渐变海报</td><td style="border:1px solid #e0e0e0;padding:8px;">微信会话缩略图 thumb + 落地页头图</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品：图尺寸 / 比例 / 默认素材</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">分享文案</td><td style="border:1px solid #e0e0e0;padding:8px;">默认「每天打卡，养成健康好习惯，领取虎力值换好礼」</td><td style="border:1px solid #e0e0e0;padding:8px;">微信会话描述 desc</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品：参照既有分享弹窗需求</td></tr><tr><td style="border:1px solid #e0e0e0;padding:8px;">落地页链接</td><td style="border:1px solid #e0e0e0;padding:8px;">取后台配置，默认 https://h5.taixiaohu.com/sleep-share?from=share&task=first&inviter_id={{user_id}}</td><td style="border:1px solid #e0e0e0;padding:8px;">点击分享卡片 / 链接跳转目标（见 4.1.12）</td><td style="border:1px solid #e0e0e0;padding:8px;">⚠️ 待确认 @产品/研发：落地页域名与路径</td></tr></tbody></table>
 <div class="warn">⚠️ 待确认 @产品：上述「标题 / 图片 / 文案 / 落地页链接」具体值，需参照既有分享弹窗需求（历史分享类需求）对齐后定稿，本期不臆造。</div>
 
 4.1.11 虎力值任务中心 <span class="tag y">本期新增</span></h4><div class="solve"><strong>解决痛点：</strong><ul class="solve-list"><li><span class="solve-no">①</span>P3 习惯粘性：虎力值任务中心做阶梯激励闭环</li><li><span class="solve-no">②</span>P5 商业闭环：并可兑换健康好物，打通变现</li></ul></div>
