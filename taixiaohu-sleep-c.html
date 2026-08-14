@@ -846,17 +846,30 @@ let state = {
   dailyReportShown: false,
   completionShown: false,
   pendingDetailTask: null,
-  // 打卡天数数据（示例：假设今天是 2026-08-13，历史有打卡）
-  checkInDates: [
-    '2026-08-01','2026-08-02','2026-08-03','2026-08-04','2026-08-05',
-    '2026-08-07','2026-08-08','2026-08-09','2026-08-10','2026-08-11','2026-08-12'
-  ],
-  totalCheckIn: 12,   // 累计打卡天数
-  streak: 5,          // 连续打卡天数
+  // 打卡天数数据：演示种子在脚本底部 seedCheckIns() 中按"相对今天"动态生成
+  checkInDates: [],
+  totalCheckIn: 12,   // 累计打卡天数（演示：含更早历史）
+  streak: 0,          // 连续打卡天数（由 seedCheckIns 计算）
+  streakRewardX: 7,       // 连续打卡额外奖励阈值（天）
+  streakRewardValue: 10,  // 连续打卡额外奖励虎力值
+  streakMilestone: 0,    // 已发放额外奖励的最高连续天数里程碑
   todayChecked: false, // 今天是否已完成首次任务打卡
   calendarYear: new Date().getFullYear(),
   calendarMonth: new Date().getMonth()
 };
+
+// 演示用：用"相对今天的最近 6 个连续自然日（截至昨日）"作为连续打卡种子，保证连续 X 天奖励可演示
+(function seedCheckIns(){
+  const arr = [];
+  const base = new Date(); base.setHours(0,0,0,0);
+  for (let i = 6; i >= 1; i--) {
+    const x = new Date(base); x.setDate(base.getDate() - i);
+    arr.push(x.getFullYear() + '-' + String(x.getMonth()+1).padStart(2,'0') + '-' + String(x.getDate()).padStart(2,'0'));
+  }
+  state.checkInDates = arr;
+  state.totalCheckIn = 12;
+  state.streak = calcStreak(arr);   // 截至昨日连续 6 天
+})();
 
 // ===== Router =====
 function go(pageId) {
@@ -918,6 +931,17 @@ function calcStreak(dates) {
     d.setDate(d.getDate() - 1);
   }
   return streak;
+}
+// 连续打卡达到 X 天 -> 一次性额外虎力值奖励（系统级激励，独立于每日任务奖励）
+function checkStreakReward() {
+  const X = state.streakRewardX;
+  const reached = Math.floor(state.streak / X);
+  const prev = Math.floor(state.streakMilestone / X);
+  if (reached > prev && reached > 0) {
+    state.huLi += state.streakRewardValue;
+    state.streakMilestone = state.streak;
+    toast('连续打卡' + state.streak + '天，额外奖励 +' + state.streakRewardValue + ' 虎力值！');
+  }
 }
 
 // ===== Home =====
@@ -1041,6 +1065,11 @@ function renderCalendar() {
     gridHtml += `<div class="calendar-day other">${d}</div>`;
   }
 
+  const rwX = state.streakRewardX, rwV = state.streakRewardValue;
+  const rwRemain = state.streak >= rwX ? 0 : (rwX - (state.streak % rwX));
+  const rewardTxt = state.streak >= rwX
+    ? ('已达成连续 ' + rwX + ' 天奖励（+' + rwV + ' 虎力值），继续加油！')
+    : ('再连续打卡 ' + rwRemain + ' 天，可得额外奖励 +' + rwV + ' 虎力值');
   container.innerHTML = `
     <div class="calendar-header">
       <div class="title-row">
@@ -1048,6 +1077,7 @@ function renderCalendar() {
         <div class="info" onclick="toast('每日完成首次任务即可打卡')">i</div>
       </div>
       <div class="subtitle">本月已连续打卡 <span class="num">${state.streak}</span> 天，累计打卡 <span class="num">${state.totalCheckIn}</span> 天</div>
+      <div class="streak-progress" style="font-size:12px;color:#00B894;margin-top:6px;">${rewardTxt}</div>
     </div>
     <div class="calendar-nav">
       <div class="arrow" onclick="prevCalendarMonth()">‹</div>
@@ -1148,6 +1178,7 @@ function completeTask(id) {
       state.checkInDates.push(tStr);
       state.totalCheckIn++;
       state.streak = calcStreak(state.checkInDates);
+      checkStreakReward();
     }
   }
   renderAll();
@@ -1175,6 +1206,7 @@ function completeTaskAfterDetail(id) {
       state.checkInDates.push(tStr);
       state.totalCheckIn++;
       state.streak = calcStreak(state.checkInDates);
+      checkStreakReward();
     }
   }
   renderAll();
