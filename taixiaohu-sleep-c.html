@@ -564,7 +564,7 @@
   <div class="page" id="page-sleep" data-page="sleep">
     <div class="app-header" style="background:linear-gradient(135deg,#6FCEB3 0%,#5EDFA2 100%);color:#fff;">
       <div class="menu"><span></span><span></span><span></span></div>
-      <div class="tabs"><div class="tab">健康</div><div class="tab">泰小虎</div><div class="tab">服务</div></div>
+      <div class="tabs"><div class="tab">健康</div><div class="tab" onclick="go('page-home')" style="cursor:pointer;">泰小虎</div><div class="tab">服务</div></div>
       <div class="more"><span></span></div>
     </div>
     <div class="member-bar">
@@ -620,7 +620,7 @@
   <div class="page" id="page-tasks" data-page="tasks">
     <div class="app-header" style="background:linear-gradient(135deg,#6FCEB3 0%,#5EDFA2 100%);color:#fff;">
       <div class="menu"><span></span><span></span><span></span></div>
-      <div class="tabs"><div class="tab">健康</div><div class="tab">泰小虎</div><div class="tab">服务</div></div>
+      <div class="tabs"><div class="tab">健康</div><div class="tab" onclick="go('page-home')" style="cursor:pointer;">泰小虎</div><div class="tab">服务</div></div>
       <div class="more"><span></span></div>
     </div>
     <div class="member-bar">
@@ -944,16 +944,13 @@ function renderHome() {
   }
 }
 function handleHomeTask() {
+  // 2026-08-14 需求：泰小虎（首页）任务卡点击直接跳转到健康打卡页面，
+  // 而非自动完成首个任务，恢复「从泰小虎页面跳转到任务」的交互。
   if (state.myTasks.length === 0) {
     go('page-claim');
     return;
   }
-  const unDone = state.myTasks.filter(id => !state.completedToday.includes(id));
-  if (unDone.length > 0) {
-    completeTask(unDone[0]);
-  } else {
-    go('page-tasks');
-  }
+  go('page-tasks');
 }
 function viewDailyReport() { hideOverlay('overlay-daily-report'); go('page-sleep'); }
 function closeDailyReport() { hideOverlay('overlay-daily-report'); }
