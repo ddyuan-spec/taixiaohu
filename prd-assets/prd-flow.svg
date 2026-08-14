@@ -71,8 +71,6 @@
   <rect x="510" y="424" width="150" height="50" rx="8" fill="#ffffff" stroke="#c05621"></rect>
   <text x="585" y="454" text-anchor="middle" font-size="13" fill="#222">固定首批规则</text>
 
-  <rect x="690" y="424" width="150" height="50" rx="8" fill="#ffffff" stroke="#c05621"></rect>
-  <text x="765" y="454" text-anchor="middle" font-size="13" fill="#222">分享弹窗配置</text>
 
   <rect x="870" y="424" width="150" height="50" rx="8" fill="#ffffff" stroke="#c05621"></rect>
   <text x="945" y="454" text-anchor="middle" font-size="13" fill="#222">数据监控漏斗</text>
