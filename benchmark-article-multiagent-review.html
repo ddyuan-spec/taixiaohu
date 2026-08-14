@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>对标文章全文：多 Agent 协作【需求评审】</title>
+<style>
+body{font-family:-apple-system,"Microsoft YaHei",sans-serif;max-width:860px;margin:32px auto;padding:0 18px;color:#1f2328;line-height:1.75;background:#fff}
+h1{font-size:26px;border-bottom:2px solid #185FA5;padding-bottom:8px}
+h2{font-size:21px;color:#185FA5;margin-top:32px}
+h3{font-size:17px;margin-top:24px}
+h4{font-size:15px;color:#444}
+blockquote{background:#eef4fb;border-left:4px solid #185FA5;margin:12px 0;padding:8px 14px;color:#445}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+th,td{border:1px solid #d0d7de;padding:7px 10px;text-align:left;vertical-align:top}
+th{background:#f3f6fa}
+pre{background:#f6f8fa;border:1px solid #e1e4e8;border-radius:6px;padding:12px;overflow:auto;font-size:13px}
+code{background:#f6f8fa;padding:1px 5px;border-radius:4px;font-size:13px}
+ul,ol{padding-left:22px}
+hr{border:none;border-top:1px solid #e1e4e8;margin:28px 0}
+a{color:#185FA5}
+</style></head><body>
+<p>来源链接：https://mp.weixin.qq.com/s/tVOEfm7oAoKvES9WNJnwpQ 作者：道三（公众号）</p>
+<hr>
+<p>每个产品团队都经历过那种场面：一份 PRD 写完，拉上测试、前端、后端开个评审会，一开就是一两个小时。会上该问的没问到，不该纠结的扯了半天，结论还经常跟着【第一个发言的人】走——这叫锚定偏差，谁先开口，后面的人就顺着他的思路飘。 那如果，这场评审会能由几个 AI Agent 自动开呢？不是一个人假装多方意见，而是真的同时派出"测试"、"前端"、"后端"三个角色，各看各的、互不干扰，最后有人把意见汇总成一份带颜色标注的报告。今天要聊的，是通过Workbuddy专家团实现多 Agent 协作的 PRD 评审工作流。 你好，我是道三，个微wuyi4973，回复【workbuddy】进群一起交流 为什么是"专家团"，不是一个 AI 很多人第一反应是：直接问 AI"帮我审一下这份 PRD"不就行了？ 行，但效果有限。【单个 AI 同时扮演多个角色，会互相打架】——它刚以产品经理口吻写完需求，转头又以测试身份挑刺，前后逻辑容易自洽成"假一致"，真正尖锐的矛盾反而被悄悄抹平了。 真实研发团队的评审之所以有用，靠的恰恰是"角色冲突"：测试专挑边界、前端专挑交互、后端专挑数据模型。这些视角天然对立，才能把问题暴露出来。 WorkBuddy 的"专家团"（Team 型）恰好对应这种结构：一个主理人负责编排调度，多个团员各司其职。【最关键的一条铁律是——主理人只做编排和中转，绝不代写任何团员的产出】。专业活，必须交给专业角色自己干。 1概述 1.1 目标 构建一个多 Agent 协作工作流，模拟真实研发团队中的 PRD 评审会议。产品经理 Agent 生成 PRD 后，测试、前端、后端三个角色 Agent 并行审查并从各自专业视角提出疑问，最终由汇总 Agent 收集所有疑问、生成解答、输出带角色颜色区分的 HTML 评审报告。 1.2 工作流总览 核心设计原则 并行评审：三个角色 Agent 同时执行，总耗时 = max(单个 Agent) 而非累加 结构化输出：所有 Agent 统一 JSON 格式输出，便于汇总 Agent 解析和去重 角色隔离：每个 Agent 只看 PRD + 自己的角色 Prompt，互不干扰，避免锚定偏差 可迭代：PM Agent 可根据评审结果修订 PRD，支持多轮评审直至收敛 2Agent 角色定义 角色 Agent输入输出核心职责 产品经理用户口语化需求描述结构化 PRD(Markdown)需求背景、目标用户、功能列表与优先级、用户故事、非功能需求、验收标准 测试工程师 PM Agent 生成的 PRD问题列表（JSON）可测试性、边界条件、异常场景、数据校验、权限场景、兼容性测试点 前端工程师PM Agent 生成的 PRD问题列表（JSON）交互流程完整性、UI 组件复用、状态管理、API 契约、响应式兼容、前端性能 后端工程师 PM Agent 生成的 PRD问题列表（JSON）数据模型、API 设计、业务逻辑、性能扩展、数据一致性、安全权限、第三方依赖 汇总 AgentPRD + 三方问题列表HTML 评审报告问题去重合并、严重度排序、生成答案、颜色区分角色、统计摘要 2.1 各角色审查关注点详解 测试工程师 审查清单 验收标准是否可量化、可测试（不能出现"速度快""体验好"等模糊表述） 边界条件：空值、零值、最大值、超长文本、特殊字符 异常场景：网络中断、超时、并发冲突、重复提交 数据校验：格式校验、范围校验、唯一性校验是否明确 权限矩阵：不同角色能看到/操作哪些功能 兼容性：浏览器、设备、分辨率要求是否明确 前端工程师 审查清单 页面交互流程是否闭环（含加载态、空态、错误态、成功态） UI 组件是否可复用现有设计系统，是否有新组件需要设计稿 前端状态管理：列表分页、筛选条件、表单暂存策略 API 接口契约：字段名、类型、格式、分页参数、错误码 响应式断点：移动端 / 平板 / 桌面端布局差异 前端性能：首屏加载、图片懒加载、虚拟列表、防抖节流 后端工程师 审查清单 数据模型：表结构、字段类型、索引、外键关系是否合理 API 设计：RESTful 规范、版本管理、分页/排序/筛选参数 业务逻辑完整性：状态机流转、审批流程、通知触发条件 性能与扩展：预估 QPS、缓存策略、分库分表、异步处理 数据一致性：事务边界、分布式锁、幂等性设计 安全权限：鉴权方式、数据隔离、SQL 注入防护、敏感字段脱敏 第三方依赖：支付/短信/地图等外部服务调用的异常处理和降级策略 3工作流阶段 阶段一：PRD 生成（PM Agent） 触发条件用户输入需求描述（口语化即可）--注意边界问题 执行方式单 Agent 前台执行，生成完整 PRD 输出格式Markdown 文档，包含标准章节结构 输出要求每个功能点必须有明确的验收标准 阶段二：并行评审（QA / FE / BE Agent） 触发条件PM Agent 完成 PRD 生成 执行方式三个 Agent 在同一条消息中并行 spawn 上下文各自独立接收 PRD 全文 + 角色 Prompt，互不可见 输出格式统一 JSON 数组（见 4.2 节） 耗时max(QA, FE, BE) 而非 QA + FE + BE 阶段三：汇总输出（汇总 Agent） 触发条件三个评审 Agent 全部完成 执行方式单 Agent 执行，接收 PRD + 三方问题列表 处理逻辑问题去重 → 严重度排序 → 生成答案 → HTML 渲染 输出格式HTML 文件，角色颜色区分 阶段四：迭代修订 触发条件存在 high 级别未解决问题 执行方式PM Agent 根据 HTML 报告修订 PRD → 重新触发阶段二 终止条件无 high 级别问题，或达到最大轮次（建议 ≤ 3 轮） 4通信协议 4.1 Agent 间数据流 4.2 问题结构化格式（JSON Schema） 所有评审 Agent 必须按以下格式输出，确保汇总 Agent 可解析： { "agent_role": "test_engineer",  // test_engineer | frontend | backend "questions": [ { "id": "QA-001", "category": "边界条件",           // 问题分类 "severity": "high",              // high | medium | low "question": "用户输入金额为 0 或负数时系统如何处理？PRD 未说明。", "prd_section": "3.2 支付功能",     // 关联的 PRD 章节 "suggestion": "建议补充：金额必须 &gt; 0，前后端双重校验，异常返回友好提示。" } ] } 严重度定义 high：阻塞性问题，PRD 缺失关键逻辑或存在矛盾，无法进入开发 medium：需补充细节，不阻塞但影响开发效率或质量 low： 建议性优化，可在开发过程中协商解决 5Prompt 模板 5.1 产品经理 Agent 你是一位资深互联网产品经理，负责将用户需求转化为结构化的 PRD 文档。</p>
+<h2>你的任务</h2>
+<p>根据以下用户需求描述，生成一份完整的 PRD 需求文档。</p>
+<h2>用户需求</h2>
+<p>{user_requirement}</p>
+<h2>PRD 必须包含以下章节</h2>
+<ol><li>需求背景与目标</li><li>目标用户与使用场景</li><li>功能需求列表（含优先级 P0/P1/P2）</li><li>用户故事 / 核心用例</li><li>非功能需求（性能、安全、兼容性）</li><li>验收标准（每个功能点必须有可量化的验收条件）</li><li>里程碑与排期建议</li></ol>
+<h2>输出要求</h2>
+<ul><li>使用 Markdown 格式</li><li>每个功能点必须编号，便于评审引用</li><li>验收标准必须具体可测试，禁止使用"体验好""速度快"等模糊表述</li><li>标注哪些功能点存在不确定项，需要评审讨论</li></ul>
+<p>5.2 测试工程师 Agent 你是一位资深测试工程师，正在评审一份 PRD 需求文档。</p>
+<h2>你的任务</h2>
+<p>从测试人员的角度审查以下 PRD，找出所有影响测试工作的问题。</p>
+<h2>PRD 文档</h2>
+<p>{prd_content}</p>
+<h2>审查清单</h2>
+<ol><li>验收标准是否可量化、可测试</li><li>边界条件：空值、零值、最大值、超长文本、特殊字符</li><li>异常场景：网络中断、超时、并发冲突、重复提交</li><li>数据校验规则是否明确</li><li>权限矩阵：不同角色的操作边界</li><li>兼容性测试要求是否明确</li></ol>
+<h2>输出格式（严格 JSON）</h2>
+<p>输出一个 JSON 对象，包含 agent_role 和 questions 数组。 每个 question 包含 id、category、severity(high/medium/low)、question、prd_section、suggestion。 只输出 JSON，不要输出其他内容。 5.3 前端工程师 Agent 你是一位资深前端开发工程师，正在评审一份 PRD 需求文档。</p>
+<h2>你的任务</h2>
+<p>从前端开发的角度审查以下 PRD，找出所有影响前端开发的问题。</p>
+<h2>PRD 文档</h2>
+<p>{prd_content}</p>
+<h2>审查清单</h2>
+<ol><li>页面交互流程是否闭环（加载态、空态、错误态、成功态）</li><li>UI 组件是否需要新设计稿，能否复用现有组件库</li><li>前端状态管理：列表分页、筛选条件、表单暂存</li><li>API 接口契约：字段名、类型、格式、分页参数、错误码</li><li>响应式与兼容性要求</li><li>前端性能优化点</li></ol>
+<h2>输出格式（严格 JSON）</h2>
+<p>同测试工程师 Agent 格式，agent_role 填 "frontend"。 只输出 JSON，不要输出其他内容。 5.4 后端工程师 Agent 你是一位资深后端开发工程师，正在评审一份 PRD 需求文档。</p>
+<h2>你的任务</h2>
+<p>从后端开发的角度审查以下 PRD，找出所有影响后端开发的问题。</p>
+<h2>PRD 文档</h2>
+<p>{prd_content}</p>
+<h2>审查清单</h2>
+<ol><li>数据模型设计：表结构、字段类型、索引、外键</li><li>API 设计：RESTful 规范、版本管理、分页/排序/筛选</li><li>业务逻辑完整性：状态机流转、审批流程、通知触发</li><li>性能与扩展：QPS 预估、缓存策略、异步处理</li><li>数据一致性：事务边界、幂等性、分布式锁</li><li>安全权限：鉴权方式、数据隔离、敏感字段脱敏</li><li>第三方依赖：外部服务调用的异常处理和降级</li></ol>
+<h2>输出格式（严格 JSON）</h2>
+<p>同测试工程师 Agent 格式，agent_role 填 "backend"。 只输出 JSON，不要输出其他内容。 5.5 汇总 Agent 你是一位 PRD 评审汇总专家，负责将多角色的评审意见整合为一份 HTML 评审报告。</p>
+<h2>你的输入</h2>
+<ol><li>原始 PRD 文档：</li></ol>
+<p>{prd_content}</p>
+<ol><li>测试工程师问题列表：</li></ol>
+<p>{qa_questions}</p>
+<ol><li>前端工程师问题列表：</li></ol>
+<p>{fe_questions}</p>
+<ol><li>后端工程师问题列表：</li></ol>
+<p>{be_questions}</p>
+<h2>你的任务</h2>
+<ol><li>合并所有问题，去除重复项（不同角色提出相同问题时合并，保留所有提出者）</li><li>按 severity 降序排列（high → medium → low）</li><li>为每个问题生成答案：</li></ol>
+<ul><li>能从 PRD 中找到答案的，直接引用 PRD 内容回答</li><li>PRD 未覆盖的，给出专业建议并标注"需 PM 确认"</li></ul>
+<ol><li>生成完整的 HTML 评审报告</li></ol>
+<h2>颜色编码规范</h2>
+<ul><li>测试工程师：琥珀色 #BA7517，背景 #FAEEDA</li><li>前端工程师：蓝色 #185FA5，背景 #E6F1FB</li><li>后端工程师：绿色 #3B6D11，背景 #EAF3DE</li></ul>
+<h2>HTML 报告结构</h2>
+<ol><li>报告头部：PRD 标题、评审时间、参与角色</li><li>统计摘要：各角色问题数、按严重度分布</li><li>问题详情列表：每个问题含编号、角色标签（颜色）、严重度、问题内容、PRD 关联章节、答案/建议</li><li>待确认项汇总：所有标注"需 PM 确认"的问题列表</li><li>评审结论：是否通过评审、阻塞项数量</li></ol>
+<h2>输出要求</h2>
+<ul><li>输出完整 HTML 文件（含 DOCTYPE、html、head、body）</li><li>使用内联 CSS，不依赖外部资源</li><li>支持移动端响应式</li></ul>
+<p>6HTML 输出规范 6.1 颜色编码体系 角色标签文字色标签背景色卡片左边框色块预览 测试工程师#854F0B#FAEEDA#BA7517Amber 前端工程师#185FA5#E6F1FB#378ADDBlue 后端工程师#3B6D11#EAF3DE#639922Green PM 答案#3C3489#EEEDFE#534AB7Purple 6.2 报告结构 报告头部：PRD 标题、评审日期、参与角色列表、PRD 版本号 统计摘要3.问题详情：卡片式布局，每张卡片包含 问题编号 + 角色标签（颜色区分） 严重度标签（红/黄/绿） 问题内容 关联 PRD 章节 汇总 Agent 的答案/建议 状态标记：已解决 / 需 PM 确认4.待确认项汇总：所有"需 PM 确认"问题的快捷列表5.评审结论：通过 / 有条件通过 / 不通过，附阻塞项数量 7可行性建议 7.1 Agent 编排：Team 模式 + 并行 Spawn 推荐使用 Team 模式进行编排。主 Agent（或 PM Agent）作为 team-lead，通过 TeamCreate 创建团队后，在单条消息中同时 spawn 三个评审 Agent，实现真正的并行执行。 编排方式TeamCreate → 主 Agent 作为 team-lead 并行 spawn一条消息中 3 个 Agent 调用（QA + FE + BE） 结果回收主 Agent 等待三个 Agent 返回后，spawn 汇总 Agent 通信方式SendMessage + 共享任务列表（TaskList） 为什么并行而非串行？ 三个角色审查 PRD 是无依赖关系的独立任务。串行执行总耗时 = QA + FE + BE，并行执行总耗时 = max(QA, FE, BE)，通常可节省 60% 以上时间。且并行避免了先执行的 Agent 结论影响后执行的 Agent（锚定偏差）。 7.2 上下文管理：Prompt 注入而非文件共享 PRD 文档通过 prompt 直接注入传递给每个评审 Agent，而非写入文件再让 Agent 读取。优势： 无需文件 IO，减少失败点 每个 Agent 的上下文完全隔离，只看到 PRD + 自己的角色 Prompt 汇总 Agent 通过 prompt 注入三方 JSON 结果，解析确定性高 注意 Token 上限 PRD 过长时（超过 8000 字），考虑按章节拆分评审，或使用 RAG 检索相关章节注入。对于多数互联网产品 PRD（3000-6000 字），直接注入无压力。 7.3 结构化输出：强制 JSON 格式 评审 Agent 必须输出严格 JSON，而非自然语言。这是汇总 Agent 能正确解析、去重、排序的前提。 在 Prompt 末尾明确要求"只输出 JSON，不要输出其他内容" 提供 JSON Schema 示例，确保字段一致 汇总 Agent 收到 JSON 后可直接 JSON.parse，无需模糊解析 7.4 问题去重策略 不同角色可能提出相同或相似的问题（如 QA 和 FE 都问到"金额为负数的处理"）。汇总 Agent 的去重逻辑： 完全重复问题文本相似度 &gt; 90% → 合并为一条，标注多个提出者 语义重复不同表述但指向同一问题 → 合并，保留最详细的表述 关联问题不同角度但同一根因 → 保留各自条目，在答案中统一回应 7.5 迭代评审机制 第一轮评审后，如果存在 high 级别未解决问题，PM Agent 根据 HTML 报告修订 PRD，重新触发评审。建议： 最大轮次 ≤ 3 轮，避免无限循环 第二轮起，评审 Agent 只审查修订部分，不再全量审查 每轮报告标注轮次编号，便于追踪问题收敛过程 7.6 容错与降级 Agent 超时设置超时阈值（建议 120s），超时后该角色问题列表为空，继续汇总 JSON 解析失败汇总 Agent 尝试从自然语言中提取问题；失败则标注"该角色评审异常" 部分 Agent 失败降级为两方评审，报告中标注缺失角色 汇总 Agent 失败将原始 JSON 问题列表直接输出，由人工处理 7.7 角色可扩展性 工作流设计为角色配置化，新增评审角色只需： 编写该角色的 Prompt 模板（审查清单 + 输出格式） 在颜色编码表中分配一个新颜色 在并行 spawn 列表中添加该 Agent 未来可扩展的角色：UI/UX 设计师 Agent、安全工程师 Agent、数据分析师 Agent、运维/SRE Agent。 7.8 实现路径建议 阶段内容验证标准 P0 原型验证5 个 Agent 串行跑通，输出 HTML 报告能生成结构完整的报告 P1 并行优化三个评审 Agent 改为并行 spawn总耗时降低 50%+ P2 去重增强汇总 Agent 实现语义去重重复问题合并率 &gt; 80% P3 迭代评审支持多轮评审 + 增量审查3 轮内 high 问题清零 P4 角色扩展新增安全 / 设计角色新角色接入 &lt; 1 小时 总结 该工作流的核心价值在于用 Agent 模拟真实研发评审会议，在 PRD 进入开发前提前暴露问题。关键成功因素：① 并行执行控制好编排时序；② JSON 结构化输出确保汇总质量；③ 颜色编码让报告一目了然；④ 迭代机制保证问题收敛。建议从 P0 原型开始验证，逐步叠加并行、去重、迭代能力。【专家团多agent评审实操】《需求文档》《PRD评审报告》</p>
+</body></html>
