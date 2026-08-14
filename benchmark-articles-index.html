@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>对标文章知识库（PRD 写作 / 需求评审优化参考）</title>
+<style>
+body{font-family:-apple-system,"Microsoft YaHei",sans-serif;max-width:920px;margin:32px auto;padding:0 18px;color:#1f2328;line-height:1.75;background:#fff}
+h1{font-size:26px;border-bottom:2px solid #BA7517;padding-bottom:8px}
+h2{font-size:21px;color:#BA7517;margin-top:34px}
+h3{font-size:17px;margin-top:22px;color:#333}
+blockquote{background:#faf6ec;border-left:4px solid #BA7517;margin:12px 0;padding:8px 14px;color:#5b4a2a}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+th,td{border:1px solid #d0d7de;padding:7px 10px;text-align:left;vertical-align:top}
+th{background:#f7f2e6}
+a{color:#185FA5}
+.note{background:#fff8e6;border:1px solid #f0d9a0;border-radius:6px;padding:10px 14px;color:#6b531a}
+code{background:#f6f8fa;padding:1px 5px;border-radius:4px;font-size:13px}
+ul,ol{padding-left:22px}
+hr{border:none;border-top:1px solid #e1e4e8;margin:28px 0}
+.kbd{background:#f3f4f6;border:1px solid #d0d7de;border-radius:4px;padding:0 6px}
+</style></head><body>
+
+<h1>对标文章知识库（PRD 写作 / 需求评审优化参考）</h1>
+<p class="note">用途：收集可用于「仿写」与「优化 PRD 输出」的标杆文章链接，并沉淀每篇与我们 PRD 工作流的对照分析。维护方式：每收录一篇，在「一、已收录」下加一个条目（链接 + 标题 + 核心方法论 + 可借鉴点）；之前给过的对标文章补到「二、待补充」。</p>
+
+<h2>一、已收录对标文章</h2>
+
+<h3>① WorkBuddy专家团：实现多 agent 协作【需求评审】，只要这几步！</h3>
+<ul>
+<li><b>链接</b>：<a href="https://mp.weixin.qq.com/s/tVOEfm7oAoKvES9WNJnwpQ" target="_blank">https://mp.weixin.qq.com/s/tVOEfm7oAoKvES9WNJnwpQ</a></li>
+<li><b>作者 / 来源</b>：道三（微信公众号）</li>
+<li><b>发布时间</b>：2026-08 前后</li>
+<li><b>全文在线版</b>：<a href="benchmark-article-multiagent-review.html">多 Agent 需求评审 · 全文</a>（仿写时直接读）</li>
+<li><b>一句话主题</b>：用 WorkBuddy「专家团（Team）」能力，让测试 / 前端 / 后端三个 Agent <b>并行</b>审同一份 PRD，再由汇总 Agent 产出<b>带角色颜色区分 + 严重度排序</b>的 HTML 评审报告，模拟真实研发评审会。</li>
+</ul>
+
+<p><b>可仿写的文章骨架（结构即方法论）：</b></p>
+<ol>
+<li>概述（目标 + 工作流总览 + 核心设计原则）</li>
+<li>Agent 角色定义（输入 / 输出 / 核心职责表格）</li>
+<li>各角色审查关注点详解（逐角色审查清单）</li>
+<li>工作流阶段（PRD 生成 → 并行评审 → 汇总输出 → 迭代修订）</li>
+<li>通信协议（Agent 间数据流 + 问题结构化 JSON Schema）</li>
+<li>Prompt 模板（每个角色一份可直接抄的 prompt）</li>
+<li>HTML 输出规范（颜色编码体系 + 报告结构）</li>
+<li>可行性建议（编排 / 上下文 / 结构化输出 / 去重 / 迭代 / 容错 / 可扩展）</li>
+<li>实现路径（P0~P4 分阶段）</li>
+</ol>
+
+<p><b>可直接借鉴的 8 个抓手：</b></p>
+<ol>
+<li><b>结构化 JSON 输出</b>：评审问题统一 <code>{agent_role, questions:[{id,category,severity,question,prd_section,suggestion}]}</code>，便于程序化去重/排序。</li>
+<li><b>并行 Team 编排</b>：QA+FE+BE 同一条消息 spawn，耗时 = max 而非累加，省 60%+。</li>
+<li><b>角色隔离 + Prompt 注入</b>：每个 Agent 只看到 PRD+自身角色 prompt，避免锚定偏差。</li>
+<li><b>严重度三档</b>：high（阻塞）/ medium（补充）/ low（优化），优先清 high。</li>
+<li><b>颜色编码报告</b>：测试=琥珀、前端=蓝、后端=绿、PM 答案=紫，一眼定位。</li>
+<li><b>待确认项汇总</b>：所有「需 PM 确认」单独成表，闭环不漏。</li>
+<li><b>迭代机制</b>：≤3 轮，第二轮起只审修订部分，标注轮次追踪收敛。</li>
+<li><b>容错降级</b>：单 Agent 超时/失败 → 降级两方评审，不阻断整体。</li>
+</ol>
+
+<h2>二、待补充（之前给过的对标文章）</h2>
+<p class="note">⚠️ 你在对话里提到「之前应该给过其他的」，但当前会话的历史检索只返回了摘要、未带真实链接，工作区里也没存过 mp.weixin 链接。请把之前给过的对标文章链接贴进来（或回我），我统一补进知识库并做对照分析。（候选来源：历史对话 c6f684fd「贴图形式」参考公众号文章——若那批也属于对标文章，也一并贴入）</p>
+
+<h2>三、分析：这篇能不能用于优化我们的 PRD 输出？</h2>
+<p><b>结论：强相关、能直接优化，而且和我们已有能力高度同构，主要缺口在「结构化输出格式」和「并行编排」，补上即可显著提效。</b></p>
+
+<h3>1. 与我们现有技能的对照</h3>
+<table>
+<tr><th>文章里的能力</th><th>我们已有的</th><th>我们的缺口 / 可增强点</th></tr>
+<tr><td>多角色评审会（测试/前端/后端/汇总）</td><td><code>pm-review-board</code> 六角色（产品/研发/测试/设计/运营/法务）</td><td>角色更全，但文章强调<b>并行 spawn + 角色隔离</b>，我们目前更像串行/汇总式</td></tr>
+<tr><td>结构化问题 JSON</td><td>评审产出偏自然语言/Markdown</td><td>缺统一 JSON Schema → 难程序化去重、排序、追踪收敛</td></tr>
+<tr><td>颜色编码 HTML 报告</td><td>评审会有报告产出</td><td>可对齐文章的颜色规范（测试琥珀/前端蓝/后端绿/PM紫）</td></tr>
+<tr><td>严重度 high/medium/low + 待确认汇总</td><td>有部分分级</td><td>可固化「待确认项」单独成表、作为 PRD 红字待办</td></tr>
+<tr><td>迭代评审 ≤3 轮</td><td>一次性评审</td><td>可加「修订后增量复审」闭环</td></tr>
+<tr><td>Team 并行编排</td><td><code>pm-master</code> 总控壳</td><td>可把评审链路从串行改为并行 spawn</td></tr>
+</table>
+
+<h3>2. 落地到 PRD 输出的 3 个最值钱优化（建议优先级）</h3>
+<ul>
+<li><b>P0｜评审问题结构化</b>：在 <code>pm-review-board</code> 输出里强制 JSON 协议（id/category/severity/prd_section/suggestion），并新增「§待确认项」表，直接喂给我们的 PRD 红字/待确认机制（你 PRD 规范里已有「⚠️ 待确认 @干系人」占位）。</li>
+<li><b>P1｜报告颜色编码 + 严重度排序</b>：套用文章的颜色规范生成 HTML 评审报告，high 优先、待确认项置顶，评审结论给「通过/有条件通过/不通过 + 阻塞项数量」。</li>
+<li><b>P2｜并行 Team 编排 + 迭代复审</b>：在 <code>pm-master</code> 下把多角色评审改为并行 spawn，并支持修订后增量复审（≤3 轮），把「评审—修订—再评审」做成闭环。</li>
+</ul>
+
+<h3>3. 风险与注意</h3>
+<ul>
+<li>文章是「评审工作流」设计稿，<b>不是 PRD 内容写作模板</b>；它优化的是「PRD 被审得更干净」，而非「PRD 怎么写」。我们 PRD 的章节结构仍应以你桌面《PRD 输出规范（修订于260715）》的「一~九」为准。</li>
+<li>JSON 强制输出对长 PRD（&gt;8000 字）有 token 压力，文章建议按章节拆分或 RAG；我们泰小虎 PRD 体量偏大，落地时需注意分章注入。</li>
+<li>文章角色偏研发侧，我们的 <code>pm-review-board</code> 还含运营/法务，扩展时按文章「角色配置化」思路加 prompt+颜色即可。</li>
+</ul>
+
+<hr>
+<p style="color:#888;font-size:13px">本库随新对标文章持续追加；对照分析同步更新到对应条目。</p>
+
+</body></html>
