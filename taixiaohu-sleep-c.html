@@ -1056,7 +1056,7 @@ function renderCalendar() {
     const isChecked = checkedSet.has(dt.getTime());
     const cls = 'calendar-day' + (isToday ? ' today' : '') + (isChecked ? ' checked' : '');
     const text = isChecked ? '✓' : d;
-    gridHtml += `<div class="${cls}">${text}</div>`;
+    gridHtml += `<div class="${cls}" onclick="onCalendarDayClick('${year}-${month}-${d}', ${isToday}, ${isChecked})">${text}</div>`;
   }
   // 下月补空
   const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
@@ -1074,7 +1074,7 @@ function renderCalendar() {
     <div class="calendar-header">
       <div class="title-row">
         <div class="title">每日打卡</div>
-        <div class="info" onclick="toast('每日完成首次任务即可打卡')">i</div>
+        <div class="info" onclick="toast('完成每日任务并分享即为完成当日打卡')">i</div>
       </div>
       <div class="subtitle">本月已连续打卡 <span class="num">${state.streak}</span> 天，累计打卡 <span class="num">${state.totalCheckIn}</span> 天</div>
       <div class="streak-progress" style="font-size:12px;color:#00B894;margin-top:6px;">${rewardTxt}</div>
@@ -1086,6 +1086,20 @@ function renderCalendar() {
     </div>
     <div class="calendar-grid">${gridHtml}</div>
   `;
+}
+
+// 日历日期点击：仅为规则提示，不执行打卡（打卡=完成任务并分享）
+function onCalendarDayClick(dateStr, isToday, isChecked) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dt = new Date(y, m, d); dt.setHours(0,0,0,0);
+  if (dt > today) { toast('未到该日期，暂不可打卡'); return; }
+  if (isChecked) {
+    toast(isToday ? '今日已完成打卡（完成任务并分享）' : (m + '月' + d + '日 已完成打卡'));
+    return;
+  }
+  if (isToday) { toast('完成每日任务并分享即为完成当日打卡'); return; }
+  toast('该日未打卡，本期不支持补卡');
 }
 
 // ===== Tasks =====
@@ -1170,17 +1184,6 @@ function completeTask(id) {
   }
   state.completedToday.push(id);
   state.pendingHuLi += t.reward;
-  // 首次完成任务即算当天打卡
-  if (!state.todayChecked) {
-    state.todayChecked = true;
-    const tStr = todayStr();
-    if (!state.checkInDates.includes(tStr)) {
-      state.checkInDates.push(tStr);
-      state.totalCheckIn++;
-      state.streak = calcStreak(state.checkInDates);
-      checkStreakReward();
-    }
-  }
   renderAll();
   const wasFirst = state.completedToday.length === 1 && !state.completionShown;
   if (wasFirst) {
@@ -1199,16 +1202,6 @@ function completeTaskAfterDetail(id) {
   if (!t || state.completedToday.includes(id)) return;
   state.completedToday.push(id);
   state.pendingHuLi += t.reward;
-  if (!state.todayChecked) {
-    state.todayChecked = true;
-    const tStr = todayStr();
-    if (!state.checkInDates.includes(tStr)) {
-      state.checkInDates.push(tStr);
-      state.totalCheckIn++;
-      state.streak = calcStreak(state.checkInDates);
-      checkStreakReward();
-    }
-  }
   renderAll();
   if (state.completedToday.length === 1 && !state.completionShown) {
     state.completionShown = true;
@@ -1324,11 +1317,25 @@ function openSharePoster() {
 }
 function closeSharePoster() { hideOverlay('overlay-share-poster'); }
 
+function doDailyCheckIn() {
+  // 打卡 = 当日完成任务并分享；仅在分享时记一次当日打卡
+  if (state.todayChecked) return;
+  state.todayChecked = true;
+  const tStr = todayStr();
+  if (!state.checkInDates.includes(tStr)) {
+    state.checkInDates.push(tStr);
+    state.totalCheckIn++;
+    state.streak = calcStreak(state.checkInDates);
+    checkStreakReward();
+  }
+}
+
 function grantHuLiOnShare() {
   if (!state.sharedToday && state.pendingHuLi > 0) {
     state.huLi += state.pendingHuLi;
     state.pendingHuLi = 0;
     state.sharedToday = true;
+    doDailyCheckIn();
     renderAll();
     return true;
   }
