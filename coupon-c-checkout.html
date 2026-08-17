@@ -73,6 +73,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hira
 .cc-name{font-size:15px;font-weight:600;color:#333;line-height:1.3}
 .cc-row{display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap}
 .cc-exp{font-size:12px;color:#999}
+.cc-hold{font-size:11px;color:#5e4bfa;background:#f0edff;border-radius:4px;padding:1px 6px;margin-left:6px}
 .cc-rule{font-size:12px;color:#5e4bfa}
 .cc-reason{font-size:11px;color:#cf1322;margin-top:8px;background:#fff1f0;border:1px solid #ffa39e;border-radius:6px;padding:6px 8px;line-height:1.45;display:flex;align-items:center;gap:4px}
 .cc-tag{font-size:10px;color:#fff;background:#ff4d4f;border-radius:4px;padding:1px 5px}
@@ -210,11 +211,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hira
 <script>
 var goodsTotal=239;
 var coupons=[
-  {id:1,name:'福利直播满100减10',amt:10,threshold:100,exp:'2026-08-14',multi:true,usable:true,obtain:'2026-08-01',reason:''},
+  {id:1,name:'福利直播满100减10',amt:10,threshold:100,exp:'2026-08-18',expList:['2026-08-18','2026-08-20','2026-08-25'],hold:3,multi:true,usable:true,obtain:'2026-08-01',reason:''},
   {id:2,name:'新人满99减20',amt:20,threshold:99,exp:'2026-08-15',multi:false,usable:true,obtain:'2026-08-02',reason:''},
   {id:3,name:'会员日满200减30',amt:30,threshold:200,exp:'2026-08-19',multi:false,usable:true,obtain:'2026-08-03',reason:''},
   {id:4,name:'老客回馈无门槛10元',amt:10,threshold:0,exp:'2026-08-21',multi:false,usable:false,obtain:'2026-08-04',reason:'仅限（App / H5）可使用'},
-  {id:5,name:'满50减5',amt:5,threshold:50,exp:'2026-08-25',multi:true,usable:true,obtain:'2026-08-04',reason:''},
+  {id:5,name:'满50减5',amt:5,threshold:50,exp:'2026-08-22',expList:['2026-08-22','2026-08-25'],hold:2,multi:true,usable:true,obtain:'2026-08-04',reason:''},
   {id:6,name:'指定商品满80减15',amt:15,threshold:80,exp:'2026-08-30',multi:false,usable:false,obtain:'2026-08-05',reason:'仅限「虾-泰香脆Q56」可使用'},
   {id:7,name:'老客回馈满100减10',amt:10,threshold:100,exp:'2026-08-14',multi:false,usable:true,obtain:'2026-08-07',reason:''},
   {id:8,name:'指定店铺满150减25',amt:25,threshold:150,exp:'2026-09-01',multi:false,usable:false,obtain:'2026-08-06',reason:'仅限「泰小虎健康旗舰店」可使用'},
@@ -283,7 +284,8 @@ function renderPopupList(){
     html+='<div class="cc-left"><div class="amt"><small>¥</small>'+c.amt+'</div><div class="rule">'+(c.threshold?('满'+c.threshold):'无门槛')+'</div></div>';
     html+='<div class="cc-mid">';
     html+='<div class="cc-name">'+c.name+'</div>';
-    html+='<div class="cc-row"><span class="cc-exp">有效期至 '+c.exp+'</span>'+(isSel&&c.usable?'<span class="cc-tag">推荐</span>':'')+'</div>';
+    var expHtml='<span class="cc-exp">有效期至 '+c.exp+'</span>'+(c.multi&&c.hold>1?'<span class="cc-hold">本次可用 '+c.hold+' 张</span>':'');
+    html+='<div class="cc-row">'+expHtml+(isSel&&c.usable?'<span class="cc-tag">推荐</span>':'')+'</div>';
     if(c.usable) html+='<div class="cc-row"><span class="cc-rule">券规则›</span></div>';
     if(c.reason) html+='<div class="cc-reason">⚠️ '+c.reason+'</div>';
     html+='</div>';
@@ -366,7 +368,8 @@ function renderFlatListHTML(){
     h+='<div class="cc-left"><div class="amt"><small>¥</small>'+c.amt+'</div><div class="rule">'+(c.threshold?('满'+c.threshold):'无门槛')+'</div></div>';
     h+='<div class="cc-mid">';
     h+='<div class="cc-name">'+c.name+'</div>';
-    h+='<div class="cc-row"><span class="cc-exp">有效期至 '+c.exp+'</span>'+(isSel&&c.usable?'<span class="cc-tag">推荐</span>':'')+'</div>';
+    var expHtml='<span class="cc-exp">有效期至 '+c.exp+'</span>'+(c.multi&&c.hold>1?'<span class="cc-hold">本次可用 '+c.hold+' 张</span>':'');
+    h+='<div class="cc-row">'+expHtml+(isSel&&c.usable?'<span class="cc-tag">推荐</span>':'')+'</div>';
     if(c.usable) h+='<div class="cc-row"><span class="cc-rule">券规则›</span></div>';
     if(c.reason) h+='<div class="cc-reason">⚠️ '+c.reason+'</div>';
     h+='</div>';
