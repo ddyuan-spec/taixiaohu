@@ -239,7 +239,12 @@ if(location.search.includes('embed=1')) document.body.classList.add('embed-mode'
         <option>LIVE002</option>
         <option>LIVE003</option>
       </select>
-      <input placeholder="昵称 / 手机号 / 用户ID" id="lvKeyword" style="width:200px">
+      <span class="fb-label">昵称:</span>
+      <input placeholder="昵称" id="lvNick" style="width:130px">
+      <span class="fb-label">手机号:</span>
+      <input placeholder="手机号" id="lvPhone" style="width:150px">
+      <span class="fb-label">用户ID:</span>
+      <input placeholder="用户ID" id="lvUserId" style="width:150px">
       <button class="btn-primary" onclick="renderLiveView()">搜索</button>
       <button class="btn-ghost" onclick="resetLiveView()">重置</button>
     </div>
@@ -450,11 +455,13 @@ var liveViewLogs = [
 ];
 
 function renderLiveView(){
-  var room=$('lvRoom').value, kw=$('lvKeyword').value.trim();
+  var room=$('lvRoom').value, nick=$('lvNick').value.trim(), phone=$('lvPhone').value.trim(), uid=$('lvUserId').value.trim();
   var rows='', cnt=0;
   liveViewLogs.forEach(function(v){
     if(room && v.roomId!==room) return;
-    if(kw && v.nickname.indexOf(kw)<0 && v.phone.indexOf(kw)<0 && v.userId.indexOf(kw)<0) return;
+    if(nick && v.nickname.indexOf(nick)<0) return;
+    if(phone && v.phone.indexOf(phone)<0) return;
+    if(uid && v.userId.indexOf(uid)<0) return;
     cnt++;
     rows += '<tr>'+
       '<td class="chk"><input type="checkbox"></td>'+
@@ -473,7 +480,7 @@ function renderLiveView(){
   $('lvTotal').textContent = cnt;
 }
 function resetLiveView(){
-  $('lvRoom').value=''; $('lvKeyword').value='';
+  $('lvRoom').value=''; $('lvNick').value=''; $('lvPhone').value=''; $('lvUserId').value='';
   renderLiveView();
 }
 function viewDetail(id){
