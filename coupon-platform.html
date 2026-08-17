@@ -957,6 +957,22 @@
   </div>
 </div>
 
+<!-- ==================== 查看下架原因 弹窗 ==================== -->
+<div class="modal-overlay" id="offlineReasonViewModal" style="display:none">
+  <div class="modal-dlg" style="width:460px">
+    <div class="modal-header">
+      <span class="modal-title">下架原因</span>
+      <button class="modal-close" onclick="closeOfflineReasonView()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="viewOfflineReasonText" style="font-size:13px;color:#333;line-height:1.7;white-space:pre-wrap;word-break:break-all;min-height:48px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost btn-sm" onclick="closeOfflineReasonView()">关闭</button>
+    </div>
+  </div>
+</div>
+
 <!-- ==================== D3: 发券活动 新建/编辑 独立页 ==================== -->
 <div id="viewSendEdit" class="hidden">
   <div class="phead">
@@ -1055,10 +1071,10 @@ function toggleGroup(el){
 let coupons=[
 {id:6,name:'老券阶梯满300减100',shop:'红门旗舰店',type:'满减券',rule:'每满 300 减 100（最多 3 次，最大优惠 ¥300）',discRule:'stack',stackTimes:3,maxAmt:300,status:'启用',usageStatus:'进行中',share:'臻享积分',valid:'固定 2026-08-01 ~ 2026-12-31',claimed:42,left:458,refundQty:0,refundAmt:0,date:'2026-08-01 ~ 2026-12-31',createDate:'2026-08-01'},
     {id:1,name:'福利直播满100减10',shop:'红门旗舰店',type:'满减券',rule:'满100减10',status:'启用',usageStatus:'进行中',share:'不共用',valid:'领取后 24 天内有效',claimed:0,left:1,refundQty:0,refundAmt:0,date:'2026-07-01 ~ 2026-12-31',createDate:'2026-07-01'},
-  {id:2,name:'老券满200减30',shop:'健康生活馆',type:'满减券',rule:'满200减30',status:'下架',usageStatus:'已结束',share:'不共用',valid:'领取后 24 天内有效',claimed:0,left:1,refundQty:0,refundAmt:0,date:'2026-07-05 ~ 2026-12-31',createDate:'2026-07-05'},
+  {id:2,name:'老券满200减30',shop:'健康生活馆',type:'满减券',rule:'满200减30',status:'下架',offlineReason:'与最新营销活动冲突，为避免重复补贴主动下架',usageStatus:'已结束',share:'不共用',valid:'领取后 24 天内有效',claimed:0,left:1,refundQty:0,refundAmt:0,date:'2026-07-05 ~ 2026-12-31',createDate:'2026-07-05'},
   {id:3,name:'新人满99减20',shop:'红门旗舰店',type:'满减券',rule:'满99减20',status:'启用',usageStatus:'进行中',share:'臻享积分',valid:'固定 2026-07-15 ~ 2026-09-15',claimed:156,left:344,refundQty:12,refundAmt:240,date:'2026-07-15 ~ 2026-09-15',createDate:'2026-07-15'},
   {id:4,name:'老券每满300减100',shop:'泰山滋补专营店',type:'满减券',rule:'每满300减100',status:'启用',usageStatus:'未开始',share:'臻享积分、多盒多折',valid:'2026-08-15 ~ 2026-10-15',claimed:89,left:211,refundQty:7,refundAmt:700,date:'2026-08-15 ~ 2026-10-15',createDate:'2026-07-10'},
-  {id:5,name:'老券满150减20',shop:'健康生活馆',type:'满减券',rule:'满150减20',status:'下架',usageStatus:'进行中',share:'不共用',valid:'领取后 24 天内有效',claimed:30,left:70,refundQty:3,refundAmt:60,date:'2026-07-05 ~ 2026-12-31',createDate:'2026-07-05'}
+  {id:5,name:'老券满150减20',shop:'健康生活馆',type:'满减券',rule:'满150减20',status:'下架',offlineReason:'券规则配置有误，重发正确模板后下架旧券',usageStatus:'进行中',share:'不共用',valid:'领取后 24 天内有效',claimed:30,left:70,refundQty:3,refundAmt:60,date:'2026-07-05 ~ 2026-12-31',createDate:'2026-07-05'}
 ];
 let currentCouponId=null;
 let offlineTargetId=null;
@@ -1149,7 +1165,7 @@ function renderCoupons(){
       <td>${c.type}</td>
       <td>${c.shop}</td>
       <td>${c.rule}</td>
-      <td><span class="tag ${c.status==='启用'?'tag-green':'tag-gray'}">${c.status}</span></td>
+      <td><span class="tag ${c.status==='启用'?'tag-green':'tag-gray'}">${c.status}</span>${c.status==='下架' && c.offlineReason ? '<a class="btn-link" style="margin-left:4px;font-size:12px" onclick="viewOfflineReason('+c.id+')">原因</a>' : ''}</td>
       <td><span class="tag ${c.usageStatus==='进行中'?'tag-green':c.usageStatus==='未开始'?'tag-yellow':c.usageStatus==='已结束'?'tag-gray':'tag-red'}">${c.usageStatus}</span></td>
       <td>${c.valid}</td>
       <td>${c.createDate}</td>
@@ -1230,11 +1246,18 @@ function confirmOffline(){
   if(reason.length>200){ toast('下架原因不能超过 200 字',true); return; }
   const c=coupons.find(x=>x.id===offlineTargetId);if(!c)return;
   c.status='下架';
+  c.offlineReason=reason;
   closeOfflineModal();
   renderCoupons();
   if(offlineFromDetail){ toast('已下架'); setTimeout(()=>go('list'),1200); }
   else { toast('已下架（原因：'+reason.slice(0,12)+(reason.length>12?'…':'')+'）'); }
 }
+function viewOfflineReason(id){
+  const c=coupons.find(x=>x.id===id);if(!c)return;
+  $('viewOfflineReasonText').textContent=c.offlineReason||'（无）';
+  $('offlineReasonViewModal').style.display='flex';
+}
+function closeOfflineReasonView(){ $('offlineReasonViewModal').style.display='none'; }
 
 /* ---- 复制券：打开新建页并代入源券全部信息（2026-08-07-coupon-copy） ---- */
 function copyCoupon(id){
