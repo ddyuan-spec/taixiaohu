@@ -217,11 +217,12 @@ var coupons=[
   {id:5,name:'满50减5',amt:5,threshold:50,exp:'2026-08-25',multi:true,usable:true,obtain:'2026-08-04',reason:''},
   {id:6,name:'指定商品满80减15',amt:15,threshold:80,exp:'2026-08-30',multi:false,usable:false,obtain:'2026-08-05',reason:'仅限「虾-泰香脆Q56」可使用'},
   {id:7,name:'老客回馈满100减10',amt:10,threshold:100,exp:'2026-08-14',multi:false,usable:true,obtain:'2026-08-07',reason:''},
-  {id:8,name:'指定店铺满150减25',amt:25,threshold:150,exp:'2026-09-01',multi:false,usable:false,obtain:'2026-08-06',reason:'仅限「泰小虎健康旗舰店」可使用'}
+  {id:8,name:'指定店铺满150减25',amt:25,threshold:150,exp:'2026-09-01',multi:false,usable:false,obtain:'2026-08-06',reason:'仅限「泰小虎健康旗舰店」可使用'},
+  {id:9,name:'满300减40',amt:40,threshold:300,exp:'2026-09-05',multi:false,usable:false,obtain:'2026-08-08',reason:'订单金额不足，还差¥61元可用'}
 ];
 var quantities={}; // id -> count
 coupons.forEach(function(c){quantities[c.id]=1;});
-var selectedId=bestUsableDiscount(); // 默认选中「优惠最高」的可用券
+var selectedId=defaultSelectedId(); // 默认选中排序后第一张券（首位可用券）
 
 function formatMoney(n){return '¥'+n.toFixed(2);}
 function currentCoupon(){return coupons.find(function(c){return c.id==selectedId;});}
@@ -240,21 +241,27 @@ function effectiveDiscountOf(c){
   return (goodsTotal>=c.threshold||c.threshold===0)?c.amt:0;
 }
 function effectiveDiscount(){return effectiveDiscountOf(currentCoupon());}
-function bestUsableDiscount(){
-  // 默认选中「优惠最高」的可用券（叠加券按当前持有可叠加张数上限计入）
-  var best=0,bestVal=-1;
-  coupons.forEach(function(c){
-    if(!c.usable)return;
-    var d=effectiveDiscountOf(c);
-    if(d>bestVal){bestVal=d;best=c.id;}
-  });
-  return best;
+function defaultSelectedId(){
+  // 默认选中排序后第一张券：可用券整体排前，故首位即首位可用券；无可用券则返回 0（不使用优惠券）
+  var sorted=coupons.slice().sort(sortCoupons);
+  var first=sorted[0];
+  return (first&&first.usable)?first.id:0;
 }
 function sortCoupons(a,b){
-  if(b.amt!==a.amt) return b.amt-a.amt;              // 优惠金额降序
-  if(a.multi!==b.multi) return a.multi?-1:1;          // 叠加券优先于非叠加券
-  if(a.exp!==b.exp) return a.exp<b.exp?1:-1;          // 到期时间倒序（晚过期在前）
-  return a.obtain<b.obtain?1:-1;                       // 获得时间倒序（晚获得在前）
+  // 第一级：可用券整体排在不可用券之前
+  if(a.usable!==b.usable) return a.usable?-1:1;
+  if(a.usable){
+    // 可用券组内：优惠金额降序（主）→ 叠加优先 → 到期倒序 → 获得倒序
+    var da=effectiveDiscountOf(a), db=effectiveDiscountOf(b);
+    if(da!==db) return db-da;
+    if(a.multi!==b.multi) return a.multi?-1:1;
+    if(a.exp!==b.exp) return a.exp<b.exp?1:-1;
+    return a.obtain<b.obtain?1:-1;
+  }
+  // 不可用券组内：叠加优先（主）→ 同金额按到期倒序 → 同到期按获得倒序
+  if(a.multi!==b.multi) return a.multi?-1:1;
+  if(a.exp!==b.exp) return a.exp<b.exp?1:-1;
+  return a.obtain<b.obtain?1:-1;
 }
 function updateAmounts(){
   var discount=effectiveDiscount();
