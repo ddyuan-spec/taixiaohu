@@ -850,9 +850,8 @@ let state = {
   checkInDates: [],
   totalCheckIn: 12,   // 累计打卡天数（演示：含更早历史）
   streak: 0,          // 连续打卡天数（由 seedCheckIns 计算）
-  streakRewardX: 7,       // 连续打卡额外奖励阈值（天）
-  streakRewardValue: 10,  // 连续打卡额外奖励虎力值
-  streakMilestone: 0,    // 已发放额外奖励的最高连续天数里程碑
+  streakTiers: [3, 7, 15, 21],  // 连续打卡阶梯奖励阈值（天），奖励值 = 阈值天数
+  awardedTiers: [3],             // 已发放奖励的阶梯（去重）；seed 连续 6 天已过 3 天档，预置避免重复发
   todayChecked: false, // 今天是否已完成首次任务打卡
   calendarYear: new Date().getFullYear(),
   calendarMonth: new Date().getMonth()
@@ -934,13 +933,12 @@ function calcStreak(dates) {
 }
 // 连续打卡达到 X 天 -> 一次性额外虎力值奖励（系统级激励，独立于每日任务奖励）
 function checkStreakReward() {
-  const X = state.streakRewardX;
-  const reached = Math.floor(state.streak / X);
-  const prev = Math.floor(state.streakMilestone / X);
-  if (reached > prev && reached > 0) {
-    state.huLi += state.streakRewardValue;
-    state.streakMilestone = state.streak;
-    toast('连续打卡' + state.streak + '天，额外奖励 +' + state.streakRewardValue + ' 虎力值！');
+  for (const tier of state.streakTiers) {
+    if (state.streak >= tier && !state.awardedTiers.includes(tier)) {
+      state.awardedTiers.push(tier);
+      state.huLi += tier;  // 奖励值 = 阈值天数
+      toast('连续打卡' + state.streak + '天，额外奖励 +' + tier + ' 虎力值！');
+    }
   }
 }
 
@@ -1065,11 +1063,11 @@ function renderCalendar() {
     gridHtml += `<div class="calendar-day other">${d}</div>`;
   }
 
-  const rwX = state.streakRewardX, rwV = state.streakRewardValue;
-  const rwRemain = state.streak >= rwX ? 0 : (rwX - (state.streak % rwX));
-  const rewardTxt = state.streak >= rwX
-    ? ('已达成连续 ' + rwX + ' 天奖励（+' + rwV + ' 虎力值），继续加油！')
-    : ('再连续打卡 ' + rwRemain + ' 天，可得额外奖励 +' + rwV + ' 虎力值');
+  const tiers = state.streakTiers;
+  const nextTier = tiers.find(t => state.streak < t);
+  const rewardTxt = nextTier
+    ? ('再连续打卡 ' + (nextTier - state.streak) + ' 天（共 ' + nextTier + ' 天），可得额外奖励 +' + nextTier + ' 虎力值')
+    : ('已达成全部连续打卡阶梯奖励（最高 ' + tiers[tiers.length - 1] + ' 天），继续加油！');
   container.innerHTML = `
     <div class="calendar-header">
       <div class="title-row">
