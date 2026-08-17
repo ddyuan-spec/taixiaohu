@@ -845,7 +845,7 @@
       <div class="fr-body radio-group">
         <label class="radio-item"><input type="checkbox" name="cpShare" value="zhenxiang_points"> 臻享积分</label>
         <label class="radio-item"><input type="checkbox" name="cpShare" value="multi_box"> 多盒多折</label>
-        <label class="radio-item"><input type="checkbox" name="cpShare" value="multi_use"> 可多张使用</label>
+        <label class="radio-item"><input type="checkbox" name="cpShare" value="multi_use" id="cpShareMultiUse"> 可多张使用</label>
       </div>
     </div>
 
@@ -1366,6 +1366,9 @@ function cpToggleDiscRule(){
   $('cpStackTimesTd').classList.toggle('hidden',!show);
   $('cpMaxAmtTh').classList.toggle('hidden',!show);
   $('cpMaxAmtTd').classList.toggle('hidden',!show);
+  // 叠加优惠 与 可多张使用 互斥：叠加券不可选「可多张使用」
+  const mu=$('cpShareMultiUse');
+  if(mu){ mu.disabled=show; if(show) mu.checked=false; }
   if(show) cpRecalcMaxAmt();
 }
 function cpRecalcMaxAmt(){
