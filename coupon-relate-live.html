@@ -242,7 +242,6 @@ if(location.search.includes('embed=1')) document.body.classList.add('embed-mode'
       <input placeholder="昵称 / 手机号 / 用户ID" id="lvKeyword" style="width:200px">
       <button class="btn-primary" onclick="renderLiveView()">搜索</button>
       <button class="btn-ghost" onclick="resetLiveView()">重置</button>
-      <button class="btn-ghost" onclick="exportLiveView()">导出</button>
     </div>
 
     <div class="tbl-wrap">
@@ -477,7 +476,6 @@ function resetLiveView(){
   $('lvRoom').value=''; $('lvKeyword').value='';
   renderLiveView();
 }
-function exportLiveView(){ toast('已生成导出任务，请前往「下载中心」查看'); }
 function viewDetail(id){
   var v=liveViewLogs.filter(function(x){return x.id===id})[0];
   if(!v) return;
