@@ -130,7 +130,7 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <table>
 <thead><tr><th>指标</th><th>定义</th><th>目标（示例）</th></tr></thead>
 <tbody>
-<tr><td>核销率</td><td>已核销 / 已领取</td><td>≥ 60%</td></tr>
+<tr><td>核销率</td><td>已核销 / 已发放（<b>已发放口径：COUNT(《用户券表》WHERE coupon_template_id=当前券 AND is_deleted=0 AND user_id IS NOT NULL)</b>，与 §4.1.6.9.1 核心公式同口径）</td><td>≥ 60%</td></tr>
 </tbody>
 </table>
 <div class="note">⚠️ 目标值为示例，<b>具体 KPI 阈值 @干系人 确认</b>。</div>
@@ -927,17 +927,16 @@ App 端：<a href="https://ddyuan-spec.github.io/taixiaohu/coupon-app.html" targ
 <tbody>
 <tr><td>券名称</td><td>取《券模板表》coupon_name，按 coupon_template_id 分组</td><td>《券模板表》</td><td>支持文本模糊搜索</td></tr>
 <tr><td>类型</td><td>取《券模板表》coupon_type（满减券 / 无门槛代金券等）</td><td>《券模板表》</td><td>支持下拉筛选</td></tr>
-<tr><td>已领取</td><td>COUNT(《用户券表》WHERE coupon_template_id=当前券)，即该券模板已发放到用户钱包的实例总数（<span >不再受发行量上限约束</span>）</td><td>《用户券表》</td><td>支持数值区间筛选</td></tr>
+<tr><td>已发放</td><td>COUNT(《用户券表》WHERE coupon_template_id=当前券 AND is_deleted=0 AND user_id IS NOT NULL)，即该券模板已发放并绑定用户、未被软删除的实例数（与 §4.1.6.9.1 核心公式「已发放」同口径；<span >不再受发行量上限约束</span>）</td><td>《用户券表》</td><td>支持数值区间筛选</td></tr>
 <tr><td>核销量</td><td>COUNT(《用户券表》WHERE coupon_template_id=当前券 AND status='已使用')，即该券模板已被核销使用的实例数</td><td>《用户券表》</td><td>支持数值区间筛选</td></tr>
-<tr><td>核销率</td><td>核销量 ÷ 已领取 × 100%（保留 1 位小数）；已领取=0 时显示"—"</td><td>上述两字段派生</td><td>仅展示，不支持筛选</td></tr>
+<tr><td>核销率</td><td>核销量 ÷ 已发放 × 100%（保留 1 位小数）；已发放=0 时显示"—"</td><td>上述两字段派生</td><td>仅展示，不支持筛选</td></tr>
 <tr><td>核销金额（元）</td><td>SUM(《核销流水表》WHERE coupon_template_id=当前券 AND status='已使用' 的 actual_discount_amount)，即该券模板所有已核销实例的实际减免金额合计（叠加券取实扣额，非模板面值）</td><td>《核销流水表》</td><td>支持数值区间筛选；默认降序</td></tr>
-<tr><td>退单量（笔）</td><td>COUNT(《订单表》WHERE coupon_template_id=当前券 AND pay_status='已退款')，即该券模板已支付后发生退款的订单笔数</td><td>《订单表》（JOIN 用户券表 coupon_template_id）</td><td>支持数值区间筛选</td></tr>
-<tr><td>退单金额（元）</td><td>SUM(《订单表》WHERE coupon_template_id=当前券 AND pay_status='已退款' 的 refund_amount)，即该券模板所有退款订单的实际退款金额合计</td><td>《订单表》（JOIN 用户券表 coupon_template_id）</td><td>支持数值区间筛选</td></tr>
+<tr><td>退单量（笔）</td><td>COUNT(DISTINCT order_id FROM《订单表》WHERE coupon_template_id=当前券 AND pay_status='已退款')，即去重后的「已支付后退款」订单笔数；<b>「多次退单」口径</b>：系统退款为<b>全额退</b>，单笔订单在状态机中至多 1 笔退款事件（pay_status 终态唯一），不存在对同一订单的多次部分退；按券维度 JOIN 时需 COUNT(DISTINCT order_id) 防「一单多券」放大计入</td><td>《订单表》（JOIN 用户券表 coupon_template_id，DISTINCT order_id）</td><td>支持数值区间筛选</td></tr>
 <tr><td>来源 / 发放时间</td><td>展示该券最近一次发放的来源（发券活动名 / 会员中心批量赠送 / 系统发券）+ 最近发放时间；多来源时按时间倒序取最新一条</td><td>《用户券表》+《发券活动表》</td><td>来源支持下拉筛选；发放时间支持日期范围</td></tr>
 </tbody>
 </table>
-<p>⚠️ <b>退单统计口径（强约束）</b>：退单量 / 退单金额仅统计 <b>已支付后发生退款</b>的订单（pay_status='已退款'）。<b>「未支付取消」「订单关闭未支付」等未支付状态的订单不计入退单</b>，亦不计入核销、已支付等任何正向指标。退单率 = 退单量 ÷ 已支付笔数 × 100%。</p>
-<p>列表附加规则：排序默认按「创建时间」降序（<span >原「总发行量」降序已随字段删除调整</span>）；分页：见 §4.1.6.5.1 分页展示规范（本维度每页条数选项 10/20/50，默认 20）；合计行（最末行）：已领取/核销量/核销金额/退单量/退单金额五列求和，领取率/核销率显示全量均值（<span >总发行量/领取率列已随字段删除移除，已领取列保留</span>）。空态：无数据时显示"暂无统计数据"。</p>
+<p>⚠️ <b>退单统计口径（强约束）</b>：退单量仅统计 <b>已支付后发生退款</b>的订单（pay_status='已退款'）。<b>「未支付取消」「订单关闭未支付」等未支付状态的订单不计入退单</b>，亦不计入核销、已支付等任何正向指标。<b>「多次退单」语义</b>：系统退款为<b>全额退</b>，一笔订单在状态机里只对应 1 笔退款事件（pay_status 终态唯一），不存在对同一订单的多次部分退，亦不存在「退款 → 重发 → 再退款」的循环；按券维度聚合时按 COUNT(DISTINCT order_id) 去重，防「一单多券」放大计入。退单率 = 退单量 ÷ 已支付笔数 × 100%。</p>
+<p>列表附加规则：排序默认按「创建时间」降序（<span >原「总发行量」降序已随字段删除调整</span>）；分页：见 §4.1.6.5.1 分页展示规范（本维度每页条数选项 10/20/50，默认 20）；合计行（最末行）：<b>已发放 / 核销量 / 核销金额 / 退单量</b> 四列求和，<b>核销率</b>显示全量均值（<span >总发行量/领取率列已随字段删除移除，已领取列已改名为已发放（口径与 §4.1.6.9.1 同）</span>）。空态：无数据时显示"暂无统计数据"。</p>
 <p>自动刷新频率：每 5 分钟（300s）静默刷新（合计行同步、停留当前页），手动刷新按钮见 §4.1.6.6。</p>
 <p class="note">📌 <b>券名称唯一性约束（统计维度准确性）</b>：本维度列表的统计分组键始终为 <b>coupon_template_id（唯一）</b>，「券名称」仅作展示字段，<b>不直接用于聚合分组</b>。若后续业务需用「券名称」作为统计维度（如按券名汇总、导出 Excel 以券名为分组键），则须确保《券模板表》coupon_name <b>全局唯一</b>——平台端<b>新建券模板时应校验券名称不可与系统内已有券重名</b>（沿用/编辑态不强制，但编辑时也禁止改成已存在的名称），否则同名不同券模板的发放/核销数据将被错误合并。聚合查询统一用 coupon_template_id 分组后取 MIN(coupon_name) 展示，避免名称歧义。</p>
 <h5>4.1.6.4 按发放活动+券维度列表字段表（「按发放活动+券」Tab 主表格，每个活动下的每张券模板一行聚合统计）</h5>
