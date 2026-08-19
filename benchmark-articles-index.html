@@ -1,94 +1,54 @@
 <!DOCTYPE html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>对标文章知识库（PRD 写作 / 需求评审优化参考）</title>
-<style>
-body{font-family:-apple-system,"Microsoft YaHei",sans-serif;max-width:920px;margin:32px auto;padding:0 18px;color:#1f2328;line-height:1.75;background:#fff}
-h1{font-size:26px;border-bottom:2px solid #BA7517;padding-bottom:8px}
-h2{font-size:21px;color:#BA7517;margin-top:34px}
-h3{font-size:17px;margin-top:22px;color:#333}
-blockquote{background:#faf6ec;border-left:4px solid #BA7517;margin:12px 0;padding:8px 14px;color:#5b4a2a}
-table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>对标文章知识库（PRD 优化 + 公众号写作技巧）</title><style>body{font-family:-apple-system,"Microsoft YaHei",sans-serif;max-width:880px;margin:32px auto;padding:0 18px;color:#1f2328;line-height:1.75;background:#fff}
+h1{font-size:25px;border-bottom:2px solid #185FA5;padding-bottom:8px}
+h2{font-size:20px;color:#185FA5;margin-top:30px}
+h3{font-size:16px;margin-top:22px;color:#222}
+h4{font-size:14.5px;color:#444}
+blockquote{background:#eef4fb;border-left:4px solid #185FA5;margin:12px 0;padding:8px 14px;color:#445}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13.5px}
 th,td{border:1px solid #d0d7de;padding:7px 10px;text-align:left;vertical-align:top}
-th{background:#f7f2e6}
-a{color:#185FA5}
-.note{background:#fff8e6;border:1px solid #f0d9a0;border-radius:6px;padding:10px 14px;color:#6b531a}
+th{background:#f3f6fa}
+pre{background:#f6f8fa;border:1px solid #e1e4e8;border-radius:6px;padding:12px;overflow:auto;font-size:13px}
 code{background:#f6f8fa;padding:1px 5px;border-radius:4px;font-size:13px}
 ul,ol{padding-left:22px}
 hr{border:none;border-top:1px solid #e1e4e8;margin:28px 0}
-.kbd{background:#f3f4f6;border:1px solid #d0d7de;border-radius:4px;padding:0 6px}
+a{color:#185FA5}
+.note{background:#fff8e6;border:1px solid #f0d58c;padding:10px 14px;border-radius:6px;color:#6b5300;margin:12px 0}
 </style></head><body>
-
-<h1>对标文章知识库（PRD 写作 / 需求评审优化参考）</h1>
-<p class="note">用途：收集可用于「仿写」与「优化 PRD 输出」的标杆文章链接，并沉淀每篇与我们 PRD 工作流的对照分析。维护方式：每收录一篇，在「一、已收录」下加一个条目（链接 + 标题 + 核心方法论 + 可借鉴点）；之前给过的对标文章补到「二、待补充」。</p>
-
-<h2>一、已收录对标文章</h2>
-
-<h3>① WorkBuddy专家团：实现多 agent 协作【需求评审】，只要这几步！</h3>
-<ul>
-<li><b>链接</b>：<a href="https://mp.weixin.qq.com/s/tVOEfm7oAoKvES9WNJnwpQ" target="_blank">https://mp.weixin.qq.com/s/tVOEfm7oAoKvES9WNJnwpQ</a></li>
-<li><b>作者 / 来源</b>：道三（微信公众号）</li>
-<li><b>发布时间</b>：2026-08 前后</li>
-<li><b>全文在线版</b>：<a href="benchmark-article-multiagent-review.html">多 Agent 需求评审 · 全文</a>（仿写时直接读）</li>
-<li><b>一句话主题</b>：用 WorkBuddy「专家团（Team）」能力，让测试 / 前端 / 后端三个 Agent <b>并行</b>审同一份 PRD，再由汇总 Agent 产出<b>带角色颜色区分 + 严重度排序</b>的 HTML 评审报告，模拟真实研发评审会。</li>
-</ul>
-
-<p><b>可仿写的文章骨架（结构即方法论）：</b></p>
-<ol>
-<li>概述（目标 + 工作流总览 + 核心设计原则）</li>
-<li>Agent 角色定义（输入 / 输出 / 核心职责表格）</li>
-<li>各角色审查关注点详解（逐角色审查清单）</li>
-<li>工作流阶段（PRD 生成 → 并行评审 → 汇总输出 → 迭代修订）</li>
-<li>通信协议（Agent 间数据流 + 问题结构化 JSON Schema）</li>
-<li>Prompt 模板（每个角色一份可直接抄的 prompt）</li>
-<li>HTML 输出规范（颜色编码体系 + 报告结构）</li>
-<li>可行性建议（编排 / 上下文 / 结构化输出 / 去重 / 迭代 / 容错 / 可扩展）</li>
-<li>实现路径（P0~P4 分阶段）</li>
-</ol>
-
-<p><b>可直接借鉴的 8 个抓手：</b></p>
-<ol>
-<li><b>结构化 JSON 输出</b>：评审问题统一 <code>{agent_role, questions:[{id,category,severity,question,prd_section,suggestion}]}</code>，便于程序化去重/排序。</li>
-<li><b>并行 Team 编排</b>：QA+FE+BE 同一条消息 spawn，耗时 = max 而非累加，省 60%+。</li>
-<li><b>角色隔离 + Prompt 注入</b>：每个 Agent 只看到 PRD+自身角色 prompt，避免锚定偏差。</li>
-<li><b>严重度三档</b>：high（阻塞）/ medium（补充）/ low（优化），优先清 high。</li>
-<li><b>颜色编码报告</b>：测试=琥珀、前端=蓝、后端=绿、PM 答案=紫，一眼定位。</li>
-<li><b>待确认项汇总</b>：所有「需 PM 确认」单独成表，闭环不漏。</li>
-<li><b>迭代机制</b>：≤3 轮，第二轮起只审修订部分，标注轮次追踪收敛。</li>
-<li><b>容错降级</b>：单 Agent 超时/失败 → 降级两方评审，不阻断整体。</li>
-</ol>
-
-<h2>二、待补充（之前给过的对标文章）</h2>
-<p class="note">⚠️ 你在对话里提到「之前应该给过其他的」，但当前会话的历史检索只返回了摘要、未带真实链接，工作区里也没存过 mp.weixin 链接。请把之前给过的对标文章链接贴进来（或回我），我统一补进知识库并做对照分析。（候选来源：历史对话 c6f684fd「贴图形式」参考公众号文章——若那批也属于对标文章，也一并贴入）</p>
-
-<h2>三、分析：这篇能不能用于优化我们的 PRD 输出？</h2>
-<p><b>结论：强相关、能直接优化，而且和我们已有能力高度同构，主要缺口在「结构化输出格式」和「并行编排」，补上即可显著提效。</b></p>
-
-<h3>1. 与我们现有技能的对照</h3>
-<table>
-<tr><th>文章里的能力</th><th>我们已有的</th><th>我们的缺口 / 可增强点</th></tr>
-<tr><td>多角色评审会（测试/前端/后端/汇总）</td><td><code>pm-review-board</code> 六角色（产品/研发/测试/设计/运营/法务）</td><td>角色更全，但文章强调<b>并行 spawn + 角色隔离</b>，我们目前更像串行/汇总式</td></tr>
-<tr><td>结构化问题 JSON</td><td>评审产出偏自然语言/Markdown</td><td>缺统一 JSON Schema → 难程序化去重、排序、追踪收敛</td></tr>
-<tr><td>颜色编码 HTML 报告</td><td>评审会有报告产出</td><td>可对齐文章的颜色规范（测试琥珀/前端蓝/后端绿/PM紫）</td></tr>
-<tr><td>严重度 high/medium/low + 待确认汇总</td><td>有部分分级</td><td>可固化「待确认项」单独成表、作为 PRD 红字待办</td></tr>
-<tr><td>迭代评审 ≤3 轮</td><td>一次性评审</td><td>可加「修订后增量复审」闭环</td></tr>
-<tr><td>Team 并行编排</td><td><code>pm-master</code> 总控壳</td><td>可把评审链路从串行改为并行 spawn</td></tr>
-</table>
-
-<h3>2. 落地到 PRD 输出的 3 个最值钱优化（建议优先级）</h3>
-<ul>
-<li><b>P0｜评审问题结构化</b>：在 <code>pm-review-board</code> 输出里强制 JSON 协议（id/category/severity/prd_section/suggestion），并新增「§待确认项」表，直接喂给我们的 PRD 红字/待确认机制（你 PRD 规范里已有「⚠️ 待确认 @干系人」占位）。</li>
-<li><b>P1｜报告颜色编码 + 严重度排序</b>：套用文章的颜色规范生成 HTML 评审报告，high 优先、待确认项置顶，评审结论给「通过/有条件通过/不通过 + 阻塞项数量」。</li>
-<li><b>P2｜并行 Team 编排 + 迭代复审</b>：在 <code>pm-master</code> 下把多角色评审改为并行 spawn，并支持修订后增量复审（≤3 轮），把「评审—修订—再评审」做成闭环。</li>
-</ul>
-
-<h3>3. 风险与注意</h3>
-<ul>
-<li>文章是「评审工作流」设计稿，<b>不是 PRD 内容写作模板</b>；它优化的是「PRD 被审得更干净」，而非「PRD 怎么写」。我们 PRD 的章节结构仍应以你桌面《PRD 输出规范（修订于260715）》的「一~九」为准。</li>
-<li>JSON 强制输出对长 PRD（&gt;8000 字）有 token 压力，文章建议按章节拆分或 RAG；我们泰小虎 PRD 体量偏大，落地时需注意分章注入。</li>
-<li>文章角色偏研发侧，我们的 <code>pm-review-board</code> 还含运营/法务，扩展时按文章「角色配置化」思路加 prompt+颜色即可。</li>
-</ul>
-
+<h1>对标文章知识库（PRD 写作优化 + 公众号写作技巧参考）</h1>
+<blockquote>用途：收集可用于「仿写」与「优化 PRD 输出 / 公众号写作」的标杆文章链接，并沉淀每篇与我们工作流的对照分析。</blockquote>
+<blockquote>维护方式：每收录一篇，在「一、已收录」下加一个条目（链接 + 标题 + 核心方法论 + 可借鉴点）；之前给过的对标文章补到「三、待补充」。</blockquote>
+<blockquote>线上短链（GitHub Pages）：https://ddyuan-spec.github.io/taixiaohu/benchmark-articles-index.html</blockquote>
 <hr>
-<p style="color:#888;font-size:13px">本库随新对标文章持续追加；对照分析同步更新到对应条目。</p>
-
+<h2>一、主对标文章（PRD 优化核心参考）</h2>
+<h3>① AI产品经理工作流01：收到一个需求后，我现在会先让AI跑完这套分析流程</h3>
+<ul><li>**链接**：https://mp.weixin.qq.com/s/cKW9DbaqiFghp3e-Fi5SEA</li><li>**作者 / 来源**：公众号（AI 产品经理工作流系列，作者未署名，-series 01）</li><li>**全文离线备份**：[benchmark-article-aipm-workflow01.html](benchmark-article-aipm-workflow01.html)</li><li>**一句话主题**：收到需求后**不要马上写 PRD/画原型**，先让 AI 跑完 **6 步需求分析流程**，把最容易遗漏的部分扫一遍，再进入文档与原型。</li><li>**为什么它是主对标**：这篇比之前误收的道三「多 Agent 评审」**更贴 PRD 优化**——道三优化的是「PRD 写完后被审得更干净」，而这篇优化的是「**PRD 写之前需求有没有拆透**」，正好填补我们 `requirement-confirm-gate` / `requirement-workflow` 的前置环节。</li></ul>
+<h4>可仿写的 6 步需求分析流程（结构即方法论）</h4>
+<ol><li>**还原真实问题**：别接受当前方案，区分"问题 vs 方案"，还原业务方真实目标，给出其他解决路径。</li><li>**识别用户角色**：输出角色表（名称 / 目标 / 使用频率 / 关注信息 / 操作权限 / 与其他角色关系）。</li><li>**拆具体场景**：每个场景含（场景名 / 触发时机 / 用户当前状态 / 想完成什么 / 系统应提供帮助 / 优先级）。</li><li>**梳理业务流程**：按步骤拆解，标注触发者、系统判断、输入/输出、状态变化，多角色用泳道图思路。</li><li>**异常与边界场景扫描**（8 类）：用户操作异常 / 系统状态异常 / 数据异常 / 权限异常 / 网络接口异常 / 并发重复 / 历史数据兼容 / 后台处理异常 → 表格输出（异常场景 / 触发条件 / 影响 / 产品处理建议）。</li><li>**模拟需求评审**：扮演资深研发 / 测试负责人 / 业务负责人，各提 ≥10 个尖锐问题，最后总结当前最大 5 个风险。</li></ol>
+<h4>可直接复用的资产（已存全文，含可直接复制的完整 Prompt + 需求分析 Checklist）</h4>
+<ul><li>**完整 Prompt**：让 AI 以"10 年资深产品负责人"身份，按「真实问题分析 → 角色分析 → 场景拆解 → 流程梳理 → 异常边界 → 模拟评审 → 最终输出（是否清晰/最大风险/补充信息/能否进 PRD）」七段输出。</li><li>**需求分析 Checklist（10 问）**：收到需求后先问自己 10 个问题，覆盖真实问题、角色、场景、流程、异常、评审六个维度。</li><li>跑完这套流程通常得到 5 样东西：真实问题 / 角色清单 / 场景拆解 / 业务流程 / 风险问题——据此写 PRD「不再是硬憋」。</li></ul>
+<h4>与我们 PRD 工作流的对照 &amp; 可落地点</h4>
+<table><tr><th>文章的 6 步</th><th>我们现有能力</th><th>缺口 / 可增强点</th></tr><tr><td>文章的 6 步</td><td>我们现有能力</td><td>缺口 / 可增强点</td></tr><tr><td>---</td><td>---</td><td>---</td></tr><tr><td>第1步 还原真实问题</td><td>`requirement-confirm-gate` 确认门禁</td><td>可把"区分问题 vs 方案"固化成门禁必问项</td></tr><tr><td>第2步 角色表</td><td>PRD §角色权限零散</td><td>可固化"角色表"为 PRD 前置标准件</td></tr><tr><td>第3步 场景拆解</td><td>PRD §四 功能需求按页面拆</td><td>可补"场景优先级"维度，先场景后页面</td></tr><tr><td>第4步 业务流程（泳道）</td><td>PRD 流程图</td><td>可强制"多角色泳道 + 状态变化标注"</td></tr><tr><td>第5步 异常边界扫描</td><td>PRD 红线要求"异常分支+校验提示"</td><td>**强对齐**：直接套 8 类异常清单做 PRD 自检</td></tr><tr><td>第6步 模拟评审</td><td>`pm-review-board`（PRD 写完后审）</td><td>可加"PRD 前置自检"角色扮演，写前先挑刺</td></tr></table>
+<p><strong>结论</strong>：这篇可直接固化为 <code>requirement-workflow</code> 的一个<strong>标准前置模板/Prompt</strong>（跑完 6 步再进 PRD），并把第5步异常扫描做成 PRD 自检清单，呼应我们「异常分支 + 校验提示文案」红线。</p>
+<hr>
+<h2>二、参考文章（按主题归类）</h2>
+<h3>A. PRD 评审优化（多 Agent 并行评审）</h3>
+<h4>② WorkBuddy专家团：实现多 agent 协作【需求评审】，只要这几步！</h4>
+<ul><li>**链接**：https://mp.weixin.qq.com/s/tVOEfm7oAoKvES9WNJnwpQ</li><li>**作者**：道三（微信公众号）</li><li>**全文离线备份**：[benchmark-article-multiagent-review.html](benchmark-article-multiagent-review.html)</li><li>**要点**：用 WorkBuddy「专家团（Team）」让测试/前端/后端 Agent **并行**审同一份 PRD，汇总出**带角色颜色 + 严重度排序**的 HTML 评审报告。结构化 JSON 输出、待确认项汇总、≤3 轮迭代复审。</li><li>**与我们的关系**：优化「PRD 写完后被审得更干净」，与 `pm-review-board`（六角色评审）/`pm-master`（总控）高度同构；可借鉴点=结构化 JSON 协议 + 颜色编码报告 + 并行 Team 编排 + 迭代复审。详见旧版索引分析（已并入本库历史）。</li></ul>
+<h3>B. 公众号写作技巧（聊天体）</h3>
+<h4>③ 写文2小时，阅读25，改成"聊天体"后，直接进流量池</h4>
+<ul><li>**链接**：https://mp.weixin.qq.com/s/O7ND3FqQg55k0M4QXOSeng</li><li>**作者**：礼礼（公众号）</li><li>**全文离线备份**：[benchmark-article-chat-style.html](benchmark-article-chat-style.html)</li><li>**要点**：公众号"聊天体"写作六法——①把"我"带进来（由我到你，抛话题引共鸣）②拒绝爹味说教（作者没有智力优越感才给读者愉悦感）③适当留白（别把话说尽，别把读者当傻子）④多用短句少长句（一段不超手机三行，有呼吸感）⑤放弃高级词汇（大白话，别堆成语制造距离感）⑥多提问调动参与感（"你们觉得呢"把单向传递变互相探讨）。</li><li>**已固化**：该六法已写入 `wechat-write` skill 的「聊天体写作法」风格层，作为公众号文案生成时的强制风格约束与自检项。</li></ul>
+<hr>
+<h2>三、待补充（之前给过的对标文章）</h2>
+<blockquote>⚠️ 你在对话里提到「之前应该给过其他的」，但历史检索只返回摘要、未带真实链接，工作区里也没存过 mp.weixin 链接。</blockquote>
+<blockquote>请把之前给过的对标文章链接贴给我（或回我），我统一补进知识库并做对照分析。</blockquote>
+<blockquote>候选来源：历史对话 c6f684fd「贴图形式」参考公众号文章——若那批也属于对标文章，也一并贴入。</blockquote>
+<hr>
+<h2>四、分析总览：这些对标能不能优化我们的 PRD / 写作输出？</h2>
+<p><strong>结论：能，且分两层——</strong></p>
+<ul><li>**需求拆透层（主对标①）**：cKW9 的 6 步流程直接补强 `requirement-confirm-gate`/`requirement-workflow`，让进入 PRD 前的需求分析标准化、可复用（尤其第5步异常扫描与我们的 PRD 异常红线强对齐）。**优先级最高（P0）**。</li><li>**评审清洗层（参考②）**：道三的多 Agent 并行评审优化「PRD 写完后被审干净」，与 `pm-review-board` 同构，增强点在结构化 JSON + 颜色报告 + 迭代复审（P1）。</li><li>**写作表达层（参考③）**：聊天体六法已固化进 `wechat-write`，提升公众号文案可读性与流量表现（已落地）。</li></ul>
+<h3>风险提示</h3>
+<ul><li>cKW9 / 道三 两篇都是「方法论/工作流」设计稿，**不是 PRD 内容写作模板**；我们 PRD 章节结构仍以你桌面《PRD 输出规范（修订于260715）》「一~九」为准，别被它们的骨架带偏。</li><li>聊天体适合公众号/对外表达；**PRD 文档本身应保持结构化、严谨**，不要把"聊天体"套进 PRD（PRD 用标准章节 + 待确认占位即可）。</li></ul>
+<hr>
+<p>*本库随新对标文章持续追加；对照分析同步更新到对应条目。主对标 = ① AI PM 6 步需求分析流程。*</p>
 </body></html>
