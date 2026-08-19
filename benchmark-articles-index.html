@@ -38,6 +38,11 @@ a{color:#185FA5}
 <h3>B. 公众号写作技巧（聊天体）</h3>
 <h4>③ 写文2小时，阅读25，改成"聊天体"后，直接进流量池</h4>
 <ul><li>**链接**：https://mp.weixin.qq.com/s/O7ND3FqQg55k0M4QXOSeng</li><li>**作者**：礼礼（公众号）</li><li>**全文离线备份**：[benchmark-article-chat-style.html](benchmark-article-chat-style.html)</li><li>**要点**：公众号"聊天体"写作六法——①把"我"带进来（由我到你，抛话题引共鸣）②拒绝爹味说教（作者没有智力优越感才给读者愉悦感）③适当留白（别把话说尽，别把读者当傻子）④多用短句少长句（一段不超手机三行，有呼吸感）⑤放弃高级词汇（大白话，别堆成语制造距离感）⑥多提问调动参与感（"你们觉得呢"把单向传递变互相探讨）。</li><li>**已固化**：该六法已写入 `wechat-write` skill 的「聊天体写作法」风格层，作为公众号文案生成时的强制风格约束与自检项。</li></ul>
+<h3>C. 公众号发布自动化（打通后台·进草稿箱）</h3>
+<h4>④ 实测WorkBuddy打通公众号！文章自动进草稿箱！</h4>
+<ul><li>**链接**：https://mp.weixin.qq.com/s/lWpQsCJ1bgAiX-229AGOMw</li><li>**作者**：晓庄（公众号「晓庄AI创业笔记」）</li><li>**全文离线备份**：[benchmark-article-draft-box.html](benchmark-article-draft-box.html)</li><li>**一句话主题**：把「写稿 → 排版 → 推送草稿箱」做成流水线，用微信官方 API（`media/upload` 素材 + `draft/add` 草稿）自动进草稿箱，排版环节归零；并固化"晓庄风格"解决 AI 味。</li><li>**核心方法论（已提炼为可固化点）**：</li></ul>
+<ol><li>**后台打通前置**：微信开发者平台（2025-12-01 起旧路径失效）→ 我的业务 → 公众号 → 开发密钥，拿 AppID/AppSecret + 加 API IP 白名单（WorkBuddy 原生连接填它给的 IP）。</li><li>**微信兼容排版**：`&lt;table&gt;&lt;tr&gt;&lt;td&gt;` 容器骨架，样式全打在 td，仅允许 `color/background-color/font-size/font-weight/padding/margin/border/text-align/line-height`，禁用 `border-radius/position/linear-gradient/伪元素`；克制用框。</li><li>**字节校验**：标题 ≤64 字节、摘要 ≤120 字节（中文 3 字节），超长报 45003/45004。</li><li>**风格固化 4 步**：投喂 3-5 篇 → 学全部历史文章 → 建《写作规范》风格库 → 封装成 Skill（我们已通过 `wechat-write` + 聊天体六法覆盖第 4 步）。</li><li>**发布前 5 步审核门禁 + 反馈回流**：内容方向 / 像不像你 / 标题 / 排版 / 截图；每轮只改一个维度，4-5 轮后把反馈写回风格库/Skill。</li></ol>
+<ul><li>**已固化**：该文能力已增强进 `wechat-article-pro` skill（v2.0.0），新增：① `scripts/wechat_format.py` 本地排版转换器（table 容器 + 样式白名单 + 字节校验）② `scripts/push_to_draft.py` 推送参考实现（media/upload + draft/add）③ 自动推送草稿箱 workflow（AppID/AppSecret/IP 白名单 + 安全红线）④ 发布前 5 步审核门禁 + 反馈回流。原 skill 伪"自动"（手动浏览器点击）已替换为真推送流程。</li></ul>
 <hr>
 <h2>三、待补充（之前给过的对标文章）</h2>
 <blockquote>⚠️ 你在对话里提到「之前应该给过其他的」，但历史检索只返回摘要、未带真实链接，工作区里也没存过 mp.weixin 链接。</blockquote>
@@ -50,5 +55,7 @@ a{color:#185FA5}
 <h3>风险提示</h3>
 <ul><li>cKW9 / 道三 两篇都是「方法论/工作流」设计稿，**不是 PRD 内容写作模板**；我们 PRD 章节结构仍以你桌面《PRD 输出规范（修订于260715）》「一~九」为准，别被它们的骨架带偏。</li><li>聊天体适合公众号/对外表达；**PRD 文档本身应保持结构化、严谨**，不要把"聊天体"套进 PRD（PRD 用标准章节 + 待确认占位即可）。</li></ul>
 <hr>
-<p>*本库随新对标文章持续追加；对照分析同步更新到对应条目。主对标 = ① AI PM 6 步需求分析流程。*</p>
+<p>*本库随新对标文章持续追加；对照分析同步更新到对应条目。主对标 = ① AI PM 6 步需求分析流程；发布自动化 = ④ 已固化进 <code>wechat-article-pro</code> v2.0.0。*</p>
+<h3>已固化成果速查</h3>
+<ul><li>③ 聊天体六法 → `wechat-write` skill（风格层 + 自检）</li><li>④ 公众号自动进草稿箱 → `wechat-article-pro` v2.0.0（排版转换器 + 推送 workflow + 5 步审核门禁）</li><li>① cKW9 六步需求分析 → 建议固化为 `requirement-workflow` 前置模板（尚未实施，待确认）</li></ul>
 </body></html>
