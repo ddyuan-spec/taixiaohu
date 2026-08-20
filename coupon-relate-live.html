@@ -471,7 +471,7 @@ function renderLiveView(){
       '<td><span class="tag tag-blue">'+v.roomId+'</span></td>'+
       '<td>'+v.enterTime+'</td>'+
       '<td>'+v.exitTime+'</td>'+
-      '<td><span class="tag '+(v.mins>=30?'tag-green':'tag-orange')+'">'+v.duration+'</span></td>'+
+      '<td><span class="tag tag-orange">'+v.duration+'</span></td>'+
       '<td><span class="tag '+(v.watchStatus==='直播中'?'tag-green':v.watchStatus==='回放'?'tag-orange':'tag-blue')+'">'+v.watchStatus+'</span></td>'+
       '<td class="act"><a class="btn-link" onclick="viewDetail('+v.id+')">详情</a></td>'+
       '</tr>';
